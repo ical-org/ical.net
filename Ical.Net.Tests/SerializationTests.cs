@@ -133,9 +133,9 @@ public class SerializationTests
     }
 
     //3 formats - UTC, local time as defined in vTimeZone, and floating,
-    //at some point it would be great to independently unit test string serialization of an IDateTime object, into its 3 forms
+    //at some point it would be great to independently unit test string serialization of an CalDateTime object, into its 3 forms
     //http://www.kanzaki.com/docs/ical/dateTime.html
-    private static string CalDateString(IDateTime cdt)
+    private static string CalDateString(CalDateTime cdt)
     {
         var returnVar = $"{cdt.Year}{cdt.Month:D2}{cdt.Day:D2}T{cdt.Hour:D2}{cdt.Minute:D2}{cdt.Second:D2}";
         if (cdt.IsUtc)

@@ -142,7 +142,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
         if (recur.Until is not null)
         {
-            var serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+            var serializer = factory.Build(typeof(CalDateTime), SerializationContext) as IStringSerializer;
             if (serializer != null)
             {
                 var until = new CalDateTime(DateOnly.FromDateTime(recur.Until.Value), TimeOnly.FromDateTime(recur.Until.Value),
@@ -264,8 +264,8 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                     {
                         case "UNTIL":
                             {
-                                var serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
-                                var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
+                                var serializer = factory.Build(typeof(CalDateTime), SerializationContext) as IStringSerializer;
+                                var dt = serializer?.Deserialize(new StringReader(keyValue)) as CalDateTime;
                                 if (dt != null)
                                 {
                                     r.Until = DateTime.SpecifyKind(dt.Value, dt.IsUtc ? DateTimeKind.Utc : DateTimeKind.Unspecified);

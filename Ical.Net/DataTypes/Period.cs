@@ -19,8 +19,8 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class Period : EncodableDataType, IComparable<Period>
 {
-    private IDateTime _startTime = null!;
-    private IDateTime? _endTime;
+    private CalDateTime _startTime = null!;
+    private CalDateTime? _endTime;
     private Duration? _duration;
 
     /// <summary>
@@ -43,7 +43,7 @@ public class Period : EncodableDataType, IComparable<Period>
     /// <para/>
     /// If both <paramref name="end"/> and <paramref name="duration"/> are <see langword="null"/>, a new <see cref="Period"/> object is created using only the <paramref name="start"/> time.
     /// </returns>
-    internal static Period Create(IDateTime start, IDateTime? end = null, Duration? duration = null, ICalendarObject? associatedObject = null)
+    internal static Period Create(CalDateTime start, CalDateTime? end = null, Duration? duration = null, ICalendarObject? associatedObject = null)
     {
         if (end is not null)
             return new Period(start, end) { AssociatedObject = associatedObject };
@@ -68,7 +68,7 @@ public class Period : EncodableDataType, IComparable<Period>
     /// <param name="end"></param>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="ArgumentNullException"></exception>
-    public Period(IDateTime start, IDateTime? end = null)
+    public Period(CalDateTime start, CalDateTime? end = null)
     {
         // Ensure consistent arguments
         if (end != null && start.TzId != end.TzId)
@@ -95,7 +95,7 @@ public class Period : EncodableDataType, IComparable<Period>
     /// <param name="start"></param>
     /// <param name="duration"></param>
     /// <exception cref="ArgumentException"></exception>
-    public Period(IDateTime start, Duration duration)
+    public Period(CalDateTime start, Duration duration)
     {
         if (duration.Sign < 0)
             throw new ArgumentException($"Duration ({duration}) must be greater than or equal to zero.", nameof(duration));
@@ -111,8 +111,8 @@ public class Period : EncodableDataType, IComparable<Period>
 
         if (obj is not Period p) return;
 
-        _startTime = p._startTime.Copy<IDateTime>();
-        _endTime = p._endTime?.Copy<IDateTime>();
+        _startTime = p._startTime.Copy();
+        _endTime = p._endTime?.Copy();
         _duration = p._duration;
     }
 
@@ -148,19 +148,19 @@ public class Period : EncodableDataType, IComparable<Period>
     /// <summary>
     /// Gets the start time of the period.
     /// </summary>
-    public virtual IDateTime StartTime => _startTime;
+    public virtual CalDateTime StartTime => _startTime;
 
     /// <summary>
     /// Gets the original end time that was set,
     /// </summary>
-    public virtual IDateTime? EndTime => _endTime;
+    public virtual CalDateTime? EndTime => _endTime;
 
     /// <summary>
     /// Gets the end time of the period that was set, or - if this is <see langword="null"/> -
     /// calculates the end time based by adding <see cref="EffectiveDuration"/> to the <see cref="StartTime"/>.
     /// If <see cref="Duration"/> and <see cref="EndTime"/> are both <see langword="null"/>, the method returns <see langword="null"/>.
     /// </summary>
-    public virtual IDateTime? EffectiveEndTime
+    public virtual CalDateTime? EffectiveEndTime
     {
         get
         {
@@ -224,7 +224,7 @@ public class Period : EncodableDataType, IComparable<Period>
     /// The method is timezone-aware.
     /// </remarks>
     /// <param name="dt"></param>
-    public virtual bool Contains(IDateTime? dt)
+    public virtual bool Contains(CalDateTime? dt)
     {
         // Start time is inclusive
         if (dt == null || !_startTime.LessThanOrEqual(dt))

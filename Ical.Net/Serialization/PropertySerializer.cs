@@ -5,6 +5,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -68,7 +69,10 @@ public class PropertySerializer : SerializerBase
         var serializedValue = valueSerializer?.SerializeToString(value);
 
         // Get the list of parameters we'll be serializing
-        var parameterList = GetParameterList(prop, value);
+        var parameterList =
+            (IList<CalendarParameter>?)(value as ICalendarDataType)?.Parameters
+            ?? (valueSerializer as IParameterProvider)?.GetParameters(value).ToList()
+            ?? (IList<CalendarParameter>)prop.Parameters;
 
         var sb = new StringBuilder();
         sb.Append(prop.Name);
@@ -90,14 +94,12 @@ public class PropertySerializer : SerializerBase
                 }
             }
         }
+
         sb.Append(':');
         sb.Append(serializedValue);
 
         result.FoldLines(sb.ToString());
     }
-
-    private static IParameterCollection GetParameterList(ICalendarProperty prop, object value)
-        => value is ICalendarDataType dataType ? dataType.Parameters : prop.Parameters;
 
     public override object? Deserialize(TextReader tr) => null;
 }

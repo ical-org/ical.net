@@ -29,7 +29,7 @@ public class RecurringEvaluator : Evaluator
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="includeReferenceDateInResults"></param>
-    protected IEnumerable<Period> EvaluateRRule(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults)
+    protected IEnumerable<Period> EvaluateRRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
     {
         if (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any())
             return [];
@@ -59,7 +59,7 @@ public class RecurringEvaluator : Evaluator
     }
 
     /// <summary> Evaluates the RDate component. </summary>
-    protected IEnumerable<Period> EvaluateRDate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd)
+    protected IEnumerable<Period> EvaluateRDate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
     {
         var recurrences =
             new SortedSet<Period>(Recurrable.RecurrenceDates
@@ -74,7 +74,7 @@ public class RecurringEvaluator : Evaluator
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
-    protected IEnumerable<Period> EvaluateExRule(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd)
+    protected IEnumerable<Period> EvaluateExRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
     {
         if (Recurrable.ExceptionRules == null || !Recurrable.ExceptionRules.Any())
             return [];
@@ -102,14 +102,14 @@ public class RecurringEvaluator : Evaluator
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
-    protected IEnumerable<Period> EvaluateExDate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd)
+    protected IEnumerable<Period> EvaluateExDate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
     {
         var exDates = new SortedSet<Period>(Recurrable
             .ExceptionDates.GetAllPeriodsByKind(PeriodKind.DateOnly, PeriodKind.DateTime));
         return exDates;
     }
 
-    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
     {
         var rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
         //Only add referenceDate if there are no RecurrenceRules defined

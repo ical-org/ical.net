@@ -14,10 +14,10 @@ namespace Ical.Net.Evaluation;
 
 internal class RecurrenceUtil
 {
-    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults) => GetOccurrences(recurrable,
+    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime dt, bool includeReferenceDateInResults) => GetOccurrences(recurrable,
         new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)), includeReferenceDateInResults);
 
-    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
+    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime periodStart, CalDateTime periodEnd, bool includeReferenceDateInResults)
     {
         var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
         if (evaluator == null || recurrable.Start == null)
@@ -27,7 +27,6 @@ internal class RecurrenceUtil
 
         // Ensure the start time is associated with the object being queried
         var start = recurrable.Start;
-        start.AssociatedObject = recurrable as ICalendarObject;
 
         // Change the time zone of periodStart/periodEnd as needed
         // so they can be used during the evaluation process.

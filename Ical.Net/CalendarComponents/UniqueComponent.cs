@@ -61,9 +61,9 @@ public class UniqueComponent : CalendarComponent, IUniqueComponent, IComparable<
         set => Properties.Set("COMMENT", value);
     }
 
-    public virtual IDateTime DtStamp
+    public virtual CalDateTime DtStamp
     {
-        get => Properties.Get<IDateTime>("DTSTAMP");
+        get => Properties.Get<CalDateTime>("DTSTAMP");
         set => Properties.Set("DTSTAMP", value);
     }
 

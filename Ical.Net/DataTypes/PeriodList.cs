@@ -151,7 +151,7 @@ internal class PeriodList : EncodableDataType, IList<Period>
     /// </summary>
     /// <param name="dt"></param>
     /// <exception cref="ArgumentException"></exception>
-    public void Add(IDateTime dt)
+    public void Add(CalDateTime dt)
     {
         var p = new Period(dt);
         Add(p);

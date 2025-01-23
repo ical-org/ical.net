@@ -133,15 +133,15 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("TZNAME", value);
     }
 
-    public virtual IDateTime DtStart
+    public virtual CalDateTime DtStart
     {
         get => Start;
         set => Start = value;
     }
 
-    public virtual IDateTime Start
+    public virtual CalDateTime Start
     {
-        get => Properties.Get<IDateTime>("DTSTART");
+        get => Properties.Get<CalDateTime>("DTSTART");
         set => Properties.Set("DTSTART", value);
     }
 
@@ -173,13 +173,13 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("RRULE", value);
     }
 
-    public virtual IDateTime RecurrenceId
+    public virtual CalDateTime RecurrenceId
     {
-        get => Properties.Get<IDateTime>("RECURRENCE-ID");
+        get => Properties.Get<CalDateTime>("RECURRENCE-ID");
         set => Properties.Set("RECURRENCE-ID", value);
     }
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime startTime = null, IDateTime endTime = null)
+    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null)
         => RecurrenceUtil.GetOccurrences(this, startTime, endTime, true);
 
     public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)

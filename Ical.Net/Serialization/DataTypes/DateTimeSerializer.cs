@@ -6,6 +6,7 @@
 #nullable enable
 using Ical.Net.DataTypes;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -15,7 +16,7 @@ namespace Ical.Net.Serialization.DataTypes;
 /// <summary>
 /// A serializer for the <see cref="CalDateTime"/> data type.
 /// </summary>
-public class DateTimeSerializer : EncodableDataTypeSerializer
+public class DateTimeSerializer : SerializerBase, IParameterProvider
 {
     /// <summary>
     /// This constructor is required for the SerializerFactory to work.
@@ -32,7 +33,7 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
 
     public override string? SerializeToString(object obj)
     {
-        if (obj is not IDateTime dt)
+        if (obj is not CalDateTime dt)
         {
             return null;
         }
@@ -43,33 +44,19 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
         // the time value. The "TZID" property parameter MUST NOT be applied to DATE-TIME
         // properties whose time values are specified in UTC.
 
-        if (dt.IsUtc)
-        {
-            // 'Z' is used as the UTC designator
-            dt.Parameters.Remove("TZID");
-        }
-        else if (!string.IsNullOrWhiteSpace(dt.TzId))
-        {
-            dt.Parameters.Set("TZID", dt.TzId);
-        }
-
-        if (!dt.HasTime)
-        {
-            dt.SetValueType("DATE");
-        }
-
         var value = new StringBuilder(512);
         value.Append($"{dt.Year:0000}{dt.Month:00}{dt.Day:00}");
-        if (!dt.HasTime) return Encode(dt, value.ToString());
-
-        value.Append($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}");
-        if (dt.IsUtc)
+        if (dt.HasTime)
         {
-            value.Append("Z");
+            value.Append($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}");
+            if (dt.IsUtc)
+            {
+                value.Append("Z");
+            }
         }
 
         // Encode the value as necessary
-        return Encode(dt, value.ToString());
+        return value.ToString();
     }
 
     private const RegexOptions Options = RegexOptions.Compiled | RegexOptions.IgnoreCase;
@@ -81,14 +68,11 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
         var value = tr.ReadToEnd();
 
         // CalDateTime is defined as the Target type
-        var dt = (CalDateTime) CreateAndAssociate();
+        var parent = SerializationContext.Peek();
 
         // The associated object is an ICalendarObject of type CalendarProperty
         // that contains any timezone ("TZID" property) deserialized in a prior step
-        var timeZoneId = dt.Parameters.Get("TZID");
-
-        // Decode the value as necessary
-        value = Decode(dt, value);
+        var timeZoneId = (parent as ICalendarParameterCollectionContainer)?.Parameters.Get("TZID");
 
         var match = FullDateTimePatternMatch.Match(value);
         if (!match.Success)
@@ -120,10 +104,25 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
         var isUtc = match.Groups[9].Success;
         if (isUtc) timeZoneId = "UTC";
 
-        dt = timePart.HasValue
-            ? new CalDateTime(datePart, timePart.Value, timeZoneId) { AssociatedObject = dt.AssociatedObject }
-            : new CalDateTime(datePart) { AssociatedObject = dt.AssociatedObject };
+        var res = timePart.HasValue
+            ? new CalDateTime(datePart, timePart.Value, timeZoneId)
+            : new CalDateTime(datePart);
 
-        return dt;
+        return res;
+    }
+
+    public IReadOnlyList<CalendarParameter> GetParameters(object value)
+    {
+        if (value is not CalDateTime dt)
+            return [];
+
+        var res = new List<CalendarParameter>(2);
+        if (!dt.IsFloating && !dt.IsUtc)
+            res.Add(new CalendarParameter("TZID", dt.TzId));
+
+        if (!dt.HasTime)
+            res.Add(new CalendarParameter("VALUE", "DATE"));
+
+        return res;
     }
 }

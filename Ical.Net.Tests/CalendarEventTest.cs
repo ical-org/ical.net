@@ -256,8 +256,8 @@ END:VCALENDAR";
 
     private static List<RecurrencePattern> GetSimpleRecurrenceList()
         => new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 } };
-    private static List<IDateTime> GetExceptionDates()
-        => new List<IDateTime> { new CalDateTime(_now.AddDays(1).Date) };
+    private static List<CalDateTime> GetExceptionDates()
+        => new List<CalDateTime> { new CalDateTime(_now.AddDays(1).Date) };
 
     [Test]
     public void EventWithRecurrenceAndExceptionComparison()
