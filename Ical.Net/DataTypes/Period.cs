@@ -111,8 +111,8 @@ public class Period : EncodableDataType, IComparable<Period>
 
         if (obj is not Period p) return;
 
-        _startTime = p._startTime.Copy<CalDateTime>();
-        _endTime = p._endTime?.Copy<CalDateTime>();
+        _startTime = p._startTime.Copy();
+        _endTime = p._endTime?.Copy();
         _duration = p._duration;
     }
 

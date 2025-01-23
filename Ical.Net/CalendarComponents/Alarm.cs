@@ -90,7 +90,7 @@ public class Alarm : CalendarComponent
             // Ensure that "FromDate" has already been set
             if (fromDate == null)
             {
-                fromDate = rc.Start.Copy<CalDateTime>();
+                fromDate = rc.Start.Copy();
             }
 
             Duration? duration = null;
@@ -124,7 +124,7 @@ public class Alarm : CalendarComponent
         }
         else
         {
-            var dt = Trigger.DateTime.Copy<CalDateTime>();
+            var dt = Trigger.DateTime.Copy();
             occurrences.Add(new AlarmOccurrence(this, dt, rc));
         }
 
@@ -169,12 +169,12 @@ public class Alarm : CalendarComponent
         for (var i = 0; i < len; i++)
         {
             var ao = occurrences[i];
-            var alarmTime = ao.DateTime.Copy<CalDateTime>();
+            var alarmTime = ao.DateTime.Copy();
 
             for (var j = 0; j < Repeat; j++)
             {
                 alarmTime = alarmTime.Add(Duration);
-                occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy<CalDateTime>(), ao.Component));
+                occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy(), ao.Component));
             }
         }
     }

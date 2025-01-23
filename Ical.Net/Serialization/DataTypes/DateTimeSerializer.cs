@@ -6,6 +6,7 @@
 #nullable enable
 using Ical.Net.DataTypes;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -15,7 +16,7 @@ namespace Ical.Net.Serialization.DataTypes;
 /// <summary>
 /// A serializer for the <see cref="CalDateTime"/> data type.
 /// </summary>
-public class DateTimeSerializer : SerializerBase
+public class DateTimeSerializer : SerializerBase, IParameterProvider
 {
     /// <summary>
     /// This constructor is required for the SerializerFactory to work.
@@ -106,6 +107,21 @@ public class DateTimeSerializer : SerializerBase
         var res = timePart.HasValue
             ? new CalDateTime(datePart, timePart.Value, timeZoneId)
             : new CalDateTime(datePart);
+
+        return res;
+    }
+
+    public IReadOnlyList<CalendarParameter> GetParameters(object value)
+    {
+        if (value is not CalDateTime dt)
+            return [];
+
+        var res = new List<CalendarParameter>(2);
+        if (!dt.IsFloating && !dt.IsUtc)
+            res.Add(new CalendarParameter("TZID", dt.TzId));
+
+        if (!dt.HasTime)
+            res.Add(new CalendarParameter("VALUE", "DATE"));
 
         return res;
     }
