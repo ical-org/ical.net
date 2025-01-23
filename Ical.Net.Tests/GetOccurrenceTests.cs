@@ -37,8 +37,8 @@ internal class GetOccurrenceTests
         var occurrences = calendar.GetOccurrences(searchStart, searchEnd).OrderBy(o => o.Period.StartTime).ToList();
 
         var firstOccurrence = occurrences.First();
-        var firstStartCopy = firstStart.Copy<CalDateTime>();
-        var firstEndCopy = firstEnd.Copy<CalDateTime>();
+        var firstStartCopy = firstStart.Copy();
+        var firstEndCopy = firstEnd.Copy();
         Assert.Multiple(() =>
         {
             Assert.That(firstOccurrence.Period.StartTime, Is.EqualTo(firstStartCopy));
@@ -46,8 +46,8 @@ internal class GetOccurrenceTests
         });
 
         var secondOccurrence = occurrences.Last();
-        var secondStartCopy = secondStart.Copy<CalDateTime>();
-        var secondEndCopy = secondEnd.Copy<CalDateTime>();
+        var secondStartCopy = secondStart.Copy();
+        var secondEndCopy = secondEnd.Copy();
         Assert.Multiple(() =>
         {
             Assert.That(secondOccurrence.Period.StartTime, Is.EqualTo(secondStartCopy));

@@ -67,6 +67,10 @@ public class SerializerFactory : ISerializerFactory
         {
             s = new DurationSerializer(ctx);
         }
+        else if (typeof(CalDateTime).IsAssignableFrom(objectType))
+        {
+            s = new DateTimeSerializer(ctx);
+        }
         else if (typeof(int).IsAssignableFrom(objectType))
         {
             s = new IntegerSerializer(ctx);

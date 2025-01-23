@@ -23,7 +23,7 @@ namespace Ical.Net.DataTypes;
 /// This is because RFC 5545, Section 3.3.5, does not allow for fractional seconds.
 /// </remarks>
 /// </summary>
-public sealed class CalDateTime : EncodableDataType, IComparable<CalDateTime>, IFormattable
+public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
 {
     // The date part that is used to return the Value property.
     private DateOnly _dateOnly;
@@ -198,7 +198,7 @@ public sealed class CalDateTime : EncodableDataType, IComparable<CalDateTime>, I
     public CalDateTime(string value, string? tzId = null)
     {
         var serializer = new DateTimeSerializer();
-        CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable
+        CopyFrom(serializer.Deserialize(new StringReader(value)) as CalDateTime
                  ?? throw new InvalidOperationException($"$Failure for deserializing value '{value}'"));
         // The string may contain a date only, meaning that the tzId should be ignored.
         _tzId = HasTime ? tzId : null;
@@ -217,26 +217,8 @@ public sealed class CalDateTime : EncodableDataType, IComparable<CalDateTime>, I
     }
 
     /// <inheritdoc/>
-    public override ICalendarObject? AssociatedObject
+    private void CopyFrom(CalDateTime calDt)
     {
-        get => base.AssociatedObject;
-        set
-        {
-            if (!Equals(AssociatedObject, value))
-            {
-                base.AssociatedObject = value;
-            }
-        }
-    }
-
-    /// <inheritdoc/>
-    public override void CopyFrom(ICopyable obj)
-    {
-        if (obj is not CalDateTime calDt)
-            return;
-
-        base.CopyFrom(obj);
-
         // Maintain the private date/time backing fields
         _dateOnly = calDt._dateOnly;
         _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
@@ -571,10 +553,13 @@ public sealed class CalDateTime : EncodableDataType, IComparable<CalDateTime>, I
         return (Value - dt.Value).ToDuration();
     }
 
+    internal CalDateTime Copy()
+        => new CalDateTime(_dateOnly, _timeOnly, _tzId);
+
     /// <inheritdoc cref="DateTime.AddYears"/>
     public CalDateTime AddYears(int years)
     {
-        var dt = Copy<CalDateTime>();
+        var dt = Copy();
         dt._dateOnly = dt._dateOnly.AddYears(years);
         return dt;
     }
@@ -582,7 +567,7 @@ public sealed class CalDateTime : EncodableDataType, IComparable<CalDateTime>, I
     /// <inheritdoc cref="DateTime.AddMonths"/>
     public CalDateTime AddMonths(int months)
     {
-        var dt = Copy<CalDateTime>();
+        var dt = Copy();
         dt._dateOnly = dt._dateOnly.AddMonths(months);
         return dt;
     }
@@ -590,7 +575,7 @@ public sealed class CalDateTime : EncodableDataType, IComparable<CalDateTime>, I
     /// <inheritdoc cref="DateTime.AddDays"/>
     public CalDateTime AddDays(int days)
     {
-        var dt = Copy<CalDateTime>();
+        var dt = Copy();
         dt._dateOnly = dt._dateOnly.AddDays(days);
         return dt;
     }

@@ -90,7 +90,7 @@ public class Trigger : EncodableDataType
             return;
         }
 
-        DateTime = t.DateTime?.Copy<CalDateTime>();
+        DateTime = t.DateTime?.Copy();
         Duration = t.Duration;
         Related = t.Related;
     }

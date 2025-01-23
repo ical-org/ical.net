@@ -21,7 +21,7 @@ public class TodoEvaluator : RecurringEvaluator
 
     internal IEnumerable<Period> EvaluateToPreviousOccurrence(CalDateTime completedDate, CalDateTime currDt)
     {
-        var beginningDate = completedDate.Copy<CalDateTime>();
+        var beginningDate = completedDate.Copy();
 
         if (Todo.RecurrenceRules != null)
         {
@@ -69,7 +69,7 @@ public class TodoEvaluator : RecurringEvaluator
     {
         if (recur.Count.HasValue)
         {
-            referenceDateTime = Todo.Start.Copy<CalDateTime>();
+            referenceDateTime = Todo.Start.Copy();
         }
         else
         {
