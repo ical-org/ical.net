@@ -434,12 +434,12 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         ZonedDateTime converted;
         if (IsFloating)
         {
-            // Make sure, we properly fix the time if it dosen't exist in the target tz.
+            // Make sure, we properly fix the time if it doesn't exist in the target tz.
             converted = DateUtil.ToZonedDateTimeLeniently(Value, otherTzId);
         }
         else
         {
-            var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
+            var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId!);
             converted = zonedOriginal.WithZone(DateUtil.GetZone(otherTzId));
         }
 
@@ -634,7 +634,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
         formatProvider ??= CultureInfo.InvariantCulture;
-        var dateTimeOffset = DateUtil.ToZonedDateTimeLeniently(Value, _tzId).ToDateTimeOffset();
+        var dateTimeOffset = DateUtil.ToZonedDateTimeLeniently(Value, _tzId ?? string.Empty).ToDateTimeOffset();
 
         // Use the .NET format options to format the DateTimeOffset
         var tzIdString = _tzId is not null ? $" {_tzId}" : string.Empty;

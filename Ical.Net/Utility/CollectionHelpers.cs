@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Ical.Net.Utility;
 internal static class CollectionHelpers
 {
     /// <summary> Commutative, stable, order-independent hashing for collections of collections. </summary>
-    public static int GetHashCode<T>(IEnumerable<T> collection)
+    public static int GetHashCode<T>(IEnumerable<T>? collection)
     {
         unchecked
         {
@@ -23,12 +24,12 @@ internal static class CollectionHelpers
 
             return collection
                 .Where(e => e != null)
-                .Aggregate(0, (current, element) => current + element.GetHashCode());
+                .Aggregate(0, (current, element) => current + element?.GetHashCode() ?? 0);
         }
     }
 
     /// <summary> Commutative, stable, order-independent hashing for collections of collections. </summary>
-    public static int GetHashCodeForNestedCollection<T>(IEnumerable<IEnumerable<T>> nestedCollection)
+    public static int GetHashCodeForNestedCollection<T>(IEnumerable<IEnumerable<T>>? nestedCollection)
     {
         unchecked
         {
@@ -40,23 +41,18 @@ internal static class CollectionHelpers
             return nestedCollection
                 .SelectMany(c => c)
                 .Where(e => e != null)
-                .Aggregate(0, (current, element) => current + element.GetHashCode());
+                .Aggregate(0, (current, element) => current + element?.GetHashCode() ?? 0);
         }
     }
 
-    public static bool Equals<T>(IEnumerable<T> left, IEnumerable<T> right, bool orderSignificant = false)
+    public static bool Equals<T>(IEnumerable<T>? left, IEnumerable<T>? right, bool orderSignificant = false)
     {
         if (ReferenceEquals(left, right))
         {
             return true;
         }
 
-        if (left == null && right != null)
-        {
-            return false;
-        }
-
-        if (left != null && right == null)
+        if (left == null || right == null)
         {
             return false;
         }
@@ -66,18 +62,21 @@ internal static class CollectionHelpers
             return left.SequenceEqual(right);
         }
 
+        // No multiple enumerations
+        var rightArray = right as T[] ?? right.ToArray();
+        var leftArray = left as T[] ?? left.ToArray();
         try
         {
             //Many things have natural IComparers defined, but some don't, because no natural comparer exists
-            return left.OrderBy(l => l).SequenceEqual(right.OrderBy(r => r));
+            return leftArray.OrderBy(l => l).SequenceEqual(rightArray.OrderBy(r => r));
         }
         catch (Exception)
         {
             //It's not possible to sort some collections of things (like Calendars) in any meaningful way. Properties can be null, and there's no natural
             //ordering for the contents therein. In cases like that, the best we can do is treat them like sets, and compare them. We don't maintain
             //fidelity with respect to duplicates, but it seems better than doing nothing
-            var leftSet = new HashSet<T>(left);
-            var rightSet = new HashSet<T>(right);
+            var leftSet = new HashSet<T>(leftArray);
+            var rightSet = new HashSet<T>(rightArray);
             return leftSet.SetEquals(rightSet);
         }
     }
