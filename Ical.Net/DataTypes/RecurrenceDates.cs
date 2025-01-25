@@ -98,5 +98,5 @@ public class RecurrenceDates : PeriodListWrapperBase
     /// </summary>
     public IEnumerable<Period> GetAllPeriods()
         => ListOfPeriodList.
-            SelectMany(pl => pl.Where(p => p.PeriodKind is PeriodKind.Period)).OrderedDistinct();
+            SelectMany(pl => pl.Where(p => p.PeriodKind is PeriodKind.Period)).Distinct();
 }
