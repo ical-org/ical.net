@@ -1,4 +1,4 @@
-﻿# iCal.NET
+﻿<img src="assets/logo.png" style="width:300px;">
 
 ## What is iCal.NET?
 iCal.NET is an iCalendar (RFC 5545) class library for .NET aimed at providing RFC 5545 compliance, while providing full compatibility with popular calendaring applications and libraries.
@@ -8,15 +8,15 @@ Make ICal.NET the best in class for .NET - in terms of usability, performance an
 
 **Join the project and help to achieve this goal!**
 
-![iCal.NET for .NET](assets/logo.png)
+## Getting iCal.Net
 
-## Getting iCal.NET
+### iCal.Net v5 pre-releases 
+Pre-releases are available as [GitHub Packages](https://github.com/ical-org/ical.net/pkgs/nuget/Ical.Net).<br/>
+**We strongly recommend using the pre-release packages**. They are stable and contain many bug fixes and improvements over the v4 release.<br/>
+See the [API Changes Document](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5) for more information.
 
-iCal.NET is available as [a nuget package](https://www.nuget.org/packages/Ical.Net).
-
-## Migrating from dday.ical to ical.net
-
-There's a guide just for you: **[Migrating from dday.ical](https://github.com/ical-org/ical.net/wiki/Migrating-from-dday.ical)**
+### iCal.Net v4
+is available as [a NuGet Package](https://www.nuget.org/packages/Ical.Net).
 
 ## Examples
 
@@ -53,7 +53,10 @@ ical.net uses [semantic versioning](http://semver.org/). In a nutshell:
 
 * Remember that keeping ical.net up is something ical.net maintainers and many contributors do in their spare time.
 
-### Paid support
+<details closed>
+    <summary>
+      Paid support
+    </summary>
 
 In case you need it, [Rian Stockbower may offer paid support and bugfixes](https://rianjs.net/consulting).
  A few basic rules to consider when asking for this kind of support:
@@ -62,6 +65,8 @@ In case you need it, [Rian Stockbower may offer paid support and bugfixes](https
 * You do not own the changes made to the library even if you paid for them.
 * Congruence with the ical-org vision for the future of ical.net is required. That means we step back from things like "add Exchange interop", or take  dependencies on third-party libraries that benefit only your one or very few use cases.
 
+</details>
+
 ## Creative Commons
 
-iCal.NET logo adapted from [Love Calendar](https://thenounproject.com/term/love-calendar/116866/) By Sergey Demushkin, RU
+iCal.Net logo adapted from [Love Calendar](https://thenounproject.com/term/love-calendar/116866/) By Sergey Demushkin, RU
