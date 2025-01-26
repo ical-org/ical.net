@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +24,6 @@ internal static class DateUtil
 
     public static DateTime AddWeeks(DateTime dt, int interval, DayOfWeek firstDayOfWeek)
     {
-        // NOTE: fixes WeeklyUntilWkst2() eval.
-        // NOTE: simplified the execution of this - fixes bug #3119920 - missing weekly occurences also
         dt = dt.AddDays(interval * 7);
         while (dt.DayOfWeek != firstDayOfWeek)
         {
@@ -63,8 +62,11 @@ internal static class DateUtil
     /// <param name="tzId">A BCL, IANA, or serialization time zone identifier</param>
     /// <param name="useLocalIfNotFound">If true, this method will return the system local time zone if tzId doesn't match a known time zone identifier.
     /// Otherwise, it will throw an exception.</param>
+    /// <exception cref="ArgumentException">Unrecognized time zone id</exception>
     public static DateTimeZone GetZone(string tzId, bool useLocalIfNotFound = true)
     {
+        var exMsg = $"Unrecognized time zone id {tzId}";
+
         if (string.IsNullOrWhiteSpace(tzId))
         {
             return LocalDateTimeZone;
@@ -83,7 +85,7 @@ internal static class DateUtil
 
         if (_windowsMapping.Value.TryGetValue(tzId, out var ianaZone))
         {
-            return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
+            return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone) ?? throw new ArgumentException(exMsg);
         }
 
         zone = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(tzId);
@@ -103,7 +105,7 @@ internal static class DateUtil
         var providerId = DateTimeZoneProviders.Tzdb.Ids.FirstOrDefault(tzId.Contains);
         if (providerId != null)
         {
-            return DateTimeZoneProviders.Tzdb.GetZoneOrNull(providerId);
+            return DateTimeZoneProviders.Tzdb.GetZoneOrNull(providerId) ?? throw new ArgumentException(exMsg);
         }
 
         if (_windowsMapping.Value.Keys
@@ -111,13 +113,13 @@ internal static class DateUtil
             .Any(pId => _windowsMapping.Value.TryGetValue(pId, out ianaZone))
            )
         {
-            return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
+            return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone!) ?? throw new ArgumentException(exMsg);
         }
 
         providerId = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.Ids.FirstOrDefault(tzId.Contains);
         if (providerId != null)
         {
-            return NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId);
+            return NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId) ?? throw new ArgumentException(exMsg);
         }
 
         if (useLocalIfNotFound)
@@ -125,7 +127,7 @@ internal static class DateUtil
             return LocalDateTimeZone;
         }
 
-        throw new ArgumentException($"Unrecognized time zone id {tzId}");
+        throw new ArgumentException(exMsg);
     }
 
     public static ZonedDateTime AddYears(ZonedDateTime zonedDateTime, int years)
