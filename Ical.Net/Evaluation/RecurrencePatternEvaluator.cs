@@ -113,8 +113,8 @@ public class RecurrencePatternEvaluator : Evaluator
          bool includeReferenceDateInResults)
     {
         // In the first step, we work with DateTime values, so we need to convert the CalDateTime to DateTime
-        var originalDate = DateUtil.GetSimpleDateTimeData(seed);
-        var seedCopy = DateUtil.GetSimpleDateTimeData(seed);
+        var originalDate = seed.Value;
+        var seedCopy = seed.Value;
         var periodStartDt = periodStart?.ToTimeZone(seed.TzId)?.Value;
         var periodEndDt = periodEnd?.ToTimeZone(seed.TzId)?.Value;
 
