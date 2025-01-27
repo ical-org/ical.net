@@ -19,7 +19,7 @@ public interface IGetOccurrences
     /// <param name="startTime">The starting date range</param>
     /// <param name="endTime">The ending date range</param>
     /// <returns>An IEnumerable that calculates and returns Periods representing the occurrences of this object in ascending order.</returns>
-    IEnumerable<Occurrence> GetOccurrences(IDateTime startTime = null, IDateTime endTime = null);
+    IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null);
 
     IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime);
 }
@@ -34,7 +34,7 @@ public interface IGetOccurrencesTyped : IGetOccurrences
     /// <param name="startTime">The starting date range. If set to null, occurrences are returned from the beginning.</param>
     /// <param name="endTime">The ending date range. If set to null, occurrences are returned until the end.</param>
     /// <returns>An IEnumerable that calculates and returns Periods representing the occurrences of this object in ascending order.</returns>
-    IEnumerable<Occurrence> GetOccurrences<T>(IDateTime startTime = null, IDateTime endTime = null) where T : IRecurringComponent;
+    IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null) where T : IRecurringComponent;
 
     IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime) where T : IRecurringComponent;
 }

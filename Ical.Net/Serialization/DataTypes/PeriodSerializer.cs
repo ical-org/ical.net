@@ -33,7 +33,7 @@ public class PeriodSerializer : EncodableDataTypeSerializer
 
         try
         {
-            var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+            var dtSerializer = factory.Build(typeof(CalDateTime), SerializationContext) as IStringSerializer;
             var durationSerializer = factory.Build(typeof(Duration), SerializationContext) as IStringSerializer;
             if (dtSerializer == null || durationSerializer == null)
             {
@@ -86,7 +86,7 @@ public class PeriodSerializer : EncodableDataTypeSerializer
             return null;
         }
 
-        var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+        var dtSerializer = factory.Build(typeof(CalDateTime), SerializationContext) as IStringSerializer;
         var durationSerializer = factory.Build(typeof(Duration), SerializationContext) as IStringSerializer;
         if (dtSerializer == null || durationSerializer == null)
         {
@@ -102,8 +102,8 @@ public class PeriodSerializer : EncodableDataTypeSerializer
             return false;
         }
 
-        var start = dtSerializer.Deserialize(new StringReader(values[0])) as IDateTime;
-        var end = dtSerializer.Deserialize(new StringReader(values[1])) as IDateTime;
+        var start = dtSerializer.Deserialize(new StringReader(values[0])) as CalDateTime;
+        var end = dtSerializer.Deserialize(new StringReader(values[1])) as CalDateTime;
         var duration = durationSerializer.Deserialize(new StringReader(values[1])) as Duration?;
 
         return start is null ? null : Period.Create(start, end, duration, p.AssociatedObject);

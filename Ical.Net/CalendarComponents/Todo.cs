@@ -25,18 +25,18 @@ public class Todo : RecurringComponent, IAlarmContainer
     /// <summary>
     /// The date/time the todo was completed.
     /// </summary>
-    public virtual IDateTime Completed
+    public virtual CalDateTime Completed
     {
-        get => Properties.Get<IDateTime>("COMPLETED");
+        get => Properties.Get<CalDateTime>("COMPLETED");
         set => Properties.Set("COMPLETED", value);
     }
 
     /// <summary>
     /// The due date of the todo item.
     /// </summary>
-    public virtual IDateTime Due
+    public virtual CalDateTime Due
     {
-        get => Properties.Get<IDateTime>("DUE");
+        get => Properties.Get<CalDateTime>("DUE");
         set
         {
             Properties.Set("DUE", value);
@@ -136,7 +136,7 @@ public class Todo : RecurringComponent, IAlarmContainer
     /// </note>
     /// </summary>
     /// <returns>True if the todo item has been completed</returns>
-    public virtual bool IsCompleted(IDateTime currDt)
+    public virtual bool IsCompleted(CalDateTime currDt)
     {
         if (Status == TodoStatus.Completed)
         {
@@ -159,7 +159,7 @@ public class Todo : RecurringComponent, IAlarmContainer
     /// </summary>
     /// <param name="currDt">The date and time to test.</param>
     /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
-    public virtual bool IsActive(IDateTime currDt)
+    public virtual bool IsActive(CalDateTime currDt)
         => (DtStart == null || currDt.GreaterThanOrEqual(DtStart))
            && (!IsCompleted(currDt) && !IsCancelled);
 

@@ -23,7 +23,7 @@ public class RecurrencePatternEvaluator : Evaluator
         Pattern = pattern;
     }
 
-    private RecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
+    private RecurrencePattern ProcessRecurrencePattern(CalDateTime referenceDate)
     {
         var r = new RecurrencePattern();
         r.CopyFrom(Pattern);
@@ -109,12 +109,12 @@ public class RecurrencePatternEvaluator : Evaluator
     /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
-    private IEnumerable<DateTime> GetDates(IDateTime seed, IDateTime? periodStart, IDateTime? periodEnd, int maxCount, RecurrencePattern pattern,
+    private IEnumerable<DateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern,
          bool includeReferenceDateInResults)
     {
-        // In the first step, we work with DateTime values, so we need to convert the IDateTime to DateTime
-        var originalDate = DateUtil.GetSimpleDateTimeData(seed);
-        var seedCopy = DateUtil.GetSimpleDateTimeData(seed);
+        // In the first step, we work with DateTime values, so we need to convert the CalDateTime to DateTime
+        var originalDate = seed.Value;
+        var seedCopy = seed.Value;
         var periodStartDt = periodStart?.ToTimeZone(seed.TzId)?.Value;
         var periodEndDt = periodEnd?.ToTimeZone(seed.TzId)?.Value;
 
@@ -843,20 +843,18 @@ public class RecurrencePatternEvaluator : Evaluator
 
     /// <summary>
     /// Creates a new period from the specified date/time,
-    /// where the <see cref="IDateTime.HasTime"/> is taken into account.
+    /// where the <see cref="CalDateTime.HasTime"/> is taken into account.
     /// when initializing the new period with a new <see cref="CalDateTime"/>.
     /// </summary>
-    private static Period CreatePeriod(DateTime dateTime, IDateTime referenceDate)
+    private static Period CreatePeriod(DateTime dateTime, CalDateTime referenceDate)
     {
-        // Turn each resulting date/time into an IDateTime and associate it
+        // Turn each resulting date/time into an CalDateTime and associate it
         // with the reference date.
-        IDateTime newDt = new CalDateTime(dateTime, null, referenceDate.HasTime);
+        CalDateTime newDt = new CalDateTime(dateTime, null, referenceDate.HasTime);
         if (referenceDate.TzId != null) {
             // Adjust nonexistent recurrence instances according to RFC 5545 3.3.5
             newDt = newDt.ToTimeZone(referenceDate.TzId);
         }
-
-        newDt.AssociateWith(referenceDate);
 
         // Create a period from the new date/time.
         return new Period(newDt);
@@ -870,13 +868,13 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="periodEnd">End (excl.) of the period occurrences are generated for.</param>
     /// <param name="includeReferenceDateInResults">Whether the referenceDate itself should be returned. Ignored as the reference data MUST equal the first occurrence of an RRULE.</param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
     {
         if (Pattern.Frequency != FrequencyType.None && Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
         {
             // This case is not defined by RFC 5545. We handle it by evaluating the rule
             // as if referenceDate had a time (i.e. set to midnight).
-            referenceDate = new CalDateTime(referenceDate.Date, new TimeOnly(), referenceDate.TzId) { AssociatedObject = referenceDate.AssociatedObject };
+            referenceDate = new CalDateTime(referenceDate.Date, new TimeOnly(), referenceDate.TzId);
         }
 
         // Create a recurrence pattern suitable for use during evaluation.
@@ -888,7 +886,7 @@ public class RecurrencePatternEvaluator : Evaluator
         return periodQuery;
     }
 
-    private static DateTime MatchTimeZone(IDateTime reference, DateTime until)
+    private static DateTime MatchTimeZone(CalDateTime reference, DateTime until)
     {
         /*
            The value of the "UNTIL" rule part MUST have the same value type as the
@@ -916,7 +914,6 @@ public class RecurrencePatternEvaluator : Evaluator
         }
 
         var untilCalDt = new CalDateTime(until, untilTzId, reference.HasTime);
-        untilCalDt.AssociateWith(reference);
 
         // If 'reference' is floating, then 'until' is floating, too
         return reference.TzId is null

@@ -42,7 +42,7 @@ public class TriggerSerializer : StringSerializer
                     return null;
                 }
 
-                var value = valueType == typeof(IDateTime)
+                var value = valueType == typeof(CalDateTime)
                     ? t.DateTime
                     : (object) t.Duration;
                 return serializer.SerializeToString(value);
@@ -94,8 +94,8 @@ public class TriggerSerializer : StringSerializer
             {
                 case null:
                     return null;
-                case IDateTime _:
-                    t.DateTime = (IDateTime) obj;
+                case CalDateTime _:
+                    t.DateTime = (CalDateTime) obj;
                     break;
                 default:
                     t.Duration = (Duration) obj;
