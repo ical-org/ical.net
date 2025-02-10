@@ -11,7 +11,9 @@ Make ICal.NET the best in class for .NET - in terms of usability, performance an
 ## Getting iCal.Net
 
 ### iCal.Net v5 pre-releases 
-Pre-releases are available as [GitHub Packages](https://github.com/ical-org/ical.net/pkgs/nuget/Ical.Net).<br/>
+Pre-releases are available as [GitHub Packages](https://github.com/ical-org/ical.net/pkgs/nuget/Ical.Net)<br/>
+and from the [zipped packages folder](https://github.com/ical-org/ical.net/tree/main/v5-daily-builds).
+
 **We strongly recommend using the pre-release packages**. They are stable and contain many bug fixes and improvements over the v4 release.<br/>
 See the [API Changes Document](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5) for more information.
 
