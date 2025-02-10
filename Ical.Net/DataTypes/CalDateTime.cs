@@ -56,7 +56,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// <summary>
     /// This constructor is required for the SerializerFactory to work.
     /// </summary>
-    public CalDateTime() { }
+    internal CalDateTime() { }
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class.
