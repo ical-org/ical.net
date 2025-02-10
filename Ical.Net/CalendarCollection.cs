@@ -55,13 +55,13 @@ public class CalendarCollection : List<Calendar>
         // being ordered to avoid full enumeration.
         .OrderedMergeMany();
 
-    public IEnumerable<Occurrence> GetOccurrences(IDateTime startTime = null, IDateTime endTime = null)
+    public IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null)
         => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime));
 
     public IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
         => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime));
 
-    public IEnumerable<Occurrence> GetOccurrences<T>(IDateTime startTime = null, IDateTime endTime = null) where T : IRecurringComponent
+    public IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null) where T : IRecurringComponent
         => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime));
 
     public IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime) where T : IRecurringComponent
@@ -78,12 +78,12 @@ public class CalendarCollection : List<Calendar>
         return this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(freeBusyRequest)));
     }
 
-    public FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
+    public FreeBusy GetFreeBusy(CalDateTime fromInclusive, CalDateTime toExclusive)
     {
         return this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(fromInclusive, toExclusive)));
     }
 
-    public FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive)
+    public FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, CalDateTime fromInclusive, CalDateTime toExclusive)
     {
         return this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive)));
     }

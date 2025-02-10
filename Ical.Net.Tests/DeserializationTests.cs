@@ -107,7 +107,7 @@ public class DeserializationTests
     }
 
     /// <summary>
-    /// Tests bug #2938007 - involving the HasTime property in IDateTime values.
+    /// Tests bug #2938007 - involving the HasTime property in CalDateTime values.
     /// See https://sourceforge.net/tracker/?func=detail&aid=2938007&group_id=187422&atid=921236
     /// </summary>
     [Test]
@@ -326,8 +326,8 @@ public class DeserializationTests
         var evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
         Assert.That(evt, Is.Not.Null);
 
-        IDateTime dtStart = new CalDateTime(2006, 12, 18);
-        IDateTime dtEnd = new CalDateTime(2006, 12, 23);
+        CalDateTime dtStart = new CalDateTime(2006, 12, 18);
+        CalDateTime dtEnd = new CalDateTime(2006, 12, 23);
         var occurrences = iCal.GetOccurrences(dtStart, dtEnd).OrderBy(o => o.Period.StartTime).ToList();
 
         var dateTimes = new[]

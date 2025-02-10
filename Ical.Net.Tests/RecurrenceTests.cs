@@ -27,8 +27,8 @@ public class RecurrenceTests
 
     private void EventOccurrenceTest(
         Calendar cal,
-        IDateTime fromDate,
-        IDateTime toDate,
+        CalDateTime fromDate,
+        CalDateTime toDate,
         Period[] expectedPeriods,
         string[] timeZones,
         int eventIndex
@@ -36,11 +36,6 @@ public class RecurrenceTests
     {
         var evt = cal.Events.Skip(eventIndex).First();
         var rule = evt.RecurrenceRules.FirstOrDefault();
-
-        if (fromDate != null)
-            fromDate.AssociatedObject = cal;
-        if (toDate != null)
-            toDate.AssociatedObject = cal;
 
         var occurrences = evt.GetOccurrences(fromDate, toDate)
             .OrderBy(o => o.Period.StartTime)
@@ -60,10 +55,7 @@ public class RecurrenceTests
 
             for (var i = 0; i < expectedPeriods.Length; i++)
             {
-                // Associate each incoming date/time with the calendar.
-                expectedPeriods[i].AssociatedObject = cal;
-
-                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveEndTime) {AssociatedObject = cal};
+                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveEndTime);
 
                 Assert.That(occurrences[i].Period, Is.EqualTo(period), "Event should occur on " + period);
                 if (timeZones != null)
@@ -75,8 +67,8 @@ public class RecurrenceTests
 
     private void EventOccurrenceTest(
         Calendar cal,
-        IDateTime fromDate,
-        IDateTime toDate,
+        CalDateTime fromDate,
+        CalDateTime toDate,
         Period[] expectedPeriods,
         string[] timeZones
     )
@@ -97,7 +89,7 @@ public class RecurrenceTests
             new CalDateTime(2006, 1, 1),
             new CalDateTime(2011, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
 
-        IDateTime dt = new CalDateTime(2007, 1, 1, 8, 30, 0, _tzid);
+        CalDateTime dt = new CalDateTime(2007, 1, 1, 8, 30, 0, _tzid);
         var i = 0;
 
         while (dt.Year < 2011)
@@ -161,7 +153,7 @@ public class RecurrenceTests
             new CalDateTime(1997, 9, 1),
             new CalDateTime(1998, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
 
-        IDateTime dt = new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid);
+        CalDateTime dt = new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid);
         var i = 0;
         while (dt.Year < 1998)
         {
@@ -333,7 +325,7 @@ public class RecurrenceTests
             new CalDateTime(1998, 1, 1),
             new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
 
-        IDateTime dt = new CalDateTime(1998, 1, 1, 9, 0, 0, _tzid);
+        CalDateTime dt = new CalDateTime(1998, 1, 1, 9, 0, 0, _tzid);
         var i = 0;
         while (dt.Year < 2001)
         {
@@ -3029,8 +3021,8 @@ public class RecurrenceTests
 
         rpattern.Frequency = FrequencyType.Weekly;
 
-        IDateTime evtStart = new CalDateTime(2006, 12, 1);
-        IDateTime evtEnd = new CalDateTime(2007, 1, 1);
+        CalDateTime evtStart = new CalDateTime(2006, 12, 1);
+        CalDateTime evtEnd = new CalDateTime(2007, 1, 1);
 
         var evaluator = rpattern.GetService(typeof(IEvaluator)) as IEvaluator;
         Assert.That(evaluator, Is.Not.Null);

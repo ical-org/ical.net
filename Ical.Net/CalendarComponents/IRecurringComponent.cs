@@ -14,9 +14,9 @@ public interface IRecurringComponent : IUniqueComponent, IRecurrable
     IList<string> Categories { get; set; }
     string Class { get; set; }
     IList<string> Contacts { get; set; }
-    IDateTime Created { get; set; }
+    CalDateTime Created { get; set; }
     string Description { get; set; }
-    IDateTime LastModified { get; set; }
+    CalDateTime LastModified { get; set; }
     int Priority { get; set; }
     IList<string> RelatedComponents { get; set; }
     int Sequence { get; set; }

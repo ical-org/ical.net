@@ -23,7 +23,7 @@ namespace Ical.Net.DataTypes;
 /// This is because RFC 5545, Section 3.3.5, does not allow for fractional seconds.
 /// </remarks>
 /// </summary>
-public sealed class CalDateTime : EncodableDataType, IDateTime
+public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
 {
     // The date part that is used to return the Value property.
     private DateOnly _dateOnly;
@@ -60,11 +60,11 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class.
-    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see cref="IDateTime.HasTime"/> is <see langword="true"/>.
-    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see cref="IDateTime.HasTime"/> is <see langword="false"/>.
+    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see cref="CalDateTime.HasTime"/> is <see langword="true"/>.
+    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see cref="CalDateTime.HasTime"/> is <see langword="false"/>.
     /// </summary>
     /// <param name="value"></param>
-    public CalDateTime(IDateTime value)
+    public CalDateTime(CalDateTime value)
     {
         if (value.HasTime)
             Initialize(DateOnly.FromDateTime(value.Value), TimeOnly.FromDateTime(value.Value), value.TzId);
@@ -198,7 +198,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public CalDateTime(string value, string? tzId = null)
     {
         var serializer = new DateTimeSerializer();
-        CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable
+        CopyFrom(serializer.Deserialize(new StringReader(value)) as CalDateTime
                  ?? throw new InvalidOperationException($"$Failure for deserializing value '{value}'"));
         // The string may contain a date only, meaning that the tzId should be ignored.
         _tzId = HasTime ? tzId : null;
@@ -217,32 +217,12 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     /// <inheritdoc/>
-    public override ICalendarObject? AssociatedObject
+    private void CopyFrom(CalDateTime calDt)
     {
-        get => base.AssociatedObject;
-        set
-        {
-            if (!Equals(AssociatedObject, value))
-            {
-                base.AssociatedObject = value;
-            }
-        }
-    }
-
-    /// <inheritdoc/>
-    public override void CopyFrom(ICopyable obj)
-    {
-        if (obj is not CalDateTime calDt)
-            return;
-
-        base.CopyFrom(obj);
-
         // Maintain the private date/time backing fields
         _dateOnly = calDt._dateOnly;
         _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
         _tzId = calDt._tzId;
-
-        AssociateWith(calDt);
     }
 
     public bool Equals(CalDateTime other) => this == other;
@@ -264,35 +244,35 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         }
     }
 
-    public static bool operator <(CalDateTime? left, IDateTime? right)
+    public static bool operator <(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
                && ((left.IsFloating || right.IsFloating) ? left.Value < right.Value : left.AsUtc < right.AsUtc);
     }
 
-    public static bool operator >(CalDateTime? left, IDateTime? right)
+    public static bool operator >(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
                && ((left.IsFloating || right.IsFloating) ? left.Value > right.Value : left.AsUtc > right.AsUtc);
     }
 
-    public static bool operator <=(CalDateTime? left, IDateTime? right)
+    public static bool operator <=(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
                && ((left.IsFloating || right.IsFloating) ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
     }
 
-    public static bool operator >=(CalDateTime? left, IDateTime? right)
+    public static bool operator >=(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
                && ((left.IsFloating || right.IsFloating) ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
     }
 
-    public static bool operator ==(CalDateTime? left, IDateTime? right)
+    public static bool operator ==(CalDateTime? left, CalDateTime? right)
     {
         if (ReferenceEquals(left, right))
         {
@@ -314,7 +294,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
                && string.Equals(left.TzId, right.TzId, StringComparison.OrdinalIgnoreCase);
     }
 
-    public static bool operator !=(CalDateTime? left, IDateTime? right)
+    public static bool operator !=(CalDateTime? left, CalDateTime? right)
     {
         return !(left == right);
     }
@@ -327,10 +307,22 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         return new CalDateTime(left);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Converts the date/time to UTC (Coordinated Universal Time)
+    /// If <see cref="IsFloating"/>==<see langword="true"/>
+    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
+    /// The returned <see cref="Value"/> is unchanged, but with <see cref="DateTimeKind.Utc"/>.
+    /// </summary>
     public DateTime AsUtc => DateTime.SpecifyKind(ToTimeZone(UtcTzId).Value, DateTimeKind.Utc);
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the date and time value in the ISO calendar as a <see cref="DateTime"/> type with <see cref="DateTimeKind.Unspecified"/>.
+    /// The value has no associated timezone.<br/>
+    /// The precision of the time part is up to seconds.
+    /// <para/>
+    /// Use <see cref="IsUtc"/> along with <see cref="TzId"/> and <see cref="IsFloating"/>
+    /// to control how this date/time is handled.
+    /// </summary>
     public DateTime Value
     {
         get
@@ -349,10 +341,22 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Returns <see langword="true"/>, if the date/time value is floating.
+    /// <para/>
+    /// A floating date/time value does not include a timezone identifier or UTC offset,
+    /// so it is interpreted as local time in the context where it is used.
+    /// <para/>
+    /// A floating date/time value is useful when the exact timezone is not
+    /// known or when the event should be interpreted in the local timezone of
+    /// the user or system processing the calendar data.
+    /// </summary>
     public bool IsFloating => _tzId is null;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets/sets whether the Value of this date/time represents
+    /// a universal time.
+    /// </summary>
     public bool IsUtc => string.Equals(_tzId, UtcTzId, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
@@ -369,38 +373,60 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// </summary>
     public string? TzId => _tzId;
 
-    /// <inheritdoc cref="TzId"/>
+    /// <summary>
+    /// Gets the timezone name this time is in, if it references a timezone.
+    /// </summary>
     /// <remarks>This is an alias for <see cref="TzId"/></remarks>
     public string? TimeZoneName => TzId;
 
-    /// <inheritdoc cref="DateTime.Year"/>
+    /// <summary>
+    /// Gets the year that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Year => Value.Year;
 
-    /// <inheritdoc cref="DateTime.Month"/>
+    /// <summary>
+    /// Gets the month that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Month => Value.Month;
 
-    /// <inheritdoc cref="DateTime.Day"/>
+    /// <summary>
+    /// Gets the day that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Day => Value.Day;
 
-    /// <inheritdoc cref="DateTime.Hour"/>
+    /// <summary>
+    /// Gets the hour that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Hour => Value.Hour;
 
-    /// <inheritdoc cref="DateTime.Minute"/>
+    /// <summary>
+    /// Gets the minute that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Minute => Value.Minute;
 
-    /// <inheritdoc cref="DateTime.Second"/>
+    /// <summary>
+    /// Gets the second that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Second => Value.Second;
 
-    /// <inheritdoc cref="DateTime.DayOfWeek"/>
+    /// <summary>
+    /// Gets the DayOfWeek that applies to the <see cref="Value"/>.
+    /// </summary>
     public DayOfWeek DayOfWeek => Value.DayOfWeek;
 
-    /// <inheritdoc cref="DateTime.DayOfYear"/>
+    /// <summary>
+    /// Gets the DayOfYear that applies to the <see cref="Value"/>.
+    /// </summary>
     public int DayOfYear => Value.DayOfYear;
 
-    /// <inheritdoc cref="DateOnly"/>
+    /// <summary>
+    /// Gets the date portion of the <see cref="Value"/>.
+    /// </summary>
     public DateOnly Date => _dateOnly;
 
-    /// <inheritdoc cref="TimeOnly"/>
+    /// <summary>
+    /// Gets the time portion of the <see cref="Value"/>, or <see langword="null"/> if the <see cref="Value"/> is a pure date.
+    /// </summary>
     public TimeOnly? Time => _timeOnly;
 
     /// <summary>
@@ -423,9 +449,14 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// </summary>
     private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime) => new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
 
-    /// <inheritdoc/>
-    IDateTime IDateTime.ToTimeZone(string? otherTzId) => ToTimeZone(otherTzId);
-
+    /// <summary>
+    /// Converts the <see cref="Value"/> to a date/time
+    /// within the specified <see paramref="otherTzId"/> timezone.
+    /// <para/>
+    /// If <see cref="IsFloating"/>==<see langword="true"/>
+    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
+    /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
+    /// </summary>
     public CalDateTime ToTimeZone(string? otherTzId)
     {
         if (otherTzId is null)
@@ -448,12 +479,17 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
             : new CalDateTime(converted.ToDateTimeUnspecified(), otherTzId);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Add the specified <see cref="Duration"/> to this instance/>.
+    /// </summary>
+    /// <remarks>
+    /// In correspondence to RFC5545, the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
+    /// </remarks>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime Add(Duration d)
+    public CalDateTime Add(Duration d)
     {
         if (!HasTime && d.HasTime)
         {
@@ -493,16 +529,20 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
             // Convert to the original timezone even if already set to ensure we're not in a non-existing time.
             newDateTime = newDateTime.ToTimeZone(TzId);
 
-        AssociateWith(this);
-
         return newDateTime;
     }
 
-    /// <inheritdoc/>
-    public TimeSpan SubtractExact(IDateTime dt) => AsUtc - dt.AsUtc;
+    /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.</summary>
+    /// <param name="dt"></param>
+    public TimeSpan SubtractExact(CalDateTime dt) => AsUtc - dt.AsUtc;
 
-    /// <inheritdoc/>
-    public Duration Subtract(IDateTime dt)
+    /// <summary>
+    /// Returns a new <see cref="Duration"/> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.
+    /// </summary>
+    /// <param name="dt"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public Duration Subtract(CalDateTime dt)
     {
         if (this.TzId is not null)
             return SubtractExact(dt).ToDurationExact();
@@ -513,26 +553,29 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         return (Value - dt.Value).ToDuration();
     }
 
+    internal CalDateTime Copy()
+        => new CalDateTime(_dateOnly, _timeOnly, _tzId);
+
     /// <inheritdoc cref="DateTime.AddYears"/>
-    public IDateTime AddYears(int years)
+    public CalDateTime AddYears(int years)
     {
-        var dt = Copy<CalDateTime>();
+        var dt = Copy();
         dt._dateOnly = dt._dateOnly.AddYears(years);
         return dt;
     }
 
     /// <inheritdoc cref="DateTime.AddMonths"/>
-    public IDateTime AddMonths(int months)
+    public CalDateTime AddMonths(int months)
     {
-        var dt = Copy<CalDateTime>();
+        var dt = Copy();
         dt._dateOnly = dt._dateOnly.AddMonths(months);
         return dt;
     }
 
     /// <inheritdoc cref="DateTime.AddDays"/>
-    public IDateTime AddDays(int days)
+    public CalDateTime AddDays(int days)
     {
-        var dt = Copy<CalDateTime>();
+        var dt = Copy();
         dt._dateOnly = dt._dateOnly.AddDays(days);
         return dt;
     }
@@ -542,77 +585,61 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime AddHours(int hours) => Add(Duration.FromHours(hours));
+    public CalDateTime AddHours(int hours) => Add(Duration.FromHours(hours));
 
     /// <inheritdoc cref="DateTime.AddMinutes"/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime AddMinutes(int minutes) => Add(Duration.FromMinutes(minutes));
+    public CalDateTime AddMinutes(int minutes) => Add(Duration.FromMinutes(minutes));
 
     /// <inheritdoc cref="DateTime.AddSeconds"/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime AddSeconds(int seconds) => Add(Duration.FromSeconds(seconds));
+    public CalDateTime AddSeconds(int seconds) => Add(Duration.FromSeconds(seconds));
 
     /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is less than <paramref name="dt"/>.
+    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is less than <paramref name="dt"/>.
     /// </summary>
-    public bool LessThan(IDateTime dt) => this < dt;
+    public bool LessThan(CalDateTime dt) => this < dt;
 
     /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is greater than <paramref name="dt"/>.
+    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than <paramref name="dt"/>.
     /// </summary>
-    public bool GreaterThan(IDateTime dt) => this > dt;
+    public bool GreaterThan(CalDateTime dt) => this > dt;
 
     /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is less than or equal to <paramref name="dt"/>.
+    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is less than or equal to <paramref name="dt"/>.
     /// </summary>
-    public bool LessThanOrEqual(IDateTime dt) => this <= dt;
+    public bool LessThanOrEqual(CalDateTime dt) => this <= dt;
 
     /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is greater than or equal to <paramref name="dt"/>.
+    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than or equal to <paramref name="dt"/>.
     /// </summary>
-    public bool GreaterThanOrEqual(IDateTime dt) => this >= dt;
+    public bool GreaterThanOrEqual(CalDateTime dt) => this >= dt;
 
     /// <summary>
-    /// Associates the current instance with the specified <see cref="IDateTime"/> object.
+    /// Compares the current instance with another <see cref="CalDateTime"/> object and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other CalDateTime.
     /// </summary>
-    /// <param name="dt">The <see cref="IDateTime"/> object to associate with.</param>
-    public void AssociateWith(IDateTime? dt)
-    {
-        if (AssociatedObject == null && dt?.AssociatedObject != null)
-        {
-            AssociatedObject = dt.AssociatedObject;
-        }
-        else if (AssociatedObject != null && dt?.AssociatedObject == null && dt != null)
-        {
-            dt.AssociatedObject = AssociatedObject;
-        }
-    }
-
-    /// <summary>
-    /// Compares the current instance with another <see cref="IDateTime"/> object and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other IDateTime.
-    /// </summary>
-    /// <param name="dt">The <see cref="IDateTime"/> object to compare with this instance.</param>
+    /// <param name="dt">The <see cref="CalDateTime"/> object to compare with this instance.</param>
     /// <returns>A value that indicates the relative order of the objects being compared. The return value has these meanings:
     /// Less than zero: This instance is less than <paramref name="dt"/>.
     /// Zero: This instance is equal to <paramref name="dt"/>.
     /// Greater than zero: This instance is greater than <paramref name="dt"/>.
     /// </returns>
-    public int CompareTo(IDateTime? dt)
+    public int CompareTo(CalDateTime? dt)
     {
-        if (Equals(dt))
-        {
-            return 0;
-        }
-
         if (dt == null)
         {
             return 1;
+        }
+
+        if (Equals(dt))
+        {
+            return 0;
         }
 
         if (this < dt)

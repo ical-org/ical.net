@@ -24,7 +24,7 @@ public class AlarmOccurrence : IComparable<AlarmOccurrence>
 
     public Alarm Alarm { get; set; }
 
-    public IDateTime DateTime
+    public CalDateTime DateTime
     {
         get => Period.StartTime;
         set => Period = new Period(value);
@@ -37,7 +37,7 @@ public class AlarmOccurrence : IComparable<AlarmOccurrence>
         Alarm = ao.Alarm;
     }
 
-    public AlarmOccurrence(Alarm a, IDateTime dt, IRecurringComponent rc)
+    public AlarmOccurrence(Alarm a, CalDateTime dt, IRecurringComponent rc)
     {
         Alarm = a;
         Period = new Period(dt);

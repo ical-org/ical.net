@@ -190,14 +190,14 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <param name="startTime">The beginning date/time of the range.</param>
     /// <param name="endTime">The end date/time of the range.</param>
     /// <returns>A list of occurrences that fall between the date/time arguments provided.</returns>
-    public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime startTime = null, IDateTime endTime = null)
+    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null)
         => GetOccurrences<IRecurringComponent>(startTime, endTime);
 
-    /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
+    /// <inheritdoc cref="GetOccurrences(CalDateTime, CalDateTime)"/>
     public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
         => GetOccurrences<IRecurringComponent>(startTime?.AsCalDateTime(), endTime?.AsCalDateTime());
 
-    /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
+    /// <inheritdoc cref="GetOccurrences(CalDateTime, CalDateTime)"/>
     public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime) where T : IRecurringComponent
         => GetOccurrences<T>(startTime?.AsCalDateTime(), endTime?.AsCalDateTime());
 
@@ -208,7 +208,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     /// <param name="startTime">The starting date range</param>
     /// <param name="endTime">The ending date range</param>
-    public virtual IEnumerable<Occurrence> GetOccurrences<T>(IDateTime startTime = null, IDateTime endTime = null) where T : IRecurringComponent
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null) where T : IRecurringComponent
     {
         // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
         var recurrenceIdsAndUids = this.Children.OfType<IRecurrable>()
@@ -310,10 +310,10 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
 
     public virtual FreeBusy GetFreeBusy(FreeBusy freeBusyRequest) => CalendarComponents.FreeBusy.Create(this, freeBusyRequest);
 
-    public virtual FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
+    public virtual FreeBusy GetFreeBusy(CalDateTime fromInclusive, CalDateTime toExclusive)
         => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
 
-    public virtual FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive)
+    public virtual FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, CalDateTime fromInclusive, CalDateTime toExclusive)
         => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
 
     /// <summary>
