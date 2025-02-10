@@ -94,7 +94,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         {
             DateTimeKind.Utc => UtcTzId,
             DateTimeKind.Unspecified => null,
-            _ => throw new ArgumentException($"An instance of {nameof(CalDateTime)} can only be initializd from a {nameof(DateTime)} of kind {nameof(DateTimeKind.Utc)} or {nameof(DateTimeKind.Unspecified)}.")
+            _ => throw new ArgumentException($"An instance of {nameof(CalDateTime)} can only be initialized from a {nameof(DateTime)} of kind {nameof(DateTimeKind.Utc)} or {nameof(DateTimeKind.Unspecified)}.")
         },
         hasTime)
     { }
