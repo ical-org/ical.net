@@ -56,7 +56,10 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// <summary>
     /// This constructor is required for the SerializerFactory to work.
     /// </summary>
-    public CalDateTime() { }
+    private CalDateTime()
+    {
+        // required for the SerializerFactory to work
+    }
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class.
@@ -94,7 +97,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         {
             DateTimeKind.Utc => UtcTzId,
             DateTimeKind.Unspecified => null,
-            _ => throw new ArgumentException($"An instance of {nameof(CalDateTime)} can only be initializd from a {nameof(DateTime)} of kind {nameof(DateTimeKind.Utc)} or {nameof(DateTimeKind.Unspecified)}.")
+            _ => throw new ArgumentException($"An instance of {nameof(CalDateTime)} can only be initialized from a {nameof(DateTime)} of kind {nameof(DateTimeKind.Utc)} or {nameof(DateTimeKind.Unspecified)}.")
         },
         hasTime)
     { }
