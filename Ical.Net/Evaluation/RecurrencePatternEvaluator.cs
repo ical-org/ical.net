@@ -31,7 +31,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // Convert the UNTIL value to one that matches the same time information as the reference date
         if (r.Until is not null)
         {
-            r.Until = MatchTimeZone(referenceDate, r.Until.Value);
+            r.Until = MatchTimeZone(referenceDate, r.Until);
         }
 
         if (referenceDate.HasTime)
@@ -886,7 +886,7 @@ public class RecurrencePatternEvaluator : Evaluator
         return periodQuery;
     }
 
-    private static DateTime MatchTimeZone(CalDateTime reference, DateTime until)
+    private static CalDateTime MatchTimeZone(CalDateTime reference, CalDateTime until)
     {
         /*
            The value of the "UNTIL" rule part MUST have the same value type as the
@@ -908,17 +908,17 @@ public class RecurrencePatternEvaluator : Evaluator
         {
             // If 'reference' has a timezone, 'until' MUST be UTC,
             // but in case of UTC rule violation we fall back to the 'reference' timezone
-            untilTzId = until.Kind == DateTimeKind.Utc
+            untilTzId = until.TzId == CalDateTime.UtcTzId
                 ? CalDateTime.UtcTzId
                 : reference.TzId;
         }
 
-        var untilCalDt = new CalDateTime(until, untilTzId, reference.HasTime);
+        var untilCalDt = new CalDateTime(until.Value, untilTzId, reference.HasTime);
 
         // If 'reference' is floating, then 'until' is floating, too
         return reference.TzId is null
-            ? untilCalDt.Value
-            // convert to the reference timezone
-            : untilCalDt.ToTimeZone(reference.TzId).Value;
+            ? untilCalDt
+            // convert to the reference timezone and convert the value to Floating
+            : untilCalDt.ToTimeZone(reference.TzId).ToTimeZone(null);
     }
 }

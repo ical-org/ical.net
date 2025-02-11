@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -36,7 +37,7 @@ public class MatchTimeZoneTests
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
-        var expectedUntil = new DateTime(2023, 11, 05, 13, 00, 00, DateTimeKind.Utc);
+        var expectedUntil = new CalDateTime(2023, 11, 05, 13, 00, 00, CalDateTime.UtcTzId);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01), new CalDateTime(2023, 11, 06));
 
         Assert.Multiple(() =>
@@ -85,7 +86,8 @@ public class MatchTimeZoneTests
         var expectedUntil = DateTime.ParseExact(inputUntil, "yyyyMMddTHHmmssZ",
             System.Globalization.CultureInfo.InvariantCulture,
             System.Globalization.DateTimeStyles.AssumeUniversal |
-            System.Globalization.DateTimeStyles.AdjustToUniversal);
+            System.Globalization.DateTimeStyles.AdjustToUniversal).AsCalDateTime();
+        
         var occurrences = evt.GetOccurrences(new CalDateTime(2024, 10, 01), new CalDateTime(2024, 10, 07));
 
         Assert.Multiple(() =>
@@ -130,7 +132,7 @@ public class MatchTimeZoneTests
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
-        var expectedUntil = new DateTime(2023, 11, 05, 09, 00, 00, DateTimeKind.Utc);
+        var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, CalDateTime.UtcTzId);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01), new CalDateTime(2023, 11, 06));
         
         Assert.Multiple(() =>
@@ -163,7 +165,7 @@ public class MatchTimeZoneTests
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
-        var expectedUntil = new DateTime(2023, 11, 05, 09, 00, 00, DateTimeKind.Unspecified);
+        var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, null);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01), new CalDateTime(2023, 11, 06));
 
         Assert.Multiple(() =>
@@ -197,7 +199,7 @@ public class MatchTimeZoneTests
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
-        var expectedUntil = new DateTime(2023, 11, 05, 09, 00, 00, DateTimeKind.Unspecified);
+        var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, null);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01), new CalDateTime(2023, 11, 06));
         
         Assert.Multiple(() =>
@@ -230,7 +232,7 @@ public class MatchTimeZoneTests
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
-        var expectedUntil = new DateTime(2023, 11, 05, 00, 00, 00, DateTimeKind.Unspecified);
+        var expectedUntil = new CalDateTime(2023, 11, 05);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01), new CalDateTime(2023, 11, 06));
 
         Assert.Multiple(() =>

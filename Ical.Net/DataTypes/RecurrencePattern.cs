@@ -21,10 +21,22 @@ namespace Ical.Net.DataTypes;
 public class RecurrencePattern : EncodableDataType
 {
     private int? _interval;
+    private CalDateTime? _until;
 
     public FrequencyType Frequency { get; set; }
 
-    public DateTime? Until { get; set; }
+    public CalDateTime? Until
+    {
+        get => _until;
+        set
+        {
+            if (value != null && value.TzId != null && value.TzId != CalDateTime.UtcTzId)
+                throw new ArgumentOutOfRangeException(nameof(Until),
+                    $"{nameof(Until)} must be either NULL, or its TzId must be UTC or NULL");
+
+            _until = value;
+        }
+    }
 
     public int? Count { get; set; }
 
@@ -103,20 +115,21 @@ public class RecurrencePattern : EncodableDataType
         return serializer.SerializeToString(this);
     }
 
-    protected bool Equals(RecurrencePattern other) => (Interval == other.Interval)
-                                                      && Frequency == other.Frequency
-                                                      && Until.Equals(other.Until)
-                                                      && Count == other.Count
-                                                      && (FirstDayOfWeek == other.FirstDayOfWeek)
-                                                      && CollectionEquals(BySecond, other.BySecond)
-                                                      && CollectionEquals(ByMinute, other.ByMinute)
-                                                      && CollectionEquals(ByHour, other.ByHour)
-                                                      && CollectionEquals(ByDay, other.ByDay)
-                                                      && CollectionEquals(ByMonthDay, other.ByMonthDay)
-                                                      && CollectionEquals(ByYearDay, other.ByYearDay)
-                                                      && CollectionEquals(ByWeekNo, other.ByWeekNo)
-                                                      && CollectionEquals(ByMonth, other.ByMonth)
-                                                      && CollectionEquals(BySetPosition, other.BySetPosition);
+    protected bool Equals(RecurrencePattern? other) => other != null
+                                                               && Interval == other.Interval
+                                                               && Frequency == other.Frequency
+                                                               && (Until?.Equals(other.Until!) ?? other.Until == null)
+                                                               && Count == other.Count
+                                                               && FirstDayOfWeek == other.FirstDayOfWeek
+                                                               && CollectionEquals(BySecond, other.BySecond)
+                                                               && CollectionEquals(ByMinute, other.ByMinute)
+                                                               && CollectionEquals(ByHour, other.ByHour)
+                                                               && CollectionEquals(ByDay, other.ByDay)
+                                                               && CollectionEquals(ByMonthDay, other.ByMonthDay)
+                                                               && CollectionEquals(ByYearDay, other.ByYearDay)
+                                                               && CollectionEquals(ByWeekNo, other.ByWeekNo)
+                                                               && CollectionEquals(ByMonth, other.ByMonth)
+                                                               && CollectionEquals(BySetPosition, other.BySetPosition);
 
     public override bool Equals(object? obj)
     {
@@ -131,7 +144,7 @@ public class RecurrencePattern : EncodableDataType
         {
             var hashCode = Interval.GetHashCode();
             hashCode = (hashCode * 397) ^ (int) Frequency;
-            hashCode = (hashCode * 397) ^ Until.GetHashCode();
+            hashCode = (hashCode * 397) ^ (Until != null ? Until.GetHashCode() : 0);
             hashCode = (hashCode * 397) ^ (Count ?? 0);
             hashCode = (hashCode * 397) ^ (int) FirstDayOfWeek;
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(BySecond);
