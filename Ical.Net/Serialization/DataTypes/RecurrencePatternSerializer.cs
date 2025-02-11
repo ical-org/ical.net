@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,24 +21,18 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
     public static DayOfWeek GetDayOfWeek(string value)
     {
-        switch (value.ToUpper())
+        return value.ToUpper() switch
         {
-            case "SU":
-                return DayOfWeek.Sunday;
-            case "MO":
-                return DayOfWeek.Monday;
-            case "TU":
-                return DayOfWeek.Tuesday;
-            case "WE":
-                return DayOfWeek.Wednesday;
-            case "TH":
-                return DayOfWeek.Thursday;
-            case "FR":
-                return DayOfWeek.Friday;
-            case "SA":
-                return DayOfWeek.Saturday;
-        }
-        throw new ArgumentException(value + " is not a valid iCal day-of-week indicator.");
+            "SU" => DayOfWeek.Sunday,
+            "MO" => DayOfWeek.Monday,
+            "TU" => DayOfWeek.Tuesday,
+            "WE" => DayOfWeek.Wednesday,
+            "TH" => DayOfWeek.Thursday,
+            "FR" => DayOfWeek.Friday,
+            "SA" => DayOfWeek.Saturday,
+            _ => throw new ArgumentOutOfRangeException(nameof(value),
+                $"{value} is not a valid iCal day-of-week indicator.")
+        };
     }
 
     protected static void AddInt32Values(IList<int> list, string value)
@@ -74,8 +69,8 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
     {
         if ((value < min || value > max || (!allowZero && value == 0)))
         {
-            throw new ArgumentException(name + " value " + value + " is out of range. Valid values are between " + min + " and " + max +
-                                        (allowZero ? "" : ", excluding zero (0)") + ".");
+            throw new ArgumentOutOfRangeException(nameof(name),
+                $"{name} value {value} is out of range. Valid values are between {min} and {max}{(allowZero ? "" : ", excluding zero (0)")}.");
         }
     }
 
@@ -83,38 +78,36 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
     {
         if (value != null && (value < min || value > max || (!allowZero && value == 0)))
         {
-            throw new ArgumentException(name + " value " + value + " is out of range. Valid values are between " + min + " and " + max +
-                                        (allowZero ? "" : ", excluding zero (0)") + ".");
+            throw new ArgumentOutOfRangeException(nameof(name),
+                $"{name} value {value} is out of range. Valid values are between {min} and {max}{(allowZero ? "" : ", excluding zero (0)")}.");
         }
     }
 
-    public virtual void CheckMutuallyExclusive<T, TU>(string name1, string name2, T? obj1, TU? obj2)
-        where T : struct
-        where TU : struct
+    public virtual void CheckMutuallyExclusive(string name1, string name2, int? obj1, CalDateTime? obj2)
     {
         if ((obj1 == null) || (obj2 == null))
         {
             return;
         }
 
-        throw new ArgumentException("Both " + name1 + " and " + name2 + " cannot be supplied together; they are mutually exclusive.");
+        throw new ArgumentOutOfRangeException(nameof(name1),
+            $"Both {name1} and {name2} cannot be supplied together; they are mutually exclusive.");
     }
 
-    private void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
+    private static void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
     {
         if (byValue.Any())
         {
-            aggregate.Add(name + "=" + string.Join(",", byValue.Select(i => i.ToString())));
+            aggregate.Add($"{name}={string.Join(",", byValue.Select(i => i.ToString()))}");
         }
     }
 
     public override Type TargetType => typeof(RecurrencePattern);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object obj)
     {
-        var recur = obj as RecurrencePattern;
         var factory = GetService<ISerializerFactory>();
-        if (recur == null || factory == null)
+        if (obj is not RecurrencePattern recur || factory == null)
         {
             return null;
         }
@@ -123,7 +116,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         SerializationContext.Push(recur);
         var values = new List<string>()
         {
-            "FREQ=" + Enum.GetName(typeof(FrequencyType), recur.Frequency).ToUpper()
+            $"FREQ={Enum.GetName(typeof(FrequencyType), recur.Frequency)?.ToUpper()}"
         };
 
 
@@ -137,42 +130,35 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         var interval = recur.Interval;
         if (interval != 1)
         {
-            values.Add("INTERVAL=" + interval);
+            values.Add($"INTERVAL={interval}");
         }
 
-        if (recur.Until is not null)
+        if (recur.Until is not null
+            && factory.Build(typeof(CalDateTime), SerializationContext) is IStringSerializer serializer1)
         {
-            var serializer = factory.Build(typeof(CalDateTime), SerializationContext) as IStringSerializer;
-            if (serializer != null)
-            {
-                var until = new CalDateTime(DateOnly.FromDateTime(recur.Until.Value), TimeOnly.FromDateTime(recur.Until.Value),
-                    recur.Until.Value.Kind == DateTimeKind.Utc ? "UTC" : null);
-
-                values.Add("UNTIL=" + serializer.SerializeToString(until));
-            }
+            values.Add($"UNTIL={serializer1.SerializeToString(recur.Until)}");
         }
 
         if (recur.FirstDayOfWeek != DayOfWeek.Monday)
         {
-            values.Add("WKST=" + Enum.GetName(typeof(DayOfWeek), recur.FirstDayOfWeek).ToUpper().Substring(0, 2));
+            values.Add($"WKST={Enum.GetName(typeof(DayOfWeek), recur.FirstDayOfWeek)?.ToUpper().Substring(0, 2)}");
         }
 
         if (recur.Count.HasValue)
         {
-            values.Add("COUNT=" + recur.Count);
+            values.Add($"COUNT={recur.Count}");
         }
 
         if (recur.ByDay.Count > 0)
         {
             var bydayValues = new List<string>(recur.ByDay.Count);
 
-            var serializer = factory.Build(typeof(WeekDay), SerializationContext) as IStringSerializer;
-            if (serializer != null)
+            if (factory.Build(typeof(WeekDay), SerializationContext) is IStringSerializer serializer)
             {
                 bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));
             }
 
-            values.Add("BYDAY=" + string.Join(",", bydayValues));
+            values.Add($"BYDAY={string.Join(",", bydayValues)}");
         }
 
         SerializeByValue(values, recur.ByHour, "BYHOUR");
@@ -190,7 +176,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         return Encode(recur, string.Join(";", values));
     }
 
-    //Compiling these is a one-time penalty of about 80ms
+    // Compiling here is a one-time penalty of about 80ms
     private const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
 
     internal static readonly Regex OtherInterval =
@@ -214,7 +200,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
     internal static readonly Regex SpecificRecurrenceCount = new Regex(@"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", _ciCompiled, RegexDefaults.Timeout);
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
         var value = tr.ReadToEnd();
 
@@ -252,9 +238,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                     var keyValues = keywordPair.Split('=');
                     if (keyValues.Length != 2)
                     {
-                        // ArgumentExceptions seem to be the Exception of choise for this class. Should
-                        // probably be changed to a more specific exception type.
-                        throw new ArgumentException($"The recurrence rule part '{keywordPair}' is invalid.");
+                        throw new ArgumentOutOfRangeException(nameof(tr), $"The recurrence rule part '{keywordPair}' is invalid.");
                     }
 
                     var keyword = keyValues[0];
@@ -265,11 +249,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                         case "UNTIL":
                             {
                                 var serializer = factory.Build(typeof(CalDateTime), SerializationContext) as IStringSerializer;
-                                var dt = serializer?.Deserialize(new StringReader(keyValue)) as CalDateTime;
-                                if (dt != null)
-                                {
-                                    r.Until = DateTime.SpecifyKind(dt.Value, dt.IsUtc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
-                                }
+                                r.Until = serializer?.Deserialize(new StringReader(keyValue)) as CalDateTime;
                             }
                             break;
                         case "COUNT":
@@ -329,8 +309,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         {
             if (match.Groups["Interval"].Success)
             {
-                int interval;
-                r.Interval = !int.TryParse(match.Groups["Interval"].Value, out interval)
+                r.Interval = !int.TryParse(match.Groups["Interval"].Value, out var interval)
                     ? 2
                     : interval;
             }
@@ -339,38 +318,24 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                 r.Interval = 1;
             }
 
-            switch (match.Groups["Freq"].Value.ToLower())
+            r.Frequency = match.Groups["Freq"].Value.ToLower() switch
             {
-                case "second":
-                    r.Frequency = FrequencyType.Secondly;
-                    break;
-                case "minute":
-                    r.Frequency = FrequencyType.Minutely;
-                    break;
-                case "hour":
-                    r.Frequency = FrequencyType.Hourly;
-                    break;
-                case "day":
-                    r.Frequency = FrequencyType.Daily;
-                    break;
-                case "week":
-                    r.Frequency = FrequencyType.Weekly;
-                    break;
-                case "month":
-                    r.Frequency = FrequencyType.Monthly;
-                    break;
-                case "year":
-                    r.Frequency = FrequencyType.Yearly;
-                    break;
-            }
+                "second" => FrequencyType.Secondly,
+                "minute" => FrequencyType.Minutely,
+                "hour" => FrequencyType.Hourly,
+                "day" => FrequencyType.Daily,
+                "week" => FrequencyType.Weekly,
+                "month" => FrequencyType.Monthly,
+                "year" => FrequencyType.Yearly,
+                _ => r.Frequency
+            };
 
             var values = match.Groups["More"].Value.Split(',');
             foreach (var item in values)
             {
                 if ((match = NumericTemporalUnits.Match(item)).Success || (match = TemporalUnitType.Match(item)).Success)
                 {
-                    int num;
-                    if (!int.TryParse(match.Groups["Num"].Value, out num))
+                    if (!int.TryParse(match.Groups["Num"].Value, out var num))
                     {
                         continue;
                     }
@@ -437,27 +402,23 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                 }
                 else if ((match = Time.Match(item)).Success)
                 {
-                    int hour;
-
-                    if (!int.TryParse(match.Groups["Hour"].Value, out hour))
+                    if (!int.TryParse(match.Groups["Hour"].Value, out var hour))
                     {
                         continue;
                     }
 
                     // Adjust for PM
-                    if (match.Groups["Meridian"].Success && match.Groups["Meridian"].Value.ToUpper().StartsWith("P"))
+                    if (match.Groups["Meridian"].Success && match.Groups["Meridian"].Value.StartsWith("P", StringComparison.CurrentCultureIgnoreCase))
                     {
                         hour += 12;
                     }
 
                     r.ByHour.Add(hour);
 
-                    int minute;
-                    if (match.Groups["Minute"].Success && int.TryParse(match.Groups["Minute"].Value, out minute))
+                    if (match.Groups["Minute"].Success && int.TryParse(match.Groups["Minute"].Value, out var minute))
                     {
                         r.ByMinute.Add(minute);
-                        int second;
-                        if (match.Groups["Second"].Success && int.TryParse(match.Groups["Second"].Value, out second))
+                        if (match.Groups["Second"].Success && int.TryParse(match.Groups["Second"].Value, out var second))
                         {
                             r.BySecond.Add(second);
                         }
@@ -472,8 +433,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                 }
                 else if ((match = SpecificRecurrenceCount.Match(item)).Success)
                 {
-                    int count;
-                    if (!int.TryParse(match.Groups["Count"].Value, out count))
+                    if (!int.TryParse(match.Groups["Count"].Value, out var count))
                     {
                         return false;
                     }
