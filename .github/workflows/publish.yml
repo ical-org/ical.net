@@ -59,19 +59,30 @@ jobs:
         dotnet-version: |
           8.0.x    
     - name: Get version tag
-      # The latest tag for the selected branch.
-      # Get it and strip off any leading 'v' from the version tag
+        # The latest tag for the selected branch.
+        # Get it and strip off any leading 'v' from the version tag
       run: | 
-         Version=$(git tag --list 'v*' --sort=-v:refname | head -n 1 | sed 's/^v//')
-         echo "VERSION=$Version" >> $GITHUB_ENV
-         echo "Version: $Version"
+           # The version variable will be e.g. like "5.1.0-pre.1" (pre-release) or "5.1.0" (release)
+           Version=$(git tag --list 'v*' --sort=-v:refname | head -n 1 | sed 's/^v//')
+           echo "VERSION=$Version" >> $GITHUB_ENV
+           echo "Version: $Version"
+    - name: Set version variables
+      run: |
+           FileVersion=${VERSION%%-*}
+           AssemblyVersion=${VERSION%%.*}.0.0
+           echo "FILE_VERSION=$FileVersion" >> $GITHUB_ENV
+           echo "ASSEMBLY_VERSION=$AssemblyVersion" >> $GITHUB_ENV
+           echo "File Version: $FileVersion"
+           echo "Assembly Version: $AssemblyVersion"
     - name: Reset branch to specified tag
       run: git reset --hard v${{ env.VERSION }}
     - name: Restore dependencies
       run: dotnet restore
     - name: Build and pack for publishing
-      run: |
-        dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.VERSION}}.${{github.run_number}} -p:Nullable=disable -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
+      run: |  
+        # For version e.g. "5.1.0-pre.1", the FileVersion will be "5.1.0" and the AssemblyVersion will be "5.0.0"
+        # AssemblyVersion must only change for major releases
+        dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.FILE_VERSION}} -p:AssemblyVersion=${{env.ASSEMBLY_VERSION}} -p:Nullable=disable -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
         dotnet pack --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --no-build -p:PackageVersion=${{env.VERSION}}
     - name: Store artifacts
       uses: actions/upload-artifact@v4
