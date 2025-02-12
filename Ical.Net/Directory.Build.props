@@ -4,12 +4,14 @@
         <Title>Ical.Net</Title>
         <Authors>ical-org maintainers and contributors</Authors>
         <Owners>ical-org</Owners>
+	    <CurrentYear>$([System.DateTime]::Now.ToString(yyyy))</CurrentYear>
+	    <Copyright>Copyright 2007-$(CurrentYear) ical-org</Copyright>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <Description>The most popular iCalendar (RFC 5545) class library for .NET.</Description>
         <PackageProjectUrl>https://github.com/ical-org/ical.net</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReleaseNotes>https://github.com/ical-org/ical.net/blob/main/release-notes.md</PackageReleaseNotes>
-        <PackageTags>iCal Calendar icalendar ics outlook events rfc-5545 rfc-2445 dday</PackageTags>
+        <PackageTags>iCal Calendar icalendar ics outlook events rfc-5545 rfc-2445</PackageTags>
         <PackageIcon>assets/icon.png</PackageIcon>
         <PackageReadmeFile>assets/readme.md</PackageReadmeFile>
     </PropertyGroup>
@@ -26,6 +28,10 @@
             <Pack>true</Pack>
             <PackagePath>assets/icon.png</PackagePath>
         </None>
+	    <None Include="..\assets\logo.png">
+		    <Pack>true</Pack>
+		    <PackagePath>assets/logo.png</PackagePath>
+	    </None>
         <None Update=".\bin\Release\net8.0\**\*">
             <Pack>true</Pack>
             <PackagePath>lib\net8.0\</PackagePath>

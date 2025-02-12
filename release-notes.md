@@ -1,6 +1,14 @@
 ﻿## Release notes
 
-A listing of what each [Nuget package](https://www.nuget.org/packages/laget.iCal) version represents.
+A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
+
+### v5
+
+* 5.0.0-pre.39 - (2025-02-12)
+  * This is the first public pre-release of the next major version of **Ical.Net**. It's an extensive rewrite of the library, with a focus on performance, correctness and usability. All issues reported in prior versions have been addressed, and the library has been thoroughly tested, also using the [libical](https://github.com/libical/libical) test suite.
+  * We strongly recommend using the pre-release packages, as they are more stable and feature-complete than the v4.x versions.
+  * Feedback is highly appreciated.
+  * Breaking changes from v4 are currently listed [here](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5).
 
 ### v4
 * 4.3.1 - (2024-10-14)
