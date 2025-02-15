@@ -457,11 +457,12 @@ public class RecurrencePatternEvaluator : Evaluator
             }
             return monthDayDates;
         }
+
         // Limit behavior
         for (var i = dates.Count - 1; i >= 0; i--)
         {
             var date = dates[i];
-            var keepDate = true;
+            var keepDate = false;
             for (var j = 0; j < pattern.ByMonthDay.Count; j++)
             {
                 var monthDay = pattern.ByMonthDay[j];
@@ -479,7 +480,7 @@ public class RecurrencePatternEvaluator : Evaluator
 
                 if (newDate.Day.Equals(date.Day))
                 {
-                    keepDate = false;
+                    keepDate = true;
                     break;
                 }
             }
