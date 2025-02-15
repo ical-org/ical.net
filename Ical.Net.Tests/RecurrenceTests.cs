@@ -2291,7 +2291,7 @@ public class RecurrenceTests
     public void Bug2912657()
     {
         var iCal = Calendar.Load(IcsFiles.Bug2912657);
-        var localTzid = iCal.TimeZones[0].TzId;
+        var localTzid = iCal.Events.First().Start.TzId;
 
         // Daily recurrence
         EventOccurrenceTest(
