@@ -318,7 +318,7 @@ public class VTimeZone : CalendarComponent
                 Properties.Remove("TZID");
             }
 
-            _nodaZone = DateUtil.GetZone(value, useLocalIfNotFound: false);
+            _nodaZone = DateUtil.GetZone(value);
             var id = _nodaZone.Id;
             if (string.IsNullOrWhiteSpace(id))
             {

@@ -57,10 +57,8 @@ internal static class DateUtil
     /// that.
     /// </summary>
     /// <param name="tzId">A BCL, IANA, or serialization time zone identifier</param>
-    /// <param name="useLocalIfNotFound">If true, this method will return the system local time zone if tzId doesn't match a known time zone identifier.
-    /// Otherwise, it will throw an exception.</param>
     /// <exception cref="ArgumentException">Unrecognized time zone id</exception>
-    public static DateTimeZone GetZone(string tzId, bool useLocalIfNotFound = true)
+    public static DateTimeZone GetZone(string tzId)
     {
         var exMsg = $"Unrecognized time zone id {tzId}";
 
@@ -117,11 +115,6 @@ internal static class DateUtil
         if (providerId != null)
         {
             return NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId) ?? throw new ArgumentException(exMsg);
-        }
-
-        if (useLocalIfNotFound)
-        {
-            return LocalDateTimeZone;
         }
 
         throw new ArgumentException(exMsg);
