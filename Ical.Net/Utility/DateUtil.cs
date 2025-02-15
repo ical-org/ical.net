@@ -44,7 +44,7 @@ internal static class DateUtil
     /// <param name="tzId">A time zone identifier</param>
     /// <exception cref="ArgumentException">Unrecognized time zone id</exception>
     public static DateTimeZone GetZone(string tzId)
-        => DefaultTimeZoneResolver.GetZone(tzId)
+        => (TimeZoneResolvers.TimeZoneResolver ?? throw new InvalidOperationException())(tzId)
             ?? throw new ArgumentException($"Unrecognized time zone id {tzId}");
 
     public static ZonedDateTime AddYears(ZonedDateTime zonedDateTime, int years)
