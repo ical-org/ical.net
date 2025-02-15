@@ -323,25 +323,33 @@ public class CalDateTimeTests
         });
     }
 
-    public static IEnumerable<TestCaseData> AddAndSubtractTestCases()
-    {
-        yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: null), Duration.FromHours(4))
-           .SetName("Floating");
-
-        yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: CalDateTime.UtcTzId), Duration.FromHours(4))
-            .SetName("UTC");
-
-        yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: "Europe/Paris"), Duration.FromHours(4))
-            .SetName("Zoned Date/Time with DST change");
-    }
+    private static TestCaseData[] AddAndSubtractTestCases => [
+        new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: null), 0),
+        new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: CalDateTime.UtcTzId), 0),
+        new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: "Europe/Paris"), 1)
+        ];
 
     [Test, TestCaseSource(nameof(AddAndSubtractTestCases))]
-    public void AddAndSubtract_ShouldBeReversible(CalDateTime t, Duration d)
+    public void AddAndSubtract_ShouldBeReversible(CalDateTime t, int tzOffs)
     {
+        var d = Duration.FromHours(4);
+        var expectedTimeSpan = d.ToTimeSpanUnspecified();
+
         Assert.Multiple(() =>
         {
             Assert.That(t.Add(d).Add(-d), Is.EqualTo(t));
-            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(d.ToTimeSpan()));
+            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(expectedTimeSpan));
+            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(d.ToTimeSpan(t)));
+        });
+
+        d = Duration.FromDays(1);
+        expectedTimeSpan = d.ToTimeSpanUnspecified().Add(TimeSpan.FromHours(tzOffs));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Add(d).Add(-d), Is.EqualTo(t));
+            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(expectedTimeSpan));
+            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(d.ToTimeSpan(t)));
         });
     }
 
