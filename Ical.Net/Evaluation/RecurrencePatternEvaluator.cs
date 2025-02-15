@@ -222,6 +222,18 @@ public class RecurrencePatternEvaluator : Evaluator
         }
     }
 
+    private struct ExpandContext
+    {
+        /// <summary>
+        /// Indicates whether the dates have been fully expanded. If true, subsequent parts should only limit, not expand.
+        /// </summary>
+        /// <remarks>
+        /// This makes a difference in case of BYWEEKNO, which might span months and years. After it was applied (BYWEEKNO would
+        /// always expand), the subsequent parts mustn't expand.
+        /// </remarks>
+        public bool DatesFullyExpanded { get; set; }
+    }
+
     /// <summary>
     /// Returns a list of possible dates generated from the applicable BY* rules, using the specified date as a seed.
     /// </summary>
@@ -231,12 +243,14 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <returns>A list of possible dates.</returns>
     private ISet<DateTime> GetCandidates(DateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
     {
+        var expandContext = new ExpandContext() { DatesFullyExpanded = false };
+
         var dates = new List<DateTime> { date };
         dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
-        dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1]);
-        dates = GetYearDayVariants(dates, pattern, expandBehaviors[2]);
-        dates = GetMonthDayVariants(dates, pattern, expandBehaviors[3]);
-        dates = GetDayVariants(dates, pattern, expandBehaviors[4]);
+        dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1], ref expandContext);
+        dates = GetYearDayVariants(dates, pattern, expandBehaviors[2], ref expandContext);
+        dates = GetMonthDayVariants(dates, pattern, expandBehaviors[3], ref expandContext);
+        dates = GetDayVariants(dates, pattern, expandBehaviors[4], ref expandContext);
         dates = GetHourVariants(dates, pattern, expandBehaviors[5]);
         dates = GetMinuteVariants(dates, pattern, expandBehaviors[6]);
         dates = GetSecondVariants(dates, pattern, expandBehaviors[7]);
@@ -306,7 +320,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYWEEKNO rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYWEEKNO rules.</returns>
-    private List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+    private List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByWeekNo.Count == 0)
         {
@@ -358,6 +372,13 @@ public class RecurrencePatternEvaluator : Evaluator
             }
         }
 
+        // subsequent parts should only limit, not expand
+        expandContext.DatesFullyExpanded = true;
+
+        // Apply BYMONTH limit behavior, as we might have expanded over month/year boundaries
+        // in this method and BYMONTH has already been applied before, so wouldn't be again.
+        weekNoDates = GetMonthVariants(weekNoDates, pattern, expand: false);
+
         return weekNoDates;
     }
 
@@ -378,14 +399,14 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYYEARDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYYEARDAY rules.</returns>
-    private List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+    private List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByYearDay.Count == 0)
         {
             return dates;
         }
 
-        if (expand.Value)
+        if (expand.Value && !expandContext.DatesFullyExpanded)
         {
             var yearDayDates = new List<DateTime>(dates.Count);
             foreach (var date in dates)
@@ -397,6 +418,8 @@ public class RecurrencePatternEvaluator : Evaluator
                     // Ignore the BY values that don't fit into the current year (i.e. +-366 in non-leap-years).
                     .Where(d => d.Year == date1.Year));
             }
+
+            expandContext.DatesFullyExpanded = true;
             return yearDayDates;
         }
         // Limit behavior
@@ -434,14 +457,14 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYMONTHDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYMONTHDAY rules.</returns>
-    private List<DateTime> GetMonthDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+    private List<DateTime> GetMonthDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByMonthDay.Count == 0)
         {
             return dates;
         }
 
-        if (expand.Value)
+        if (expand.Value && !expandContext.DatesFullyExpanded)
         {
             var monthDayDates = new List<DateTime>();
             foreach (var date in dates)
@@ -455,6 +478,8 @@ public class RecurrencePatternEvaluator : Evaluator
                         : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay)
                 );
             }
+
+            expandContext.DatesFullyExpanded = true;
             return monthDayDates;
         }
 
@@ -500,14 +525,14 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which BYDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying BYDAY rules, or the original list if no BYDAY rules are specified.</returns>
-    private List<DateTime> GetDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+    private List<DateTime> GetDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByDay.Count == 0)
         {
             return dates;
         }
 
-        if (expand.Value)
+        if (expand.Value && !expandContext.DatesFullyExpanded)
         {
             // Expand behavior
             var weekDayDates = new List<DateTime>();
@@ -519,6 +544,7 @@ public class RecurrencePatternEvaluator : Evaluator
                 }
             }
 
+            expandContext.DatesFullyExpanded = true;
             return weekDayDates;
         }
 
