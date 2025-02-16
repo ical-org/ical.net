@@ -69,7 +69,7 @@ public class EventEvaluator : RecurringEvaluator
            The exact duration is calculated from the zoned end time and the zoned start time,
            and it may differ from the time span added to the period start time.
          */
-        var tsToAdd = CalendarEvent.GetEffectiveDuration();
+        var tsToAdd = CalendarEvent.EffectiveDuration;
 
         CalDateTime endTime;
         if (tsToAdd.IsZero)
