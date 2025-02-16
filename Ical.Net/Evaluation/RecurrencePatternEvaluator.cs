@@ -392,7 +392,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYYEARDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYYEARDAY rules.</returns>
-    private List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByYearDay.Count == 0)
         {
