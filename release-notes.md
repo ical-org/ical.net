@@ -4,6 +4,15 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ### v5
 
+* 5.0.0-pre.41 - (2025-02-20)
+  * Make the time zone resolver plugable
+  * Make `CalendarEvent.EffectiveDuration` and some conversion functions public.
+  * Fix: Incorrect expansion behaviour after `BYWEEKNO`
+
+* 5.0.0-pre.40 - (2025-02-15)
+  * Fix: Derive correct file and assembly version from package version in https://github.com/ical-org/ical.net/pull/726
+  * Fix inverted limiting behavior of `BYMONTHDAY` by @minichma in https://github.com/ical-org/ical.net/pull/730
+
 * 5.0.0-pre.39 - (2025-02-12)
   * This is the first public pre-release of the next major version of **Ical.Net**. It's an extensive rewrite of the library, with a focus on performance, correctness and usability. All issues reported in prior versions have been addressed, and the library has been thoroughly tested, also using the [libical](https://github.com/libical/libical) test suite.
   * We strongly recommend using the pre-release packages, as they are more stable and feature-complete than the v4.x versions.
