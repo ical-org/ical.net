@@ -20,10 +20,10 @@ namespace Ical.Net.CalendarComponents;
 public class VTimeZone : CalendarComponent
 {
     public static VTimeZone FromLocalTimeZone()
-        => FromDateTimeZone(DateUtil.LocalDateTimeZone.Id);
+        => FromDateTimeZone(DefaultTimeZoneResolver.LocalDateTimeZone.Id);
 
     public static VTimeZone FromLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
-        => FromDateTimeZone(DateUtil.LocalDateTimeZone.Id, earliestDateTimeToSupport, includeHistoricalData);
+        => FromDateTimeZone(DefaultTimeZoneResolver.LocalDateTimeZone.Id, earliestDateTimeToSupport, includeHistoricalData);
 
     public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         => FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1), false);
@@ -318,7 +318,7 @@ public class VTimeZone : CalendarComponent
                 Properties.Remove("TZID");
             }
 
-            _nodaZone = DateUtil.GetZone(value, useLocalIfNotFound: false);
+            _nodaZone = DateUtil.GetZone(value);
             var id = _nodaZone.Id;
             if (string.IsNullOrWhiteSpace(id))
             {

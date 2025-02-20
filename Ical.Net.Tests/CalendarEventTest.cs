@@ -486,12 +486,12 @@ END:VCALENDAR";
             DtEnd = new CalDateTime(DateOnly.FromDateTime(dt.AddHours(1)), TimeOnly.FromDateTime(dt.AddHours(1)), tzIdEnd)
         };
 
-        var ed = evt.GetEffectiveDuration();
+        var ed = evt.EffectiveDuration;
         Assert.Multiple(() =>
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt));
             Assert.That(evt.DtEnd.Value, Is.EqualTo(dt.AddHours(1)));
-            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(-4)));
+            Assert.That(evt.EffectiveDuration, Is.EqualTo(Duration.FromHours(-4)));
         });
 
         evt = new CalendarEvent
@@ -503,7 +503,7 @@ END:VCALENDAR";
         Assert.Multiple(() =>
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.GetEffectiveDuration().IsZero, Is.True);
+            Assert.That(evt.EffectiveDuration.IsZero, Is.True);
         });
 
         evt = new CalendarEvent
@@ -515,7 +515,7 @@ END:VCALENDAR";
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
             Assert.That(evt.Duration, Is.Null);
-            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(DataTypes.Duration.FromDays(1)));
+            Assert.That(evt.EffectiveDuration, Is.EqualTo(DataTypes.Duration.FromDays(1)));
         });
 
         evt = new CalendarEvent
@@ -527,7 +527,7 @@ END:VCALENDAR";
         Assert.Multiple(() => {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt));
             Assert.That(evt.DtEnd, Is.Null);
-            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(2)));
+            Assert.That(evt.EffectiveDuration, Is.EqualTo(Duration.FromHours(2)));
         });
 
         evt = new CalendarEvent()
@@ -538,7 +538,7 @@ END:VCALENDAR";
 
         Assert.Multiple(() => {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(2)));
+            Assert.That(evt.EffectiveDuration, Is.EqualTo(Duration.FromHours(2)));
         });
 
         evt = new CalendarEvent()
@@ -549,7 +549,7 @@ END:VCALENDAR";
 
         Assert.Multiple(() => {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromDays(1)));
+            Assert.That(evt.EffectiveDuration, Is.EqualTo(Duration.FromDays(1)));
         });
     }
 

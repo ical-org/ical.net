@@ -126,7 +126,7 @@ public struct Duration
     /// <remarks>
     /// According to RFC5545 the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
     /// </remarks>
-    internal static Duration FromTimeSpanExact(TimeSpan t)
+    public static Duration FromTimeSpanExact(TimeSpan t)
         // As a TimeSpan always refers to exact time, we specify days as part of the hours field,
         // because time is added as exact values rather than nominal according to RFC 5545.
         => new Duration(hours: NullIfZero(t.Days * 24 + t.Hours), minutes: NullIfZero(t.Minutes), seconds: NullIfZero(t.Seconds));
@@ -171,14 +171,33 @@ public struct Duration
     }
 
     /// <summary>
-    /// Convert the instance to a <see cref="TimeSpan"/>.
+    /// Convert the instance to a <see cref="TimeSpan"/>, ignoring potential
+    /// DST changes.
     /// </summary>
-    internal TimeSpan ToTimeSpan()
+    /// <remarks>
+    /// A duration's days and weeks are considered nominal durations, while the time fields are
+    /// considered exact values.
+    /// To convert a duration to a <see cref="TimeSpan"/> while considering the days and weeks as
+    /// nominal durations, use <see cref="ToTimeSpan"/>.
+    /// </remarks>
+    public TimeSpan ToTimeSpanUnspecified()
         => new TimeSpan(
             (Weeks ?? 0) * 7 + (Days ?? 0),
             Hours ?? 0,
             Minutes ?? 0,
             Seconds ?? 0);
+
+    /// <summary>
+    /// Convert the instance to a <see cref="TimeSpan"/>, treating the days as nominal duration and
+    /// the time part as exact.
+    /// </summary>
+    /// <remarks>
+    /// A duration's days and weeks are considered nominal durations, while the time fields are considered exact values.
+    /// To convert a duration to a <see cref="TimeSpan"/> while considering the days and weeks as nominal durations,
+    /// use <see cref="ToTimeSpan"/>.
+    /// </remarks>
+    public TimeSpan ToTimeSpan(CalDateTime start)
+        => start.Add(this).SubtractExact(start);
 
     /// <summary>
     /// Gets a value indicating whether the duration is zero, that is, all fields are null or 0.

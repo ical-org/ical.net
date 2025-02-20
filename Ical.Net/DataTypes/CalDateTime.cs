@@ -517,7 +517,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
 
         (TimeSpan? nominalPart, TimeSpan? exactPart) dt;
         if (TzId is null)
-            dt = (d.ToTimeSpan(), null);
+            dt = (d.ToTimeSpanUnspecified(), null);
         else
             dt = (d.HasDate ? d.DateAsTimeSpan : null, d.HasTime ? d.TimeAsTimeSpan : null);
 
