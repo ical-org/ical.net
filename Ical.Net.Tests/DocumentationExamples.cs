@@ -21,14 +21,14 @@ public class DocumentationExamples
         // We want it to recur through the end of July.
         var vEvent = new CalendarEvent
         {
-            DtStart = new CalDateTime(DateTime.Parse("2016-07-01T07:00")),
-            DtEnd = new CalDateTime(DateTime.Parse("2016-07-01T08:00")),
+            DtStart = new CalDateTime("20160701T070000"),
+            DtEnd = new CalDateTime("20160701T080000"),
         };
 
         //Recur daily through the end of the day, July 31, 2016
         var recurrenceRule = new RecurrencePattern(FrequencyType.Daily, 1)
         {
-            Until = DateTime.Parse("2016-07-31T23:59:59")
+            Until = new CalDateTime("20160731T235959")
         };
 
         vEvent.RecurrenceRules = new List<RecurrencePattern> { recurrenceRule };
@@ -57,7 +57,7 @@ public class DocumentationExamples
         // Recurring every other Tuesday until Dec 31
         var rrule = new RecurrencePattern(FrequencyType.Weekly, 2)
         {
-            Until = DateTime.Parse("2016-12-31T11:59:59")
+            Until = new CalDateTime("20161231T115959")
         };
         vEvent.RecurrenceRules = new List<RecurrencePattern> { rrule };
 
@@ -88,7 +88,6 @@ public class DocumentationExamples
             Interval = 1,
             ByMonth = new List<int> { 11 },
             ByDay = new List<WeekDay> { new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 } },
-            Until = DateTime.MaxValue
         };
         vEvent.RecurrenceRules = new List<RecurrencePattern> { rrule };
 

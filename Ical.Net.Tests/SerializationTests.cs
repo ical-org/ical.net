@@ -502,7 +502,7 @@ public class SerializationTests
     {
         var rrule = new RecurrencePattern(FrequencyType.Daily)
         {
-            Until = _nowTime.AddDays(7),
+            Until = new CalDateTime(_nowTime.AddDays(7)),
         };
         const string someTz = "Europe/Volgograd";
         var e = new CalendarEvent

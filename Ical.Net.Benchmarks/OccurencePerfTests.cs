@@ -60,7 +60,7 @@ public class OccurencePerfTests
             {
                 var rrule = new RecurrencePattern(FrequencyType.Daily, 1)
                 {
-                    Until = startTime.AddDays(10),
+                    Until = new CalDateTime(startTime.AddDays(10)),
                 };
 
                 var e = new CalendarEvent
