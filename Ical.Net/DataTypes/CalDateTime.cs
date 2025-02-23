@@ -302,14 +302,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     }
 
     /// <summary>
-    /// Creates a new instance of <see cref="CalDateTime"/> with <see langword="true"/> for <see cref="HasTime"/>
-    /// </summary>
-    public static implicit operator CalDateTime(DateTime left)
-    {
-        return new CalDateTime(left);
-    }
-
-    /// <summary>
     /// Converts the date/time to UTC (Coordinated Universal Time)
     /// If <see cref="IsFloating"/>==<see langword="true"/>
     /// it means that the <see cref="Value"/> is considered as local time for every timezone:

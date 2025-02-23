@@ -3134,7 +3134,7 @@ END:VCALENDAR";
 
         var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
         {
-            Until = DateTime.Parse("2016-08-31T07:00:00"),
+            Until = new CalDateTime("20160831T070000"),
             ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday) },
         };
 
@@ -3307,7 +3307,7 @@ END:VCALENDAR";
     {
         var start = _now.AddYears(-1);
         var end = start.AddHours(1);
-        var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = start.AddYears(2) };
+        var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = new CalDateTime(start.AddYears(2)) };
         var e = new CalendarEvent
         {
             DtStart = new CalDateTime(start),
