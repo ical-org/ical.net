@@ -250,28 +250,28 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating) ? left.Value < right.Value : left.AsUtc < right.AsUtc);
+               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value < right.Value : left.AsUtc < right.AsUtc);
     }
 
     public static bool operator >(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating) ? left.Value > right.Value : left.AsUtc > right.AsUtc);
+               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value > right.Value : left.AsUtc > right.AsUtc);
     }
 
     public static bool operator <=(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating) ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
+               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
     }
 
     public static bool operator >=(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating) ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
+               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
     }
 
     public static bool operator ==(CalDateTime? left, CalDateTime? right)
