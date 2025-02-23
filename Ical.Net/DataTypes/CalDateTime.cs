@@ -241,7 +241,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         {
             var hashCode = Value.GetHashCode();
             hashCode = (hashCode * 397) ^ HasTime.GetHashCode();
-            hashCode = (hashCode * 397) ^ AsUtc.GetHashCode();
             hashCode = (hashCode * 397) ^ (TzId != null ? TzId.GetHashCode() : 0);
             return hashCode;
         }
