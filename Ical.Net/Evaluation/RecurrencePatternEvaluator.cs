@@ -141,7 +141,7 @@ public class RecurrencePatternEvaluator : Evaluator
         return EnumerateDates(originalDate, seedCopy, periodStartDt, periodEndDt, maxCount, pattern);
     }
 
-    private IEnumerable<DateTime> EnumerateDates(DateTime originalDate, DateTime seedCopy, DateTime? periodStart, DateTime? periodEnd, int maxCount, RecurrencePattern pattern)
+    private IEnumerable<DateTime> EnumerateDates(DateTime originalDate, DateTime intervalRefTime, DateTime? periodStart, DateTime? periodEnd, int maxCount, RecurrencePattern pattern)
     {
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
@@ -153,16 +153,10 @@ public class RecurrencePatternEvaluator : Evaluator
         var coarseUntil = pattern.Until?.Value.AddDays(1);
 
         var noCandidateIncrementCount = 0;
-        DateTime? candidate = null;
         var dateCount = 0;
         while (maxCount < 0 || dateCount < maxCount)
         {
-            if (seedCopy > coarseUntil)
-            {
-                break;
-            }
-
-            if (candidate > periodEnd)
+            if (intervalRefTime > coarseUntil)
             {
                 break;
             }
@@ -173,19 +167,19 @@ public class RecurrencePatternEvaluator : Evaluator
             }
 
             //No need to continue if the seed is after the periodEnd
-            if (seedCopy > periodEnd)
+            if (intervalRefTime > periodEnd)
             {
                 break;
             }
 
-            var candidates = GetCandidates(seedCopy, pattern, expandBehavior);
+            var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior);
             if (candidates.Count > 0)
             {
                 noCandidateIncrementCount = 0;
 
                 foreach (var t in candidates.Where(t => t >= originalDate))
                 {
-                    candidate = t;
+                    var candidate = t;
 
                     // candidates MAY occur before periodStart
                     // For example, FREQ=YEARLY;BYWEEKNO=1 could return dates
@@ -204,7 +198,7 @@ public class RecurrencePatternEvaluator : Evaluator
 
                     // UNTIL is applied outside of this method, after TZ conversion has been applied.
 
-                    yield return candidate.Value;
+                    yield return candidate;
                     dateCount++;
                 }
             }
@@ -217,7 +211,7 @@ public class RecurrencePatternEvaluator : Evaluator
                 }
             }
 
-            IncrementDate(ref seedCopy, pattern, pattern.Interval);
+            IncrementDate(ref intervalRefTime, pattern, pattern.Interval);
         }
     }
 
