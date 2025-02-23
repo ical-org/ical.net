@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation;
 
@@ -27,12 +26,6 @@ public class RecurrencePatternEvaluator : Evaluator
     {
         var r = new RecurrencePattern();
         r.CopyFrom(Pattern);
-
-        // Convert the UNTIL value to one that matches the same time information as the reference date
-        if (r.Until is not null)
-        {
-            r.Until = MatchTimeZone(referenceDate, r.Until);
-        }
 
         if (referenceDate.HasTime)
         {
@@ -152,12 +145,19 @@ public class RecurrencePatternEvaluator : Evaluator
     {
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
+        // This value is only used for performance reasons to stop incrementing after
+        // until is passed, even if no recurrences are being found.
+        // As a safe heuristic we add 1d to the UNTIL value to cover any time shift and DST changes.
+        // It's just important that we don't miss any recurrences, not that we stop exactly at UNTIL.
+        // Precise UNTIL handling is done outside this method after TZ conversion.
+        var coarseUntil = pattern.Until?.Value.AddDays(1);
+
         var noCandidateIncrementCount = 0;
         DateTime? candidate = null;
         var dateCount = 0;
         while (maxCount < 0 || dateCount < maxCount)
         {
-            if (pattern.Until is not null && candidate > pattern.Until)
+            if (seedCopy > coarseUntil)
             {
                 break;
             }
@@ -202,11 +202,10 @@ public class RecurrencePatternEvaluator : Evaluator
                         continue;
                     }
 
-                    if (pattern.Until is null || candidate <= pattern.Until)
-                    {
-                        yield return candidate.Value;
-                        dateCount++;
-                    }
+                    // UNTIL is applied outside of this method, after TZ conversion has been applied.
+
+                    yield return candidate.Value;
+                    dateCount++;
                 }
             }
             else
@@ -903,42 +902,9 @@ public class RecurrencePatternEvaluator : Evaluator
         var periodQuery = GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults)
             .Select(dt => CreatePeriod(dt, referenceDate));
 
+        if (pattern.Until is not null)
+            periodQuery = periodQuery.TakeWhile(p => p.StartTime <= pattern.Until);
+
         return periodQuery;
-    }
-
-    private static CalDateTime MatchTimeZone(CalDateTime reference, CalDateTime until)
-    {
-        /*
-           The value of the "UNTIL" rule part MUST have the same value type as the
-           "DTSTART" property.  Furthermore, if the "DTSTART" property is
-           specified as a date with local time, then the UNTIL rule part MUST
-           also be specified as a date with local time.
-
-           If the "DTSTART" property is specified as a date with UTC time or a date with local
-           time and time zone reference, then the UNTIL rule part MUST be
-           specified as a date with UTC time.
-         */
-        string? untilTzId;
-        if (reference.IsFloating)
-        {
-            // If 'reference' is floating, then 'until' must be floating
-            untilTzId = null;
-        }
-        else
-        {
-            // If 'reference' has a timezone, 'until' MUST be UTC,
-            // but in case of UTC rule violation we fall back to the 'reference' timezone
-            untilTzId = until.TzId == CalDateTime.UtcTzId
-                ? CalDateTime.UtcTzId
-                : reference.TzId;
-        }
-
-        var untilCalDt = new CalDateTime(until.Value, untilTzId, reference.HasTime);
-
-        // If 'reference' is floating, then 'until' is floating, too
-        return reference.TzId is null
-            ? untilCalDt
-            // convert to the reference timezone and convert the value to Floating
-            : untilCalDt.ToTimeZone(reference.TzId).ToTimeZone(null);
     }
 }
