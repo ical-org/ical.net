@@ -22,13 +22,13 @@ namespace Ical.Net.Tests;
 [TestFixture]
 public class SerializationTests
 {
-    private static readonly DateTime _nowTime = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
-    private static readonly DateTime _later = _nowTime.AddHours(1);
+    private static readonly CalDateTime _nowTime = CalDateTime.Now;
+    private static readonly CalDateTime _later = _nowTime.AddHours(1);
     private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
     private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
     private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
-    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), Duration = (_later - _nowTime).ToDurationExact() };
-    private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
+    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), Duration = (_later.Value - _nowTime.Value).ToDurationExact() };
+    private static Calendar DeserializeCalendar(string s) => Calendar.Load(s);
 
     internal static void CompareCalendars(Calendar cal1, Calendar cal2)
     {
@@ -382,7 +382,7 @@ public class SerializationTests
         var serialized = SerializeToString(e);
         Assert.That(serialized.Contains(EventStatus.Confirmed, EventStatus.Comparison), Is.True);
 
-        var calendar = UnserializeCalendar(serialized);
+        var calendar = DeserializeCalendar(serialized);
         var eventStatus = calendar.Events.First().Status;
         Assert.That(string.Equals(EventStatus.Confirmed, eventStatus, EventStatus.Comparison), Is.True);
     }
@@ -399,7 +399,7 @@ public class SerializationTests
         var serialized = SerializeToString(c);
         Assert.That(serialized.Contains(TodoStatus.NeedsAction, TodoStatus.Comparison), Is.True);
 
-        var calendar = UnserializeCalendar(serialized);
+        var calendar = DeserializeCalendar(serialized);
         var status = calendar.Todos.First().Status;
         Assert.That(string.Equals(TodoStatus.NeedsAction, status, TodoStatus.Comparison), Is.True);
     }
@@ -416,7 +416,7 @@ public class SerializationTests
         var serialized = SerializeToString(c);
         Assert.That(serialized.Contains(JournalStatus.Final, JournalStatus.Comparison), Is.True);
 
-        var calendar = UnserializeCalendar(serialized);
+        var calendar = DeserializeCalendar(serialized);
         var status = calendar.Journals.First().Status;
         Assert.That(string.Equals(JournalStatus.Final, status, JournalStatus.Comparison), Is.True);
     }
@@ -507,8 +507,8 @@ public class SerializationTests
         const string someTz = "Europe/Volgograd";
         var e = new CalendarEvent
         {
-            Start = new CalDateTime(_nowTime, someTz),
-            End = new CalDateTime(_nowTime.AddHours(1), someTz),
+            Start = _nowTime.ToTimeZone(someTz),
+            End = _nowTime.AddHours(1).ToTimeZone(someTz),
             RecurrenceRules = new List<RecurrencePattern> { rrule },
         };
         var c = new Calendar
