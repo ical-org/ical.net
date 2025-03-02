@@ -426,10 +426,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                 }
                 else if ((match = RecurUntil.Match(item)).Success)
                 {
-                    var dt = DateTime.Parse(match.Groups["DateTime"].Value);
-                    DateTime.SpecifyKind(dt, DateTimeKind.Utc);
-
-                    r.Until = dt;
+                    r.Until = new CalDateTime(match.Groups["DateTime"].Value);
                 }
                 else if ((match = SpecificRecurrenceCount.Match(item)).Success)
                 {

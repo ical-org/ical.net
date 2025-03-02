@@ -241,7 +241,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         {
             var hashCode = Value.GetHashCode();
             hashCode = (hashCode * 397) ^ HasTime.GetHashCode();
-            hashCode = (hashCode * 397) ^ AsUtc.GetHashCode();
             hashCode = (hashCode * 397) ^ (TzId != null ? TzId.GetHashCode() : 0);
             return hashCode;
         }
@@ -251,28 +250,28 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating) ? left.Value < right.Value : left.AsUtc < right.AsUtc);
+               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value < right.Value : left.AsUtc < right.AsUtc);
     }
 
     public static bool operator >(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating) ? left.Value > right.Value : left.AsUtc > right.AsUtc);
+               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value > right.Value : left.AsUtc > right.AsUtc);
     }
 
     public static bool operator <=(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating) ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
+               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
     }
 
     public static bool operator >=(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating) ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
+               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
     }
 
     public static bool operator ==(CalDateTime? left, CalDateTime? right)
@@ -300,14 +299,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     public static bool operator !=(CalDateTime? left, CalDateTime? right)
     {
         return !(left == right);
-    }
-
-    /// <summary>
-    /// Creates a new instance of <see cref="CalDateTime"/> with <see langword="true"/> for <see cref="HasTime"/>
-    /// </summary>
-    public static implicit operator CalDateTime(DateTime left)
-    {
-        return new CalDateTime(left);
     }
 
     /// <summary>

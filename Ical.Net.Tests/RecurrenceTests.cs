@@ -76,6 +76,52 @@ public class RecurrenceTests
         EventOccurrenceTest(cal, fromDate, toDate, expectedPeriods, timeZones, 0);
     }
 
+    private static TestCaseData[] EventOccurrenceTestCases = new TestCaseData[]
+    {
+        new("""
+            DTSTART;TZID=Europe/Amsterdam:20201024T023000
+            DURATION:PT5M
+            RRULE:FREQ=DAILY;UNTIL=20201025T010000Z
+            """,
+            new []
+            {
+                "20201024T023000/PT5M",
+                "20201025T023000/PT5M"
+            }
+        ),
+    };
+
+    [Test, Category("Recurrence")]
+    [TestCaseSource(nameof(EventOccurrenceTestCases))]
+    public void EventOccurrenceTest(
+        string eventIcal,
+        string[] expectedPeriods)
+    {
+        var eventSerializer = new EventSerializer();
+        var calendarIcalStr = $"""
+            BEGIN:VCALENDAR
+            VERSION:2.0
+            BEGIN:VEVENT
+            {eventIcal}
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var cal = Calendar.Load(calendarIcalStr);
+        var tzid = cal.Events.Single().Start.TzId;
+
+        var periodSerializer = new PeriodSerializer();
+        var periods = expectedPeriods
+            .Select(p => (Period) periodSerializer.Deserialize(new StringReader(p)))
+            .Select(p =>
+                p.Duration is null
+                    ? new Period(p.StartTime.ToTimeZone(tzid), p.EndTime)
+                    : new Period(p.StartTime.ToTimeZone(tzid), p.Duration.Value))
+            .ToArray();
+
+        EventOccurrenceTest(cal, null, null, periods, null, 0);
+    }
+
     /// <summary>
     /// See Page 45 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
     /// </summary>
@@ -3134,7 +3180,7 @@ END:VCALENDAR";
 
         var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
         {
-            Until = DateTime.Parse("2016-08-31T07:00:00"),
+            Until = new CalDateTime("20160831T070000"),
             ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday) },
         };
 
@@ -3307,7 +3353,7 @@ END:VCALENDAR";
     {
         var start = _now.AddYears(-1);
         var end = start.AddHours(1);
-        var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = start.AddYears(2) };
+        var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = new CalDateTime(start.AddYears(2)) };
         var e = new CalendarEvent
         {
             DtStart = new CalDateTime(start),
