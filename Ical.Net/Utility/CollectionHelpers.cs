@@ -261,7 +261,7 @@ internal static class CollectionHelpers
 
         foreach (var item in items)
         {
-            if (first || !comparer.Equals(prev, item))
+            if (first || !comparer.Equals(prev!, item))
                 yield return item;
 
             prev = item;

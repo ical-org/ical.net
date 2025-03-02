@@ -3,8 +3,8 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -15,7 +15,6 @@ using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -27,10 +26,10 @@ public class RecurrenceTests
 
     private void EventOccurrenceTest(
         Calendar cal,
-        CalDateTime fromDate,
-        CalDateTime toDate,
+        CalDateTime? fromDate,
+        CalDateTime? toDate,
         Period[] expectedPeriods,
-        string[] timeZones,
+        string[]? timeZones,
         int eventIndex
     )
     {
@@ -70,7 +69,7 @@ public class RecurrenceTests
         CalDateTime fromDate,
         CalDateTime toDate,
         Period[] expectedPeriods,
-        string[] timeZones
+        string[]? timeZones
     )
     {
         EventOccurrenceTest(cal, fromDate, toDate, expectedPeriods, timeZones, 0);
@@ -112,7 +111,7 @@ public class RecurrenceTests
 
         var periodSerializer = new PeriodSerializer();
         var periods = expectedPeriods
-            .Select(p => (Period) periodSerializer.Deserialize(new StringReader(p)))
+            .Select(p => (Period) periodSerializer.Deserialize(new StringReader(p))!)
             .Select(p =>
                 p.Duration is null
                     ? new Period(p.StartTime.ToTimeZone(tzid), p.EndTime)
@@ -2578,7 +2577,7 @@ public class RecurrenceTests
     [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DURATION:P1W",                             "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
     [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DURATION:P7D",                             "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
 
-    public void DurationOfRecurrencesOverDst(string dtStart, string dtEnd, string d1, string d2, string d3)
+    public void DurationOfRecurrencesOverDst(string dtStart, string dtEnd, string? d1, string? d2, string? d3)
     {
         var iCal = Calendar.Load($"""
             BEGIN:VCALENDAR
@@ -2596,7 +2595,7 @@ public class RecurrenceTests
         var expectedPeriods =
             new[] { d1, d2, d3 }
             .Where(x => x != null)
-            .Select(x => (Period)periodSerializer.Deserialize(new StringReader(x)))
+            .Select(x => (Period)periodSerializer.Deserialize(new StringReader(x!))!)
             .ToArray();
         
         for (var index = 0; index < expectedPeriods.Length; index++)
@@ -2708,7 +2707,7 @@ public class RecurrenceTests
         using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO");
         var start = new CalDateTime(2010, 11, 27, 9, 0, 0);
         var serializer = new RecurrencePatternSerializer();
-        var rp = (RecurrencePattern)serializer.Deserialize(sr);
+        var rp = (RecurrencePattern)serializer.Deserialize(sr)!;
         var rpe = new RecurrencePatternEvaluator(rp);
         var recurringPeriods = rpe.Evaluate(start, start, rp.Until, false).ToList();
 
@@ -2754,7 +2753,7 @@ public class RecurrenceTests
     {
         using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126");
         var serializer = new RecurrencePatternSerializer();
-        var rp = (RecurrencePattern)serializer.Deserialize(sr);
+        var rp = (RecurrencePattern)serializer.Deserialize(sr)!;
 
         Assert.That(rp, Is.Not.Null);
         Assert.That(rp.Until, Is.EqualTo(new CalDateTime(2025, 11, 26)));
@@ -3685,15 +3684,15 @@ END:VCALENDAR";
     {
         public int LineNumber { get; set; }
 
-        public string RRule { get; set; }
+        public string? RRule { get; set; }
 
-        public CalDateTime DtStart { get; set; }
+        public CalDateTime? DtStart { get; set; }
 
-        public CalDateTime StartAt { get; set; }
+        public CalDateTime? StartAt { get; set; }
 
-        public IReadOnlyList<CalDateTime> Instances { get; set; }
+        public IReadOnlyList<CalDateTime>? Instances { get; set; }
 
-        public string Exception { get; set; }
+        public string? Exception { get; set; }
 
         public override string ToString()
             => $"Line {LineNumber}: {DtStart}, {RRule}";
@@ -3701,7 +3700,7 @@ END:VCALENDAR";
 
     private static IEnumerable<RecurrenceTestCase> ParseTestCaseFile(string fileContent)
     {
-        RecurrenceTestCase current = null;
+        RecurrenceTestCase? current = null;
 
         var rd = new StringReader(fileContent);
         var lineNo = 0;
@@ -3790,11 +3789,11 @@ END:VCALENDAR";
         if (testCase.Exception != null)
         {
             var exceptionType = Type.GetType(testCase.Exception)!;
-            Assert.Throws(exceptionType, () => new RecurrencePattern(testCase.RRule));
+            Assert.Throws(exceptionType, () => new RecurrencePattern(testCase.RRule!));
             return;
         }
 
-        evt.RecurrenceRules.Add(new RecurrencePattern(testCase.RRule));
+        evt.RecurrenceRules.Add(new RecurrencePattern(testCase.RRule!));
 
         var occurrences = evt.GetOccurrences(testCase.StartAt?.Value ?? DateTime.MinValue, DateTime.MaxValue)
             .OrderBy(x => x)
@@ -3891,7 +3890,7 @@ END:VCALENDAR";
     [TestCase("UTC")]
     [TestCase("Europe/Vienna")]
     [TestCase("America/New_York")]
-    public void TestDtStartTimezone(string tzId)
+    public void TestDtStartTimezone(string? tzId)
     {
         var icalText = """
             BEGIN:VCALENDAR
