@@ -109,27 +109,28 @@ public class RecurrencePattern : EncodableDataType
             CopyFrom(deserialized);
     }
 
-    public override string ToString()
+    public override string? ToString()
     {
         var serializer = new RecurrencePatternSerializer();
         return serializer.SerializeToString(this);
     }
 
-    protected bool Equals(RecurrencePattern? other) => other != null
-                                                               && Interval == other.Interval
-                                                               && Frequency == other.Frequency
-                                                               && (Until?.Equals(other.Until!) ?? other.Until == null)
-                                                               && Count == other.Count
-                                                               && FirstDayOfWeek == other.FirstDayOfWeek
-                                                               && CollectionEquals(BySecond, other.BySecond)
-                                                               && CollectionEquals(ByMinute, other.ByMinute)
-                                                               && CollectionEquals(ByHour, other.ByHour)
-                                                               && CollectionEquals(ByDay, other.ByDay)
-                                                               && CollectionEquals(ByMonthDay, other.ByMonthDay)
-                                                               && CollectionEquals(ByYearDay, other.ByYearDay)
-                                                               && CollectionEquals(ByWeekNo, other.ByWeekNo)
-                                                               && CollectionEquals(ByMonth, other.ByMonth)
-                                                               && CollectionEquals(BySetPosition, other.BySetPosition);
+    protected bool Equals(RecurrencePattern? other)
+        => other != null
+           && Interval == other.Interval
+           && Frequency == other.Frequency
+           && (Until?.Equals(other.Until!) ?? other.Until == null)
+           && Count == other.Count
+           && FirstDayOfWeek == other.FirstDayOfWeek
+           && CollectionEquals(BySecond, other.BySecond)
+           && CollectionEquals(ByMinute, other.ByMinute)
+           && CollectionEquals(ByHour, other.ByHour)
+           && CollectionEquals(ByDay, other.ByDay)
+           && CollectionEquals(ByMonthDay, other.ByMonthDay)
+           && CollectionEquals(ByYearDay, other.ByYearDay)
+           && CollectionEquals(ByWeekNo, other.ByWeekNo)
+           && CollectionEquals(ByMonth, other.ByMonth)
+           && CollectionEquals(BySetPosition, other.BySetPosition);
 
     public override bool Equals(object? obj)
     {
