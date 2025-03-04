@@ -15,7 +15,7 @@ internal static class DateUtil
     public static CalDateTime AsCalDateTime(this DateTime t)
         => new CalDateTime(t);
 
-    public static DateTime AddWeeks(DateTime dt, int interval, DayOfWeek firstDayOfWeek)
+    public static CalDateTime AddWeeks(CalDateTime dt, int interval, DayOfWeek firstDayOfWeek)
     {
         dt = dt.AddDays(interval * 7);
         while (dt.DayOfWeek != firstDayOfWeek)
@@ -26,7 +26,7 @@ internal static class DateUtil
         return dt;
     }
 
-    public static DateTime FirstDayOfWeek(DateTime dt, DayOfWeek firstDayOfWeek, out int offset)
+    public static CalDateTime FirstDayOfWeek(CalDateTime dt, DayOfWeek firstDayOfWeek, out int offset)
     {
         offset = 0;
         while (dt.DayOfWeek != firstDayOfWeek)

@@ -51,7 +51,7 @@ public class OccurencePerfTests
         const string tzid = "America/New_York";
         const int limit = 4;
 
-        var startTime = DateTime.Now.AddDays(-1);
+        var startTime = CalDateTime.Now.AddDays(-1);
         var interval = TimeSpan.FromDays(1);
 
         var events = Enumerable
@@ -65,11 +65,11 @@ public class OccurencePerfTests
 
                 var e = new CalendarEvent
                 {
-                    Start = new CalDateTime(startTime.AddMinutes(5), tzid),
-                    End = new CalDateTime(startTime.AddMinutes(10), tzid),
+                    Start = startTime.AddMinutes(5).ToTimeZone(tzid),
+                    End = startTime.AddMinutes(10).ToTimeZone(tzid),
                     RecurrenceRules = new List<RecurrencePattern> { rrule },
                 };
-                startTime += interval;
+                startTime = startTime.Add(Duration.FromTimeSpanExact(interval));
                 return e;
             });
 
@@ -133,7 +133,7 @@ public class OccurencePerfTests
                     End = new CalDateTime(startTime.AddMinutes(10), tzid),
                     RecurrenceRules = new List<RecurrencePattern> { rrule },
                 };
-                startTime += interval;
+                startTime = startTime.Add(interval);
                 return e;
             });
 

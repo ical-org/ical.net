@@ -102,20 +102,20 @@ public class RecurrencePatternEvaluator : Evaluator
     /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
-    private IEnumerable<DateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern,
+    private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern,
          bool includeReferenceDateInResults)
     {
         // In the first step, we work with DateTime values, so we need to convert the CalDateTime to DateTime
-        var originalDate = seed.Value;
-        var seedCopy = seed.Value;
-        var periodStartDt = periodStart?.ToTimeZone(seed.TzId)?.Value;
-        var periodEndDt = periodEnd?.ToTimeZone(seed.TzId)?.Value;
+        var originalDate = seed;
+        var seedCopy = seed;
+        var periodStartDt = periodStart?.ToTimeZone(seed.TzId);
+        var periodEndDt = periodEnd?.ToTimeZone(seed.TzId);
 
         if ((pattern.Frequency == FrequencyType.Yearly) && (pattern.ByWeekNo.Count != 0))
         {
             // Dates in the first or last week of the year could belong weeks that belong to
             // the prev/next year, in which case we must adjust that year. This is necessary
-            // to get the invervals right.
+            // to get the intervals right.
             IncrementDate(ref seedCopy, pattern, Calendar.GetIso8601YearOfWeek(seedCopy, pattern.FirstDayOfWeek) - seedCopy.Year);
         }
 
@@ -141,7 +141,7 @@ public class RecurrencePatternEvaluator : Evaluator
         return EnumerateDates(originalDate, seedCopy, periodStartDt, periodEndDt, maxCount, pattern);
     }
 
-    private IEnumerable<DateTime> EnumerateDates(DateTime originalDate, DateTime intervalRefTime, DateTime? periodStart, DateTime? periodEnd, int maxCount, RecurrencePattern pattern)
+    private IEnumerable<CalDateTime> EnumerateDates(CalDateTime originalDate, CalDateTime intervalRefTime, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern)
     {
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
@@ -150,9 +150,10 @@ public class RecurrencePatternEvaluator : Evaluator
         // As a safe heuristic we add 1d to the UNTIL value to cover any time shift and DST changes.
         // It's just important that we don't miss any recurrences, not that we stop exactly at UNTIL.
         // Precise UNTIL handling is done outside this method after TZ conversion.
-        var coarseUntil = pattern.Until?.Value.AddDays(1);
+        var coarseUntil = pattern.Until?.AddDays(1);
 
         var noCandidateIncrementCount = 0;
+
         var dateCount = 0;
         while (maxCount < 0 || dateCount < maxCount)
         {
@@ -234,11 +235,11 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expandBehaviors"></param>
     /// <returns>A list of possible dates.</returns>
-    private ISet<DateTime> GetCandidates(DateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
+    private ISet<CalDateTime> GetCandidates(CalDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
     {
         var expandContext = new ExpandContext() { DatesFullyExpanded = false };
 
-        var dates = new List<DateTime> { date };
+        var dates = new List<CalDateTime> { date };
         dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
         dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1], ref expandContext);
         dates = GetYearDayVariants(dates, pattern, expandBehaviors[2], ref expandContext);
@@ -248,7 +249,7 @@ public class RecurrencePatternEvaluator : Evaluator
         dates = GetMinuteVariants(dates, pattern, expandBehaviors[6]);
         dates = GetSecondVariants(dates, pattern, expandBehaviors[7]);
         dates = ApplySetPosRules(dates, pattern);
-        return new SortedSet<DateTime>(dates);
+        return new SortedSet<CalDateTime>(dates);
     }
 
     /// <summary>
@@ -257,7 +258,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYSETPOS rules will be applied.</param>
     /// <param name="pattern"></param>
-    private List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
+    private List<CalDateTime> ApplySetPosRules(List<CalDateTime> dates, RecurrencePattern pattern)
     {
         // return if no SETPOS rules specified..
         if (pattern.BySetPosition.Count == 0)
@@ -286,7 +287,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYMONTH rules.</returns>
-    private List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+    private List<CalDateTime> GetMonthVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByMonth.Count == 0)
         {
@@ -302,7 +303,7 @@ public class RecurrencePatternEvaluator : Evaluator
         }
 
         // Limit behavior
-        var dateSet = new HashSet<DateTime>(dates);
+        var dateSet = new HashSet<CalDateTime>(dates);
         dateSet.ExceptWith(dates.Where(date => pattern.ByMonth.All(t => t != date.Month)));
         return dateSet.ToList();
     }
@@ -313,7 +314,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYWEEKNO rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYWEEKNO rules.</returns>
-    private List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private List<CalDateTime> GetWeekNoVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByWeekNo.Count == 0)
         {
@@ -322,11 +323,11 @@ public class RecurrencePatternEvaluator : Evaluator
 
         if (!expand.Value)
         {
-            return new List<DateTime>();
+            return new List<CalDateTime>();
         }
 
         // Expand behavior
-        var weekNoDates = new List<DateTime>();
+        var weekNoDates = new List<CalDateTime>();
         foreach ((var t, var weekNo) in dates.SelectMany(t => GetByWeekNoForYearNormalized(pattern, t.Year), (t, weekNo) => (t, weekNo)))
         {
             var date = t;
@@ -365,7 +366,7 @@ public class RecurrencePatternEvaluator : Evaluator
         return weekNoDates;
     }
 
-    private static DateTime GetFirstDayOfWeekDate(DateTime date, DayOfWeek firstDayOfWeek)
+    private static CalDateTime GetFirstDayOfWeekDate(CalDateTime date, DayOfWeek firstDayOfWeek)
         => date.AddDays(-((int) date.DayOfWeek + 7 - (int) firstDayOfWeek) % 7);
 
     /// <summary>
@@ -385,7 +386,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYYEARDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYYEARDAY rules.</returns>
-    private static List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static List<CalDateTime> GetYearDayVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByYearDay.Count == 0)
         {
@@ -394,7 +395,7 @@ public class RecurrencePatternEvaluator : Evaluator
 
         if (expand.Value && !expandContext.DatesFullyExpanded)
         {
-            var yearDayDates = new List<DateTime>(dates.Count);
+            var yearDayDates = new List<CalDateTime>(dates.Count);
             foreach (var date in dates)
             {
                 var date1 = date;
@@ -443,7 +444,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYMONTHDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYMONTHDAY rules.</returns>
-    private List<DateTime> GetMonthDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private List<CalDateTime> GetMonthDayVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByMonthDay.Count == 0)
         {
@@ -452,7 +453,7 @@ public class RecurrencePatternEvaluator : Evaluator
 
         if (expand.Value && !expandContext.DatesFullyExpanded)
         {
-            var monthDayDates = new List<DateTime>();
+            var monthDayDates = new List<CalDateTime>();
             foreach (var date in dates)
             {
                 monthDayDates.AddRange(
@@ -511,7 +512,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which BYDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying BYDAY rules, or the original list if no BYDAY rules are specified.</returns>
-    private List<DateTime> GetDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private List<CalDateTime> GetDayVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByDay.Count == 0)
         {
@@ -521,7 +522,7 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value && !expandContext.DatesFullyExpanded)
         {
             // Expand behavior
-            var weekDayDates = new List<DateTime>();
+            var weekDayDates = new List<CalDateTime>();
             foreach (var date in dates)
             {
                 foreach (var day in pattern.ByDay)
@@ -570,9 +571,9 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="date">The date to start the evaluation from.</param>
     /// <param name="weekDay">The week day to evaluate.</param>
     /// <returns>A list of applicable dates.</returns>
-    private List<DateTime> GetAbsWeekDays(DateTime date, WeekDay weekDay, RecurrencePattern pattern)
+    private List<CalDateTime> GetAbsWeekDays(CalDateTime date, WeekDay weekDay, RecurrencePattern pattern)
     {
-        var days = new List<DateTime>();
+        var days = new List<CalDateTime>();
 
         var dayOfWeek = weekDay.DayOfWeek;
         if (pattern.Frequency == FrequencyType.Daily)
@@ -661,7 +662,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <summary>
     /// Returns the days since the start of the week, 0 if the date is on the first day of the week.
     /// </summary>
-    private static int GetWeekDayOffset(DateTime date, DayOfWeek startOfWeek)
+    private static int GetWeekDayOffset(CalDateTime date, DayOfWeek startOfWeek)
         => date.DayOfWeek + ((date.DayOfWeek < startOfWeek) ? 7 : 0) - startOfWeek;
 
     /// <summary>
@@ -671,14 +672,14 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list from which to extract the element.</param>
     /// <param name="offset">The position of the element to extract.</param>
-    private List<DateTime> GetOffsetDates(List<DateTime> dates, int? offset)
+    private List<CalDateTime> GetOffsetDates(List<CalDateTime> dates, int? offset)
     {
         if (offset is null)
         {
             return dates;
         }
 
-        var offsetDates = new List<DateTime>();
+        var offsetDates = new List<CalDateTime>();
         var size = dates.Count;
         if (offset < 0 && offset >= -size)
         {
@@ -699,7 +700,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYHOUR rules.</returns>
-    private List<DateTime> GetHourVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+    private List<CalDateTime> GetHourVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByHour.Count == 0)
         {
@@ -709,7 +710,7 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value)
         {
             // Expand behavior
-            var hourlyDates = new List<DateTime>();
+            var hourlyDates = new List<CalDateTime>();
             for (var i = 0; i < dates.Count; i++)
             {
                 var date = dates[i];
@@ -753,7 +754,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYMINUTE rules.</returns>
-    private List<DateTime> GetMinuteVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+    private List<CalDateTime> GetMinuteVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByMinute.Count == 0)
         {
@@ -763,7 +764,7 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value)
         {
             // Expand behavior
-            var minutelyDates = new List<DateTime>();
+            var minutelyDates = new List<CalDateTime>();
             for (var i = 0; i < dates.Count; i++)
             {
                 var date = dates[i];
@@ -806,7 +807,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYSECOND rules.</returns>
-    private List<DateTime> GetSecondVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+    private List<CalDateTime> GetSecondVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.BySecond.Count == 0)
         {
@@ -816,7 +817,7 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value)
         {
             // Expand behavior
-            var secondlyDates = new List<DateTime>();
+            var secondlyDates = new List<CalDateTime>();
             for (var i = 0; i < dates.Count; i++)
             {
                 var date = dates[i];
@@ -859,11 +860,11 @@ public class RecurrencePatternEvaluator : Evaluator
     /// where the <see cref="CalDateTime.HasTime"/> is taken into account.
     /// when initializing the new period with a new <see cref="CalDateTime"/>.
     /// </summary>
-    private static Period CreatePeriod(DateTime dateTime, CalDateTime referenceDate)
+    private static Period CreatePeriod(CalDateTime dateTime, CalDateTime referenceDate)
     {
         // Turn each resulting date/time into an CalDateTime and associate it
         // with the reference date.
-        CalDateTime newDt = new CalDateTime(dateTime, null, referenceDate.HasTime);
+        var newDt = new CalDateTime(dateTime.Value, null, referenceDate.HasTime);
         if (referenceDate.TzId != null) {
             // Adjust nonexistent recurrence instances according to RFC 5545 3.3.5
             newDt = newDt.ToTimeZone(referenceDate.TzId);
