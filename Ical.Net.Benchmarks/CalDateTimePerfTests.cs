@@ -15,7 +15,7 @@ public class CalDateTimePerfTests
     private const string _bTzid = "America/New_York";
 
     [Benchmark]
-    public CalDateTime EmptyTzid() => new CalDateTime(DateTime.Now);
+    public CalDateTime EmptyTzid() => CalDateTime.Now;
 
     [Benchmark]
     public CalDateTime SpecifiedTzid() => new CalDateTime(DateTime.Now, _aTzid);
