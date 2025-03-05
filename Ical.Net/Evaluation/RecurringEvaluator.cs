@@ -104,10 +104,15 @@ public class RecurringEvaluator : Evaluator
 
     public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
     {
-        var rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-        //Only add referenceDate if there are no RecurrenceRules defined
-        if (includeReferenceDateInResults && (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any()))
-            rruleOccurrences = rruleOccurrences.Prepend(new Period(referenceDate));
+        IEnumerable<Period> rruleOccurrences;
+
+        // Only add referenceDate if there are no RecurrenceRules defined. This is in line
+        // with RFC 5545 which requires DTSTART to match any RRULE. If it doesn't, the behaviour
+        // is undefined. It seems to be good practice not to return the referenceDate in this case.
+        if ((Recurrable.RecurrenceRules == null) || !Recurrable.RecurrenceRules.Any())
+            rruleOccurrences = [new Period(referenceDate)];
+        else
+            rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
 
         var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
 
