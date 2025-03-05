@@ -48,13 +48,6 @@ public class RecurringEvaluator : Evaluator
             // This way we receive validation errors early, not only when enumeration starts.
             .ToList(); //NOSONAR - deliberately enumerate here
 
-
-        //Only add referenceDate if there are no RecurrenceRules defined
-        if (includeReferenceDateInResults && (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any()))
-        {
-            periodsQueries.Add([new Period(referenceDate)]);
-        }
-
         return periodsQueries.OrderedMergeMany();
     }
 
@@ -114,9 +107,7 @@ public class RecurringEvaluator : Evaluator
         var rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
         //Only add referenceDate if there are no RecurrenceRules defined
         if (includeReferenceDateInResults && (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any()))
-        {
-            rruleOccurrences = rruleOccurrences.Append(new Period(referenceDate));
-        }
+            rruleOccurrences = rruleOccurrences.Prepend(new Period(referenceDate));
 
         var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
 
