@@ -206,9 +206,7 @@ public class RecurrencePatternEvaluator : Evaluator
             {
                 noCandidateIncrementCount++;
                 if (noCandidateIncrementCount > MaxIncrementCount)
-                {
-                    break;
-                }
+                    throw new EvaluationLimitExceededException();
             }
 
             IncrementDate(ref intervalRefTime, pattern, pattern.Interval);
