@@ -19,7 +19,7 @@ public abstract class Evaluator : IEvaluator
         Calendar = CultureInfo.CurrentCulture.Calendar;
     }
 
-    protected void IncrementDate(ref DateTime dt, RecurrencePattern pattern, int interval)
+    protected void IncrementDate(ref CalDateTime dt, RecurrencePattern pattern, int interval)
     {
         if (interval == 0)
             return;

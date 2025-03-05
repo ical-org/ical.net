@@ -5,6 +5,7 @@
 
 using System;
 using System.Globalization;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net;
 
@@ -13,7 +14,7 @@ public static class CalendarExtensions
     /// <summary>
     /// Calculate the week number according to ISO.8601, as required by RFC 5545.
     /// </summary>
-    public static int GetIso8601WeekOfYear(this System.Globalization.Calendar calendar, DateTime time, DayOfWeek firstDayOfWeek)
+    public static int GetIso8601WeekOfYear(this System.Globalization.Calendar calendar, CalDateTime time, DayOfWeek firstDayOfWeek)
     {
         // A week is defined as a
         // seven day period, starting on the day of the week defined to be
@@ -24,7 +25,7 @@ public static class CalendarExtensions
         // We add 3 to make sure the test date is in the 'right' year, because
         // otherwise we might end up with week 53 in a year that only has 52.
         var tTest = GetStartOfWeek(time, firstDayOfWeek).AddDays(3);
-        var res = calendar.GetWeekOfYear(tTest, CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek);
+        var res = calendar.GetWeekOfYear(tTest.Value, CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek);
 
         return res;
     }
@@ -33,7 +34,7 @@ public static class CalendarExtensions
     /// Calculate and return the date that represents the first day of the week the given date is
     /// in, according to the week numbering required by RFC 5545.
     /// </summary>
-    private static DateTime GetStartOfWeek(this DateTime t, DayOfWeek firstDayOfWeek)
+    private static CalDateTime GetStartOfWeek(this CalDateTime t, DayOfWeek firstDayOfWeek)
     {
         var t0 = ((int) firstDayOfWeek) % 7;
         var tn = ((int) t.DayOfWeek) % 7;
@@ -49,7 +50,7 @@ public static class CalendarExtensions
     /// E.g. for `2019-12-31` with first day of the week being Monday, the method will return 2020,
     /// because the week that contains `2019-12-31` is the first week of 2020.
     /// </remarks>
-    public static int GetIso8601YearOfWeek(this System.Globalization.Calendar calendar, DateTime time, DayOfWeek firstDayOfWeek)
+    public static int GetIso8601YearOfWeek(this System.Globalization.Calendar calendar, CalDateTime time, DayOfWeek firstDayOfWeek)
     {
         var year = time.Year;
         if ((time.Month >= 12) && (calendar.GetIso8601WeekOfYear(time, firstDayOfWeek) == 1))
@@ -66,7 +67,7 @@ public static class CalendarExtensions
     public static int GetIso8601WeeksInYear(this System.Globalization.Calendar calendar, int year, DayOfWeek firstDayOfWeek)
     {
         // The last week of the year is the week that contains the 4th-last day of the year (which is the 28th of December in Gregorian Calendar).
-        var testTime = new DateTime(year + 1, 1, 1, 0, 0, 0, DateTimeKind.Unspecified).AddDays(-4);
+        var testTime = new CalDateTime(year + 1, 1, 1, 0, 0, 0, null).AddDays(-4);
         return calendar.GetIso8601WeekOfYear(testTime, firstDayOfWeek);
     }
 }
