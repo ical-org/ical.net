@@ -252,9 +252,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     public virtual bool IsActive => !string.Equals(Status, EventStatus.Cancelled, EventStatus.Comparison);
 
     /// <inheritdoc/>
-    protected override bool EvaluationIncludesReferenceDate => true;
-
-    /// <inheritdoc/>
     protected override void OnDeserializing(StreamingContext context)
     {
         base.OnDeserializing(context);
@@ -280,7 +277,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             && string.Equals(Status, other.Status, StringComparison.Ordinal)
             && IsActive == other.IsActive
             && string.Equals(Transparency, other.Transparency, TransparencyType.Comparison)
-            && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
             && Attachments.SequenceEqual(other.Attachments)
             && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules)
             && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules);

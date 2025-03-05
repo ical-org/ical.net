@@ -28,8 +28,6 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
 
     public static IEnumerable<TRecurringComponent> SortByDate<TRecurringComponent>(IEnumerable<TRecurringComponent> list) => list.OrderBy(d => d);
 
-    protected virtual bool EvaluationIncludesReferenceDate => false;
-
     public virtual IList<Attachment> Attachments
     {
         get => Properties.GetMany<Attachment>("ATTACH");
@@ -188,10 +186,10 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
     }
 
     public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null)
-        => RecurrenceUtil.GetOccurrences(this, startTime, endTime, EvaluationIncludesReferenceDate);
+        => RecurrenceUtil.GetOccurrences(this, startTime, endTime);
 
     public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
-        => RecurrenceUtil.GetOccurrences(this, startTime?.AsCalDateTime(), endTime?.AsCalDateTime(), EvaluationIncludesReferenceDate);
+        => RecurrenceUtil.GetOccurrences(this, startTime?.AsCalDateTime(), endTime?.AsCalDateTime());
 
     public virtual IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 

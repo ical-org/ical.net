@@ -169,8 +169,6 @@ public class Todo : RecurringComponent, IAlarmContainer
     /// <returns>True if the todo was cancelled, False otherwise.</returns>
     public virtual bool IsCancelled => string.Equals(Status, TodoStatus.Cancelled, TodoStatus.Comparison);
 
-    protected override bool EvaluationIncludesReferenceDate => true;
-
     protected override void OnDeserializing(StreamingContext context)
     {
         //ToDo: a necessary evil, for now

@@ -180,8 +180,8 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
     }
 
     public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null)
-        => RecurrenceUtil.GetOccurrences(this, startTime, endTime, true);
+        => RecurrenceUtil.GetOccurrences(this, startTime, endTime);
 
     public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
-        => RecurrenceUtil.GetOccurrences(this, startTime?.AsCalDateTime(), endTime?.AsCalDateTime(), true);
+        => RecurrenceUtil.GetOccurrences(this, startTime?.AsCalDateTime(), endTime?.AsCalDateTime());
 }

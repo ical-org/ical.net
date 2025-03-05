@@ -29,7 +29,7 @@ public class RecurringEvaluator : Evaluator
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="includeReferenceDateInResults"></param>
-    protected IEnumerable<Period> EvaluateRRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
+    protected IEnumerable<Period> EvaluateRRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
     {
         if (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any())
             return [];
@@ -41,7 +41,7 @@ public class RecurringEvaluator : Evaluator
             {
                 return Enumerable.Empty<Period>();
             }
-            return ruleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+            return ruleEvaluator.Evaluate(referenceDate, periodStart, periodEnd);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -79,7 +79,7 @@ public class RecurringEvaluator : Evaluator
             {
                 return Enumerable.Empty<Period>();
             }
-            return exRuleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+            return exRuleEvaluator.Evaluate(referenceDate, periodStart, periodEnd);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -102,7 +102,7 @@ public class RecurringEvaluator : Evaluator
         return exDates;
     }
 
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
     {
         IEnumerable<Period> rruleOccurrences;
 
@@ -112,7 +112,7 @@ public class RecurringEvaluator : Evaluator
         if ((Recurrable.RecurrenceRules == null) || !Recurrable.RecurrenceRules.Any())
             rruleOccurrences = [new Period(referenceDate)];
         else
-            rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+            rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd);
 
         var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
 

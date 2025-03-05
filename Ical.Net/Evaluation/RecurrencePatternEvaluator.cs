@@ -102,8 +102,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
-    private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern,
-         bool includeReferenceDateInResults)
+    private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern)
     {
         // In the first step, we work with DateTime values, so we need to convert the CalDateTime to DateTime
         var originalDate = seed;
@@ -882,7 +881,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="periodEnd">End (excl.) of the period occurrences are generated for.</param>
     /// <param name="includeReferenceDateInResults">Whether the referenceDate itself should be returned. Ignored as the reference data MUST equal the first occurrence of an RRULE.</param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
     {
         if (Pattern.Frequency != FrequencyType.None && Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
         {
@@ -894,7 +893,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // Create a recurrence pattern suitable for use during evaluation.
         var pattern = ProcessRecurrencePattern(referenceDate);
 
-        var periodQuery = GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults)
+        var periodQuery = GetDates(referenceDate, periodStart, periodEnd, -1, pattern)
             .Select(dt => CreatePeriod(dt, referenceDate));
 
         if (pattern.Until is not null)
