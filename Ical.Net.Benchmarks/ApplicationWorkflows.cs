@@ -14,9 +14,8 @@ namespace Ical.Net.Benchmarks;
 
 public class ApplicationWorkflows
 {
-    private static readonly TimeSpan _oneYear = TimeSpan.FromDays(365);
-    private static readonly DateTime _searchStart = DateTime.Now.Subtract(_oneYear);
-    private static readonly DateTime _searchEnd = DateTime.Now.Add(_oneYear);
+    private static readonly CalDateTime _searchStart = CalDateTime.Now.AddDays(-365);
+    private static readonly CalDateTime _searchEnd = CalDateTime.Now;
     private static readonly List<string> _manyCalendars = GetIcalStrings();
 
     private static List<string> GetIcalStrings()
@@ -24,6 +23,7 @@ public class ApplicationWorkflows
         var testProjectDirectory = Runner.FindParentFolder("Ical.Net.Tests", Directory.GetCurrentDirectory());
         var topLevelIcsPath = Path.GetFullPath(Path.Combine(testProjectDirectory, "Calendars"));
         return Directory.EnumerateFiles(topLevelIcsPath, "*.ics", SearchOption.AllDirectories)
+            .Where(p => !p.EndsWith("DateTime1.ics")) // contains a deliberate error
             .Select(File.ReadAllText)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .Where(s => !s.Contains("InternetExplorer") && !s.Contains("SECONDLY"))
