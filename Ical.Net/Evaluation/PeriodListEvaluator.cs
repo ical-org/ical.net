@@ -23,12 +23,6 @@ internal class PeriodListEvaluator : Evaluator
     {
         var periods = new SortedSet<Period>();
 
-        if (includeReferenceDateInResults)
-        {
-            var p = new Period(referenceDate);
-            periods.Add(p);
-        }
-
         if ((periodStart is not null) && (periodEnd is not null) && periodEnd.LessThan(periodStart))
         {
             return periods;
