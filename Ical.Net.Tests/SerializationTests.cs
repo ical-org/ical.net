@@ -525,20 +525,44 @@ public class SerializationTests
         Assert.That(!until.EndsWith("Z"), Is.True);
     }
 
-    [Test(Description = "PRODID and VERSION should use ical.net values instead of preserving deserialized values")]
-    public void LibraryMetadataTests()
+    [Test]
+    public void ProductId_and_Version_CanBeChanged()
     {
         var c = new Calendar
         {
             ProductId = "FOO",
-            Version = "BAR"
+            Version = "BAR",
         };
-        var serialized = new CalendarSerializer().SerializeToString(c);
-        var expectedProdid = $"PRODID:{LibraryMetadata.ProdId}";
-        Assert.That(serialized.Contains(expectedProdid, StringComparison.Ordinal), Is.True);
 
-        var expectedVersion = $"VERSION:{LibraryMetadata.Version}";
-        Assert.That(serialized.Contains(expectedVersion, StringComparison.Ordinal), Is.True);
+        var serialized = new CalendarSerializer().SerializeToString(c);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(serialized, Does.Contain($"PRODID:{c.ProductId}"));
+            Assert.That(serialized, Does.Contain($"VERSION:{c.Version}"));
+        });
+    }
+
+    [Test]
+    public void ProductId_and_Version_CannotBeSetAsEmpty()
+    {
+        var c = new Calendar();
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => c.ProductId = string.Empty, Throws.ArgumentException);
+            Assert.That(() => c.Version = string.Empty, Throws.ArgumentException);
+        });
+    }
+
+    [Test]
+    public void ProductId_and_Version_HaveDefaultValues()
+    {
+        var c = new Calendar();
+        Assert.Multiple(() =>
+        {
+            Assert.That(c.ProductId, Is.EqualTo(LibraryMetadata.ProdId));
+            Assert.That(c.Version, Is.EqualTo(LibraryMetadata.Version));
+        });
     }
 
     [Test]
