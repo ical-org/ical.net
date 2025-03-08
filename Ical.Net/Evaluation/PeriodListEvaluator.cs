@@ -19,7 +19,7 @@ internal class PeriodListEvaluator : Evaluator
         _mPeriodList = rdt;
     }
 
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
     {
         var periods = new SortedSet<Period>();
 

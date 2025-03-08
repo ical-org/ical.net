@@ -9,6 +9,6 @@ namespace Ical.Net.Evaluation;
 /// Represents an exception will be raised during calendar evaluation when the maximum number of
 /// increments is exceeded.
 /// </summary>
-/// <seealso cref="EvaluationOptions.MaxUnmatchedIncrements"/>
+/// <seealso cref="EvaluationOptions.MaxUnmatchedIncrementsLimit"/>
 public class EvaluationLimitExceededException : EvaluationException
 { }

@@ -13,8 +13,6 @@ namespace Ical.Net.Evaluation;
 
 public class RecurrencePatternEvaluator : Evaluator
 {
-    private const int MaxIncrementCount = 1000;
-
     protected RecurrencePattern Pattern { get; set; }
 
     public RecurrencePatternEvaluator(RecurrencePattern pattern)
@@ -102,7 +100,8 @@ public class RecurrencePatternEvaluator : Evaluator
     /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
-    private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern)
+    private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern,
+         EvaluationOptions options)
     {
         // In the first step, we work with DateTime values, so we need to convert the CalDateTime to DateTime
         var originalDate = seed;
@@ -137,10 +136,10 @@ public class RecurrencePatternEvaluator : Evaluator
         // Do the enumeration in a separate method, as it is a generator method that is
         // only executed after enumeration started. In order to do most validation upfront,
         // do as many steps outside the generator as possible.
-        return EnumerateDates(originalDate, seedCopy, periodStartDt, periodEndDt, maxCount, pattern);
+        return EnumerateDates(originalDate, seedCopy, periodStartDt, periodEndDt, maxCount, pattern, options);
     }
 
-    private IEnumerable<CalDateTime> EnumerateDates(CalDateTime originalDate, CalDateTime intervalRefTime, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern)
+    private IEnumerable<CalDateTime> EnumerateDates(CalDateTime originalDate, CalDateTime intervalRefTime, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern, EvaluationOptions options)
     {
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
@@ -205,7 +204,7 @@ public class RecurrencePatternEvaluator : Evaluator
             else
             {
                 noCandidateIncrementCount++;
-                if (noCandidateIncrementCount > MaxIncrementCount)
+                if (noCandidateIncrementCount > options?.MaxUnmatchedIncrementsLimit)
                     throw new EvaluationLimitExceededException();
             }
 
@@ -877,9 +876,9 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="referenceDate">The reference date, i.e. DTSTART.</param>
     /// <param name="periodStart">Start (incl.) of the period occurrences are generated for.</param>
     /// <param name="periodEnd">End (excl.) of the period occurrences are generated for.</param>
-    /// <param name="includeReferenceDateInResults">Whether the referenceDate itself should be returned. Ignored as the reference data MUST equal the first occurrence of an RRULE.</param>
+    /// <param name="options"></param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
     {
         if (Pattern.Frequency != FrequencyType.None && Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
         {
@@ -891,7 +890,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // Create a recurrence pattern suitable for use during evaluation.
         var pattern = ProcessRecurrencePattern(referenceDate);
 
-        var periodQuery = GetDates(referenceDate, periodStart, periodEnd, -1, pattern)
+        var periodQuery = GetDates(referenceDate, periodStart, periodEnd, -1, pattern, options)
             .Select(dt => CreatePeriod(dt, referenceDate));
 
         if (pattern.Until is not null)

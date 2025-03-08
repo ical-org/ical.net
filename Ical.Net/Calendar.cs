@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 using Ical.Net.Proxies;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
@@ -190,16 +191,16 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <param name="startTime">The beginning date/time of the range.</param>
     /// <param name="endTime">The end date/time of the range.</param>
     /// <returns>A list of occurrences that fall between the date/time arguments provided.</returns>
-    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null)
-        => GetOccurrences<IRecurringComponent>(startTime, endTime);
+    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default)
+        => GetOccurrences<IRecurringComponent>(startTime, endTime, options);
 
     /// <inheritdoc cref="GetOccurrences(CalDateTime, CalDateTime)"/>
-    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
-        => GetOccurrences<IRecurringComponent>(startTime?.AsCalDateTime(), endTime?.AsCalDateTime());
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default)
+        => GetOccurrences<IRecurringComponent>(startTime?.AsCalDateTime(), endTime?.AsCalDateTime(), options);
 
     /// <inheritdoc cref="GetOccurrences(CalDateTime, CalDateTime)"/>
-    public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime) where T : IRecurringComponent
-        => GetOccurrences<T>(startTime?.AsCalDateTime(), endTime?.AsCalDateTime());
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default) where T : IRecurringComponent
+        => GetOccurrences<T>(startTime?.AsCalDateTime(), endTime?.AsCalDateTime(), options);
 
     /// <summary>
     /// Returns all occurrences of components of type T that start within the date range provided.
@@ -208,7 +209,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     /// <param name="startTime">The starting date range</param>
     /// <param name="endTime">The ending date range</param>
-    public virtual IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null) where T : IRecurringComponent
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default) where T : IRecurringComponent
     {
         // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
         var recurrenceIdsAndUids = this.Children.OfType<IRecurrable>()
@@ -219,7 +220,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
 
         var occurrences = RecurringItems
             .OfType<T>()
-            .Select(recurrable => recurrable.GetOccurrences(startTime, endTime))
+            .Select(recurrable => recurrable.GetOccurrences(startTime, endTime, options))
 
             // Enumerate the list of occurrences (not the occurrences themselves) now to ensure
             // the initialization code is run, including validation and error handling.

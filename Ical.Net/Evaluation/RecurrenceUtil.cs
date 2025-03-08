@@ -14,10 +14,10 @@ namespace Ical.Net.Evaluation;
 
 internal class RecurrenceUtil
 {
-    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime dt) => GetOccurrences(recurrable,
-        new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)));
+    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime dt, EvaluationOptions options = default) => GetOccurrences(recurrable,
+        new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)), options);
 
-    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime periodStart, CalDateTime periodEnd)
+    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime periodStart, CalDateTime periodEnd, EvaluationOptions options = default)
     {
         var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
         if (evaluator == null || recurrable.Start == null)
@@ -36,7 +36,7 @@ internal class RecurrenceUtil
         if (periodEnd != null)
             periodEnd = new CalDateTime(periodEnd.Date, periodEnd.Time, start.TzId);
 
-        var periods = evaluator.Evaluate(start, periodStart, periodEnd);
+        var periods = evaluator.Evaluate(start, periodStart, periodEnd, options);
 
         var occurrences =
             from p in periods

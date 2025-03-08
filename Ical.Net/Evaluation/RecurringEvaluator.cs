@@ -29,7 +29,7 @@ public class RecurringEvaluator : Evaluator
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="includeReferenceDateInResults"></param>
-    protected IEnumerable<Period> EvaluateRRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
+    protected IEnumerable<Period> EvaluateRRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
     {
         if (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any())
             return [];
@@ -41,7 +41,7 @@ public class RecurringEvaluator : Evaluator
             {
                 return Enumerable.Empty<Period>();
             }
-            return ruleEvaluator.Evaluate(referenceDate, periodStart, periodEnd);
+            return ruleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, options);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -67,7 +67,7 @@ public class RecurringEvaluator : Evaluator
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
-    protected IEnumerable<Period> EvaluateExRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
+    protected IEnumerable<Period> EvaluateExRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
     {
         if (Recurrable.ExceptionRules == null || !Recurrable.ExceptionRules.Any())
             return [];
@@ -79,7 +79,7 @@ public class RecurringEvaluator : Evaluator
             {
                 return Enumerable.Empty<Period>();
             }
-            return exRuleEvaluator.Evaluate(referenceDate, periodStart, periodEnd);
+            return exRuleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, options);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -102,7 +102,7 @@ public class RecurringEvaluator : Evaluator
         return exDates;
     }
 
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
     {
         IEnumerable<Period> rruleOccurrences;
 
@@ -112,11 +112,11 @@ public class RecurringEvaluator : Evaluator
         if ((Recurrable.RecurrenceRules == null) || !Recurrable.RecurrenceRules.Any())
             rruleOccurrences = [new Period(referenceDate)];
         else
-            rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd);
+            rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, options);
 
         var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
 
-        var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, periodEnd);
+        var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, periodEnd, options);
         var exDateExclusions = EvaluateExDate(referenceDate, periodStart, periodEnd);
 
         var periods =

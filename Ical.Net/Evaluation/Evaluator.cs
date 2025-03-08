@@ -56,5 +56,5 @@ public abstract class Evaluator : IEvaluator
 
     public System.Globalization.Calendar Calendar { get; private set; }
 
-    public abstract IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd);
+    public abstract IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options);
 }
