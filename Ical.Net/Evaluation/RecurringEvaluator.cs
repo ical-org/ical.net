@@ -29,7 +29,7 @@ public class RecurringEvaluator : Evaluator
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="includeReferenceDateInResults"></param>
-    protected IEnumerable<Period> EvaluateRRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
+    protected IEnumerable<Period> EvaluateRRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
     {
         if (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any())
             return [];
@@ -41,19 +41,12 @@ public class RecurringEvaluator : Evaluator
             {
                 return Enumerable.Empty<Period>();
             }
-            return ruleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+            return ruleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, options);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
             // This way we receive validation errors early, not only when enumeration starts.
             .ToList(); //NOSONAR - deliberately enumerate here
-
-
-        //Only add referenceDate if there are no RecurrenceRules defined
-        if (includeReferenceDateInResults && (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any()))
-        {
-            periodsQueries.Add([new Period(referenceDate)]);
-        }
 
         return periodsQueries.OrderedMergeMany();
     }
@@ -74,7 +67,7 @@ public class RecurringEvaluator : Evaluator
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
-    protected IEnumerable<Period> EvaluateExRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
+    protected IEnumerable<Period> EvaluateExRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
     {
         if (Recurrable.ExceptionRules == null || !Recurrable.ExceptionRules.Any())
             return [];
@@ -86,7 +79,7 @@ public class RecurringEvaluator : Evaluator
             {
                 return Enumerable.Empty<Period>();
             }
-            return exRuleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+            return exRuleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, options);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -109,18 +102,21 @@ public class RecurringEvaluator : Evaluator
         return exDates;
     }
 
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
     {
-        var rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-        //Only add referenceDate if there are no RecurrenceRules defined
-        if (includeReferenceDateInResults && (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any()))
-        {
-            rruleOccurrences = rruleOccurrences.Append(new Period(referenceDate));
-        }
+        IEnumerable<Period> rruleOccurrences;
+
+        // Only add referenceDate if there are no RecurrenceRules defined. This is in line
+        // with RFC 5545 which requires DTSTART to match any RRULE. If it doesn't, the behaviour
+        // is undefined. It seems to be good practice not to return the referenceDate in this case.
+        if ((Recurrable.RecurrenceRules == null) || !Recurrable.RecurrenceRules.Any())
+            rruleOccurrences = [new Period(referenceDate)];
+        else
+            rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, options);
 
         var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
 
-        var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, periodEnd);
+        var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, periodEnd, options);
         var exDateExclusions = EvaluateExDate(referenceDate, periodStart, periodEnd);
 
         var periods =

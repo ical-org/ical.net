@@ -82,8 +82,7 @@ internal class GetOccurrenceTests
         var occurrences = RecurrenceUtil.GetOccurrences(
             recurrable: vEvent,
             periodStart: intervalStart,
-            periodEnd: intervalEnd,
-            includeReferenceDateInResults: false);
+            periodEnd: intervalEnd);
         var occurrenceSet = new HashSet<CalDateTime>(occurrences.Select(o => o.Period.StartTime));
 
         Assert.That(occurrenceSet, Has.Count.EqualTo(evaluationsCount));
