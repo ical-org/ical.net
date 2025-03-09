@@ -100,7 +100,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
-    private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern,
+    private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, RecurrencePattern pattern,
          EvaluationOptions options)
     {
         // In the first step, we work with DateTime values, so we need to convert the CalDateTime to DateTime
@@ -136,10 +136,10 @@ public class RecurrencePatternEvaluator : Evaluator
         // Do the enumeration in a separate method, as it is a generator method that is
         // only executed after enumeration started. In order to do most validation upfront,
         // do as many steps outside the generator as possible.
-        return EnumerateDates(originalDate, seedCopy, periodStartDt, periodEndDt, maxCount, pattern, options);
+        return EnumerateDates(originalDate, seedCopy, periodStartDt, periodEndDt, pattern, options);
     }
 
-    private IEnumerable<CalDateTime> EnumerateDates(CalDateTime originalDate, CalDateTime intervalRefTime, CalDateTime? periodStart, CalDateTime? periodEnd, int maxCount, RecurrencePattern pattern, EvaluationOptions options)
+    private IEnumerable<CalDateTime> EnumerateDates(CalDateTime originalDate, CalDateTime intervalRefTime, CalDateTime? periodStart, CalDateTime? periodEnd, RecurrencePattern pattern, EvaluationOptions options)
     {
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
@@ -153,7 +153,7 @@ public class RecurrencePatternEvaluator : Evaluator
         var noCandidateIncrementCount = 0;
 
         var dateCount = 0;
-        while (maxCount < 0 || dateCount < maxCount)
+        while (true)
         {
             if (intervalRefTime > coarseUntil)
             {
@@ -890,7 +890,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // Create a recurrence pattern suitable for use during evaluation.
         var pattern = ProcessRecurrencePattern(referenceDate);
 
-        var periodQuery = GetDates(referenceDate, periodStart, periodEnd, -1, pattern, options)
+        var periodQuery = GetDates(referenceDate, periodStart, periodEnd, pattern, options)
             .Select(dt => CreatePeriod(dt, referenceDate));
 
         if (pattern.Until is not null)
