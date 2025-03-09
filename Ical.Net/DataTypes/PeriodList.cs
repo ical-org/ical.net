@@ -34,11 +34,8 @@ internal class PeriodList : EncodableDataType, IList<Period>
     /// </summary>
     protected IList<Period> Periods { get; } = new List<Period>();
 
-    // Also needed for the serialization factory
     public PeriodList()
-    {
-        SetService(new PeriodListEvaluator(this));
-    }
+    { }
 
     /// <summary>
     /// Creates a new instance of the <see cref="PeriodList"/> class from the <see cref="StringReader"/>.
@@ -52,8 +49,6 @@ internal class PeriodList : EncodableDataType, IList<Period>
         {
             CopyFrom(deserialized);
         }
-
-        SetService(new PeriodListEvaluator(this));
     }
 
     /// <summary>

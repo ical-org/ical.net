@@ -37,10 +37,10 @@ public interface IEvaluator
     /// <param name="referenceDate"></param>
     /// <param name="periodStart"></param>
     /// <param name="periodEnd"></param>
-    /// <param name="includeReferenceDateInResults"></param>
+    /// <param name="options"></param>
     /// <returns>
     ///     A sequence of <see cref="Ical.Net.DataTypes.Period"/> objects for
     ///     each date/time when this item occurs/recurs.
     /// </returns>
-    IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults);
+    IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options);
 }

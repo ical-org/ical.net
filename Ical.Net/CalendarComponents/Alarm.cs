@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -73,7 +74,7 @@ public class Alarm : CalendarComponent
     /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
     /// that occur between <paramref name="fromDate"/> and <paramref name="toDate"/>.
     /// </summary>
-    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, CalDateTime? fromDate, CalDateTime? toDate)
+    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, CalDateTime? fromDate, CalDateTime? toDate, EvaluationOptions options)
     {
         if (Trigger == null)
         {
@@ -94,7 +95,7 @@ public class Alarm : CalendarComponent
             }
 
             Duration? duration = null;
-            foreach (var o in rc.GetOccurrences(fromDate, toDate))
+            foreach (var o in rc.GetOccurrences(fromDate, toDate, options))
             {
                 var dt = o.Period.StartTime;
                 if (string.Equals(Trigger.Related, TriggerRelation.End, TriggerRelation.Comparison))
@@ -143,7 +144,7 @@ public class Alarm : CalendarComponent
     /// <param name="start">The earliest date/time to poll trigered alarms for.</param>
     /// <param name="end"></param>
     /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-    public virtual IList<AlarmOccurrence> Poll(CalDateTime start, CalDateTime end)
+    public virtual IList<AlarmOccurrence> Poll(CalDateTime start, CalDateTime end, EvaluationOptions options = default)
     {
         var results = new List<AlarmOccurrence>();
 
@@ -154,7 +155,7 @@ public class Alarm : CalendarComponent
             return results;
         }
 
-        results.AddRange(GetOccurrences(rc, start, end));
+        results.AddRange(GetOccurrences(rc, start, end, options));
         return results;
     }
 

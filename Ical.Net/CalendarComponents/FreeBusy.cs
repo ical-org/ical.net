@@ -7,20 +7,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents;
 
 public class FreeBusy : UniqueComponent, IMergeable
 {
-    public static FreeBusy Create(ICalendarObject obj, FreeBusy freeBusyRequest)
+    public static FreeBusy Create(ICalendarObject obj, FreeBusy freeBusyRequest, EvaluationOptions options = default)
     {
         if (!(obj is IGetOccurrencesTyped))
         {
             return null;
         }
         var getOccurrences = (IGetOccurrencesTyped) obj;
-        var occurrences = getOccurrences.GetOccurrences<CalendarEvent>(freeBusyRequest.Start, freeBusyRequest.End);
+        var occurrences = getOccurrences.GetOccurrences<CalendarEvent>(freeBusyRequest.Start, freeBusyRequest.End, options);
         var contacts = new List<string>();
         var isFilteredByAttendees = false;
 

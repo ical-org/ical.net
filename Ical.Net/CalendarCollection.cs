@@ -10,8 +10,10 @@ using System.Linq;
 using System.Text;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
+using static NodaTime.TimeZones.ZoneEqualityComparer;
 
 namespace Ical.Net;
 
@@ -55,17 +57,17 @@ public class CalendarCollection : List<Calendar>
         // being ordered to avoid full enumeration.
         .OrderedMergeMany();
 
-    public IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null)
-        => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime));
+    public IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default)
+        => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime, options));
 
-    public IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
-        => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime));
+    public IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default)
+        => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime, options));
 
-    public IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null) where T : IRecurringComponent
-        => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime));
+    public IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default) where T : IRecurringComponent
+        => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime, options));
 
-    public IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime) where T : IRecurringComponent
-        => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime));
+    public IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default) where T : IRecurringComponent
+        => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime, options));
 
     private FreeBusy CombineFreeBusy(FreeBusy main, FreeBusy current)
     {

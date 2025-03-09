@@ -146,7 +146,7 @@ public class Todo : RecurringComponent, IAlarmContainer
             }
 
             // Evaluate to the previous occurrence.
-            var periods = _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt);
+            var periods = _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt, options: default);
 
             return periods.All(p => !p.StartTime.GreaterThan(Completed) || !currDt.GreaterThanOrEqual(p.StartTime));
         }
@@ -168,8 +168,6 @@ public class Todo : RecurringComponent, IAlarmContainer
     /// </summary>
     /// <returns>True if the todo was cancelled, False otherwise.</returns>
     public virtual bool IsCancelled => string.Equals(Status, TodoStatus.Cancelled, TodoStatus.Comparison);
-
-    protected override bool EvaluationIncludesReferenceDate => true;
 
     protected override void OnDeserializing(StreamingContext context)
     {

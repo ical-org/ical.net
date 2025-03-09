@@ -19,7 +19,7 @@ public class TodoEvaluator : RecurringEvaluator
 
     public TodoEvaluator(Todo todo) : base(todo) { }
 
-    internal IEnumerable<Period> EvaluateToPreviousOccurrence(CalDateTime completedDate, CalDateTime currDt)
+    internal IEnumerable<Period> EvaluateToPreviousOccurrence(CalDateTime completedDate, CalDateTime currDt, EvaluationOptions options)
     {
         var beginningDate = completedDate.Copy();
 
@@ -44,7 +44,7 @@ public class TodoEvaluator : RecurringEvaluator
 
         DetermineStartingRecurrence(Todo.ExceptionDates.GetAllDates(), ref beginningDate);
 
-        return Evaluate(Todo.Start, beginningDate, currDt.AddSeconds(1), true);
+        return Evaluate(Todo.Start, beginningDate, currDt.AddSeconds(1), options);
     }
 
     private static void DetermineStartingRecurrence(IEnumerable<Period> rdate, ref CalDateTime referenceDateTime)
@@ -77,13 +77,13 @@ public class TodoEvaluator : RecurringEvaluator
         }
     }
 
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
     {
         // TODO items can only recur if a start date is specified
         if (Todo.Start == null)
             return [];
 
-        return base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults)
+        return base.Evaluate(referenceDate, periodStart, periodEnd, options)
             .Select(p => p);
     }
 }
