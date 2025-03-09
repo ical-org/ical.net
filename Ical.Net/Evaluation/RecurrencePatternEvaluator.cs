@@ -158,41 +158,36 @@ public class RecurrencePatternEvaluator : Evaluator
                 break;
 
             var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior);
-            if (candidates.Count > 0)
+
+            foreach (var t in candidates.Where(t => t >= originalDate))
             {
                 noCandidateIncrementCount = 0;
+                var candidate = t;
 
-                foreach (var t in candidates.Where(t => t >= originalDate))
+                // candidates MAY occur before periodStart
+                // For example, FREQ=YEARLY;BYWEEKNO=1 could return dates
+                // from the previous year.
+                //
+                // exclude candidates that start at the same moment as periodEnd if the period is a range but keep them if targeting a specific moment
+                if (dateCount >= pattern.Count)
                 {
-                    var candidate = t;
-
-                    // candidates MAY occur before periodStart
-                    // For example, FREQ=YEARLY;BYWEEKNO=1 could return dates
-                    // from the previous year.
-                    //
-                    // exclude candidates that start at the same moment as periodEnd if the period is a range but keep them if targeting a specific moment
-                    if (dateCount >= pattern.Count)
-                    {
-                        break;
-                    }
-
-                    if ((candidate >= periodEnd && periodStart != periodEnd) || candidate > periodEnd && periodStart == periodEnd)
-                    {
-                        continue;
-                    }
-
-                    // UNTIL is applied outside of this method, after TZ conversion has been applied.
-
-                    yield return candidate;
-                    dateCount++;
+                    break;
                 }
+
+                if ((candidate >= periodEnd && periodStart != periodEnd) || candidate > periodEnd && periodStart == periodEnd)
+                {
+                    continue;
+                }
+
+                // UNTIL is applied outside of this method, after TZ conversion has been applied.
+
+                yield return candidate;
+                dateCount++;
             }
-            else
-            {
-                noCandidateIncrementCount++;
-                if (noCandidateIncrementCount > options?.MaxUnmatchedIncrementsLimit)
-                    throw new EvaluationLimitExceededException();
-            }
+
+            noCandidateIncrementCount++;
+            if (noCandidateIncrementCount > options?.MaxUnmatchedIncrementsLimit)
+                throw new EvaluationLimitExceededException();
 
             IncrementDate(ref intervalRefTime, pattern, pattern.Interval);
         }
