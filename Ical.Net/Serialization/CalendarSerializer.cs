@@ -27,20 +27,6 @@ public class CalendarSerializer : ComponentSerializer
 
     protected override IComparer<ICalendarProperty> PropertySorter => new CalendarPropertySorter();
 
-    public override string SerializeToString(object obj)
-    {
-        if (obj is Calendar)
-        {
-            // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
-            var calendar = (Calendar) obj;
-            calendar.Version = LibraryMetadata.Version;
-            calendar.ProductId = LibraryMetadata.ProdId;
-
-            return base.SerializeToString(calendar);
-        }
-
-        return base.SerializeToString(obj);
-    }
 
     public override object Deserialize(TextReader tr) => null;
 

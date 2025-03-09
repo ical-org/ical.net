@@ -588,4 +588,28 @@ public class DeserializationTests
             Assert.That(calendar.Events.Single().Duration != null, Is.EqualTo(!useDtEnd));
         });
     }
+
+    [Test]
+    public void CalendarWithMissingProdIdOrVersion_ShouldLeavePropertiesInvalid()
+    {
+        var ics = """
+                      BEGIN:VCALENDAR
+                      BEGIN:VEVENT
+                      DTSTART:20070406T230000Z
+                      DTEND:20070407T010000Z
+                      END:VEVENT
+                      END:VCALENDAR
+                      """;
+
+        var calendar = Calendar.Load(ics);
+        var deserialized = new CalendarSerializer(calendar).SerializeToString();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(calendar.ProductId, Is.EqualTo(null));
+            Assert.That(calendar.Version, Is.EqualTo(null));
+            // The serialized calendar should not contain the PRODID or VERSION properties, which are required
+            Assert.That(deserialized, Does.Not.Contain("PRODID:").And.Not.Contains("VERSION:"));
+        });
+    }
 }
