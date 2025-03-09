@@ -165,14 +165,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     public virtual string Version
     {
         get => Properties.Get<string>("VERSION");
-        set
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentException("Version to set must not be null or empty");
-            }
-            Properties.Set("VERSION", value);
-        }
+        set => Properties.Set("VERSION", value);
     }
 
     /// <summary>
@@ -187,14 +180,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     public virtual string ProductId
     {
         get => Properties.Get<string>("PRODID");
-        set
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentException("Product ID to set must not be null or empty");
-            }
-            Properties.Set("PRODID", value);
-        }
+        set => Properties.Set("PRODID", value);
     }
 
     public virtual string Scale

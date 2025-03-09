@@ -544,17 +544,6 @@ public class SerializationTests
     }
 
     [Test]
-    public void ProductId_and_Version_CannotBeSetAsEmpty()
-    {
-        var c = new Calendar();
-        Assert.Multiple(() =>
-        {
-            Assert.That(() => c.ProductId = string.Empty, Throws.ArgumentException);
-            Assert.That(() => c.Version = string.Empty, Throws.ArgumentException);
-        });
-    }
-
-    [Test]
     public void ProductId_and_Version_HaveDefaultValues()
     {
         var c = new Calendar();
