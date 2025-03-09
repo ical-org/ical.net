@@ -143,33 +143,19 @@ public class RecurrencePatternEvaluator : Evaluator
     {
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
-        // This value is only used for performance reasons to stop incrementing after
-        // until is passed, even if no recurrences are being found.
-        // As a safe heuristic we add 1d to the UNTIL value to cover any time shift and DST changes.
-        // It's just important that we don't miss any recurrences, not that we stop exactly at UNTIL.
-        // Precise UNTIL handling is done outside this method after TZ conversion.
-        var coarseUntil = pattern.Until?.AddDays(1);
+        var searchEndDate = GetSearchEndDate(periodEnd, pattern);
 
         var noCandidateIncrementCount = 0;
 
         var dateCount = 0;
         while (true)
         {
-            if (intervalRefTime > coarseUntil)
-            {
-                break;
-            }
-
             if (dateCount >= pattern.Count)
-            {
                 break;
-            }
 
-            //No need to continue if the seed is after the periodEnd
-            if (intervalRefTime > periodEnd)
-            {
+            //No need to continue if the interval's lower limit is after the periodEnd
+            if (searchEndDate < GetIntervalLowerLimit(intervalRefTime, pattern))
                 break;
-            }
 
             var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior);
             if (candidates.Count > 0)
@@ -210,6 +196,37 @@ public class RecurrencePatternEvaluator : Evaluator
 
             IncrementDate(ref intervalRefTime, pattern, pattern.Interval);
         }
+    }
+
+    private static CalDateTime? GetSearchEndDate(CalDateTime? periodEnd, RecurrencePattern pattern)
+    {
+        // This value is only used for performance reasons to stop incrementing after
+        // until is passed, even if no recurrences are being found.
+        // As a safe heuristic we add 1d to the UNTIL value to cover any time shift and DST changes.
+        // It's just important that we don't miss any recurrences, not that we stop exactly at UNTIL.
+        // Precise UNTIL handling is done outside this method after TZ conversion.
+        var coarseUntil = pattern.Until?.AddDays(1);
+
+        if ((coarseUntil == null) || (periodEnd == null))
+            return (coarseUntil ?? periodEnd);
+
+        return (coarseUntil < periodEnd ? coarseUntil : periodEnd);
+    }
+
+    /// <summary>
+    /// Find the lowest possible date/time for a recurrence in the given interval.
+    /// </summary>
+    /// <remarks>
+    /// Usually intervalRefTime is either at DTSTART or later at the start of the interval.
+    /// However, for YEARLY recurrences with BYWEEKNO=1 there could be recurrences before
+    /// Jan 1st, so we need to adjust the intervalRefTime to the start of the week.
+    /// </remarks>
+    private static CalDateTime GetIntervalLowerLimit(CalDateTime intervalRefTime, RecurrencePattern pattern)
+    {
+        var intervalLowerLimit = intervalRefTime;
+        if ((pattern.Frequency == FrequencyType.Yearly) && (pattern.ByWeekNo.Count != 0))
+            intervalLowerLimit = GetFirstDayOfWeekDate(intervalRefTime, pattern.FirstDayOfWeek);
+        return intervalLowerLimit;
     }
 
     private struct ExpandContext
