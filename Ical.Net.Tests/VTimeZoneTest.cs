@@ -3,13 +3,17 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -299,5 +303,55 @@ public class VTimeZoneTest
         };
         iCal.Events.Add(calEvent2);
         return iCal;
+    }
+
+    [Test, Category("VTimeZoneProvider")]
+    public void VTimeZoneProvider_ShouldResolve_CustomVTimeZone()
+    {
+        var ics = IcsFiles.VTimeZone1;
+
+        var calendar = Calendar.Load(ics);
+        VTimeZoneInitializer.ClearTimeZones();
+        VTimeZoneInitializer.AddTimeZones(calendar);
+
+        var timeZone = VTimeZoneProvider.Instance.GetZoneOrNull("Custom/Timezone");
+
+        var intervals = timeZone?
+            .GetZoneIntervals(Instant
+                    .FromUtc(1970, 1, 1, 0, 0, 0),
+                Instant.FromUtc(1970, 3, 8, 8, 0, 0))
+            .ToList();
+
+        var standardInterval = intervals?.FirstOrDefault(i => i.Name == "CST");
+        var daylightInterval = intervals?.FirstOrDefault(i => i.Name == "CDT");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(timeZone, Is.Not.Null);
+            Assert.That(timeZone?.Id, Is.EqualTo("Custom/Timezone"));
+
+            Assert.That(intervals, Is.Not.Null);
+            Assert.That(intervals, Has.Count.EqualTo(2));
+
+            Assert.That(standardInterval, Is.Not.Null);
+            Assert.That(standardInterval?.WallOffset, Is.EqualTo(Offset.FromHours(-5)));
+
+            Assert.That(daylightInterval, Is.Not.Null);
+            Assert.That(daylightInterval?.WallOffset, Is.EqualTo(Offset.FromHours(-4)));
+        });
+    }
+
+    [Test, Category("VTimeZoneProvider")]
+    public void Occurrences_WithCustomTimeZone()
+    {
+        var ics = IcsFiles.VTimeZone1;
+
+        var calendar = Calendar.Load(ics);
+        VTimeZoneInitializer.ClearTimeZones();
+        VTimeZoneInitializer.AddTimeZones(calendar);
+
+        var occ = calendar.GetOccurrences().ToList();
+
+        Assert.That(occ, Has.Count.EqualTo(1));
     }
 }
