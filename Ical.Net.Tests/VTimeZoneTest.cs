@@ -3,32 +3,37 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using Ical.Net.TimeZone;
 using Ical.Net.Utility;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
+[TestFixture]
 public class VTimeZoneTest
 {
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void InvalidTzIdShouldThrowException()
     {
         Assert.Throws<ArgumentException>(() => new VTimeZone("shouldFail"));
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneFromDateTimeZoneNullZoneShouldThrowException()
     {
         Assert.Throws<ArgumentException>(() => CreateTestCalendar("shouldFail"));
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneAmericaPhoenixShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Phoenix");
@@ -42,7 +47,7 @@ public class VTimeZoneTest
         });
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneAmericaPhoenixShouldSerializeProperly2()
     {
         var iCal = CreateTestCalendar("America/Phoenix", DateTime.Now, false);
@@ -56,7 +61,7 @@ public class VTimeZoneTest
         });
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneUsMountainStandardTimeShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("US Mountain Standard Time");
@@ -72,7 +77,7 @@ public class VTimeZoneTest
         });
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZonePacificKiritimatiShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("Pacific/Kiritimati");
@@ -80,7 +85,7 @@ public class VTimeZoneTest
         Assert.DoesNotThrow(() => serializer.SerializeToString(iCal));
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneCentralAmericaStandardTimeShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("Central America Standard Time");
@@ -90,7 +95,7 @@ public class VTimeZoneTest
         Assert.That(serialized, Does.Contain("TZID:Central America Standard Time"), "Time zone not found in serialization");
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneEasternStandardTimeShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("Eastern Standard Time");
@@ -100,7 +105,7 @@ public class VTimeZoneTest
         Assert.That(serialized, Does.Contain("TZID:Eastern Standard Time"), "Time zone not found in serialization");
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneEuropeMoscowShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("Europe/Moscow");
@@ -130,7 +135,7 @@ public class VTimeZoneTest
         });
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneAmericaChicagoShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Chicago");
@@ -156,7 +161,7 @@ public class VTimeZoneTest
         });
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneAmericaLosAngelesShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Los_Angeles");
@@ -182,7 +187,7 @@ public class VTimeZoneTest
         //Assert.IsTrue(serialized.Contains("RDATE:19600424T010000"), "RDATE:19600424T010000 was not serialized");  // NodaTime doesn't match with what tzurl has
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneEuropeOsloShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("Europe/Oslo");
@@ -200,7 +205,7 @@ public class VTimeZoneTest
 
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneAmericaAnchorageShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Anchorage");
@@ -227,7 +232,7 @@ public class VTimeZoneTest
         });
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneAmericaEirunepeShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Eirunepe");
@@ -251,7 +256,7 @@ public class VTimeZoneTest
         Assert.That(serialized, Does.Not.Contain("RDATE:19501201T000000/P1D"), "The RDATE was not serialized correctly, should be RDATE:19501201T000000");
     }
 
-    [Test, Category("VTimeZone")]
+    [Test, Category(nameof(VTimeZone))]
     public void VTimeZoneAmericaDetroitShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Detroit");
@@ -299,5 +304,191 @@ public class VTimeZoneTest
         };
         iCal.Events.Add(calEvent2);
         return iCal;
+    }
+
+    [Test, Category(nameof(VTimeZone))]
+    public void VTimeZoneProvider_ShouldResolve_CustomVTimeZone()
+    {
+        var ics = IcsFiles.EventWithCustomTz;
+
+        var calendar = Calendar.Load(ics)!;
+        var provider = new CalTimeZoneProvider();
+        provider.AddRangeFrom(calendar.TimeZones);
+
+        var timeZone = provider.GetZoneOrNull("Custom/Timezone");
+
+        var intervals = timeZone?
+            .GetZoneIntervals(Instant
+                    .FromUtc(1970, 1, 1, 0, 0, 0),
+                Instant.FromUtc(1970, 3, 8, 8, 0, 0))
+            .ToList();
+
+        var standardInterval = intervals?.FirstOrDefault(i => i.Name == "CST");
+        var daylightInterval = intervals?.FirstOrDefault(i => i.Name == "CDT");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(timeZone, Is.Not.Null);
+            Assert.That(timeZone?.Id, Is.EqualTo("Custom/Timezone"));
+
+            Assert.That(intervals, Is.Not.Null);
+            Assert.That(intervals, Has.Count.EqualTo(2));
+
+            Assert.That(standardInterval, Is.Not.Null);
+            Assert.That(standardInterval?.WallOffset, Is.EqualTo(Offset.FromHours(-5)));
+
+            Assert.That(daylightInterval, Is.Not.Null);
+            Assert.That(daylightInterval?.WallOffset, Is.EqualTo(Offset.FromHours(-4)));
+        });
+    }
+
+    [Test, Category(nameof(VTimeZone))]
+    public void CustomTimeZone_ShouldHandleStandardAndDST()
+    {
+        // Explicit timezone rules for each year are provided for clarity
+        // The timezone definitions cover the range for all expected occurrences
+        // Recurrence without a timezone is undefined
+        var ics = IcsFiles.RecEventWithCustomTz;
+
+        var calendar = Calendar.Load(ics)!;
+        var provider = new CalTimeZoneProvider();
+        provider.AddRangeFrom(calendar.TimeZones);
+
+        TimeZoneResolvers.TimeZoneResolver = tzId =>
+            // use custom timezones from the calendar, hand over to default resolver if tzId not found
+            provider.GetZoneOrNull(tzId) ??
+            TimeZoneResolvers.Default(tzId);
+
+        var timeZone = provider.GetZoneOrNull("Special Timezone");
+        var occurrences = calendar.GetOccurrences<CalendarEvent>(
+            new CalDateTime(2024, 1, 1)).ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(timeZone, Is.Not.Null);
+            Assert.That(timeZone?.Id, Is.EqualTo("Special Timezone"));
+
+            Assert.That(occurrences, Is.Not.Null);
+            // 24 months from 2024-01-01 to 2025-12-31
+            Assert.That(occurrences.Count, Is.EqualTo(24));
+
+            // Check the first occurrence - no intervals defined for 2024
+            var firstOccurrence = occurrences[0];
+            Assert.That(firstOccurrence.Period.StartTime, Is.EqualTo(new CalDateTime(2024, 1, 1, 9, 0, 0, "Special Timezone")));
+            // CST offset -5 hours
+            Assert.That(firstOccurrence.Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2024, 1, 1, 14, 0, 0, DateTimeKind.Utc)));
+
+            // Check 8th occurrence
+            var eighthOccurrence = occurrences[7];
+            Assert.That(eighthOccurrence.Period.StartTime, Is.EqualTo(new CalDateTime(2024, 8, 1, 9, 0, 0, "Special Timezone")));
+            // CDT offset -4 hours
+            Assert.That(eighthOccurrence.Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2024, 8, 1, 13, 0, 0, DateTimeKind.Utc)));
+
+            // Check the last occurrence - no intervals defined for 2025-09
+            var lastOccurrence = occurrences[occurrences.Count - 1];
+            Assert.That(lastOccurrence.Period.StartTime, Is.EqualTo(new CalDateTime(2025, 12, 1, 9, 0, 0, "Special Timezone")));
+            // CST offset -5 hours
+            Assert.That(lastOccurrence.Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2025, 12, 1, 14, 0, 0, DateTimeKind.Utc)));
+        });
+    }
+
+    [Test, Category(nameof(VTimeZone))]
+    [TestCase("Custom/America/New_York")] // using custom timezone
+    [TestCase("America/New_York")] // using NodaTime
+    public void NewYorkTimezone_ShouldHandle_DstTransitions(string tzName)
+    {
+        // America/New_York definition from the ICS file
+        // and the IANA timezone database of NodaTime
+        // should give the same results
+
+        // Load the calendar with the custom timezone
+        var calendar = Calendar.Load(IcsFiles.AmericaNewYork);
+        foreach (var tz in calendar.TimeZones)
+        {
+            // Change the name for the custom timezone
+            tz.TzId = tzName;
+        }
+        var provider = new CalTimeZoneProvider();
+        provider.AddRangeFrom(calendar.TimeZones);
+
+        // Modify the timezone resolver
+        TimeZoneResolvers.TimeZoneResolver = tzId =>
+            TimeZoneResolvers.Default(tzId)
+            // use custom timezone provider for "Custom/America/New_York"
+            ?? provider.GetZoneOrNull(tzId);
+
+        // Arrange
+        var springForward = new CalDateTime(2023, 3, 12, 2, 30, 0, tzName); // Invalid time (skipped)
+        var fallBack = new CalDateTime(2023, 11, 5, 1, 30, 0, tzName);      // Ambiguous time (occurs twice)
+
+        // Act
+
+        // Spring Forward (2:30AM doesn't exist - should map to 3:30AM EDT)
+        var springResult = springForward.ToTimeZone(tzName);
+        var springOffset = LocalDateTime.FromDateTime(springResult.Value)
+            .InZoneLeniently(TimeZoneResolvers.TimeZoneResolver(tzName)).Offset;
+
+        // Fall Back (1:30AM occurs twice - should use daylight instance)
+        var fallResult = fallBack.ToTimeZone(tzName);
+        var fallOffset = LocalDateTime.FromDateTime(fallResult.Value)
+            .InZoneLeniently(TimeZoneResolvers.TimeZoneResolver(tzName)).Offset;
+
+        Assert.Multiple(() =>
+        {
+            // 3:30AM / EDT offset -4 hours
+            Assert.That(springResult.Value.ToString("s"), Is.EqualTo("2023-03-12T03:30:00"));
+            Assert.That(springOffset, Is.EqualTo(Offset.FromHours(-4)));
+            // 1:30AM / prefers EDT offset -4 hours
+            Assert.That(fallResult.Value.ToString("s"), Is.EqualTo("2023-11-05T01:30:00"));
+            Assert.That(fallOffset, Is.EqualTo(Offset.FromHours(-4)));
+        });
+    }
+
+    [Test, Category(nameof(VTimeZone))]
+    [TestCase("Custom/Asia/Jerusalem")] // using custom timezone
+    [TestCase("Asia/Jerusalem")] // using NodaTime
+    public void JerusalemTimezone_ShouldHandle_DstTransitions(string tzName)
+    {
+        // Load the calendar with the custom timezone
+        var calendar = Calendar.Load(IcsFiles.AsiaJerusalem);
+        foreach (var tz in calendar.TimeZones)
+        {
+            // Change the name for the custom timezone
+            tz.TzId = tzName;
+        }
+        var provider = new CalTimeZoneProvider();
+        provider.AddRangeFrom(calendar.TimeZones);
+
+        // Modify the timezone resolver
+        TimeZoneResolvers.TimeZoneResolver = tzId =>
+            TimeZoneResolvers.Default(tzId)
+            // use custom timezone provider for "Custom/Asia/Jerusalem"
+            ?? provider.GetZoneOrNull(tzId);
+
+        // Arrange
+        var springForward = new CalDateTime(2023, 3, 24, 2, 30, 0, tzName); // Invalid time (skipped)
+        var fallBack = new CalDateTime(2023, 10, 29, 1, 30, 0, tzName);     // Ambiguous time (occurs twice)
+
+        // Act
+
+        // Spring Forward (2:30AM doesn't exist - should map to 3:30AM IDT)
+        var springResult = springForward.ToTimeZone(tzName);
+        var springOffset = LocalDateTime.FromDateTime(springResult.Value)
+            .InZoneLeniently(TimeZoneResolvers.TimeZoneResolver(tzName)).Offset;
+
+        // Fall Back (1:30AM occurs twice - should use daylight instance)
+        var fallResult = fallBack.ToTimeZone(tzName);
+        var fallOffset = LocalDateTime.FromDateTime(fallResult.Value)
+            .InZoneLeniently(TimeZoneResolvers.TimeZoneResolver(tzName)).Offset;
+
+        Assert.Multiple(() =>
+        {
+            // 3:30AM / IDT offset +3 hours
+            Assert.That(springResult.Value.ToString("s"), Is.EqualTo("2023-03-24T03:30:00"));
+            Assert.That(springOffset, Is.EqualTo(Offset.FromHours(3)));
+            // 1:30AM / prefers IDT offset +3 hours
+            Assert.That(fallResult.Value.ToString("s"), Is.EqualTo("2023-10-29T01:30:00"));
+            Assert.That(fallOffset, Is.EqualTo(Offset.FromHours(3)));
+        });
     }
 }

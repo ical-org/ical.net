@@ -135,6 +135,10 @@ internal class IcsFiles
     internal static string Transparency2 => ReadStream("Ical.Net.Tests.Calendars.Serialization.Transparency2.ics");
     internal static string Trigger1 => ReadStream("Ical.Net.Tests.Calendars.Serialization.Trigger1.ics");
     internal static string UsHolidays => ReadStream("Ical.Net.Tests.Calendars.Serialization.USHolidays.ics");
+    internal static string EventWithCustomTz => ReadStream("Ical.Net.Tests.Calendars.Timezone.EventWithCustomTz.ics");
+    internal static string RecEventWithCustomTz => ReadStream("Ical.Net.Tests.Calendars.Timezone.RecEventWithCustomTz.ics");
+    internal static string AmericaNewYork => ReadStream("Ical.Net.Tests.contrib.libical.Timezone.America_New_York.ics");
+    internal static string AsiaJerusalem => ReadStream("Ical.Net.Tests.contrib.libical.Timezone.Asia_Jerusalem.ics");
     internal static string WeeklyCount1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.WeeklyCount1.ics");
     internal static string WeeklyCountWkst1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.WeeklyCountWkst1.ics");
     internal static string WeeklyCountWkst2 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.WeeklyCountWkst2.ics");
@@ -168,5 +172,4 @@ internal class IcsFiles
     internal static string RecurrrenceTestCases => ReadStream("Ical.Net.Tests.Calendars.Recurrence.RecurrenceTestCases.txt");
 
     internal static string LibicalIcalrecurTest => ReadStream("Ical.Net.Tests.contrib.libical.icalrecur_test.out");
-
 }

@@ -6,7 +6,7 @@
 using System;
 using NodaTime;
 
-namespace Ical.Net;
+namespace Ical.Net.TimeZone;
 
 public static class TimeZoneResolvers
 {
