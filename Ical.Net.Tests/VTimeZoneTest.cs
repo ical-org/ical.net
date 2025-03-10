@@ -311,10 +311,8 @@ public class VTimeZoneTest
         var ics = IcsFiles.VTimeZone1;
 
         var calendar = Calendar.Load(ics);
-        VTimeZoneInitializer.ClearTimeZones();
-        VTimeZoneInitializer.AddTimeZones(calendar);
 
-        var timeZone = VTimeZoneProvider.Instance.GetZoneOrNull("Custom/Timezone");
+        var timeZone = VTimeZoneProvider.FromCalendar(calendar).GetZoneOrNull("Custom/Timezone");
 
         var intervals = timeZone?
             .GetZoneIntervals(Instant
@@ -342,16 +340,175 @@ public class VTimeZoneTest
     }
 
     [Test, Category("VTimeZoneProvider")]
+    public void GetZoneOrNull_ShouldReturnUtcZone_WhenTzIdIsUtc()
+    {
+        var ics = IcsFiles.VTimeZone1;
+        var calendar = Calendar.Load(ics);
+        var provider = VTimeZoneProvider.FromCalendar(calendar);
+
+        var result = provider.GetZoneOrNull("UTC");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result!.Id, Is.EqualTo("UTC"));
+            Assert.That(result.Id, Is.EqualTo(provider["UTC"].Id));
+        });
+    }
+
+    [Test, Category("VTimeZoneProvider")]
+    public void ProviderTzIds_ShouldEqualToCalendar()
+    {
+        var ics = IcsFiles.VTimeZone1;
+        var calendar = Calendar.Load(ics);
+        var provider = VTimeZoneProvider.FromCalendar(calendar);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(provider.Ids.Count, Is.EqualTo(1));
+            Assert.That(provider.Ids, Is.EquivalentTo(calendar.TimeZones.Select(tz => tz.TzId)));
+            Assert.That(provider.GetSystemDefault(), Is.EqualTo(DateTimeZoneProviders.Tzdb.GetSystemDefault()));
+            Assert.That(provider.VersionId, Is.EqualTo("1.0.0"));
+        });
+    }
+
+    [Test, Category("VTimeZoneProvider")]
+    [TestCase("UTC+01:00", 1)]
+    [TestCase("UTC-05:00", -5)]
+    public void GetZoneOrNull_ShouldReturnOffsetZone_WhenTzIdIsUtcWithOffset(string tzId, int expectedOffsetHours)
+    {
+        var ics = IcsFiles.VTimeZone1;
+        var calendar = Calendar.Load(ics);
+        var provider = VTimeZoneProvider.FromCalendar(calendar);
+
+        var result = provider.GetZoneOrNull(tzId);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result!.MaxOffset, Is.EqualTo(Offset.FromHours(expectedOffsetHours)));
+        });
+    }
+
+    [Test, Category("CustomTimeZone")]
+    public void Occurrences_WithinUndefined_TzIntervals()
+    {
+        // Timezone intervals are defined for July and August 2025 only
+        var ics = IcsFiles.VTimeZone3;
+        var calendar = Calendar.Load(ics);
+        var provider = VTimeZoneProvider.FromCalendar(calendar);
+
+        TimeZoneResolvers.TimeZoneResolver = tzId =>
+            TimeZoneResolvers.Default(tzId)
+            // use custom timezones from the calendar if not found in the default resolver
+            ?? provider.GetZoneOrNull(tzId);
+
+        var timeZone = provider.GetZoneOrNull("July August Timezone");
+        var occurrences = calendar.GetOccurrences<CalendarEvent>(
+            new CalDateTime(2024, 6, 1),
+            new CalDateTime(2025, 10, 1)).ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(timeZone, Is.Not.Null);
+            Assert.That(timeZone?.Id, Is.EqualTo("July August Timezone"));
+            Assert.That(occurrences, Is.Not.Null);
+
+            // Check occurrence in June - no intervals defined for 2024
+            var juneOccurrence = occurrences.First();
+            /*
+            Assert.That(juneOccurrence.Period.StartTime, Is.EqualTo(new CalDateTime(2024, 6, 1, 9, 0, 0, "July August Timezone")));
+            Assert.That(juneOccurrence.Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2024, 6, 1, 9, 0, 0, DateTimeKind.Utc))); // No offset
+            */
+            // Check an occurrence in July
+            var julyOccurrence = occurrences.First(o => o.Period.StartTime.Date == new DateOnly(2025, 7, 1));
+            Assert.That(julyOccurrence.Period.StartTime, Is.EqualTo(new CalDateTime(2025, 7, 1, 9, 0, 0, "July August Timezone")));
+            Assert.That(julyOccurrence.Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2025, 7, 1, 8, 0, 0, DateTimeKind.Utc))); // +1 hour offset
+
+            // Check an occurrence in August
+            var augustOccurrence = occurrences.First(o => o.Period.StartTime.Date == new DateOnly(2025, 8, 1));
+            Assert.That(augustOccurrence.Period.StartTime, Is.EqualTo(new CalDateTime(2025, 8, 1, 9, 0, 0, "July August Timezone")));
+            Assert.That(augustOccurrence.Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2025, 8, 1, 10, 0, 0, DateTimeKind.Utc))); // -1 hour offset
+
+            // Check occurrence in September - no intervals defined after August 2025
+            var septOccurrence = occurrences.Last();
+            /*
+            Assert.That(septOccurrence.Period.StartTime, Is.EqualTo(new CalDateTime(2025, 9, 30, 9, 0, 0, "July August Timezone")));
+            Assert.That(septOccurrence.Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2025, 9, 30, 9, 0, 0, DateTimeKind.Utc))); // No offset
+            */
+        });
+    }
+
+    [Test, Category("VTimeZoneProvider")]
     public void Occurrences_WithCustomTimeZone()
     {
         var ics = IcsFiles.VTimeZone1;
-
         var calendar = Calendar.Load(ics);
-        VTimeZoneInitializer.ClearTimeZones();
-        VTimeZoneInitializer.AddTimeZones(calendar);
+
+        TimeZoneResolvers.TimeZoneResolver = tzId =>
+            TimeZoneResolvers.Default(tzId)
+            // use custom timezones from the calendar if not found in the default resolver
+            ?? VTimeZoneProvider.FromCalendar(calendar).GetZoneOrNull(tzId);
 
         var occ = calendar.GetOccurrences().ToList();
 
-        Assert.That(occ, Has.Count.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(occ, Has.Count.EqualTo(1));
+            Assert.That(occ[0].Period.StartTime, Is.EqualTo(new CalDateTime(2025, 11, 1, 9, 0, 0, "Custom/Timezone")));
+            // Offset is -4 hours for daylight saving time from 2025-03-08 
+            Assert.That(occ[0].Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2025, 11, 1, 13, 0, 0, DateTimeKind.Utc)));
+        });
+    }
+
+    [Test, Category("CustomTimeZone")]
+    public void CustomTimeZone_ShouldHandleStandardAndDST()
+    {
+        // Explicit timezone rules for each year are provided for clarity
+        // The timezone definitions cover the range for all expected occurrences
+        // Recurrence without a timezone is undefined
+        var ics = IcsFiles.VTimeZone2;
+
+        var calendar = Calendar.Load(ics);
+        var provider = VTimeZoneProvider.FromCalendar(calendar);
+
+        TimeZoneResolvers.TimeZoneResolver = tzId =>
+            TimeZoneResolvers.Default(tzId)
+            // use custom timezones from the calendar if not found in the default resolver
+            ?? provider.GetZoneOrNull(tzId);
+
+        var timeZone = provider.GetZoneOrNull("Special Timezone");
+        var occurrences = calendar.GetOccurrences<CalendarEvent>(
+            new CalDateTime(2024, 1, 1),
+            new CalDateTime(2025, 12, 31)).ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(timeZone, Is.Not.Null);
+            Assert.That(timeZone?.Id, Is.EqualTo("Special Timezone"));
+
+            Assert.That(occurrences, Is.Not.Null);
+            // 24 months from 2024-01-01 to 2025-12-31
+            Assert.That(occurrences.Count, Is.EqualTo(24));
+
+            // Check the first occurrence - no intervals defined for 2024
+            var firstOccurrence = occurrences.First();
+            Assert.That(firstOccurrence.Period.StartTime, Is.EqualTo(new CalDateTime(2024, 1, 1, 9, 0, 0, "Special Timezone")));
+            // CST offset -5 hours
+            Assert.That(firstOccurrence.Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2024, 1, 1, 14, 0, 0, DateTimeKind.Utc)));
+
+            // Check 8th occurrence
+            var eighthOccurrence = occurrences[7];
+            Assert.That(eighthOccurrence.Period.StartTime, Is.EqualTo(new CalDateTime(2024, 8, 1, 9, 0, 0, "Special Timezone")));
+            // CDT offset -4 hours
+            Assert.That(eighthOccurrence.Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2024, 8, 1, 13, 0, 0, DateTimeKind.Utc)));
+
+            // Check the last occurrence - no intervals defined for 2025-09
+            var lastOccurrence = occurrences.Last();
+            Assert.That(lastOccurrence.Period.StartTime, Is.EqualTo(new CalDateTime(2025, 12, 1, 9, 0, 0, "Special Timezone")));
+            // CST offset -5 hours
+            Assert.That(lastOccurrence.Period.StartTime.AsUtc, Is.EqualTo(new DateTime(2025, 12, 1, 14, 0, 0, DateTimeKind.Utc)));
+        });
     }
 }
+

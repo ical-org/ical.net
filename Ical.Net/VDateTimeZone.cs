@@ -21,7 +21,7 @@ internal class VDateTimeZone : DateTimeZone
     /// <param name="id">The timezone ID.</param>
     /// <param name="intervals">The list of <see cref="ZoneInterval"/>s.</param>
     public VDateTimeZone(string id, List<ZoneInterval> intervals)
-        : base(id, false, intervals.First().WallOffset, intervals.Last().WallOffset)
+        : base(id, false, intervals[0].WallOffset, intervals[intervals.Count - 1].WallOffset)
     {
         _intervals = intervals;
     }
@@ -31,6 +31,6 @@ internal class VDateTimeZone : DateTimeZone
     {
         return _intervals.LastOrDefault(interval =>
                    interval.HasStart && interval.Start <= instant && (!interval.HasEnd || interval.End > instant))
-               ?? _intervals.Last();
+               ?? _intervals[_intervals.Count - 1];
     }
 }

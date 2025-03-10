@@ -89,12 +89,6 @@ public static class DefaultTimeZoneResolver
             return NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId) ?? throw new ArgumentException(exMsg);
         }
 
-        providerId = VTimeZoneProvider.Instance.Ids.FirstOrDefault(tzId.Contains);
-        if (providerId != null)
-        {
-            return VTimeZoneProvider.Instance.GetZoneOrNull(tzId) ?? throw new ArgumentException(exMsg);
-        }
-
         return null;
     }
 

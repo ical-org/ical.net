@@ -136,6 +136,8 @@ internal class IcsFiles
     internal static string Trigger1 => ReadStream("Ical.Net.Tests.Calendars.Serialization.Trigger1.ics");
     internal static string UsHolidays => ReadStream("Ical.Net.Tests.Calendars.Serialization.USHolidays.ics");
     internal static string VTimeZone1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.VTimeZone1.ics");
+    internal static string VTimeZone2 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.VTimeZone2.ics");
+    internal static string VTimeZone3 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.VTimeZone3.ics");
     internal static string WeeklyCount1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.WeeklyCount1.ics");
     internal static string WeeklyCountWkst1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.WeeklyCountWkst1.ics");
     internal static string WeeklyCountWkst2 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.WeeklyCountWkst2.ics");
