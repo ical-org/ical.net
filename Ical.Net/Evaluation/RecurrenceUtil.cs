@@ -19,7 +19,7 @@ internal class RecurrenceUtil
 
     public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime periodStart, CalDateTime periodEnd, EvaluationOptions options = default)
     {
-        var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
+        var evaluator = recurrable.Evaluator;
         if (evaluator == null || recurrable.Start == null)
         {
             return [];

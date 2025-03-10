@@ -17,7 +17,6 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
 {
     // Are initialized in the constructor
     private ICalendarObjectList<ICalendarObject> _children = null!;
-    private ServiceProvider _serviceProvider = null!;
 
     internal CalendarObject()
     {
@@ -38,7 +37,6 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
     private void Initialize()
     {
         _children = new CalendarObjectList();
-        _serviceProvider = new ServiceProvider();
         _children.ItemAdded += Children_ItemAdded;
     }
 
@@ -125,22 +123,6 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
     public virtual int Line { get; set; }
 
     public virtual int Column { get; set; }
-
-    public virtual object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
-
-    public virtual object GetService(string name) => _serviceProvider.GetService(name);
-
-    public virtual T GetService<T>() => _serviceProvider.GetService<T>();
-
-    public virtual T GetService<T>(string name) => _serviceProvider.GetService<T>(name);
-
-    public virtual void SetService(string name, object obj) => _serviceProvider.SetService(name, obj);
-
-    public virtual void SetService(object obj) => _serviceProvider.SetService(obj);
-
-    public virtual void RemoveService(Type type) => _serviceProvider.RemoveService(type);
-
-    public virtual void RemoveService(string name) => _serviceProvider.RemoveService(name);
 
     public virtual string? Group
     {

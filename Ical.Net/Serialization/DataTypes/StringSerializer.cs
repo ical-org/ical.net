@@ -141,12 +141,6 @@ public class StringSerializer : EncodableDataTypeSerializer
         var escapedValues = encodedValues.Select(v => Decode(dt, v)).ToList();
         var values = escapedValues.Select(Unescape).ToList();
 
-        if (co is ICalendarProperty)
-        {
-            // Is this necessary?
-            co.SetService("EscapedValue", escapedValues.Count == 1 ? escapedValues[0] : (object) escapedValues);
-        }
-
         // Return either a single value, or the entire list.
         if (values.Count == 1)
         {
