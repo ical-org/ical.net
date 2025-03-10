@@ -122,7 +122,6 @@ public class Todo : RecurringComponent, IAlarmContainer
         Name = TodoStatus.Name;
 
         _mEvaluator = new TodoEvaluator(this);
-        SetService(_mEvaluator);
     }
 
     /// <summary>
@@ -168,6 +167,8 @@ public class Todo : RecurringComponent, IAlarmContainer
     /// </summary>
     /// <returns>True if the todo was cancelled, False otherwise.</returns>
     public virtual bool IsCancelled => string.Equals(Status, TodoStatus.Cancelled, TodoStatus.Comparison);
+
+    public override IEvaluator Evaluator => _mEvaluator;
 
     protected override void OnDeserializing(StreamingContext context)
     {

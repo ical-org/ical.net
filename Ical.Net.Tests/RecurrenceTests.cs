@@ -2927,9 +2927,7 @@ public class RecurrenceTests
         var fromDate = new CalDateTime(DateTime.Parse("3/30/08 11:59:40 PM", us));
         var toDate = new CalDateTime(DateTime.Parse("3/31/08 12:00:11 AM", us));
 
-        var evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
-        Assert.That(evaluator, Is.Not.Null);
-
+        var evaluator = new RecurrencePatternEvaluator(pattern);
         var occurrences = evaluator.Evaluate(
             startDate,
             fromDate,
@@ -2959,8 +2957,7 @@ public class RecurrenceTests
         var fromDate = new CalDateTime(DateTime.Parse("4/1/2008 10:08:10 AM", us));
         var toDate = new CalDateTime(DateTime.Parse("4/1/2008 10:43:23 AM", us));
 
-        var evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
-        Assert.That(evaluator, Is.Not.Null);
+        var evaluator = new RecurrencePatternEvaluator(pattern);
 
         var occurrences = evaluator.Evaluate(
             startDate,
@@ -3065,8 +3062,7 @@ public class RecurrenceTests
         var evtStart = new CalDateTime(2006, 12, 1);
         var evtEnd = new CalDateTime(2007, 1, 1);
 
-        var evaluator = rpattern.GetService(typeof(IEvaluator)) as IEvaluator;
-        Assert.That(evaluator, Is.Not.Null);
+        var evaluator = new RecurrencePatternEvaluator(rpattern);
 
         // Add the exception dates
         var periods = evaluator.Evaluate(

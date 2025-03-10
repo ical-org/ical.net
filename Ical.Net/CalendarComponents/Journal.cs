@@ -4,6 +4,7 @@
 //
 
 using System.Runtime.Serialization;
+using Ical.Net.Evaluation;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -17,6 +18,8 @@ public class Journal : RecurringComponent
         get => Properties.Get<string>(JournalStatus.Key);
         set => Properties.Set(JournalStatus.Key, value);
     }
+
+    public override IEvaluator Evaluator => throw new System.NotImplementedException();
 
     /// <summary>
     /// Constructs an Journal object, with an iCalObject

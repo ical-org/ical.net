@@ -36,11 +36,7 @@ public class RecurringEvaluator : Evaluator
 
         var periodsQueries = Recurrable.RecurrenceRules.Select(rule =>
         {
-            var ruleEvaluator = rule.GetService(typeof(IEvaluator)) as IEvaluator;
-            if (ruleEvaluator == null)
-            {
-                return Enumerable.Empty<Period>();
-            }
+            var ruleEvaluator = new RecurrencePatternEvaluator(rule);
             return ruleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, options);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
@@ -74,11 +70,7 @@ public class RecurringEvaluator : Evaluator
 
         var exRuleEvaluatorQueries = Recurrable.ExceptionRules.Select(exRule =>
         {
-            var exRuleEvaluator = exRule.GetService(typeof(IEvaluator)) as IEvaluator;
-            if (exRuleEvaluator == null)
-            {
-                return Enumerable.Empty<Period>();
-            }
+            var exRuleEvaluator = new RecurrencePatternEvaluator(exRule);
             return exRuleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, options);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
