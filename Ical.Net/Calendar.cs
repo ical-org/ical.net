@@ -61,12 +61,16 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     public Calendar()
     {
-        Name = Components.Calendar;
+        // Note: ProductId and Version Property values will be empty before _deserialization_
+        ProductId = LibraryMetadata.ProdId;
+        Version = LibraryMetadata.Version;
+
         Initialize();
     }
 
     private void Initialize()
     {
+        Name = Components.Calendar;
         _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
         _mEvents = new UniqueComponentListProxy<CalendarEvent>(Children);
         _mTodos = new UniqueComponentListProxy<Todo>(Children);
@@ -144,16 +148,36 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     public virtual ICalendarObjectList<VTimeZone> TimeZones => _mTimeZones;
 
     /// <summary>
-    /// A collection of <see cref="Todo"/> components in the iCalendar.
+    /// A collection of <see cref="CalendarComponents.Todo"/> components in the iCalendar.
     /// </summary>
     public virtual IUniqueComponentList<Todo> Todos => _mTodos;
 
+    /// <summary>
+    /// Gets or sets the version of the iCalendar definition. The default is <see cref="LibraryMetadata.Version"/>
+    /// as per RFC 5545 Section 3.7.4 and must be specified.
+    /// <para/>
+    /// It specifies the identifier corresponding to the highest version number of the iCalendar specification
+    /// that is required in order to interpret the iCalendar object.
+    /// <para/>
+    /// <b>Do not change unless you are sure about the consequences.</b>
+    /// <para/>
+    /// The default value does not apply to deserialized objects.
+    /// </summary>
     public virtual string Version
     {
         get => Properties.Get<string>("VERSION");
         set => Properties.Set("VERSION", value);
     }
 
+    /// <summary>
+    /// Gets or sets the product ID of the iCalendar, which typically contains the name of the software
+    /// that created the iCalendar. The default is <see cref="LibraryMetadata.ProdId"/>.
+    /// <para/>
+    /// <b>Be careful when setting a custom value</b>, as it is free-form text that must conform to the iCalendar specification
+    /// (RFC 5545 Section 3.7.3). The product ID must be specified.
+    /// <para/>
+    /// The default value does not apply to deserialized objects.
+    /// </summary>
     public virtual string ProductId
     {
         get => Properties.Get<string>("PRODID");
