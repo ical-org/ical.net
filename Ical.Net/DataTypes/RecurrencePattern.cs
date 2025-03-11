@@ -86,9 +86,7 @@ public class RecurrencePattern : EncodableDataType
     public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
 
     public RecurrencePattern()
-    {
-        SetService(new RecurrencePatternEvaluator(this));
-    }
+    { }
 
     public RecurrencePattern(FrequencyType frequency) : this(frequency, 1) { }
 

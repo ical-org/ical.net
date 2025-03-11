@@ -235,13 +235,13 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// </summary>
     public CalendarEvent()
     {
+        this.Evaluator = new EventEvaluator(this);
         Initialize();
     }
 
     private void Initialize()
     {
         Name = EventStatus.Name;
-        SetService(new EventEvaluator(this));
     }
 
     /// <summary>
@@ -250,6 +250,8 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// </summary>
     /// <returns>True if the event has not been cancelled, False otherwise.</returns>
     public virtual bool IsActive => !string.Equals(Status, EventStatus.Cancelled, EventStatus.Comparison);
+
+    public override IEvaluator Evaluator { get; }
 
     /// <inheritdoc/>
     protected override void OnDeserializing(StreamingContext context)

@@ -16,7 +16,6 @@ public abstract class CalendarDataType : ICalendarDataType
 {
     private IParameterCollection _parameters;
     private ParameterCollectionProxy _proxy;
-    private ServiceProvider _serviceProvider;
 
     private ICalendarObject _associatedObject;
 
@@ -29,7 +28,6 @@ public abstract class CalendarDataType : ICalendarDataType
     {
         _parameters = new ParameterList();
         _proxy = new ParameterCollectionProxy(_parameters);
-        _serviceProvider = new ServiceProvider();
     }
 
     [OnDeserializing]
@@ -163,20 +161,4 @@ public abstract class CalendarDataType : ICalendarDataType
     }
 
     public virtual IParameterCollection Parameters => _proxy;
-
-    public virtual object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
-
-    public object GetService(string name) => _serviceProvider.GetService(name);
-
-    public T GetService<T>() => _serviceProvider.GetService<T>();
-
-    public T GetService<T>(string name) => _serviceProvider.GetService<T>(name);
-
-    public void SetService(string name, object obj) => _serviceProvider.SetService(name, obj);
-
-    public void SetService(object obj) => _serviceProvider.SetService(obj);
-
-    public void RemoveService(Type type) => _serviceProvider.RemoveService(type);
-
-    public void RemoveService(string name) => _serviceProvider.RemoveService(name);
 }

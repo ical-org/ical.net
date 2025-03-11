@@ -151,6 +151,10 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
     /// </summary>
     public virtual ICalendarObjectList<Alarm> Alarms => new CalendarObjectListProxy<Alarm>(Children);
 
+    private RecurringEvaluator _evaluator;
+
+    public virtual IEvaluator Evaluator => _evaluator;
+
     public RecurringComponent()
     {
         Initialize();
@@ -165,7 +169,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
 
     private void Initialize()
     {
-        SetService(new RecurringEvaluator(this));
+        this._evaluator = new RecurringEvaluator(this);
         ExceptionDates = new ExceptionDates(ExceptionDatesPeriodLists);
         RecurrenceDates = new RecurrenceDates(RecurrenceDatesPeriodLists);
     }

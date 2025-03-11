@@ -35,7 +35,6 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
     private void Initialize()
     {
         _evaluator = new TimeZoneInfoEvaluator(this);
-        SetService(_evaluator);
         ExceptionDates = new ExceptionDates(ExceptionDatesPeriodLists);
         RecurrenceDates = new RecurrenceDates(RecurrenceDatesPeriodLists);
     }
@@ -178,6 +177,8 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         get => Properties.Get<CalDateTime>("RECURRENCE-ID");
         set => Properties.Set("RECURRENCE-ID", value);
     }
+
+    public IEvaluator Evaluator => _evaluator;
 
     public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default)
         => RecurrenceUtil.GetOccurrences(this, startTime, endTime, options);

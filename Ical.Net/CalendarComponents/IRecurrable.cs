@@ -5,10 +5,11 @@
 
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 
 namespace Ical.Net.CalendarComponents;
 
-public interface IRecurrable : IGetOccurrences, IServiceProvider
+public interface IRecurrable : IGetOccurrences
 {
     /// <summary>
     /// Gets/sets the start date/time of the component.
@@ -20,4 +21,5 @@ public interface IRecurrable : IGetOccurrences, IServiceProvider
     RecurrenceDates RecurrenceDates { get; }
     IList<RecurrencePattern> RecurrenceRules { get; set; }
     CalDateTime RecurrenceId { get; set; }
+    IEvaluator Evaluator { get; }
 }

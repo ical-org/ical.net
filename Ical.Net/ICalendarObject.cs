@@ -7,7 +7,7 @@ using Ical.Net.Collections;
 
 namespace Ical.Net;
 
-public interface ICalendarObject : IGroupedObject<string>, ILoadable, ICopyable, IServiceProvider
+public interface ICalendarObject : IGroupedObject<string>, ILoadable, ICopyable
 {
     /// <summary>
     /// The name of the calendar object.
