@@ -176,38 +176,11 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         return Encode(recur, string.Join(";", values));
     }
 
-    // Compiling here is a one-time penalty
-    private const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
-
-    internal static readonly Regex NaturalLanguagePattern =
-        new Regex(
-            @"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)",
-            _ciCompiled, RegexDefaults.Timeout);
+    private const RegexOptions CiCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
 
     internal static readonly Regex FrequencyPattern =
-        new Regex(@"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", _ciCompiled,
+        new Regex(@"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", CiCompiled,
             RegexDefaults.Timeout);
-
-    internal static readonly Regex NumericTemporalUnits =
-        new Regex(@"(?<Num>\d+)\w\w\s+(?<Type>second|minute|hour|day|week|month)", _ciCompiled, RegexDefaults.Timeout);
-
-    internal static readonly Regex TemporalUnitType =
-        new Regex(@"(?<Type>second|minute|hour|day|week|month)\s+(?<Num>\d+)", _ciCompiled, RegexDefaults.Timeout);
-
-    internal static readonly Regex RelativeDaysOfWeek =
-        new Regex(
-            @"(?<Num>\d+\w{0,2})?(\w|\s)+?(?<First>first)?(?<Last>last)?\s*((?<Day>sunday|monday|tuesday|wednesday|thursday|friday|saturday)\s*(and|or)?\s*)+",
-            _ciCompiled, RegexDefaults.Timeout);
-
-    internal static readonly Regex Time = new Regex(
-        @"at\s+(?<Hour>\d{1,2})(:(?<Minute>\d{2})((:|\.)(?<Second>\d{2}))?)?\s*(?<Meridian>(a|p)m?)?",
-        _ciCompiled, RegexDefaults.Timeout);
-
-    internal static readonly Regex RecurUntil =
-        new Regex(@"^\s*until\s+(?<DateTime>.+)$", _ciCompiled, RegexDefaults.Timeout);
-
-    internal static readonly Regex SpecificRecurrenceCount =
-        new Regex(@"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", _ciCompiled, RegexDefaults.Timeout);
 
     /// <summary>
     /// Deserializes an RRULE value string into an <see cref="RecurrencePattern"/> object.
@@ -238,18 +211,9 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         // Decode the value, if necessary
         value = Decode(r, value);
 
-        if (TryDeserializeFrequencyPattern(value, r, factory!))
-        {
-            return r;
-        }
-
-        if (TryDeserializeNaturalLanguagePattern(value, r))
-        {
-            return r;
-        }
-
-        // Couldn't parse the object
-        return null;
+        return TryDeserializeFrequencyPattern(value, r, factory)
+            ? r
+            : null;
     }
 
     private bool TryDeserializeFrequencyPattern(string value, RecurrencePattern r, ISerializerFactory factory)
@@ -349,53 +313,6 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         }
     }
 
-    private bool TryDeserializeNaturalLanguagePattern(string value, RecurrencePattern r)
-    {
-        var match = NaturalLanguagePattern.Match(value);
-        if (!match.Success)
-        {
-            return false;
-        }
-
-        if (match.Groups["Interval"].Success)
-        {
-            r.Interval = !int.TryParse(match.Groups["Interval"].Value, out var interval)
-                ? 2
-                : interval;
-        }
-        else
-        {
-            r.Interval = 1;
-        }
-
-        r.Frequency = match.Groups["Freq"].Value.ToLower() switch
-        {
-            "second" => FrequencyType.Secondly,
-            "minute" => FrequencyType.Minutely,
-            "hour" => FrequencyType.Hourly,
-            "day" => FrequencyType.Daily,
-            "week" => FrequencyType.Weekly,
-            "month" => FrequencyType.Monthly,
-            "year" => FrequencyType.Yearly,
-            _ => r.Frequency
-        };
-
-        var values = match.Groups["More"].Value.Split(',');
-        foreach (var item in values)
-        {
-            _ = TryAddNumericTemporalUnit(item, r)
-                || TryAddRelativeDayOfWeek(item, r)
-                || TryAddTime(item, r)
-                || TryAddRecurUntil(item, r)
-                || TryAddSpecificRecurrenceCount(item, r);
-        }
-
-        CheckMutuallyExclusive("COUNT", "UNTIL", r.Count, r.Until);
-        CheckRanges(r);
-
-        return true;
-    }
-
     private static void AddWeekDays(IList<WeekDay> byDay, string keyValue)
     {
         var days = keyValue.Split(',');
@@ -403,161 +320,6 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         {
             byDay.Add(new WeekDay(day));
         }
-    }
-
-    private static bool TryAddNumericTemporalUnit(string item, RecurrencePattern r)
-    {
-        var match = NumericTemporalUnits.Match(item);
-        if (!match.Success)
-        {
-            match = TemporalUnitType.Match(item);
-        }
-
-        if (!match.Success)
-        {
-            return false;
-        }
-
-        if (!int.TryParse(match.Groups["Num"].Value, out var num))
-        {
-            return false;
-        }
-
-        switch (match.Groups["Type"].Value.ToLower())
-        {
-            case "second":
-                r.BySecond.Add(num);
-                break;
-            case "minute":
-                r.ByMinute.Add(num);
-                break;
-            case "hour":
-                r.ByHour.Add(num);
-                break;
-            case "day":
-                switch (r.Frequency)
-                {
-                    case FrequencyType.Yearly:
-                        r.ByYearDay.Add(num);
-                        break;
-                    case FrequencyType.Monthly:
-                        r.ByMonthDay.Add(num);
-                        break;
-                }
-                break;
-            case "week":
-                r.ByWeekNo.Add(num);
-                break;
-            case "month":
-                r.ByMonth.Add(num);
-                break;
-        }
-
-        return true;
-    }
-
-    private static bool TryAddRelativeDayOfWeek(string item, RecurrencePattern r)
-    {
-        var match = RelativeDaysOfWeek.Match(item);
-        if (!match.Success)
-        {
-            return false;
-        }
-
-        int? num = null;
-        if (match.Groups["Num"].Success)
-        {
-            if (int.TryParse(match.Groups["Num"].Value, out var n))
-            {
-                num = n;
-                if (match.Groups["Last"].Success)
-                {
-                    // Make number negative
-                    num *= -1;
-                }
-            }
-        }
-        else if (match.Groups["Last"].Success)
-        {
-            num = -1;
-        }
-        else if (match.Groups["First"].Success)
-        {
-            num = 1;
-        }
-
-        var dayOfWeekQuery = from Capture capture in match.Groups["Day"].Captures
-            select (DayOfWeek) Enum.Parse(typeof(DayOfWeek), capture.Value, true)
-            into dayOfWeek
-            select new WeekDay(dayOfWeek) { Offset = num };
-
-        r.ByDay.AddRange(dayOfWeekQuery);
-
-        return true;
-    }
-
-    private static bool TryAddTime(string item, RecurrencePattern r)
-    {
-        var match = Time.Match(item);
-        if (!match.Success)
-        {
-            return false;
-        }
-
-        if (!int.TryParse(match.Groups["Hour"].Value, out var hour))
-        {
-            return false;
-        }
-
-        // Adjust for PM
-        if (match.Groups["Meridian"].Success && match.Groups["Meridian"].Value
-                .StartsWith("P", StringComparison.CurrentCultureIgnoreCase))
-        {
-            hour += 12;
-        }
-
-        r.ByHour.Add(hour);
-
-        if (!match.Groups["Minute"].Success || !int.TryParse(match.Groups["Minute"].Value, out var minute))
-            return true;
-
-        r.ByMinute.Add(minute);
-        if (match.Groups["Second"].Success &&
-            int.TryParse(match.Groups["Second"].Value, out var second))
-        {
-            r.BySecond.Add(second);
-        }
-
-        return true;
-    }
-
-    private static bool TryAddRecurUntil(string item, RecurrencePattern r)
-    {
-        var match = RecurUntil.Match(item);
-        if (!match.Success)
-        {
-            return false;
-        }
-
-        r.Until = new CalDateTime(match.Groups["DateTime"].Value);
-        return true;
-    }
-
-    private static bool TryAddSpecificRecurrenceCount(string item, RecurrencePattern r)
-    {
-        var match = SpecificRecurrenceCount.Match(item);
-        if (!match.Success)
-        {
-            return false;
-        }
-
-        if (!int.TryParse(match.Groups["Count"].Value, out var count))
-        {
-            return false;
-        }
-
-        r.Count = count;
-        return true;
     }
 
     private void CheckRanges(RecurrencePattern r)
