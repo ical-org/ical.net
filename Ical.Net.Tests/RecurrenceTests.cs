@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -3943,5 +3942,36 @@ END:VCALENDAR";
             : Throws.Nothing;
 
         Assert.That(() => cal.GetOccurrences(options: options).ToList(), constraint);
+    }
+
+    [TestCase("FREQ=DAILY;INTERVAL=2;UNTIL=20250430T000000Z")]
+    [TestCase("UNTIL=20250430T000000Z;FREQ=DAILY;INTERVAL=2")]
+    [TestCase("INTERVAL=2;FREQ=DAILY;UNTIL=20250430T000000Z")]
+    [TestCase("INTERVAL=2;UNTIL=20250430T000000Z;FREQ=DAILY")]
+    public void Recurrence_RRULE_Properties_ShouldBeDeserialized_In_Any_Order(string rRule)
+    {
+        var serializer = new RecurrencePatternSerializer();
+        var recurrencePattern = serializer.Deserialize(new StringReader(rRule)) as RecurrencePattern;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(recurrencePattern, Is.Not.Null);
+            Assert.That(recurrencePattern?.Until, Is.Not.Null);
+            Assert.That(recurrencePattern?.Until, Is.EqualTo(new CalDateTime(2025, 4, 30, 0, 0, 0, CalDateTime.UtcTzId)));
+            Assert.That(recurrencePattern?.Frequency, Is.EqualTo(FrequencyType.Daily));
+            Assert.That(recurrencePattern?.Interval, Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void Disallowed_Recurrence_RangeChecks_Should_Throw()
+    {
+        var serializer = new RecurrencePatternSerializer();
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => serializer.CheckMutuallyExclusive("a", "b", 1, CalDateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => serializer.CheckRange("a", 0, 1, 2, false), Throws.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => serializer.CheckRange("a", (int?) 0, 1, 2, false), Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
     }
 }
