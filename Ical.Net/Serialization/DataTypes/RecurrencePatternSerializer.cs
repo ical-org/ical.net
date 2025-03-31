@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
@@ -176,12 +175,6 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         return Encode(recur, string.Join(";", values));
     }
 
-    private const RegexOptions CiCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
-
-    internal static readonly Regex FrequencyPattern =
-        new Regex(@"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", CiCompiled,
-            RegexDefaults.Timeout);
-
     /// <summary>
     /// Deserializes an RRULE value string into an <see cref="RecurrencePattern"/> object.
     /// <para/>
@@ -211,20 +204,17 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         // Decode the value, if necessary
         value = Decode(r, value);
 
-        return TryDeserializeFrequencyPattern(value, r, factory)
-            ? r
-            : null;
+        DeserializePattern(value, r, factory);
+        return r;
     }
 
-    private bool TryDeserializeFrequencyPattern(string value, RecurrencePattern r, ISerializerFactory factory)
+    /// <summary>
+    /// Deserializes the recurrence rule.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Always throws on failure.</exception>
+    private void DeserializePattern(string value, RecurrencePattern r, ISerializerFactory factory)
     {
-        // We can't proceed if the FREQ part is missing
-        var match = FrequencyPattern.Match(value);
-        if (!match.Success)
-        {
-            return false;
-        }
-
+        var freqPartExists = false;
         var keywordPairs = value.Split(';');
         foreach (var keywordPair in keywordPairs)
         {
@@ -241,13 +231,21 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                     $"The recurrence rule part '{keywordPair}' is invalid.");
             }
 
+            if (keyValues[0].Equals("FREQ", StringComparison.OrdinalIgnoreCase))
+            {
+                freqPartExists = true;
+            }
+
             ProcessKeyValuePair(keyValues[0].ToLower(), keyValues[1], r, factory);
         }
 
+        if (!freqPartExists || r.Frequency == FrequencyType.None)
+        {
+            throw new ArgumentOutOfRangeException(nameof(value),
+                "The recurrence rule must specify a FREQ part that is not NONE.");
+        }
         CheckMutuallyExclusive("COUNT", "UNTIL", r.Count, r.Until);
         CheckRanges(r);
-
-        return true;
     }
 
     private void ProcessKeyValuePair(string key, string value, RecurrencePattern r, ISerializerFactory factory)
@@ -310,6 +308,10 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
             case "wkst":
                 r.FirstDayOfWeek = GetDayOfWeek(value);
                 break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(key),
+                    $"The recurrence rule part '{key}' is not supported.");
         }
     }
 
