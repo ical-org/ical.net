@@ -342,7 +342,7 @@ public static class RegexDefaults
     /// <summary>
     /// The default timeout for regular expressions in milliseconds.
     /// </summary>
-    public const int TimeoutMilliseconds = 200;
+    public const int TimeoutMilliseconds = 2000;
     /// <summary>
     /// The default timeout for regular expressions.
     /// </summary>

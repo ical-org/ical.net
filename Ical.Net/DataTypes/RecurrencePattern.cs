@@ -81,6 +81,10 @@ public class RecurrencePattern : EncodableDataType
     /// </summary>
     public List<int> ByMonth { get; set; } = new List<int>();
 
+    /// <summary>
+    /// Specify the n-th occurrence within the set of occurrences specified by the RRULE.
+    /// It is typically used in conjunction with other rule parts like BYDAY, BYMONTHDAY, etc.
+    /// </summary>
     public List<int> BySetPosition { get; set; } = new List<int>();
 
     public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
