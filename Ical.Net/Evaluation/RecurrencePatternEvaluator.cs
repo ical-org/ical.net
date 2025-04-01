@@ -13,6 +13,13 @@ namespace Ical.Net.Evaluation;
 
 public class RecurrencePatternEvaluator : Evaluator
 {
+    /// <summary>
+    /// The system calendar to be used to calculate details like the week of the year, days in a month, etc.
+    /// We only support the gregorian calendar at this time. We take it from the InvariantCulture to avoid
+    /// any side effects from the local system's configuration.
+    /// </summary>
+    private static System.Globalization.Calendar Calendar { get; } = System.Globalization.CultureInfo.InvariantCulture.Calendar;
+
     protected RecurrencePattern Pattern { get; set; }
 
     public RecurrencePatternEvaluator(RecurrencePattern pattern)
