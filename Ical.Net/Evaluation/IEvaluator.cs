@@ -13,11 +13,6 @@ namespace Ical.Net.Evaluation;
 public interface IEvaluator
 {
     /// <summary>
-    /// The system calendar that governs the evaluation rules.
-    /// </summary>
-    System.Globalization.Calendar Calendar { get; }
-
-    /// <summary>
     /// Evaluates this item to determine the dates and times for which it occurs/recurs.
     /// This method only evaluates items which occur/recur between <paramref name="periodStart"/>
     /// and <paramref name="periodEnd"/>; therefore, if you require a list of items which

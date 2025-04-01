@@ -6,7 +6,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
 
@@ -14,11 +13,6 @@ namespace Ical.Net.Evaluation;
 
 public abstract class Evaluator : IEvaluator
 {
-    protected Evaluator()
-    {
-        Calendar = CultureInfo.CurrentCulture.Calendar;
-    }
-
     protected void IncrementDate(ref CalDateTime dt, RecurrencePattern pattern, int interval)
     {
         if (interval == 0)
@@ -53,8 +47,6 @@ public abstract class Evaluator : IEvaluator
                 throw new Exception("FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.");
         }
     }
-
-    public System.Globalization.Calendar Calendar { get; private set; }
 
     public abstract IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options);
 }
