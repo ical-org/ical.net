@@ -44,9 +44,10 @@ jobs:
         name: coverage-report
         path: ./Ical.Net.Tests/coverage.*.xml  # store all coverage reports
     - name: Upload coverage to Codecov  
-      uses: codecov/codecov-action@v4  
+      uses: codecov/codecov-action@v5  
       with:  
         # files: automatically finds all in ./Ical.Net.Tests/
         name: coverage
         token: ${{ secrets.CODECOV_TOKEN }}
+        # ical-org global settings do not require an upload token from forks
         fail_ci_if_error: false
