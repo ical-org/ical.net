@@ -48,5 +48,6 @@ jobs:
       with:  
         # files: automatically finds all in ./Ical.Net.Tests/
         name: coverage
-        # ical-org does not require an upload token for its public repositories
+        token: ${{ secrets.CODECOV_TOKEN }}
+        # ical-org global settings do not require an upload token from forks
         fail_ci_if_error: false
