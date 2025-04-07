@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,9 @@ namespace Ical.Net.DataTypes;
 
 public class Attendee : EncodableDataType
 {
-    private Uri _sentBy;
+    private Uri? _sentBy;
     /// <summary> SENT-BY, to indicate who is acting on behalf of the ATTENDEE </summary>
-    public virtual Uri SentBy
+    public virtual Uri? SentBy
     {
         get
         {
@@ -38,7 +39,7 @@ public class Attendee : EncodableDataType
         }
     }
 
-    private string _commonName;
+    private string? _commonName;
     /// <summary> CN: to show the common or displayable name associated with the calendar address </summary>
     public virtual string CommonName
     {
@@ -61,9 +62,9 @@ public class Attendee : EncodableDataType
         }
     }
 
-    private Uri _directoryEntry;
+    private Uri? _directoryEntry;
     /// <summary> DIR, to indicate the URI that points to the directory information corresponding to the attendee </summary>
-    public virtual Uri DirectoryEntry
+    public virtual Uri? DirectoryEntry
     {
         get
         {
@@ -87,7 +88,7 @@ public class Attendee : EncodableDataType
         }
     }
 
-    private string _type;
+    private string? _type;
     /// <summary> CUTYPE: the type of calendar user </summary>
     public virtual string Type
     {
@@ -111,7 +112,7 @@ public class Attendee : EncodableDataType
         }
     }
 
-    private List<string> _members;
+    private List<string>? _members;
     /// <summary> MEMBER: the groups the user belongs to </summary>
     public virtual IList<string> Members
     {
@@ -123,7 +124,7 @@ public class Attendee : EncodableDataType
         }
     }
 
-    private string _role;
+    private string? _role;
     /// <summary> ROLE: the intended role the attendee will have </summary>
     public virtual string Role
     {
@@ -146,7 +147,7 @@ public class Attendee : EncodableDataType
         }
     }
 
-    private string _participationStatus;
+    private string? _participationStatus;
     public virtual string ParticipationStatus
     {
         get
@@ -179,9 +180,8 @@ public class Attendee : EncodableDataType
                 return _rsvp.Value;
             }
 
-            bool val;
             var rsvp = Parameters.Get("RSVP");
-            if (rsvp != null && bool.TryParse(rsvp, out val))
+            if (rsvp != null && bool.TryParse(rsvp, out var val))
             {
                 _rsvp = val;
                 return _rsvp.Value;
@@ -196,9 +196,9 @@ public class Attendee : EncodableDataType
         }
     }
 
-    private List<string> _delegatedTo;
+    private List<string>? _delegatedTo;
     /// <summary> DELEGATED-TO, to indicate the calendar users that the original request was delegated to </summary>
-    public virtual IList<string> DelegatedTo
+    public virtual IList<string>? DelegatedTo
     {
         get => _delegatedTo ?? (_delegatedTo = new List<string>(Parameters.GetMany("DELEGATED-TO")));
         set
@@ -212,7 +212,7 @@ public class Attendee : EncodableDataType
         }
     }
 
-    private List<string> _delegatedFrom;
+    private List<string>? _delegatedFrom;
     /// <summary> DELEGATED-FROM, to indicate whom the request was delegated from </summary>
     public virtual IList<string> DelegatedFrom
     {
@@ -229,7 +229,7 @@ public class Attendee : EncodableDataType
     }
 
     /// <summary> Uri associated with the attendee, typically an email address </summary>
-    public virtual Uri Value { get; set; }
+    public virtual Uri? Value { get; set; }
 
     public Attendee() { }
 
@@ -276,10 +276,10 @@ public class Attendee : EncodableDataType
                                              && Rsvp == other.Rsvp
                                              && Equals(Value, other.Value)
                                              && Members.SequenceEqual(other.Members)
-                                             && DelegatedTo.SequenceEqual(other.DelegatedTo)
-                                             && DelegatedFrom.SequenceEqual(other.DelegatedFrom);
+                                             && (DelegatedTo?.SequenceEqual(other.DelegatedTo ?? Enumerable.Empty<string>()) ?? other.DelegatedTo == null)
+                                             && (DelegatedFrom?.SequenceEqual(other.DelegatedFrom ?? Enumerable.Empty<string>()) ?? other.DelegatedFrom == null);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
