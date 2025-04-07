@@ -63,8 +63,8 @@ public class DocumentationExamples
 
         // Count every other Tuesday between July 1 and Dec 31.
         // The first Tuesday is July 5. There should be 13 in total
-        var searchStart = DateTime.Parse("2010-01-01");
-        var searchEnd = DateTime.Parse("2016-12-31");
+        var searchStart = new CalDateTime(2010, 01, 01);
+        var searchEnd = new CalDateTime(2016, 12, 31);
         var tuesdays = vEvent.GetOccurrences(searchStart, searchEnd).ToList();
 
         Assert.That(tuesdays, Has.Count.EqualTo(13));
@@ -91,8 +91,8 @@ public class DocumentationExamples
         };
         vEvent.RecurrenceRules = new List<RecurrencePattern> { rrule };
 
-        var searchStart = DateTime.Parse("2000-01-01");
-        var searchEnd = DateTime.Parse("2017-01-01");
+        var searchStart = new CalDateTime(2000, 01, 01);
+        var searchEnd = new CalDateTime(2017, 01, 01);
         var usThanksgivings = vEvent.GetOccurrences(searchStart, searchEnd).ToList();
 
         Assert.That(usThanksgivings, Has.Count.EqualTo(17));

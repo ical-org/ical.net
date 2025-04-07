@@ -359,7 +359,7 @@ public class RecurrenceTests_From_Issues
             RecurrenceRules = new List<RecurrencePattern> { rule }
         };
 
-        var occurrences = calendarEvent.GetOccurrences(startDate, endDate);
+        var occurrences = calendarEvent.GetOccurrences(new CalDateTime(startDate), new CalDateTime(endDate));
         var occurrencesDates = occurrences.Select(o => new CalDateTime(o.Period.StartTime.Date)).ToList();
 
         // Sort both collections to ensure they are in the same order
@@ -501,8 +501,7 @@ public class RecurrenceTests_From_Issues
         var calendar = new Calendar();
         calendar.Events.Add(vEvent);
 
-        var occurrences = vEvent.GetOccurrences(DateTime.Parse("2017-06-01T00:00"), DateTime.Parse("2017-06-30T23:59")).ToList();
-
+        var occurrences = vEvent.GetOccurrences(new CalDateTime(2017, 06, 01, 00, 00, 00), new CalDateTime(2017, 06, 30, 23, 59, 0)).ToList();
         var excludedDays = new List<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday, DayOfWeek.Tuesday, DayOfWeek.Thursday };
 
         Assert.Multiple(() =>

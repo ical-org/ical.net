@@ -2672,7 +2672,7 @@ public class RecurrenceTests
 
         evt.RecurrenceRules.Add(pattern);
 
-        var occurrences = evt.GetOccurrences(new DateTime(2018, 1, 1), DateTime.MaxValue).ToList();
+        var occurrences = evt.GetOccurrences(new CalDateTime(2018, 1, 1), new CalDateTime(DateTime.MaxValue, false)).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(10), "There should be 10 occurrences of this event.");
     }
 
@@ -2741,7 +2741,7 @@ public class RecurrenceTests
 
         evt.RecurrenceRules.Add(pattern);
 
-        var occurrences = evt.GetOccurrences(new DateTime(2011, 1, 1), new DateTime(2012, 1, 1)).ToList();
+        var occurrences = evt.GetOccurrences(new CalDateTime(2011, 1, 1), new CalDateTime(2012, 1, 1)).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(10), "There should be 10 occurrences of this event, one for each month except February and December.");
     }
 
@@ -2782,7 +2782,7 @@ public class RecurrenceTests
         //Testing on both the first day and the next, results used to be different
         for (var i = 0; i <= 1; i++)
         {
-            var checkTime = DateTime.Parse("2019-01-04T08:00Z").ToUniversalTime();
+            var checkTime = new CalDateTime(2019, 01, 04, 08, 00, 00, CalDateTime.UtcTzId);
             checkTime = checkTime.AddDays(i);
             //Valid asking for the exact moment
             var occurrences = vEvent.GetOccurrences(checkTime, checkTime).ToList();
@@ -2811,7 +2811,7 @@ public class RecurrenceTests
             End = new CalDateTime(DateTime.Parse("2020-01-11T00:00")),
         };
 
-        var occurrences = vEvent.GetOccurrences(DateTime.Parse("2020-01-10T00:00"), DateTime.Parse("2020-01-11T00:00"));
+        var occurrences = vEvent.GetOccurrences(new CalDateTime(2020,01, 10, 0, 0, 0), new CalDateTime(2020, 01, 11, 00, 00, 00));
         Assert.That(occurrences.Count, Is.EqualTo(0));
     }
 
@@ -3023,7 +3023,7 @@ public class RecurrenceTests
 
         Assert.That(() =>
         {
-            _ = evt.GetOccurrences(DateTime.Today.AddDays(1), DateTime.Today.AddDays(2));
+            _ = evt.GetOccurrences(CalDateTime.Today.AddDays(1), CalDateTime.Today.AddDays(2));
         }, Throws.Exception, "An exception should be thrown when evaluating a recurrence with no specified FREQUENCY");
     }
 
@@ -3403,7 +3403,7 @@ END:VCALENDAR";
         //Testing on both the first day and the next, results used to be different
         for (var i = 0; i <= 1; i++)
         {
-            var checkTime = DateTime.Parse("2019-06-07 00:00:00");
+            var checkTime = new CalDateTime(2019, 06, 07, 00, 00, 00);
             checkTime = checkTime.AddDays(i);
 
             //Valid if asking for a range starting at the same moment
@@ -3428,19 +3428,19 @@ END:VCALENDAR";
         vEvent.RecurrenceRules.Add(rrule);
 
         // Exactly on start time
-        var testingTime = new DateTime(2019, 6, 7, 9, 0, 0);
+        var testingTime = new CalDateTime(2019, 6, 7, 9, 0, 0);
 
         var occurrences = vEvent.GetOccurrences(testingTime, testingTime).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(1));
 
         // One second before end time
-        testingTime = new DateTime(2019, 6, 7, 16, 59, 59);
+        testingTime = new CalDateTime(2019, 6, 7, 16, 59, 59);
 
         occurrences = vEvent.GetOccurrences(testingTime, testingTime).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(1));
 
         // Exactly on end time
-        testingTime = new DateTime(2019, 6, 7, 17, 0, 0);
+        testingTime = new CalDateTime(2019, 6, 7, 17, 0, 0);
 
         occurrences = vEvent.GetOccurrences(testingTime, testingTime).ToList();
         Assert.That(occurrences.Count, Is.EqualTo(0));
@@ -3778,7 +3778,7 @@ END:VCALENDAR";
         evt.Summary = "Event summary";
 
         // Start at midnight, UTC time
-        evt.Start = testCase.DtStart;
+        evt.Start = testCase.DtStart!;
 
         if (testCase.Exception != null)
         {
@@ -3789,7 +3789,7 @@ END:VCALENDAR";
 
         evt.RecurrenceRules.Add(new RecurrencePattern(testCase.RRule!));
 
-        var occurrences = evt.GetOccurrences(testCase.StartAt?.Value ?? DateTime.MinValue, DateTime.MaxValue)
+        var occurrences = evt.GetOccurrences(testCase.StartAt ?? new CalDateTime(DateTime.MinValue), new CalDateTime(DateTime.MaxValue))
             .OrderBy(x => x)
             .ToList();
 

@@ -145,7 +145,7 @@ public class Alarm : CalendarComponent
     /// <param name="end"></param>
     /// <param name="options"></param>
     /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-    public virtual IList<AlarmOccurrence> Poll(CalDateTime start, CalDateTime end, EvaluationOptions? options = null)
+    public virtual IList<AlarmOccurrence> Poll(CalDateTime? start, CalDateTime? end, EvaluationOptions? options = null)
     {
         var results = new List<AlarmOccurrence>();
 
