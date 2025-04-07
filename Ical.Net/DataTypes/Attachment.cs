@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Linq;
 using System.Text;
@@ -18,8 +19,8 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class Attachment : EncodableDataType
 {
-    public virtual Uri Uri { get; set; }
-    public virtual byte[] Data { get; private set; } // private set for CopyFrom
+    public virtual Uri? Uri { get; set; }
+    public virtual byte[]? Data { get; private set; } // private set for CopyFrom
 
     private Encoding _valueEncoding = System.Text.Encoding.UTF8;
     public virtual Encoding ValueEncoding
@@ -43,7 +44,7 @@ public class Attachment : EncodableDataType
 
     public Attachment() { }
 
-    public Attachment(byte[] value) : this()
+    public Attachment(byte[]? value) : this()
     {
         if (value != null)
         {
@@ -93,15 +94,15 @@ public class Attachment : EncodableDataType
         FormatType = att.FormatType;
     }
 
-    protected bool Equals(Attachment other)
+    protected bool Equals(Attachment? other)
     {
-        var firstPart = Equals(Uri, other.Uri) && ValueEncoding.Equals(other.ValueEncoding);
+        var firstPart = Equals(Uri, other?.Uri) && ValueEncoding.Equals(other?.ValueEncoding);
         return Data == null
             ? firstPart
-            : firstPart && Data.SequenceEqual(other.Data);
+            : firstPart && other?.Data != null && Data.SequenceEqual(other.Data);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
