@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
@@ -118,7 +119,8 @@ public struct Duration
     /// Parses the specified value according to RFC 5545.
     /// </summary>
     /// <exception cref="System.FormatException">Thrown if the value is not a valid duration.</exception>
-    public static Duration Parse(string value) => (Duration)new DurationSerializer().Deserialize(new StringReader(value));
+    public static Duration Parse(string value) =>
+        (Duration) new DurationSerializer().Deserialize(new StringReader(value))!; // throws if null
 
     /// <summary>
     /// Creates an instance that represents the given time span as exact value, that is, time-only.
@@ -143,32 +145,12 @@ public struct Duration
     /// <summary>
     /// Gets a value representing the time parts of the given instance.
     /// </summary>
-    internal TimeSpan TimeAsTimeSpan
-    {
-        get
-        {
-            return new TimeSpan(
-                0,
-                Hours ?? 0,
-                Minutes ?? 0,
-                Seconds ?? 0);
-        }
-    }
+    internal TimeSpan TimeAsTimeSpan => new(0, Hours ?? 0, Minutes ?? 0, Seconds ?? 0);
 
     /// <summary>
     /// Gets a value representing the date parts (days and weeks) of the given instance.
     /// </summary>
-    internal TimeSpan DateAsTimeSpan
-    {
-        get
-        {
-            return new TimeSpan(
-                (Weeks ?? 0) * 7 + (Days ?? 0),
-                0,
-                0,
-                0);
-        }
-    }
+    internal TimeSpan DateAsTimeSpan => new((Weeks ?? 0) * 7 + (Days ?? 0), 0, 0, 0);
 
     /// <summary>
     /// Convert the instance to a <see cref="TimeSpan"/>, ignoring potential
@@ -181,11 +163,7 @@ public struct Duration
     /// nominal durations, use <see cref="ToTimeSpan"/>.
     /// </remarks>
     public TimeSpan ToTimeSpanUnspecified()
-        => new TimeSpan(
-            (Weeks ?? 0) * 7 + (Days ?? 0),
-            Hours ?? 0,
-            Minutes ?? 0,
-            Seconds ?? 0);
+        => new TimeSpan((Weeks ?? 0) * 7 + (Days ?? 0), Hours ?? 0, Minutes ?? 0, Seconds ?? 0);
 
     /// <summary>
     /// Convert the instance to a <see cref="TimeSpan"/>, treating the days as nominal duration and
@@ -226,7 +204,7 @@ public struct Duration
         new Duration(-d.Weeks, -d.Days, -d.Hours, -d.Minutes, -d.Seconds);
 
     /// <inheritdoc/>
-    public override string ToString()
+    public override string? ToString()
         => new DurationSerializer().SerializeToString(this);
 
     private static int? GetSign(int? v) =>

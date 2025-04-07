@@ -3904,7 +3904,7 @@ END:VCALENDAR";
         var cal = Calendar.Load(icalText);
         var evt = cal.Events.First();
         var ev = new EventEvaluator(evt);
-        var occurrences = ev.Evaluate(evt.DtStart, evt.DtStart.ToTimeZone(tzId), evt.DtStart.AddMinutes(61).ToTimeZone(tzId), default);
+        var occurrences = ev.Evaluate(evt.DtStart, evt.DtStart.ToTimeZone(tzId), evt.DtStart.AddMinutes(61).ToTimeZone(tzId), null);
         var occurrencesStartTimes = occurrences.Select(x => x.StartTime).Take(2).ToList();
 
         var expectedStartTimes = new[]

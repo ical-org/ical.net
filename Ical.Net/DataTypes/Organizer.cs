@@ -21,7 +21,7 @@ public class Organizer : EncodableDataType
     {
         get
         {
-            string sentBy = Parameters.Get("SENT-BY");
+            var sentBy = Parameters.Get("SENT-BY");
             if (!string.IsNullOrWhiteSpace(sentBy))
             {
                 return new Uri(sentBy);

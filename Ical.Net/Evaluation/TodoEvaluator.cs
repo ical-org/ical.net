@@ -79,7 +79,7 @@ public class TodoEvaluator : RecurringEvaluator
 
     public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
     {
-        // TODO items can only recur if a start date is specified
+        // Items can only recur if a start date is specified
         if (Todo.Start == null)
             return [];
 
