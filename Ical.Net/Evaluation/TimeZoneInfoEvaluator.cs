@@ -21,12 +21,10 @@ public class TimeZoneInfoEvaluator : RecurringEvaluator
 
     public TimeZoneInfoEvaluator(IRecurrable tzi) : base(tzi) { }
 
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
     {
         // Time zones must include an effective start date/time
         // and must provide an evaluator.
-        if (TimeZoneInfo == null)
-            return [];
 
         // Always include the reference date in the results
         var periods = base.Evaluate(referenceDate, periodStart, periodEnd, options);

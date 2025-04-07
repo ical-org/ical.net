@@ -1232,8 +1232,8 @@ public class RecurrenceTests
         var rpe1 = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53"));
         var rpe2 = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=53,51,49,47,45,43,41,39,37,35,33,31,29,27,25,23,21,19,17,15,13,11,9,7,5,3,1"));
 
-        var recurringPeriods1 = rpe1.Evaluate(new CalDateTime(start), start, end, default).ToList();
-        var recurringPeriods2 = rpe2.Evaluate(new CalDateTime(start), start, end, default).ToList();
+        var recurringPeriods1 = rpe1.Evaluate(new CalDateTime(start), start, end, null).ToList();
+        var recurringPeriods2 = rpe2.Evaluate(new CalDateTime(start), start, end, null).ToList();
 
         Assert.That(recurringPeriods2, Has.Count.EqualTo(recurringPeriods1.Count));
     }
@@ -3901,7 +3901,7 @@ END:VCALENDAR";
         var cal = Calendar.Load(icalText);
         var evt = cal.Events.First();
         var ev = new EventEvaluator(evt);
-        var occurrences = ev.Evaluate(evt.DtStart, evt.DtStart.ToTimeZone(tzId), evt.DtStart.AddMinutes(61).ToTimeZone(tzId), default);
+        var occurrences = ev.Evaluate(evt.DtStart, evt.DtStart.ToTimeZone(tzId), evt.DtStart.AddMinutes(61).ToTimeZone(tzId), null);
         var occurrencesStartTimes = occurrences.Select(x => x.StartTime).Take(2).ToList();
 
         var expectedStartTimes = new[]

@@ -74,7 +74,7 @@ public class Alarm : CalendarComponent
     /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
     /// that occur between <paramref name="fromDate"/> and <paramref name="toDate"/>.
     /// </summary>
-    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, CalDateTime? fromDate, CalDateTime? toDate, EvaluationOptions options)
+    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, CalDateTime? fromDate, CalDateTime? toDate, EvaluationOptions? options)
     {
         if (Trigger == null)
         {
@@ -141,10 +141,11 @@ public class Alarm : CalendarComponent
     /// since the provided <paramref name="start"/> date/time.  If <paramref name="start"/>
     /// is null, all triggered alarms will be returned.
     /// </summary>
-    /// <param name="start">The earliest date/time to poll trigered alarms for.</param>
+    /// <param name="start">The earliest date/time to poll triggered alarms for.</param>
     /// <param name="end"></param>
+    /// <param name="options"></param>
     /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-    public virtual IList<AlarmOccurrence> Poll(CalDateTime start, CalDateTime end, EvaluationOptions options = default)
+    public virtual IList<AlarmOccurrence> Poll(CalDateTime start, CalDateTime end, EvaluationOptions? options = null)
     {
         var results = new List<AlarmOccurrence>();
 
@@ -170,12 +171,20 @@ public class Alarm : CalendarComponent
         for (var i = 0; i < len; i++)
         {
             var ao = occurrences[i];
+            if (ao?.DateTime == null || ao.Component == null)
+            {
+                continue;
+            }
+
             var alarmTime = ao.DateTime.Copy();
 
             for (var j = 0; j < Repeat; j++)
             {
-                alarmTime = alarmTime.Add(Duration);
-                occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy(), ao.Component));
+                alarmTime = alarmTime?.Add(Duration);
+                if (alarmTime != null)
+                {
+                    occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy(), ao.Component));
+                }
             }
         }
     }

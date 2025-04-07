@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using Ical.Net.CalendarComponents;
 
@@ -18,16 +19,16 @@ namespace Ical.Net.DataTypes;
 /// </remarks>
 public class AlarmOccurrence : IComparable<AlarmOccurrence>
 {
-    public Period Period { get; set; }
+    public Period? Period { get; set; }
 
-    public IRecurringComponent Component { get; set; }
+    public IRecurringComponent? Component { get; set; }
 
-    public Alarm Alarm { get; set; }
+    public Alarm? Alarm { get; set; }
 
-    public CalDateTime DateTime
+    public CalDateTime? DateTime
     {
-        get => Period.StartTime;
-        set => Period = new Period(value);
+        get => Period?.StartTime;
+        set => Period = value != null ? new Period(value) : null;
     }
 
     public AlarmOccurrence(AlarmOccurrence ao)
@@ -44,14 +45,21 @@ public class AlarmOccurrence : IComparable<AlarmOccurrence>
         Component = rc;
     }
 
-    public int CompareTo(AlarmOccurrence other) => Period.CompareTo(other.Period);
+    public int CompareTo(AlarmOccurrence? other)
+    {
+        if (other == null || other.Period == null)
+        {
+            return 1;
+        }
+        return Period?.CompareTo(other.Period) ?? 1;
+    }
 
     protected bool Equals(AlarmOccurrence other)
         => Equals(Period, other.Period)
            && Equals(Component, other.Component)
            && Equals(Alarm, other.Alarm);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
