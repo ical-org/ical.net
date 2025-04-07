@@ -1232,8 +1232,8 @@ public class RecurrenceTests
         var rpe1 = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53"));
         var rpe2 = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=53,51,49,47,45,43,41,39,37,35,33,31,29,27,25,23,21,19,17,15,13,11,9,7,5,3,1"));
 
-        var recurringPeriods1 = rpe1.Evaluate(new CalDateTime(start), start, end, default).ToList();
-        var recurringPeriods2 = rpe2.Evaluate(new CalDateTime(start), start, end, default).ToList();
+        var recurringPeriods1 = rpe1.Evaluate(new CalDateTime(start), start, end, null).ToList();
+        var recurringPeriods2 = rpe2.Evaluate(new CalDateTime(start), start, end, null).ToList();
 
         Assert.That(recurringPeriods2, Has.Count.EqualTo(recurringPeriods1.Count));
     }
@@ -3800,31 +3800,34 @@ END:VCALENDAR";
 
     [Test]
     // Reproducer from https://github.com/ical-org/ical.net/issues/629
+    // Note: The original reproducer used DateTime.Parse(yyyy-MM-dd) to create a CalDateTime
+    // which resolves to DateTime, with a Time part of 00:00:00.0000000.
+    // It's important to always or never use the Time part in this unit test
     public void ShouldCreateARecurringYearlyEvent()
     {
         var springAdminEvent = new CalendarEvent
         {
-            Start = new CalDateTime(DateTime.Parse("2024-04-15")),
-            End = new CalDateTime(DateTime.Parse("2024-04-15")),
+            Start = new CalDateTime(2024, 04, 15),
+            End = new CalDateTime(2024, 04, 15),
             RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Yearly, 1) },
         };
 
         var calendar = new Calendar();
         calendar.Events.Add(springAdminEvent);
-        var searchStart = DateTime.Parse("2024-04-15");
-        var searchEnd = DateTime.Parse("2050-5-31");
+        var searchStart = new CalDateTime(2024, 04, 15);
+        var searchEnd = new CalDateTime(2050, 05, 31);
         var occurrences = calendar.GetOccurrences(searchStart, searchEnd);
         Assert.That(occurrences.Count, Is.EqualTo(27));
 
-        springAdminEvent.Start = new CalDateTime(DateTime.Parse("2024-04-16"));
-        springAdminEvent.End = new CalDateTime(DateTime.Parse("2024-04-16"));
+        springAdminEvent.Start = new CalDateTime(2024, 04, 16);
+        springAdminEvent.End = new CalDateTime(2024, 04, 16);
         springAdminEvent.RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Yearly, 1) };
 
-        searchStart = DateTime.Parse("2024-04-16");
-        searchEnd = DateTime.Parse("2050-5-31");
+        searchStart = new CalDateTime(2024, 04, 16);
+        searchEnd = new CalDateTime(2050, 05, 31);
         occurrences = calendar.GetOccurrences(searchStart, searchEnd);
 
-        //occurences is 26 here, omitting 4/16/2024
+        // occurrences are 26 here, omitting 4/16/2024
         Assert.That(occurrences.Count, Is.EqualTo(27));
     }
 

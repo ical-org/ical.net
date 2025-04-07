@@ -218,14 +218,6 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default)
         => GetOccurrences<IRecurringComponent>(startTime, endTime, options);
 
-    /// <inheritdoc cref="GetOccurrences(CalDateTime, CalDateTime)"/>
-    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default)
-        => GetOccurrences<IRecurringComponent>(startTime?.AsCalDateTime(), endTime?.AsCalDateTime(), options);
-
-    /// <inheritdoc cref="GetOccurrences(CalDateTime, CalDateTime)"/>
-    public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default) where T : IRecurringComponent
-        => GetOccurrences<T>(startTime?.AsCalDateTime(), endTime?.AsCalDateTime(), options);
-
     /// <summary>
     /// Returns all occurrences of components of type T that start within the date range provided.
     /// All components occurring between <paramref name="startTime"/> and <paramref name="endTime"/>

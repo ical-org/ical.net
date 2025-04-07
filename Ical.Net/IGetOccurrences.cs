@@ -3,7 +3,7 @@
 // Licensed under the MIT license.
 //
 
-using System;
+#nullable enable
 using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -19,10 +19,9 @@ public interface IGetOccurrences
     /// </summary>
     /// <param name="startTime">The starting date range</param>
     /// <param name="endTime">The ending date range</param>
+    /// <param name="options"></param>
     /// <returns>An IEnumerable that calculates and returns Periods representing the occurrences of this object in ascending order.</returns>
-    IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default);
-
-    IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default);
+    IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null);
 }
 
 public interface IGetOccurrencesTyped : IGetOccurrences
@@ -34,8 +33,7 @@ public interface IGetOccurrencesTyped : IGetOccurrences
     /// </summary>
     /// <param name="startTime">The starting date range. If set to null, occurrences are returned from the beginning.</param>
     /// <param name="endTime">The ending date range. If set to null, occurrences are returned until the end.</param>
+    /// <param name="options"></param>
     /// <returns>An IEnumerable that calculates and returns Periods representing the occurrences of this object in ascending order.</returns>
-    IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default) where T : IRecurringComponent;
-
-    IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default) where T : IRecurringComponent;
+    IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null) where T : IRecurringComponent;
 }

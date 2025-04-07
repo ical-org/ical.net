@@ -38,8 +38,8 @@ public class DocumentationExamples
 
         // Count the occurrences between July 20, and Aug 5 -- there should be 12:
         // July 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
-        var searchStart = DateTime.Parse("2016-07-20");
-        var searchEnd = DateTime.Parse("2016-08-05");
+        var searchStart = new CalDateTime(2016, 07, 20);
+        var searchEnd = new CalDateTime(2016, 08, 05);
         var occurrences = calendar.GetOccurrences(searchStart, searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(12));
     }
@@ -124,8 +124,8 @@ public class DocumentationExamples
         calendar.Events.Add(vEvent);
 
         // We are essentially counting all the days that aren't Sunday in 2016, so there should be 314
-        var searchStart = DateTime.Parse("2015-12-31");
-        var searchEnd = DateTime.Parse("2017-01-01");
+        var searchStart = new CalDateTime(2015, 12, 31);
+        var searchEnd = new CalDateTime(2017, 01, 01);
         var occurrences = calendar.GetOccurrences(searchStart, searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(314));
     }
