@@ -124,7 +124,7 @@ internal class PeriodList : EncodableDataType, IList<Period>
     {
         EnsureConsistentTimezoneAndPeriodKind(item);
         if (Periods.Contains(item)) return;
-        Periods?.Insert(index, item);
+        Periods.Insert(index, item);
     }
 
     /// <inheritdoc/>
@@ -140,7 +140,7 @@ internal class PeriodList : EncodableDataType, IList<Period>
     {
         EnsureConsistentTimezoneAndPeriodKind(item);
         if (Periods.Contains(item)) return;
-        Periods?.Add(item);
+        Periods.Add(item);
     }
 
     /// <summary>
