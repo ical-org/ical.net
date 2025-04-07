@@ -3,19 +3,18 @@
 // Licensed under the MIT license.
 //
 
-using System;
+#nullable enable
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
-using Ical.Net.Utility;
 
 namespace Ical.Net;
 
 public class VTimeZoneInfo : CalendarComponent, IRecurrable
 {
-    private TimeZoneInfoEvaluator _evaluator;
+    private TimeZoneInfoEvaluator? _evaluator;
 
     public VTimeZoneInfo()
     {
@@ -46,7 +45,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         Initialize();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         var tzi = obj as VTimeZoneInfo;
         if (tzi != null)
@@ -70,7 +69,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         }
     }
 
-    public virtual string TzId
+    public virtual string? TzId
     {
         get =>
             !(Parent is VTimeZone tz)
@@ -90,7 +89,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
     ///     </list>
     /// </example>
     /// </summary>
-    public virtual string TimeZoneName
+    public virtual string? TimeZoneName
     {
         get => TimeZoneNames.Count > 0
             ? TimeZoneNames[0]
@@ -98,7 +97,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set
         {
             TimeZoneNames.Clear();
-            TimeZoneNames.Add(value);
+            TimeZoneNames.Add(value ?? string.Empty);
         }
     }
 
@@ -150,7 +149,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("EXDATE", value);
     }
 
-    public virtual ExceptionDates ExceptionDates { get; private set; }
+    public virtual ExceptionDates ExceptionDates { get; private set; } = null!;
 
     public virtual IList<RecurrencePattern> ExceptionRules
     {
@@ -164,7 +163,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("RDATE", value);
     }
 
-    public virtual RecurrenceDates RecurrenceDates { get; private set; }
+    public virtual RecurrenceDates RecurrenceDates { get; private set; } = null!;
 
     public virtual IList<RecurrencePattern> RecurrenceRules
     {
@@ -178,11 +177,8 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("RECURRENCE-ID", value);
     }
 
-    public IEvaluator Evaluator => _evaluator;
+    public IEvaluator? Evaluator => _evaluator;
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default)
+    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null)
         => RecurrenceUtil.GetOccurrences(this, startTime, endTime, options);
-
-    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default)
-        => RecurrenceUtil.GetOccurrences(this, startTime?.AsCalDateTime(), endTime?.AsCalDateTime(), options);
 }
