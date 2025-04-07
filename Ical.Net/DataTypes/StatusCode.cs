@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.IO;
 using System.Linq;
 using Ical.Net.Serialization.DataTypes;
@@ -37,7 +38,10 @@ public class StatusCode : EncodableDataType
         ? Parts[2]
         : 0;
 
-    public StatusCode() { }
+    public StatusCode()
+    {
+        Parts = System.Array.Empty<int>();
+    }
 
     public StatusCode(int[] parts)
     {
@@ -47,7 +51,11 @@ public class StatusCode : EncodableDataType
     public StatusCode(string value) : this()
     {
         var serializer = new StatusCodeSerializer();
-        CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+        var deserialized = serializer.Deserialize(new StringReader(value)) as ICopyable;
+        if (deserialized != null)
+        {
+            CopyFrom(deserialized);
+        }
     }
 
     /// <inheritdoc/>
@@ -64,7 +72,7 @@ public class StatusCode : EncodableDataType
 
     protected bool Equals(StatusCode other) => Parts.SequenceEqual(other.Parts);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
         {
