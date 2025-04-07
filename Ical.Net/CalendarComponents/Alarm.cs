@@ -91,7 +91,7 @@ public class Alarm : CalendarComponent
             // Ensure that "FromDate" has already been set
             if (fromDate == null)
             {
-                fromDate = rc.Start.Copy();
+                fromDate = rc.Start?.Copy();
             }
 
             Duration? duration = null;

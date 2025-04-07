@@ -68,7 +68,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
     /// <summary>
     /// The start date/time of the component.
     /// </summary>
-    public virtual CalDateTime DtStart
+    public virtual CalDateTime? DtStart
     {
         get => Properties.Get<CalDateTime>("DTSTART");
         set => Properties.Set("DTSTART", value);
@@ -135,7 +135,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
     /// <summary>
     /// An alias to the DTStart field (i.e. start date/time).
     /// </summary>
-    public virtual CalDateTime Start
+    public virtual CalDateTime? Start
     {
         get => DtStart;
         set => DtStart = value;

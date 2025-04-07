@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation;
 
@@ -23,26 +22,25 @@ public class TodoEvaluator : RecurringEvaluator
     {
         var beginningDate = completedDate.Copy();
 
-        if (Todo.RecurrenceRules != null)
+        foreach (var rrule in Todo.RecurrenceRules)
         {
-            foreach (var rrule in Todo.RecurrenceRules)
-            {
-                DetermineStartingRecurrence(rrule, ref beginningDate);
-            }
+            DetermineStartingRecurrence(rrule, ref beginningDate);
         }
 
         DetermineStartingRecurrence(Todo.RecurrenceDates.GetAllPeriods(), ref beginningDate);
         DetermineStartingRecurrence(Todo.RecurrenceDates.GetAllDates(), ref beginningDate);
 
-        if (Todo.ExceptionRules != null)
+        foreach (var exrule in Todo.ExceptionRules)
         {
-            foreach (var exrule in Todo.ExceptionRules)
-            {
-                DetermineStartingRecurrence(exrule, ref beginningDate);
-            }
+            DetermineStartingRecurrence(exrule, ref beginningDate);
         }
 
         DetermineStartingRecurrence(Todo.ExceptionDates.GetAllDates(), ref beginningDate);
+
+        if (Todo.Start == null)
+        {
+            throw new InvalidOperationException("Todo.Start must not be null.");
+        }
 
         return Evaluate(Todo.Start, beginningDate, currDt.AddSeconds(1), options);
     }
@@ -67,7 +65,7 @@ public class TodoEvaluator : RecurringEvaluator
 
     private void DetermineStartingRecurrence(RecurrencePattern recur, ref CalDateTime referenceDateTime)
     {
-        if (recur.Count.HasValue)
+        if (recur.Count.HasValue && Todo.Start != null)
         {
             referenceDateTime = Todo.Start.Copy();
         }
