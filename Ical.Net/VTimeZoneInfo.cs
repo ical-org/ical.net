@@ -99,8 +99,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
             TimeZoneNames.Add(value ?? string.Empty);
         }
     }
-
-
+    
     public virtual UtcOffset? OffsetFrom
     {
         get => Properties.Get<UtcOffset>("TZOFFSETFROM");
@@ -112,8 +111,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         get => Properties.Get<UtcOffset>("TZOFFSETTO");
         set => Properties.Set("TZOFFSETTO", value);
     }
-
-
+    
     public virtual IList<string> TimeZoneNames
     {
         get => Properties.GetMany<string>("TZNAME");
@@ -160,7 +158,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("RRULE", value);
     }
 
-    public virtual CalDateTime RecurrenceId
+    public virtual CalDateTime? RecurrenceId
     {
         get => Properties.Get<CalDateTime>("RECURRENCE-ID");
         set => Properties.Set("RECURRENCE-ID", value);

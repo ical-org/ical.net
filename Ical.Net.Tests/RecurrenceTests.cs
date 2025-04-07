@@ -2866,8 +2866,8 @@ public class RecurrenceTests
             Assert.That(evt, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(items.ContainsKey(evt.Summary), Is.True, "Holiday text '" + evt.Summary + "' did not match known holidays.");
-                Assert.That(o.Period.StartTime, Is.EqualTo(items[evt.Summary]), "Date/time of holiday '" + evt.Summary + "' did not match.");
+                Assert.That(items.ContainsKey(evt.Summary!), Is.True, "Holiday text '" + evt.Summary + "' did not match known holidays.");
+                Assert.That(o.Period.StartTime, Is.EqualTo(items[evt.Summary!]), "Date/time of holiday '" + evt.Summary + "' did not match.");
             });
         }
     }

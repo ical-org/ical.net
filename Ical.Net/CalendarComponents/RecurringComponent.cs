@@ -41,7 +41,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("CATEGORIES", value);
     }
 
-    public virtual string Class
+    public virtual string? Class
     {
         get => Properties.Get<string>("CLASS");
         set => Properties.Set("CLASS", value);
@@ -53,13 +53,13 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("CONTACT", value);
     }
 
-    public virtual CalDateTime Created
+    public virtual CalDateTime? Created
     {
         get => Properties.Get<CalDateTime>("CREATED");
         set => Properties.Set("CREATED", value);
     }
 
-    public virtual string Description
+    public virtual string? Description
     {
         get => Properties.Get<string>("DESCRIPTION");
         set => Properties.Set("DESCRIPTION", value);
@@ -88,7 +88,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("EXRULE", value);
     }
 
-    public virtual CalDateTime LastModified
+    public virtual CalDateTime? LastModified
     {
         get => Properties.Get<CalDateTime>("LAST-MODIFIED");
         set => Properties.Set("LAST-MODIFIED", value);
@@ -114,7 +114,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("RRULE", value);
     }
 
-    public virtual CalDateTime RecurrenceId
+    public virtual CalDateTime? RecurrenceId
     {
         get => Properties.Get<CalDateTime>("RECURRENCE-ID");
         set => Properties.Set("RECURRENCE-ID", value);
@@ -141,7 +141,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => DtStart = value;
     }
 
-    public virtual string Summary
+    public virtual string? Summary
     {
         get => Properties.Get<string>("SUMMARY");
         set => Properties.Set("SUMMARY", value);

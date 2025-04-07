@@ -21,6 +21,6 @@ public interface IRecurrable : IGetOccurrences
     IList<RecurrencePattern> ExceptionRules { get; set; }
     RecurrenceDates RecurrenceDates { get; }
     IList<RecurrencePattern> RecurrenceRules { get; set; }
-    CalDateTime RecurrenceId { get; set; }
+    CalDateTime? RecurrenceId { get; set; }
     IEvaluator? Evaluator { get; }
 }
