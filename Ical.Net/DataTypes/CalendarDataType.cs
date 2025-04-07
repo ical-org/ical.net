@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Runtime.Serialization;
 using Ical.Net.Proxies;
@@ -14,10 +15,11 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public abstract class CalendarDataType : ICalendarDataType
 {
-    private IParameterCollection _parameters;
-    private ParameterCollectionProxy _proxy;
+    // Well be set with Initialize()
+    private IParameterCollection _parameters = null!;
+    private ParameterCollectionProxy _proxy = null!;
 
-    private ICalendarObject _associatedObject;
+    private ICalendarObject? _associatedObject;
 
     protected CalendarDataType()
     {
@@ -49,10 +51,10 @@ public abstract class CalendarDataType : ICalendarDataType
 
     protected virtual void OnDeserialized(StreamingContext context) { }
 
-    public virtual Type GetValueType()
+    public virtual Type? GetValueType()
     {
         // See RFC 5545 Section 3.2.20.
-        if (_proxy != null && _proxy.ContainsKey("VALUE"))
+        if (_proxy.ContainsKey("VALUE"))
         {
             switch (_proxy.Get("VALUE"))
             {
@@ -92,12 +94,12 @@ public abstract class CalendarDataType : ICalendarDataType
         return null;
     }
 
-    public virtual void SetValueType(string type)
+    public virtual void SetValueType(string? type)
     {
-        _proxy?.Set("VALUE", type?.ToUpper());
+        _proxy.Set("VALUE", type?.ToUpper());
     }
 
-    public virtual ICalendarObject AssociatedObject
+    public virtual ICalendarObject? AssociatedObject
     {
         get => _associatedObject;
         set
@@ -124,9 +126,9 @@ public abstract class CalendarDataType : ICalendarDataType
         }
     }
 
-    public virtual Calendar Calendar => _associatedObject?.Calendar;
+    public virtual Calendar? Calendar => _associatedObject?.Calendar;
 
-    public virtual string Language
+    public virtual string? Language
     {
         get => Parameters.Get("LANGUAGE");
         set => Parameters.Set("LANGUAGE", value);
@@ -149,7 +151,7 @@ public abstract class CalendarDataType : ICalendarDataType
     /// Creates a deep copy of the <see cref="T"/> object.
     /// </summary>
     /// <returns>The copy of the <see cref="T"/> object.</returns>
-    public virtual T Copy<T>()
+    public virtual T? Copy<T>()
     {
         var type = GetType();
         var obj = Activator.CreateInstance(type, true) as ICopyable;
