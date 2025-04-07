@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using Ical.Net.Serialization.DataTypes;
 
@@ -45,7 +46,7 @@ public class UtcOffset : EncodableDataType
 
     protected bool Equals(UtcOffset other) => Offset == other.Offset;
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
         {
