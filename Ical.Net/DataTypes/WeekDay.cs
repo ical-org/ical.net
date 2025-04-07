@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,18 +38,24 @@ public class WeekDay : EncodableDataType
     public WeekDay(string value)
     {
         var serializer = new WeekDaySerializer();
-        CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+        if (serializer.Deserialize(new StringReader(value)) is ICopyable deserializedObject)
+        {
+            CopyFrom(deserializedObject);
+        }
+        else
+        {
+            throw new ArgumentException($"Cannot convert '{value}' to a {nameof(WeekDay)} object.", nameof(value));
+        }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-        if (!(obj is WeekDay))
+        if (obj is not WeekDay weekday)
         {
             return false;
         }
 
-        var ds = (WeekDay) obj;
-        return ds.Offset == Offset && ds.DayOfWeek == DayOfWeek;
+        return weekday.Offset == Offset && weekday.DayOfWeek == DayOfWeek;
     }
 
     public override int GetHashCode() => (Offset ?? 0).GetHashCode() ^ DayOfWeek.GetHashCode();
@@ -63,19 +70,14 @@ public class WeekDay : EncodableDataType
         DayOfWeek = weekday.DayOfWeek;
     }
 
-    public int CompareTo(object obj)
+    public int CompareTo(object? obj)
     {
         var weekday = obj switch
         {
-            string => new WeekDay(obj.ToString()),
+            string str => new WeekDay(str),
             WeekDay day => day,
-            _ => null
+            _ => throw new ArgumentException($"Must be of type 'string' or 'Weekday'", nameof(obj))
         };
-
-        if (weekday == null)
-        {
-            throw new ArgumentException();
-        }
 
         var compare = DayOfWeek.CompareTo(weekday.DayOfWeek);
         if (compare == 0)
