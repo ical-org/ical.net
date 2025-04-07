@@ -47,11 +47,9 @@ public class AlarmOccurrence : IComparable<AlarmOccurrence>
 
     public int CompareTo(AlarmOccurrence? other)
     {
-        if (other == null || other.Period == null)
-        {
-            return 1;
-        }
-        return Period?.CompareTo(other.Period) ?? 1;
+        if (other == null) return 1;
+        if (Period == null) return other.Period == null ? 0 : -1;
+        return Period.CompareTo(other.Period);
     }
 
     protected bool Equals(AlarmOccurrence other)

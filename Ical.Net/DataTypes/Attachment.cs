@@ -97,9 +97,15 @@ public class Attachment : EncodableDataType
     protected bool Equals(Attachment? other)
     {
         var firstPart = Equals(Uri, other?.Uri) && ValueEncoding.Equals(other?.ValueEncoding);
-        return Data == null
-            ? firstPart
-            : firstPart && other?.Data != null && Data.SequenceEqual(other.Data);
+        if (Data == null && other?.Data == null)
+        {
+            return firstPart;
+        }
+        if (Data == null || other?.Data == null)
+        {
+            return false;
+        }
+        return firstPart && Data.SequenceEqual(other.Data);
     }
 
     public override bool Equals(object? obj)

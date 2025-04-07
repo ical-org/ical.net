@@ -198,15 +198,11 @@ public class Attendee : EncodableDataType
 
     private List<string>? _delegatedTo;
     /// <summary> DELEGATED-TO, to indicate the calendar users that the original request was delegated to </summary>
-    public virtual IList<string>? DelegatedTo
+    public virtual IList<string> DelegatedTo
     {
         get => _delegatedTo ?? (_delegatedTo = new List<string>(Parameters.GetMany("DELEGATED-TO")));
         set
         {
-            if (value == null)
-            {
-                return;
-            }
             _delegatedTo = new List<string>(value);
             Parameters.Set("DELEGATED-TO", value);
         }
@@ -219,10 +215,6 @@ public class Attendee : EncodableDataType
         get => _delegatedFrom ?? (_delegatedFrom = new List<string>(Parameters.GetMany("DELEGATED-FROM")));
         set
         {
-            if (value == null)
-            {
-                return;
-            }
             _delegatedFrom = new List<string>(value);
             Parameters.Set("DELEGATED-FROM", value);
         }
@@ -276,9 +268,8 @@ public class Attendee : EncodableDataType
                                              && Rsvp == other.Rsvp
                                              && Equals(Value, other.Value)
                                              && Members.SequenceEqual(other.Members)
-                                             && (DelegatedTo?.SequenceEqual(other.DelegatedTo ?? Enumerable.Empty<string>()) ?? other.DelegatedTo == null)
-                                             && (DelegatedFrom?.SequenceEqual(other.DelegatedFrom ?? Enumerable.Empty<string>()) ?? other.DelegatedFrom == null);
-
+                                             && DelegatedTo.SequenceEqual(other.DelegatedTo)
+                                             && DelegatedFrom.SequenceEqual(other.DelegatedFrom);
     public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;

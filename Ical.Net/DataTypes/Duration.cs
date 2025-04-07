@@ -119,8 +119,8 @@ public struct Duration
     /// Parses the specified value according to RFC 5545.
     /// </summary>
     /// <exception cref="System.FormatException">Thrown if the value is not a valid duration.</exception>
-    public static Duration? Parse(string value) =>
-        (Duration?) new DurationSerializer().Deserialize(new StringReader(value));
+    public static Duration Parse(string value) =>
+        (Duration) new DurationSerializer().Deserialize(new StringReader(value))!; // throws if null
 
     /// <summary>
     /// Creates an instance that represents the given time span as exact value, that is, time-only.
