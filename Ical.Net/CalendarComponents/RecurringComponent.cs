@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,7 +80,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("EXDATE", value);
     }
 
-    public virtual ExceptionDates ExceptionDates { get; internal set; }
+    public virtual ExceptionDates ExceptionDates { get; internal set; } = null!;
 
     public virtual IList<RecurrencePattern> ExceptionRules
     {
@@ -105,7 +106,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("RDATE", value);
     }
 
-    public virtual RecurrenceDates RecurrenceDates { get; internal set; }
+    public virtual RecurrenceDates RecurrenceDates { get; internal set; } = null!;
 
     public virtual IList<RecurrencePattern> RecurrenceRules
     {
@@ -151,9 +152,9 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
     /// </summary>
     public virtual ICalendarObjectList<Alarm> Alarms => new CalendarObjectListProxy<Alarm>(Children);
 
-    private RecurringEvaluator _evaluator;
+    private RecurringEvaluator? _evaluator;
 
-    public virtual IEvaluator Evaluator => _evaluator;
+    public virtual IEvaluator? Evaluator => _evaluator;
 
     public RecurringComponent()
     {
@@ -169,7 +170,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
 
     private void Initialize()
     {
-        this._evaluator = new RecurringEvaluator(this);
+        _evaluator = new RecurringEvaluator(this);
         ExceptionDates = new ExceptionDates(ExceptionDatesPeriodLists);
         RecurrenceDates = new RecurrenceDates(RecurrenceDatesPeriodLists);
     }
@@ -189,17 +190,13 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         Initialize();
     }
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default)
+    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null)
         => RecurrenceUtil.GetOccurrences(this, startTime, endTime, options);
-
-    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default)
-        => RecurrenceUtil.GetOccurrences(this, startTime?.AsCalDateTime(), endTime?.AsCalDateTime(), options);
 
     public virtual IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 
-    public virtual IList<AlarmOccurrence> PollAlarms(CalDateTime startTime, CalDateTime endTime)
-        => Alarms?.SelectMany(a => a.Poll(startTime, endTime)).ToList()
-           ?? new List<AlarmOccurrence>();
+    public virtual IList<AlarmOccurrence> PollAlarms(CalDateTime? startTime, CalDateTime? endTime)
+        => Alarms.SelectMany(a => a.Poll(startTime, endTime)).ToList();
 
     protected bool Equals(RecurringComponent other)
     {
@@ -220,7 +217,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         return result;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;

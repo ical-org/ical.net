@@ -60,13 +60,7 @@ public class CalendarCollection : List<Calendar>
     public IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default)
         => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime, options));
 
-    public IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default)
-        => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime, options));
-
     public IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default) where T : IRecurringComponent
-        => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime, options));
-
-    public IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime, EvaluationOptions options = default) where T : IRecurringComponent
         => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime, options));
 
     private FreeBusy CombineFreeBusy(FreeBusy main, FreeBusy current)

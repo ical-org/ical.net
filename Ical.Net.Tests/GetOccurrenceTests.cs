@@ -32,8 +32,8 @@ internal class GetOccurrenceTests
         calendar.Events.Add(vEvent);
         calendar.Events.Add(vEvent2);
 
-        var searchStart = DateTime.Parse("2015-12-29");
-        var searchEnd = DateTime.Parse("2017-02-10");
+        var searchStart = new CalDateTime(2015, 12, 29);
+        var searchEnd = new CalDateTime(2017, 02, 10);
         var occurrences = calendar.GetOccurrences(searchStart, searchEnd).OrderBy(o => o.Period.StartTime).ToList();
 
         var firstOccurrence = occurrences.First();
@@ -143,7 +143,7 @@ END:VEVENT
 END:VCALENDAR";
 
         var calendar = GetCalendars(ical);
-        var date = new DateTime(2016, 10, 11);
+        var date = new CalDateTime(2016, 10, 11);
         var occurrences = calendar.GetOccurrences(date, date.AddDays(1)).ToList();
 
         //We really want to make sure this doesn't explode
@@ -207,7 +207,7 @@ END:VCALENDAR";
             """;
 
         var collection = Calendar.Load(ical);
-        var startCheck = new DateTime(2016, 11, 11);
+        var startCheck = new CalDateTime(2016, 11, 11);
         var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1)).ToList();
 
         CalDateTime[] expectedStartDates = [
@@ -261,7 +261,7 @@ END:VCALENDAR";
             """;
 
         var collection = Calendar.Load(ical);
-        var startCheck = new DateTime(2023, 10, 1);
+        var startCheck = new CalDateTime(2023, 10, 1);
         var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1))
             .ToList();
 

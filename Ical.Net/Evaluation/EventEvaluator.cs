@@ -42,7 +42,7 @@ public class EventEvaluator : RecurringEvaluator
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceTime, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceTime, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
     {
         // Evaluate recurrences normally
         var periods = base.Evaluate(referenceTime, periodStart, periodEnd, options)

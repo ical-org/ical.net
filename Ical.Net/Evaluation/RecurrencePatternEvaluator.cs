@@ -108,7 +108,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
     private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, RecurrencePattern pattern,
-         EvaluationOptions options)
+         EvaluationOptions? options)
     {
         // In the first step, we work with DateTime values, so we need to convert the CalDateTime to DateTime
         var originalDate = seed;
@@ -146,7 +146,7 @@ public class RecurrencePatternEvaluator : Evaluator
         return EnumerateDates(originalDate, seedCopy, periodStartDt, periodEndDt, pattern, options);
     }
 
-    private IEnumerable<CalDateTime> EnumerateDates(CalDateTime originalDate, CalDateTime intervalRefTime, CalDateTime? periodStart, CalDateTime? periodEnd, RecurrencePattern pattern, EvaluationOptions options)
+    private IEnumerable<CalDateTime> EnumerateDates(CalDateTime originalDate, CalDateTime intervalRefTime, CalDateTime? periodStart, CalDateTime? periodEnd, RecurrencePattern pattern, EvaluationOptions? options)
     {
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
@@ -897,7 +897,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="periodEnd">End (excl.) of the period occurrences are generated for.</param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
     {
         if (Pattern.Frequency != FrequencyType.None && Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
         {
