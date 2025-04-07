@@ -6,6 +6,7 @@
 using BenchmarkDotNet.Attributes;
 using System;
 using System.Linq;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Benchmarks;
 
@@ -68,8 +69,8 @@ END:VCALENDAR";
 
         var calendar = Calendar.Load(e);
         var calendarEvent = calendar.Events.First();
-        var searchStart = new DateTime(2009, 06, 20);
-        var searchEnd = new DateTime(2011, 06, 23);
+        var searchStart = new CalDateTime(2009, 06, 20);
+        var searchEnd = new CalDateTime(2011, 06, 23);
         var occurrences = calendarEvent.GetOccurrences(searchStart, searchEnd);
     }
 
@@ -130,8 +131,8 @@ END:VCALENDAR";
 
         var calendar = Calendar.Load(e);
         var calendarEvent = calendar.Events.First();
-        var searchStart = new DateTime(2009, 06, 20);
-        var searchEnd = new DateTime(2011, 06, 23);
+        var searchStart = new CalDateTime(2009, 06, 20);
+        var searchEnd = new CalDateTime(2011, 06, 23);
         var occurrences = calendarEvent.GetOccurrences(searchStart, searchEnd);
     }
 }

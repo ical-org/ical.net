@@ -23,9 +23,6 @@ public class TimeZoneInfoEvaluator : RecurringEvaluator
 
     public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
     {
-        // Time zones must include an effective start date/time
-        // and must provide an evaluator.
-
         // Always include the reference date in the results
         var periods = base.Evaluate(referenceDate, periodStart, periodEnd, options);
         return periods;
