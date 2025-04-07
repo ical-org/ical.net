@@ -125,8 +125,11 @@ public class Alarm : CalendarComponent
         }
         else
         {
-            var dt = Trigger.DateTime.Copy();
-            occurrences.Add(new AlarmOccurrence(this, dt, rc));
+            var dt = Trigger?.DateTime?.Copy();
+            if (dt != null)
+            {
+                occurrences.Add(new AlarmOccurrence(this, dt, rc));
+            }
         }
 
         // If a REPEAT and DURATION value were specified,
@@ -150,8 +153,7 @@ public class Alarm : CalendarComponent
         var results = new List<AlarmOccurrence>();
 
         // Evaluate the alarms to determine the recurrences
-        var rc = Parent as RecurringComponent;
-        if (rc == null)
+        if (Parent is not RecurringComponent rc)
         {
             return results;
         }
