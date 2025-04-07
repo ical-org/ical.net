@@ -69,10 +69,7 @@ internal class PeriodList : EncodableDataType, IList<Period>
 
         foreach (var p in list)
         {
-            if (p != null)
-            {
-                Add(p.Copy<Period>()!);
-            }
+            Add(p.Copy<Period>()!);
         }
     }
 
