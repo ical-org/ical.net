@@ -3,7 +3,7 @@
 // Licensed under the MIT license.
 //
 
-using System;
+#nullable enable
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,18 +22,18 @@ public class Todo : RecurringComponent, IAlarmContainer
     private readonly TodoEvaluator _mEvaluator;
 
     /// <summary>
-    /// The date/time the todo was completed.
+    /// The date/time when the item was completed.
     /// </summary>
-    public virtual CalDateTime Completed
+    public virtual CalDateTime? Completed
     {
         get => Properties.Get<CalDateTime>("COMPLETED");
         set => Properties.Set("COMPLETED", value);
     }
 
     /// <summary>
-    /// The due date of the todo item.
+    /// The due date of the item.
     /// </summary>
-    public virtual CalDateTime Due
+    public virtual CalDateTime? Due
     {
         get => Properties.Get<CalDateTime>("DUE");
         set
@@ -43,7 +43,7 @@ public class Todo : RecurringComponent, IAlarmContainer
     }
 
     /// <summary>
-    /// The duration of the todo item.
+    /// The duration of the item.
     /// </summary>
     // NOTE: Duration is not supported by all systems,
     // (i.e. iPhone) and cannot co-exist with Due.
@@ -64,13 +64,13 @@ public class Todo : RecurringComponent, IAlarmContainer
         }
     }
 
-    public virtual GeographicLocation GeographicLocation
+    public virtual GeographicLocation? GeographicLocation
     {
         get => Properties.Get<GeographicLocation>("GEO");
         set => Properties.Set("GEO", value);
     }
 
-    public virtual string Location
+    public virtual string? Location
     {
         get => Properties.Get<string>("LOCATION");
         set => Properties.Set("LOCATION", value);
@@ -89,7 +89,7 @@ public class Todo : RecurringComponent, IAlarmContainer
     }
 
     /// <summary>
-    /// The status of the todo item.
+    /// The status of the item.
     /// </summary>
     public virtual string Status
     {
@@ -124,16 +124,16 @@ public class Todo : RecurringComponent, IAlarmContainer
     }
 
     /// <summary>
-    /// Use this method to determine if a todo item has been completed.
+    /// Use this method to determine if an item has been completed.
     /// This takes into account recurrence items and the previous date
     /// of completion, if any.
     /// <note>
-    /// This method evaluates the recurrence pattern for this TODO
+    /// This method evaluates the recurrence pattern for this item
     /// as necessary to ensure all relevant information is taken
     /// into account to give the most accurate result possible.
     /// </note>
     /// </summary>
-    /// <returns>True if the todo item has been completed</returns>
+    /// <returns>True if the item has been completed</returns>
     public virtual bool IsCompleted(CalDateTime currDt)
     {
         if (Status == TodoStatus.Completed)
@@ -144,7 +144,7 @@ public class Todo : RecurringComponent, IAlarmContainer
             }
 
             // Evaluate to the previous occurrence.
-            var periods = _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt, options: default);
+            var periods = _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt, options: null);
 
             return periods.All(p => !p.StartTime.GreaterThan(Completed) || !currDt.GreaterThanOrEqual(p.StartTime));
         }
@@ -152,7 +152,7 @@ public class Todo : RecurringComponent, IAlarmContainer
     }
 
     /// <summary>
-    /// Returns 'True' if the todo item is Active as of <paramref name="currDt"/>.
+    /// Returns 'True' if the item is Active as of <paramref name="currDt"/>.
     /// An item is Active if it requires action of some sort.
     /// </summary>
     /// <param name="currDt">The date and time to test.</param>
@@ -162,9 +162,9 @@ public class Todo : RecurringComponent, IAlarmContainer
            && (!IsCompleted(currDt) && !IsCancelled);
 
     /// <summary>
-    /// Returns True if the todo item was cancelled.
+    /// Returns True if the item was cancelled.
     /// </summary>
-    /// <returns>True if the todo was cancelled, False otherwise.</returns>
+    /// <returns>True if the item was cancelled, False otherwise.</returns>
     public virtual bool IsCancelled => string.Equals(Status, TodoStatus.Cancelled, TodoStatus.Comparison);
 
     public override IEvaluator Evaluator => _mEvaluator;

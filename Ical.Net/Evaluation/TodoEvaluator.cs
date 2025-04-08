@@ -18,7 +18,7 @@ public class TodoEvaluator : RecurringEvaluator
 
     public TodoEvaluator(Todo todo) : base(todo) { }
 
-    internal IEnumerable<Period> EvaluateToPreviousOccurrence(CalDateTime completedDate, CalDateTime currDt, EvaluationOptions options)
+    internal IEnumerable<Period> EvaluateToPreviousOccurrence(CalDateTime completedDate, CalDateTime currDt, EvaluationOptions? options)
     {
         var beginningDate = completedDate.Copy();
 
