@@ -48,5 +48,5 @@ public abstract class Evaluator : IEvaluator
         }
     }
 
-    public abstract IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions options);
+    public abstract IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options);
 }

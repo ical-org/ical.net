@@ -3,7 +3,9 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 namespace Ical.Net.Evaluation;
+
 public class EvaluationOptions
 {
     /// <summary>
@@ -12,7 +14,7 @@ public class EvaluationOptions
     /// </summary>
     /// <remarks>
     /// This option only applies to the evaluation of RecurrencePatterns.
-    ///
+    /// <para/>
     /// If the specified number of increments is exceeded without finding a recurrence, an
     /// exception of type <see cref="Ical.Net.Evaluation.EvaluationLimitExceededException"/> will be thrown.
     /// </remarks>
