@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using Ical.Net.DataTypes;
 using Ical.Net.Proxies;
 using Ical.Net.Utility;
@@ -83,23 +84,25 @@ public class VTimeZone : CalendarComponent
         }
         else
         {
-            // first, get the latest standard and daylight intervals, find the oldest recurring date in both, set the RRULES for it, and create a VTimeZoneInfos out of them.
-            //standard
+            // first, get the latest standard and daylight intervals, find the oldest recurring date in both,
+            // set the RRULES for it, and create a VTimeZoneInfos out of them.
+
+            // Standard
             var standardIntervals = intervals.Where(x => x.Savings.ToTimeSpan() == new TimeSpan(0)).ToList();
-            var latestStandardInterval = standardIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
+            var latestStandardInterval = standardIntervals.OrderByDescending(x => x.Start).First();
             matchingStandardIntervals = GetMatchingIntervals(standardIntervals, latestStandardInterval, true);
             var latestStandardTimeZoneInfo = CreateTimeZoneInfo(matchingStandardIntervals, intervals);
             vTimeZone.AddChild(latestStandardTimeZoneInfo);
 
             // check to see if there is no active, future daylight savings (ie, America/Phoenix)
-            if (latestStandardInterval != null && (latestStandardInterval.HasEnd ? latestStandardInterval.End : Instant.MaxValue) != Instant.MaxValue)
+            if ((latestStandardInterval.HasEnd ? latestStandardInterval.End : Instant.MaxValue) != Instant.MaxValue)
             {
                 //daylight
                 var daylightIntervals = intervals.Where(x => x.Savings.ToTimeSpan() != new TimeSpan(0)).ToList();
 
                 if (daylightIntervals.Any())
                 {
-                    var latestDaylightInterval = daylightIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
+                    var latestDaylightInterval = daylightIntervals.OrderByDescending(x => x.Start).First();
                     matchingDaylightIntervals = GetMatchingIntervals(daylightIntervals, latestDaylightInterval, true);
                     var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
                     vTimeZone.AddChild(latestDaylightTimeZoneInfo);
@@ -157,7 +160,7 @@ public class VTimeZone : CalendarComponent
         }
         else if (isOnlyInterval)
         {
-            delta = new TimeSpan();
+            delta = TimeSpan.Zero;
         }
 
         var utcOffset = oldestInterval.StandardOffset.ToTimeSpan();
@@ -242,11 +245,7 @@ public class VTimeZone : CalendarComponent
         foreach (var interval in intervals)
         {
             var time = interval.IsoLocalStart.ToDateTimeUnspecified();
-            var date = new CalDateTime(time, true).Add(delta.ToDurationExact()) as CalDateTime;
-            if (date == null)
-            {
-                continue;
-            }
+            var date = new CalDateTime(time, true).Add(delta.ToDurationExact());
 
             tzi.RecurrenceDates.Add(date);
         }
@@ -293,8 +292,8 @@ public class VTimeZone : CalendarComponent
         Location = _nodaZone.Id;
     }
 
-    private DateTimeZone _nodaZone;
-    private string _tzId;
+    private DateTimeZone _nodaZone = DateTimeZone.Utc; // must initialize
+    private string? _tzId;
     public virtual string TzId
     {
         get
@@ -336,8 +335,8 @@ public class VTimeZone : CalendarComponent
         }
     }
 
-    private Uri _url;
-    public virtual Uri Url
+    private Uri? _url;
+    public virtual Uri? Url
     {
         get => _url ?? (_url = Properties.Get<Uri>("TZURL"));
         set
@@ -347,10 +346,10 @@ public class VTimeZone : CalendarComponent
         }
     }
 
-    private string _location;
-    public string Location
+    private string? _location;
+    public string? Location
     {
-        get => _location ?? (_location = Properties.Get<string>("X-LIC-LOCATION"));
+        get => _location ??= Properties.Get<string>("X-LIC-LOCATION");
         set
         {
             _location = value;
@@ -365,20 +364,20 @@ public class VTimeZone : CalendarComponent
             && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
             && Equals(Url, other.Url);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
-        return Equals((VTimeZone)obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((VTimeZone) obj);
     }
 
     public override int GetHashCode()
     {
         unchecked
         {
-            var hashCode = Name.GetHashCode();
-            hashCode = (hashCode * 397) ^ (TzId?.GetHashCode() ?? 0);
+            var hashCode = Name?.GetHashCode() ?? 0;
+            hashCode = (hashCode * 397) ^ (TzId.GetHashCode());
             hashCode = (hashCode * 397) ^ (Url?.GetHashCode() ?? 0);
             return hashCode;
         }
