@@ -65,7 +65,9 @@ public class TodoEvaluator : RecurringEvaluator
 
     private void DetermineStartingRecurrence(RecurrencePattern recur, ref CalDateTime referenceDateTime)
     {
-        if (recur.Count.HasValue && Todo.Start != null)
+        if (Todo.Start is null) return;
+
+        if (recur.Count.HasValue)
         {
             referenceDateTime = Todo.Start.Copy();
         }

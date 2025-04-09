@@ -89,7 +89,13 @@ public class VTimeZone : CalendarComponent
 
             // Standard
             var standardIntervals = intervals.Where(x => x.Savings.ToTimeSpan() == new TimeSpan(0)).ToList();
-            var latestStandardInterval = standardIntervals.OrderByDescending(x => x.Start).First();
+            var latestStandardInterval = standardIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
+
+            if (latestStandardInterval == null)
+            {
+                return vTimeZone;
+            }
+
             matchingStandardIntervals = GetMatchingIntervals(standardIntervals, latestStandardInterval, true);
             var latestStandardTimeZoneInfo = CreateTimeZoneInfo(matchingStandardIntervals, intervals);
             vTimeZone.AddChild(latestStandardTimeZoneInfo);
@@ -100,10 +106,11 @@ public class VTimeZone : CalendarComponent
                 //daylight
                 var daylightIntervals = intervals.Where(x => x.Savings.ToTimeSpan() != new TimeSpan(0)).ToList();
 
-                if (daylightIntervals.Any())
+                if (daylightIntervals.Count != 0)
                 {
                     var latestDaylightInterval = daylightIntervals.OrderByDescending(x => x.Start).First();
-                    matchingDaylightIntervals = GetMatchingIntervals(daylightIntervals, latestDaylightInterval, true);
+                    matchingDaylightIntervals =
+                        GetMatchingIntervals(daylightIntervals, latestDaylightInterval, true);
                     var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
                     vTimeZone.AddChild(latestDaylightTimeZoneInfo);
                 }
@@ -139,9 +146,9 @@ public class VTimeZone : CalendarComponent
     private static VTimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true,
         bool isOnlyInterval = false)
     {
-        if (matchedIntervals == null || !matchedIntervals.Any())
+        if (matchedIntervals == null || matchedIntervals.Count == 0)
         {
-            throw new ArgumentException("No intervals found in matchedIntervals");
+            throw new InvalidOperationException("No intervals found in matchedIntervals");
         }
 
         var oldestInterval = matchedIntervals.OrderBy(x => x.Start).FirstOrDefault();
