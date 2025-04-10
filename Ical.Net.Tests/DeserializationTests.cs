@@ -612,4 +612,45 @@ public class DeserializationTests
             Assert.That(deserialized, Does.Not.Contain("PRODID:").And.Not.Contains("VERSION:"));
         });
     }
+
+    [Test, Category("DurationSerializer")]
+    [TestCase("PT1H", 0, 0, 1, 0, 0)]
+    [TestCase("PT1H30M", 0, 0, 1, 30, 0)]
+    [TestCase("PT1H30M45S", 0, 0, 1, 30, 45)]
+    [TestCase("P1D", 0, 1, 0, 0, 0)]
+    [TestCase("-P1D", 0, -1, 0, 0, 0)]
+    [TestCase("P1W", 1, 0, 0, 0, 0)]
+    [TestCase("-P1W", -1, 0, 0, 0, 0)]
+    [TestCase("P0W", null, null, null, null, null)]
+    [TestCase("-P0W")]
+    [TestCase("-P1D", 0, -1, 0, 0, 0)]
+    [TestCase("-P1W", -1, 0, 0, 0, 0)]
+    [TestCase("PT0S", 0, 0, 0, 0, 0)]
+    [TestCase("-PT0S", 0, 0, 0, 0, 0)]
+    [TestCase("-PT1H", 0, 0, -1, 0, 0)]
+    [TestCase("-PT1H30M", 0, 0, -1, -30, 0)]
+    [TestCase("-P1D", 0, -1, 0, 0, 0)]
+    [TestCase("PT125H199M199S", 0, 0, 125, 199, 199)]
+    [TestCase("-PT125H199M199S", 0, 0, -125, -199, -199)]
+    [TestCase("-P0DT0H30M0S", 0, 0, 0, -30, 0)]
+    [TestCase("-P1DT1H", 0, -1, -1, 0, 0)]
+    [TestCase("PT1000H", 0, 0, 1000, 0, 0)]
+    [TestCase("-PT1000H", null, null, -1000, null, null)]
+    public void DurationSerializer_ShouldReturn_ExpectedDuration(string text, int? weeks = null, int? days = null, int? hours = null, int? minutes = null, int? seconds = null)
+    {
+        var s = new DurationSerializer();
+        Assert.That((Duration?) s.Deserialize(new StringReader(text)), Is.EqualTo(new Duration(weeks, days, hours, minutes, seconds)));
+    }
+
+    [Test, Category("DurationSerializer")]
+    [TestCase("")]
+    [TestCase("Invalid")]
+    public void Duration_InvalidArguments_ShouldThrow(string text)
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(new DurationSerializer().Deserialize(new StringReader(text)), Is.Null);
+            Assert.That(Duration.Parse(text), Is.Null);
+        });
+    }
 }

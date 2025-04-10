@@ -58,6 +58,12 @@ public class DurationSerializer : SerializerBase
         new Regex(@"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase, RegexDefaults.Timeout);
 
+    /// <summary>
+    /// Deserializes a string into a <see cref="Duration"/> object.
+    /// </summary>
+    /// <param name="tr"></param>
+    /// <returns>A <see cref="Duration"/> for a valid input pattern, or <see langword="null"/> otherwise.</returns>
+    /// <exception cref="FormatException">Cannot create a <see cref="Duration"/> from the input pattern values.</exception>
     public override object? Deserialize(TextReader tr)
     {
         var value = tr.ReadToEnd();
@@ -68,8 +74,10 @@ public class DurationSerializer : SerializerBase
 
             if (!match.Success)
             {
-                // This happens for EXDATE values, which never have a duration,
-                // and also RDATE values, where the optional duration is missing.
+                // This happens for
+                // * EXDATE values, which never have a duration,
+                // * RDATE values, where the optional duration is missing
+                // * TRIGGER values that are invalid
                 return null;
             }
 
@@ -92,7 +100,7 @@ public class DurationSerializer : SerializerBase
                 days = GetGroupInt("day");
                 if (match.Groups["time"].Success)
                 {
-                    hours  = GetGroupInt("hour");
+                    hours = GetGroupInt("hour");
                     minutes = GetGroupInt("minute");
                     seconds = GetGroupInt("second");
                 }
@@ -100,9 +108,9 @@ public class DurationSerializer : SerializerBase
 
             return new Duration(sign * weeks, sign * days, sign * hours, sign * minutes, sign * seconds);
         }
-        catch
+        catch (Exception ex)
         {
-            throw new FormatException();
+            throw new FormatException(ex.Message, ex);
         }
     }
 }
