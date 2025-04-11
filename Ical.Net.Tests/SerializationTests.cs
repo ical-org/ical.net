@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -348,15 +349,18 @@ public class SerializationTests
         }
     }
 
-    //todo test event:
-    //-GeographicLocation
-    //-Alarm
-
     [Test]
     public void ZeroDuration_Test()
     {
         var result = new DurationSerializer().SerializeToString(Duration.Zero);
         Assert.That("P0D".Equals(result, StringComparison.Ordinal), Is.True);
+    }
+
+    [Test]
+    public void Duration_FromWeeks()
+    {
+        var weeks = Duration.FromWeeks(4).Weeks;
+        Assert.That(weeks, Is.EqualTo(4));
     }
 
     [Test]
