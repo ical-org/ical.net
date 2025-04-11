@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.Diagnostics;
 using Ical.Net.CalendarComponents;
 using Ical.Net.Serialization.DataTypes;
@@ -52,7 +53,7 @@ public class GeographicLocation : EncodableDataType
 
     protected bool Equals(GeographicLocation other) => Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;

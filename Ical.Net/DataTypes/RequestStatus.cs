@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
 
@@ -13,23 +14,23 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class RequestStatus : EncodableDataType
 {
-    private string _mDescription;
-    private string _mExtraData;
-    private StatusCode _mStatusCode;
+    private string? _mDescription;
+    private string? _mExtraData;
+    private StatusCode? _mStatusCode;
 
-    public virtual string Description
+    public virtual string? Description
     {
         get => _mDescription;
         set => _mDescription = value;
     }
 
-    public virtual string ExtraData
+    public virtual string? ExtraData
     {
         get => _mExtraData;
         set => _mExtraData = value;
     }
 
-    public virtual StatusCode StatusCode
+    public virtual StatusCode? StatusCode
     {
         get => _mStatusCode;
         set => _mStatusCode = value;
@@ -40,7 +41,10 @@ public class RequestStatus : EncodableDataType
     public RequestStatus(string value) : this()
     {
         var serializer = new RequestStatusSerializer();
-        CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+        if (serializer.Deserialize(new StringReader(value)) is ICopyable deserializedObject)
+        {
+            CopyFrom(deserializedObject);
+        }
     }
 
     /// <inheritdoc/>
@@ -52,10 +56,7 @@ public class RequestStatus : EncodableDataType
             return;
         }
 
-        if (rs.StatusCode != null)
-        {
-            StatusCode = rs.StatusCode;
-        }
+        StatusCode = rs.StatusCode;
         Description = rs.Description;
         ExtraData = rs.ExtraData;
     }
@@ -69,7 +70,7 @@ public class RequestStatus : EncodableDataType
     protected bool Equals(RequestStatus other) => string.Equals(_mDescription, other._mDescription) && string.Equals(_mExtraData, other._mExtraData) &&
                                                   Equals(_mStatusCode, other._mStatusCode);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
         {
