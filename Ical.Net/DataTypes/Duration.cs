@@ -22,6 +22,12 @@ public struct Duration
     /// <exception cref="ArgumentException">Thrown if not all non-null arguments have the same sign.</exception>
     public Duration(int? weeks = null, int? days = null, int? hours = null, int? minutes = null, int? seconds = null)
     {
+        weeks = NullIfZero(weeks);
+        days = NullIfZero(days);
+        hours = NullIfZero(hours);
+        minutes = NullIfZero(minutes);
+        seconds = NullIfZero(seconds);
+
         var sign = GetSign(weeks) ?? GetSign(days) ?? GetSign(hours) ?? GetSign(minutes) ?? GetSign(seconds) ?? 1;
         if (
             ((GetSign(weeks) ?? sign) != sign)
@@ -119,8 +125,8 @@ public struct Duration
     /// Parses the specified value according to RFC 5545.
     /// </summary>
     /// <exception cref="System.FormatException">Thrown if the value is not a valid duration.</exception>
-    public static Duration Parse(string value) =>
-        (Duration) new DurationSerializer().Deserialize(new StringReader(value))!; // throws if null
+    public static Duration? Parse(string value) =>
+        (Duration?) new DurationSerializer().Deserialize(new StringReader(value))!;
 
     /// <summary>
     /// Creates an instance that represents the given time span as exact value, that is, time-only.
@@ -200,7 +206,7 @@ public struct Duration
     /// <summary>
     /// Returns a negated copy of the given instance.
     /// </summary>
-    public static Duration operator-(Duration d) =>
+    public static Duration operator -(Duration d) =>
         new Duration(-d.Weeks, -d.Days, -d.Hours, -d.Minutes, -d.Seconds);
 
     /// <inheritdoc/>
@@ -215,5 +221,5 @@ public struct Duration
             < 0 => -1
         };
 
-    private static int? NullIfZero(int v) => (v == 0) ? null : v;
+    private static int? NullIfZero(int? v) => (v == 0) ? null : v;
 }
