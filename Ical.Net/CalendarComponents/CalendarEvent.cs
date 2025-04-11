@@ -174,7 +174,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// Returns <see langword="true"/> if the event is an all-day event,
     /// meaning the <see cref="RecurringComponent.Start"/> is a 'DATE' value type.
     /// </summary>
-    public virtual bool IsAllDay => !Start.HasTime;
+    public virtual bool IsAllDay => Start?.HasTime == false;
 
     /// <summary>
     /// The geographic location (lat/long) of the event.
@@ -346,16 +346,14 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         {
             return 1;
         }
-        if (DtStart.Equals(other.DtStart))
+        if (DtStart is null)
         {
-            return 0;
+            return other.DtStart is null ? 0 : -1;
         }
-        if (DtStart.LessThan(other.DtStart))
+        if (other.DtStart is null)
         {
-            return -1;
+            return 1;
         }
-
-        // meaning DtStart is greater than other
-        return 1;
+        return DtStart.CompareTo(other.DtStart);
     }
 }

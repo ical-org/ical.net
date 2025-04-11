@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.Runtime.Serialization;
 using Ical.Net.Evaluation;
 
@@ -35,9 +36,17 @@ public class Journal : RecurringComponent
         base.OnDeserializing(context);
     }
 
-    protected bool Equals(Journal other) => Start.Equals(other.Start) && Equals(other as RecurringComponent);
+    protected bool Equals(Journal? other)
+    {
+        if (Start == null || other?.Start == null)
+        {
+            return Start == other?.Start; // Both must be null to be considered equal
+        }
 
-    public override bool Equals(object obj)
+        return Start.Equals(other.Start) && Equals(other as RecurringComponent);
+    }
+
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;

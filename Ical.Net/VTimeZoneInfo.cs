@@ -47,8 +47,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
 
     public override bool Equals(object? obj)
     {
-        var tzi = obj as VTimeZoneInfo;
-        if (tzi != null)
+        if (obj is VTimeZoneInfo tzi)
         {
             return Equals(TimeZoneName, tzi.TimeZoneName) &&
                    Equals(OffsetFrom, tzi.OffsetFrom) &&
@@ -100,44 +99,32 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
             TimeZoneNames.Add(value ?? string.Empty);
         }
     }
-
-    public virtual UtcOffset TZOffsetFrom
-    {
-        get => OffsetFrom;
-        set => OffsetFrom = value;
-    }
-
-    public virtual UtcOffset OffsetFrom
+    
+    public virtual UtcOffset? OffsetFrom
     {
         get => Properties.Get<UtcOffset>("TZOFFSETFROM");
         set => Properties.Set("TZOFFSETFROM", value);
     }
 
-    public virtual UtcOffset OffsetTo
+    public virtual UtcOffset? OffsetTo
     {
         get => Properties.Get<UtcOffset>("TZOFFSETTO");
         set => Properties.Set("TZOFFSETTO", value);
     }
-
-    public virtual UtcOffset TZOffsetTo
-    {
-        get => OffsetTo;
-        set => OffsetTo = value;
-    }
-
+    
     public virtual IList<string> TimeZoneNames
     {
         get => Properties.GetMany<string>("TZNAME");
         set => Properties.Set("TZNAME", value);
     }
 
-    public virtual CalDateTime DtStart
+    public virtual CalDateTime? DtStart
     {
         get => Start;
         set => Start = value;
     }
 
-    public virtual CalDateTime Start
+    public virtual CalDateTime? Start
     {
         get => Properties.Get<CalDateTime>("DTSTART");
         set => Properties.Set("DTSTART", value);
@@ -171,7 +158,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("RRULE", value);
     }
 
-    public virtual CalDateTime RecurrenceId
+    public virtual CalDateTime? RecurrenceId
     {
         get => Properties.Get<CalDateTime>("RECURRENCE-ID");
         set => Properties.Set("RECURRENCE-ID", value);

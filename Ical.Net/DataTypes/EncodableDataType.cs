@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 namespace Ical.Net.DataTypes;
 
 /// <summary>
@@ -10,7 +11,7 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class EncodableDataType : CalendarDataType, IEncodableDataType
 {
-    public virtual string Encoding
+    public virtual string? Encoding
     {
         get => Parameters.Get("ENCODING");
         set => Parameters.Set("ENCODING", value);
