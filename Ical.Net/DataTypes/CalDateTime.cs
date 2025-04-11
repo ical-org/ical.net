@@ -228,7 +228,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         _tzId = calDt._tzId;
     }
 
-    public bool Equals(CalDateTime other) => this == other;
+    public bool Equals(CalDateTime? other) => this == other;
 
     /// <inheritdoc/>
     public override bool Equals(object? obj)
@@ -598,22 +598,22 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is less than <paramref name="dt"/>.
     /// </summary>
-    public bool LessThan(CalDateTime dt) => this < dt;
+    public bool LessThan(CalDateTime? dt) => this < dt;
 
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than <paramref name="dt"/>.
     /// </summary>
-    public bool GreaterThan(CalDateTime dt) => this > dt;
+    public bool GreaterThan(CalDateTime? dt) => this > dt;
 
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is less than or equal to <paramref name="dt"/>.
     /// </summary>
-    public bool LessThanOrEqual(CalDateTime dt) => this <= dt;
+    public bool LessThanOrEqual(CalDateTime? dt) => this <= dt;
 
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than or equal to <paramref name="dt"/>.
     /// </summary>
-    public bool GreaterThanOrEqual(CalDateTime dt) => this >= dt;
+    public bool GreaterThanOrEqual(CalDateTime? dt) => this >= dt;
 
     /// <summary>
     /// Compares the current instance with another <see cref="CalDateTime"/> object and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other CalDateTime.
