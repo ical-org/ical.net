@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using Ical.Net.CalendarComponents;
 
@@ -27,13 +28,13 @@ public class Occurrence : IComparable<Occurrence>
 
     public bool Equals(Occurrence other) => Equals(Period, other.Period) && Equals(Source, other.Source);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
         {
             return false;
         }
-        return obj is Occurrence && Equals((Occurrence) obj);
+        return obj is Occurrence occurrence && Equals(occurrence);
     }
 
     public override int GetHashCode()
@@ -44,21 +45,7 @@ public class Occurrence : IComparable<Occurrence>
         }
     }
 
-    public override string ToString()
-    {
-        var s = "Occurrence";
-        if (Source != null)
-        {
-            s = Source.GetType().Name + " ";
-        }
+    public override string ToString() => $"Occurrence {Source.GetType().Name} ({Period.StartTime})";
 
-        if (Period != null)
-        {
-            s += "(" + Period.StartTime + ")";
-        }
-
-        return s;
-    }
-
-    public int CompareTo(Occurrence other) => Period.CompareTo(other.Period);
+    public int CompareTo(Occurrence? other) => Period.CompareTo(other?.Period);
 }

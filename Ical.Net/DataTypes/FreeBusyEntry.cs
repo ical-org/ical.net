@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 namespace Ical.Net.DataTypes;
 
 public class FreeBusyEntry : Period
@@ -16,8 +17,8 @@ public class FreeBusyEntry : Period
 
     public FreeBusyEntry(Period period, FreeBusyStatus status)
     {
-        //Sets the status associated with a given period, which requires copying the period values
-        //Probably the Period object should just have a FreeBusyStatus directly?
+        // Sets the status associated with a given period, which requires copying the period values
+        // Probably the Period object should just have a FreeBusyStatus directly?
         CopyFrom(period);
         Status = status;
     }
