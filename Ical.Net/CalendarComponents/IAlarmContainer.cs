@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
 
@@ -16,7 +17,7 @@ public interface IAlarmContainer
     ICalendarObjectList<Alarm> Alarms { get; }
 
     ///  <summary>
-    ///  Polls <see cref="Alarm"/>s for occurrences within the <see cref="Evaluate"/>d
+    ///  Polls <see cref="Alarm"/>s for occurrences within the <see cref="RecurringComponent.GetOccurrences"/>d
     ///  time frame of this <see cref="RecurringComponent"/>.  For each evaluated
     ///  occurrence if this component, each <see cref="Alarm"/> is polled for its
     ///  corresponding alarm occurrences.
@@ -24,5 +25,5 @@ public interface IAlarmContainer
     /// <param name="startTime">The earliest allowable alarm occurrence to poll, or <c>null</c>.</param>
     /// <param name="endTime"></param>
     /// <returns>A List of <see cref="AlarmOccurrence"/> objects, one for each occurrence of the <see cref="Alarm"/>.</returns>
-    IList<AlarmOccurrence> PollAlarms(CalDateTime startTime, CalDateTime endTime);
+    IList<AlarmOccurrence> PollAlarms(CalDateTime? startTime, CalDateTime? endTime);
 }

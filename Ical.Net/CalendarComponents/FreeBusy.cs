@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,23 +15,23 @@ namespace Ical.Net.CalendarComponents;
 
 public class FreeBusy : UniqueComponent, IMergeable
 {
-    public static FreeBusy Create(ICalendarObject obj, FreeBusy freeBusyRequest, EvaluationOptions options = default)
+    public static FreeBusy? Create(ICalendarObject obj, FreeBusy freeBusyRequest, EvaluationOptions? options = null)
     {
-        if (!(obj is IGetOccurrencesTyped))
+        if ((obj is not IGetOccurrencesTyped occ))
         {
             return null;
         }
-        var getOccurrences = (IGetOccurrencesTyped) obj;
-        var occurrences = getOccurrences.GetOccurrences<CalendarEvent>(freeBusyRequest.Start, freeBusyRequest.End, options);
+
+        var occurrences = occ.GetOccurrences<CalendarEvent>(freeBusyRequest.Start, freeBusyRequest.End, options);
         var contacts = new List<string>();
         var isFilteredByAttendees = false;
 
-        if (freeBusyRequest.Attendees != null && freeBusyRequest.Attendees.Count > 0)
+        if (freeBusyRequest.Attendees.Count > 0)
         {
             isFilteredByAttendees = true;
             var attendees = freeBusyRequest.Attendees
                 .Where(a => a.Value != null)
-                .Select(a => a.Value.OriginalString.Trim());
+                .Select(a => a.Value!.OriginalString.Trim());
             contacts.AddRange(attendees);
         }
 
@@ -41,12 +42,8 @@ public class FreeBusy : UniqueComponent, IMergeable
 
         foreach (var o in occurrences)
         {
-            var uc = o.Source as IUniqueComponent;
-
-            if (uc == null)
-            {
+            if (o.Source is not IUniqueComponent uc)
                 continue;
-            }
 
             var evt = uc as CalendarEvent;
             var accepted = false;
@@ -68,8 +65,7 @@ public class FreeBusy : UniqueComponent, IMergeable
                 var participatingAttendeeQuery = uc.Attendees
                     .Where(attendee =>
                         attendee.Value != null
-                        && contacts.Contains(attendee.Value.OriginalString.Trim())
-                        && attendee.ParticipationStatus != null)
+                        && contacts.Contains(attendee.Value.OriginalString.Trim()))
                     .Select(pa => pa.ParticipationStatus.ToUpperInvariant());
 
                 foreach (var participatingAttendee in participatingAttendeeQuery)
@@ -98,7 +94,7 @@ public class FreeBusy : UniqueComponent, IMergeable
         return fb;
     }
 
-    public static FreeBusy CreateRequest(CalDateTime fromInclusive, CalDateTime toExclusive, Organizer organizer, IEnumerable<Attendee> contacts)
+    public static FreeBusy CreateRequest(CalDateTime fromInclusive, CalDateTime toExclusive, Organizer? organizer, IEnumerable<Attendee>? contacts)
     {
         var fb = new FreeBusy
         {
@@ -158,7 +154,7 @@ public class FreeBusy : UniqueComponent, IMergeable
         set => Properties.Set("DTEND", value);
     }
 
-    public virtual FreeBusyStatus GetFreeBusyStatus(Period period)
+    public virtual FreeBusyStatus GetFreeBusyStatus(Period? period)
     {
         var status = FreeBusyStatus.Free;
         if (period == null)
@@ -173,7 +169,7 @@ public class FreeBusy : UniqueComponent, IMergeable
         return status;
     }
 
-    public virtual FreeBusyStatus GetFreeBusyStatus(CalDateTime dt)
+    public virtual FreeBusyStatus GetFreeBusyStatus(CalDateTime? dt)
     {
         var status = FreeBusyStatus.Free;
         if (dt == null)
@@ -190,7 +186,7 @@ public class FreeBusy : UniqueComponent, IMergeable
 
     public virtual void MergeWith(IMergeable obj)
     {
-        if (!(obj is FreeBusy fb))
+        if (obj is not FreeBusy fb)
         {
             return;
         }

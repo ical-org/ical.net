@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
@@ -18,7 +19,7 @@ public class CalendarComponent : CalendarObject, ICalendarComponent
     /// <summary>
     /// Returns a list of properties that are associated with the iCalendar object.
     /// </summary>
-    public virtual CalendarPropertyList Properties { get; protected set; }
+    public virtual CalendarPropertyList Properties { get; protected set; } = null!;
 
     public CalendarComponent() : base()
     {
@@ -47,8 +48,7 @@ public class CalendarComponent : CalendarObject, ICalendarComponent
     {
         base.CopyFrom(obj);
 
-        var c = obj as ICalendarComponent;
-        if (c == null)
+        if (obj is not ICalendarComponent c)
         {
             return;
         }

@@ -3,11 +3,11 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -61,13 +61,13 @@ public class UniqueComponent : CalendarComponent, IUniqueComponent, IComparable<
         set => Properties.Set("COMMENT", value);
     }
 
-    public virtual CalDateTime DtStamp
+    public virtual CalDateTime? DtStamp
     {
         get => Properties.Get<CalDateTime>("DTSTAMP");
         set => Properties.Set("DTSTAMP", value);
     }
 
-    public virtual Organizer Organizer
+    public virtual Organizer? Organizer
     {
         get => Properties.Get<Organizer>("ORGANIZER");
         set => Properties.Set("ORGANIZER", value);
@@ -79,7 +79,7 @@ public class UniqueComponent : CalendarComponent, IUniqueComponent, IComparable<
         set => Properties.Set("REQUEST-STATUS", value);
     }
 
-    public virtual Uri Url
+    public virtual Uri? Url
     {
         get => Properties.Get<Uri>("URL");
         set => Properties.Set("URL", value);
@@ -92,26 +92,25 @@ public class UniqueComponent : CalendarComponent, IUniqueComponent, IComparable<
         EnsureProperties();
     }
 
-    public int CompareTo(UniqueComponent other)
-        => string.Compare(Uid, other.Uid, StringComparison.OrdinalIgnoreCase);
+    public int CompareTo(UniqueComponent? other)
+        => string.Compare(Uid, other?.Uid, StringComparison.OrdinalIgnoreCase);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-        if (obj is RecurringComponent && obj != this)
+        if (obj is not RecurringComponent rec || rec == this)
+            return base.Equals(obj);
+
+        if (Uid != null)
         {
-            var r = (RecurringComponent)obj;
-            if (Uid != null)
-            {
-                return Uid.Equals(r.Uid);
-            }
-            return Uid == r.Uid;
+            return Uid.Equals(rec.Uid);
         }
-        return base.Equals(obj);
+
+        return Uid == rec.Uid;
     }
 
     public override int GetHashCode() => Uid?.GetHashCode() ?? base.GetHashCode();
 
-    public virtual string Uid
+    public virtual string? Uid
     {
         get => Properties.Get<string>("UID");
         set => Properties.Set("UID", value);

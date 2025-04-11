@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation;
 
@@ -19,30 +18,29 @@ public class TodoEvaluator : RecurringEvaluator
 
     public TodoEvaluator(Todo todo) : base(todo) { }
 
-    internal IEnumerable<Period> EvaluateToPreviousOccurrence(CalDateTime completedDate, CalDateTime currDt, EvaluationOptions options)
+    internal IEnumerable<Period> EvaluateToPreviousOccurrence(CalDateTime completedDate, CalDateTime currDt, EvaluationOptions? options)
     {
         var beginningDate = completedDate.Copy();
 
-        if (Todo.RecurrenceRules != null)
+        foreach (var rrule in Todo.RecurrenceRules)
         {
-            foreach (var rrule in Todo.RecurrenceRules)
-            {
-                DetermineStartingRecurrence(rrule, ref beginningDate);
-            }
+            DetermineStartingRecurrence(rrule, ref beginningDate);
         }
 
         DetermineStartingRecurrence(Todo.RecurrenceDates.GetAllPeriods(), ref beginningDate);
         DetermineStartingRecurrence(Todo.RecurrenceDates.GetAllDates(), ref beginningDate);
 
-        if (Todo.ExceptionRules != null)
+        foreach (var exrule in Todo.ExceptionRules)
         {
-            foreach (var exrule in Todo.ExceptionRules)
-            {
-                DetermineStartingRecurrence(exrule, ref beginningDate);
-            }
+            DetermineStartingRecurrence(exrule, ref beginningDate);
         }
 
         DetermineStartingRecurrence(Todo.ExceptionDates.GetAllDates(), ref beginningDate);
+
+        if (Todo.Start == null)
+        {
+            throw new InvalidOperationException("Todo.Start must not be null.");
+        }
 
         return Evaluate(Todo.Start, beginningDate, currDt.AddSeconds(1), options);
     }
@@ -67,6 +65,8 @@ public class TodoEvaluator : RecurringEvaluator
 
     private void DetermineStartingRecurrence(RecurrencePattern recur, ref CalDateTime referenceDateTime)
     {
+        if (Todo.Start is null) return;
+
         if (recur.Count.HasValue)
         {
             referenceDateTime = Todo.Start.Copy();

@@ -108,7 +108,7 @@ public class RecurrenceTests
             """;
 
         var cal = Calendar.Load(calendarIcalStr);
-        var tzid = cal.Events.Single().Start.TzId;
+        var tzid = cal.Events.Single().Start?.TzId;
 
         var periodSerializer = new PeriodSerializer();
         var periods = expectedPeriods
@@ -140,7 +140,7 @@ public class RecurrenceTests
 
         while (dt.Year < 2011)
         {
-            if (dt.GreaterThan(evt.Start) &&
+            if (dt.GreaterThan(evt.Start!) &&
                 (dt.Year % 2 == 1) && // Every-other year from 2005
                 (dt.Month == 1) &&
                 (dt.DayOfWeek == DayOfWeek.Sunday))
@@ -203,7 +203,7 @@ public class RecurrenceTests
         var i = 0;
         while (dt.Year < 1998)
         {
-            if (dt.GreaterThanOrEqual(evt.Start) &&
+            if (dt.GreaterThanOrEqual(evt.Start!) &&
                 dt.LessThan(new CalDateTime(1997, 12, 24, 0, 0, 0, _tzid)))
             {
                 Assert.Multiple(() =>
@@ -375,7 +375,7 @@ public class RecurrenceTests
         var i = 0;
         while (dt.Year < 2001)
         {
-            if (dt.GreaterThanOrEqual(evt.Start) &&
+            if (dt.GreaterThanOrEqual(evt.Start!) &&
                 dt.Month == 1 &&
                 dt.LessThanOrEqual(new CalDateTime(2000, 1, 31, 9, 0, 0, _tzid)))
             {
@@ -2337,7 +2337,7 @@ public class RecurrenceTests
     public void Bug2912657()
     {
         var iCal = Calendar.Load(IcsFiles.Bug2912657);
-        var localTzid = iCal.Events.First().Start.TzId;
+        var localTzid = iCal.Events.First().Start?.TzId;
 
         // Daily recurrence
         EventOccurrenceTest(
@@ -2602,7 +2602,7 @@ public class RecurrenceTests
         for (var index = 0; index < expectedPeriods.Length; index++)
         {
             var p = expectedPeriods[index];
-            var newStart = p.StartTime.ToTimeZone(start.TzId);
+            var newStart = p.StartTime.ToTimeZone(start?.TzId);
             expectedPeriods[index] = Period.Create(newStart, end: newStart.Add(p.Duration!.Value));
         }
 
@@ -2866,8 +2866,8 @@ public class RecurrenceTests
             Assert.That(evt, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(items.ContainsKey(evt.Summary), Is.True, "Holiday text '" + evt.Summary + "' did not match known holidays.");
-                Assert.That(o.Period.StartTime, Is.EqualTo(items[evt.Summary]), "Date/time of holiday '" + evt.Summary + "' did not match.");
+                Assert.That(items.ContainsKey(evt.Summary!), Is.True, "Holiday text '" + evt.Summary + "' did not match known holidays.");
+                Assert.That(o.Period.StartTime, Is.EqualTo(items[evt.Summary!]), "Date/time of holiday '" + evt.Summary + "' did not match.");
             });
         }
     }
@@ -3904,7 +3904,7 @@ END:VCALENDAR";
         var cal = Calendar.Load(icalText);
         var evt = cal.Events.First();
         var ev = new EventEvaluator(evt);
-        var occurrences = ev.Evaluate(evt.DtStart, evt.DtStart.ToTimeZone(tzId), evt.DtStart.AddMinutes(61).ToTimeZone(tzId), null);
+        var occurrences = ev.Evaluate(evt.DtStart!, evt.DtStart!.ToTimeZone(tzId), evt.DtStart.AddMinutes(61).ToTimeZone(tzId), null);
         var occurrencesStartTimes = occurrences.Select(x => x.StartTime).Take(2).ToList();
 
         var expectedStartTimes = new[]
