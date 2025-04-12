@@ -4,16 +4,34 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ### v5
 
-* 5.0.0-pre.41 - (2025-02-20)
+#### 5.0.0-pre.42 - (2025-04-12)
+
+* Fix incorrect handling of UNTIL if falling into DST change and some related improvements in https://github.com/ical-org/ical.net/pull/738
+* Fix: Minor NRT warnings with Recurrence in https://github.com/ical-org/ical.net/pull/743
+* Fix: Benchmarks in https://github.com/ical-org/ical.net/pull/746
+* Replace `DateTime` with `CalDateTime` in `RecurrencePatternEvaluator` and related code in https://github.com/ical-org/ical.net/pull/742
+* Evaluation: Make `MaxIncrementCount` configurable in https://github.com/ical-org/ical.net/pull/750
+* Fix issue with `BYWEEKNO=1` where `UNTIL` lies in the year prior to the year of the week of the last occurrence. in https://github.com/ical-org/ical.net/pull/752
+* Remove `IServiceProvider` in https://github.com/ical-org/ical.net/pull/753
+* Update `PRODID` and `VERSION` property handling in https://github.com/ical-org/ical.net/pull/748
+* Enhance `RecurrencePatternSerializer` in https://github.com/ical-org/ical.net/pull/758
+* Evaluation: Avoid dependency on local culture settings. in https://github.com/ical-org/ical.net/pull/759
+* Change `DateTime` method args to `CalDateTime` in https://github.com/ical-org/ical.net/pull/761
+* Enable NRT in https://github.com/ical-org/ical.net/pull/762, https://github.com/ical-org/ical.net/pull/763, https://github.com/ical-org/ical.net/pull/764, https://github.com/ical-org/ical.net/pull/765. Note: The current packages are created with `NRT` disabled, The v5 final release will be fully NRT compliant.
+* Fix positive/nagative args in `Duration` CTOR in https://github.com/ical-org/ical.net/pull/767
+
+#### 5.0.0-pre.41 - (2025-02-20)
+
   * Make the time zone resolver plugable
   * Make `CalendarEvent.EffectiveDuration` and some conversion functions public.
   * Fix: Incorrect expansion behaviour after `BYWEEKNO`
 
-* 5.0.0-pre.40 - (2025-02-15)
+#### 5.0.0-pre.40 - (2025-02-15)
+
   * Fix: Derive correct file and assembly version from package version in https://github.com/ical-org/ical.net/pull/726
   * Fix inverted limiting behavior of `BYMONTHDAY` by @minichma in https://github.com/ical-org/ical.net/pull/730
 
-* 5.0.0-pre.39 - (2025-02-12)
+#### 5.0.0-pre.39 - (2025-02-12)
   * This is the first public pre-release of the next major version of **Ical.Net**. It's an extensive rewrite of the library, with a focus on performance, correctness and usability. All issues reported in prior versions have been addressed, and the library has been thoroughly tested, also using the [libical](https://github.com/libical/libical) test suite.
   * We strongly recommend using the pre-release packages, as they are more stable and feature-complete than the v4.x versions.
   * Feedback is highly appreciated.
