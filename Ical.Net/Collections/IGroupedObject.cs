@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 namespace Ical.Net.Collections;
 
 public interface IGroupedObject<TGroup>

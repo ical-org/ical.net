@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +16,7 @@ namespace Ical.Net;
 [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
 public class CalendarParameter : CalendarObject, IValueObject<string>
 {
-    private HashSet<string> _values;
+    private HashSet<string> _values = new();
 
     public CalendarParameter()
     {
@@ -27,7 +28,7 @@ public class CalendarParameter : CalendarObject, IValueObject<string>
         Initialize();
     }
 
-    public CalendarParameter(string name, string value) : base(name)
+    public CalendarParameter(string name, string? value) : base(name)
     {
         Initialize();
         AddValue(value);
@@ -72,7 +73,7 @@ public class CalendarParameter : CalendarObject, IValueObject<string>
 
     public virtual bool ContainsValue(string value) => _values.Contains(value);
 
-    public virtual int ValueCount => _values?.Count ?? 0;
+    public virtual int ValueCount => _values.Count;
 
     public virtual void SetValue(string value)
     {
@@ -87,25 +88,29 @@ public class CalendarParameter : CalendarObject, IValueObject<string>
         _values.UnionWith(values.Where(IsValidValue));
     }
 
-    private bool IsValidValue(string value) => !string.IsNullOrWhiteSpace(value);
+    private static bool IsValidValue(string? value) => !string.IsNullOrWhiteSpace(value);
 
-    public virtual void AddValue(string value)
+    public virtual void AddValue(string? value)
     {
         if (!IsValidValue(value))
         {
             return;
         }
-        _values.Add(value);
+        _values.Add(value!);
     }
 
-    public virtual void RemoveValue(string value)
-    {
-        _values.Remove(value);
-    }
+    public virtual void RemoveValue(string value) => _values.Remove(value);
 
-    public virtual string Value
+    public virtual string? Value
     {
-        get => Values?.FirstOrDefault();
-        set => SetValue(value);
+        get => Values.FirstOrDefault();
+        set
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value), "Value cannot be null.");
+            }
+            SetValue(value);
+        }
     }
 }

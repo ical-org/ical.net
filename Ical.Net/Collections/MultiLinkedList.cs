@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.Collections.Generic;
 
 namespace Ical.Net.Collections;
@@ -11,18 +12,9 @@ public class MultiLinkedList<TType> :
     List<TType>,
     IMultiLinkedList<TType>
 {
-    private IMultiLinkedList<TType> _previous;
-    private IMultiLinkedList<TType> _next;
+    private IMultiLinkedList<TType>? _previous;
 
-    public virtual void SetPrevious(IMultiLinkedList<TType> previous)
-    {
-        _previous = previous;
-    }
-
-    public virtual void SetNext(IMultiLinkedList<TType> next)
-    {
-        _next = next;
-    }
+    public virtual void SetPrevious(IMultiLinkedList<TType> previous) => _previous = previous;
 
     public virtual int StartIndex => _previous?.ExclusiveEnd ?? 0;
 

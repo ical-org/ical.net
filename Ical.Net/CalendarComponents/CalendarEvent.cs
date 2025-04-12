@@ -56,7 +56,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// </summary>
     public virtual CalDateTime? DtEnd
     {
-        get => Properties.Get<CalDateTime?>("DTEND");
+        get => Properties.Get<CalDateTime>("DTEND");
         set
         {
             if (Duration is not null) throw new InvalidOperationException("DTEND property cannot be set when DURATION property is not null.");
@@ -82,6 +82,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// </remarks>
     public virtual Duration? Duration
     {
+        // Duration is a struct, so we need to use Nullable<Duration> to allow null values
         get => Properties.Get<Duration?>("DURATION");
         set
         {
@@ -181,7 +182,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// </summary>
     public virtual GeographicLocation? GeographicLocation
     {
-        get => Properties.Get<GeographicLocation?>("GEO");
+        get => Properties.Get<GeographicLocation>("GEO");
         set => SetProperty("GEO", value);
     }
 
@@ -190,7 +191,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// </summary>
     public virtual string? Location
     {
-        get => Properties.Get<string?>("LOCATION");
+        get => Properties.Get<string>("LOCATION");
         set => SetProperty("LOCATION", value);
     }
 
@@ -212,7 +213,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// </summary>
     public virtual string? Status
     {
-        get => Properties.Get<string?>("STATUS");
+        get => Properties.Get<string>("STATUS");
         set => SetProperty("STATUS", value);
     }
 
@@ -225,7 +226,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// </summary>
     public virtual string? Transparency
     {
-        get => Properties.Get<string?>(TransparencyType.Key);
+        get => Properties.Get<string>(TransparencyType.Key);
         set => SetProperty(TransparencyType.Key, value);
     }
 
@@ -340,20 +341,5 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     }
 
     /// <inheritdoc/>
-    public int CompareTo(CalendarEvent? other)
-    {
-        if (other is null)
-        {
-            return 1;
-        }
-        if (DtStart is null)
-        {
-            return other.DtStart is null ? 0 : -1;
-        }
-        if (other.DtStart is null)
-        {
-            return 1;
-        }
-        return DtStart.CompareTo(other.DtStart);
-    }
+    public int CompareTo(CalendarEvent? other) => DtStart?.CompareTo(other?.DtStart) ?? -1;
 }

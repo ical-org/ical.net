@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,11 @@ namespace Ical.Net.Proxies;
 public class ParameterCollectionProxy : GroupedCollectionProxy<string, CalendarParameter, CalendarParameter>, IParameterCollection
 {
     protected GroupedValueList<string, CalendarParameter, CalendarParameter, string> Parameters
-        => RealObject as GroupedValueList<string, CalendarParameter, CalendarParameter, string>;
+        => (GroupedValueList<string, CalendarParameter, CalendarParameter, string>) RealObject;
 
     public ParameterCollectionProxy(IGroupedList<string, CalendarParameter> realObject) : base(realObject) { }
 
-    public virtual void SetParent(ICalendarObject parent)
+    public virtual void SetParent(ICalendarObject? parent)
     {
         foreach (var parameter in this)
         {
@@ -27,11 +28,9 @@ public class ParameterCollectionProxy : GroupedCollectionProxy<string, CalendarP
     }
 
     public virtual void Add(string name, string value)
-    {
-        RealObject.Add(new CalendarParameter(name, value));
-    }
+        => RealObject.Add(new CalendarParameter(name, value));
 
-    public virtual string Get(string name)
+    public virtual string? Get(string name)
     {
         var parameter = RealObject.FirstOrDefault(o => string.Equals(o.Name, name, StringComparison.Ordinal));
 
@@ -74,9 +73,29 @@ public class ParameterCollectionProxy : GroupedCollectionProxy<string, CalendarP
 
     public virtual void RemoveAt(int index) { }
 
-    public virtual CalendarParameter this[int index]
+    /// <summary>
+    /// The indexer for the IList interface. This is the virtual, primary implementation of the indexer.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns>
+    /// Returns the item at the specified index, or null if the index is invalid.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">For a <see langword="null"/> value.</exception>
+    public virtual CalendarParameter? this[int index]
     {
-        get { return Parameters[index]; }
-        set { }
+        get => Parameters[index];
+        set => Parameters[index] = (value ?? throw new ArgumentNullException(nameof(value)));
+    }
+
+    /// <summary>
+    /// This is an explicit non-nullable implementation of the indexer for the IList interface.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    CalendarParameter IList<CalendarParameter>.this[int index]
+    {
+        get => this[index] ?? throw new ArgumentOutOfRangeException(nameof(index));
+        set => this[index] = value;
     }
 }

@@ -17,13 +17,13 @@ namespace Ical.Net.CalendarComponents;
 /// </summary>
 public class Alarm : CalendarComponent
 {
-    public virtual string Action
+    public virtual string? Action
     {
         get => Properties.Get<string>(AlarmAction.Key);
         set => Properties.Set(AlarmAction.Key, value);
     }
 
-    public virtual Attachment Attachment
+    public virtual Attachment? Attachment
     {
         get => Properties.Get<Attachment>("ATTACH");
         set => Properties.Set("ATTACH", value);
@@ -35,13 +35,13 @@ public class Alarm : CalendarComponent
         set => Properties.Set("ATTENDEE", value);
     }
 
-    public virtual string Description
+    public virtual string? Description
     {
         get => Properties.Get<string>("DESCRIPTION");
         set => Properties.Set("DESCRIPTION", value);
     }
 
-    public virtual Duration Duration
+    public virtual Duration? Duration
     {
         get => Properties.Get<Duration>("DURATION");
         set => Properties.Set("DURATION", value);
@@ -53,7 +53,7 @@ public class Alarm : CalendarComponent
         set => Properties.Set("REPEAT", value);
     }
 
-    public virtual string Summary
+    public virtual string? Summary
     {
         get => Properties.Get<string>("SUMMARY");
         set => Properties.Set("SUMMARY", value);
@@ -182,7 +182,9 @@ public class Alarm : CalendarComponent
 
             for (var j = 0; j < Repeat; j++)
             {
-                alarmTime = alarmTime?.Add(Duration);
+                if (Duration != null)
+                    alarmTime = alarmTime?.Add(Duration.Value);
+
                 if (alarmTime != null)
                 {
                     occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy(), ao.Component));

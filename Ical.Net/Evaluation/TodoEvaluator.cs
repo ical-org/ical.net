@@ -20,6 +20,10 @@ public class TodoEvaluator : RecurringEvaluator
 
     internal IEnumerable<Period> EvaluateToPreviousOccurrence(CalDateTime completedDate, CalDateTime currDt, EvaluationOptions? options)
     {
+        // Cannot evaluate a todos that have no start date
+        if (Todo.Start == null)
+            return [];
+
         var beginningDate = completedDate.Copy();
 
         foreach (var rrule in Todo.RecurrenceRules)
@@ -69,7 +73,8 @@ public class TodoEvaluator : RecurringEvaluator
 
         if (recur.Count.HasValue)
         {
-            referenceDateTime = Todo.Start.Copy();
+            // Caller ensures that Start is not null
+            referenceDateTime = Todo.Start!.Copy();
         }
         else
         {

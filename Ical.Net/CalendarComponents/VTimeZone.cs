@@ -287,7 +287,6 @@ public class VTimeZone : CalendarComponent
         Name = Components.Timezone;
     }
 
-
     public VTimeZone(string tzId) : this()
     {
         if (string.IsNullOrWhiteSpace(tzId))
@@ -301,7 +300,7 @@ public class VTimeZone : CalendarComponent
 
     private DateTimeZone _nodaZone = DateTimeZone.Utc; // must initialize
     private string? _tzId;
-    public virtual string TzId
+    public virtual string? TzId
     {
         get
         {
@@ -322,6 +321,7 @@ public class VTimeZone : CalendarComponent
             {
                 _tzId = null;
                 Properties.Remove("TZID");
+                return;
             }
 
             _nodaZone = DateUtil.GetZone(value);
@@ -384,7 +384,7 @@ public class VTimeZone : CalendarComponent
         unchecked
         {
             var hashCode = Name?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ (TzId.GetHashCode());
+            hashCode = (hashCode * 397) ^ (TzId?.GetHashCode() ?? 0);
             hashCode = (hashCode * 397) ^ (Url?.GetHashCode() ?? 0);
             return hashCode;
         }

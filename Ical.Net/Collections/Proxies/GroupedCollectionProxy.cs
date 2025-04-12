@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,31 +21,24 @@ public class GroupedCollectionProxy<TGroup, TOriginal, TNew> :
 {
     private readonly Func<TNew, bool> _predicate;
 
-    public GroupedCollectionProxy(IGroupedCollection<TGroup, TOriginal> realObject, Func<TNew, bool> predicate = null)
+    public GroupedCollectionProxy(IGroupedCollection<TGroup, TOriginal> realObject, Func<TNew, bool>? predicate = null)
     {
         _predicate = predicate ?? (o => true);
-        SetProxiedObject(realObject);
+        RealObject = realObject;
     }
 
-    public virtual event EventHandler<ObjectEventArgs<TNew, int>> ItemAdded;
-    public virtual event EventHandler<ObjectEventArgs<TNew, int>> ItemRemoved;
+    public event EventHandler<ObjectEventArgs<TNew, int>>? ItemAdded;
+    public event EventHandler<ObjectEventArgs<TNew, int>>? ItemRemoved;
 
     protected void OnItemAdded(TNew item, int index)
-    {
-        ItemAdded?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
-    }
+        => ItemAdded?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
 
     protected void OnItemRemoved(TNew item, int index)
-    {
-        ItemRemoved?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
-    }
+        => ItemRemoved?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
 
     public virtual bool Remove(TGroup group) => RealObject.Remove(group);
 
-    public virtual void Clear(TGroup group)
-    {
-        RealObject.Clear(group);
-    }
+    public virtual void Clear(TGroup group) => RealObject.Clear(group);
 
     public virtual bool ContainsKey(TGroup group) => RealObject.ContainsKey(group);
 
@@ -55,10 +49,7 @@ public class GroupedCollectionProxy<TGroup, TOriginal, TNew> :
         .OfType<TNew>()
         .Where(_predicate);
 
-    public virtual void Add(TNew item)
-    {
-        RealObject.Add(item);
-    }
+    public virtual void Add(TNew item) => RealObject.Add(item);
 
     public virtual void Clear()
     {
@@ -105,7 +96,5 @@ public class GroupedCollectionProxy<TGroup, TOriginal, TNew> :
     public IGroupedCollection<TGroup, TOriginal> RealObject { get; private set; }
 
     public virtual void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject)
-    {
-        RealObject = realObject;
-    }
+        => RealObject = realObject;
 }

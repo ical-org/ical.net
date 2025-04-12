@@ -14,7 +14,7 @@ namespace Ical.Net.CalendarComponents;
 /// </summary>
 public class Journal : RecurringComponent
 {
-    public string Status
+    public string? Status
     {
         get => Properties.Get<string>(JournalStatus.Key);
         set => Properties.Set(JournalStatus.Key, value);

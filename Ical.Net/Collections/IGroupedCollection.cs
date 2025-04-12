@@ -3,12 +3,13 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
 namespace Ical.Net.Collections;
 
-public interface IGroupedCollection<TGroup, TItem> :
+public interface IGroupedCollection<in TGroup, TItem> :
     ICollection<TItem>
     where TItem : class, IGroupedObject<TGroup>
 {
