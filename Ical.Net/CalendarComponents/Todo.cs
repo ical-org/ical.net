@@ -91,7 +91,7 @@ public class Todo : RecurringComponent, IAlarmContainer
     /// <summary>
     /// The status of the item.
     /// </summary>
-    public virtual string Status
+    public virtual string? Status
     {
         get => Properties.Get<string>(TodoStatus.Key);
         set
@@ -171,7 +171,7 @@ public class Todo : RecurringComponent, IAlarmContainer
 
     protected override void OnDeserializing(StreamingContext context)
     {
-        //ToDo: a necessary evil, for now
+        //A necessary evil, for now
         base.OnDeserializing(context);
     }
 }

@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,11 +17,13 @@ namespace Ical.Net.Collections.Proxies;
 /// </summary>
 public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TNewValue> : IList<TNewValue>
     where TInterface : class, IGroupedObject<TGroup>, IValueObject<TOriginalValue>
+    where TGroup : notnull
+    where TNewValue : class
     where TItem : new()
 {
     private readonly GroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
     private readonly TGroup _group;
-    private TInterface _container;
+    private TInterface? _container;
 
     public GroupedValueListProxy(GroupedValueList<TGroup, TInterface, TItem, TOriginalValue> realObject, TGroup group)
     {
@@ -39,12 +42,12 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
         _container = Items.FirstOrDefault();
 
         // If no item is found, create a new object and add it to the list
-        if (!Equals(_container, default(TInterface)))
+        if (_container != null)
         {
             return _container;
         }
         var container = new TItem();
-        if (!(container is TInterface))
+        if (container is not TInterface)
         {
             throw new Exception("Could not create a container for the value - the container is not of type " + typeof(TInterface).Name);
         }
@@ -70,12 +73,13 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
             i += count;
         }
     }
-
+    
     private IEnumerator<TNewValue> GetEnumeratorInternal()
     {
         return Items
             .Where(o => o.ValueCount > 0)
-            .SelectMany(o => o.Values.OfType<TNewValue>())
+            // Values can't be null if ValueCount > 0  
+            .SelectMany(o => o.Values!.OfType<TNewValue>())
             .GetEnumerator();
     }
 
@@ -96,7 +100,7 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
         foreach (var original in items)
         {
             // Clear all values from each matching object
-            original.SetValue(default(TOriginalValue));
+            original.SetValue(default(TOriginalValue)!);
         }
     }
 
@@ -106,7 +110,7 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
     {
         Items
             .Where(o => o.Values != null)
-            .SelectMany(o => o.Values)
+            .SelectMany(o => o.Values!)
             .ToArray()
             .CopyTo(array, arrayIndex);
     }
@@ -142,7 +146,7 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
     {
         var index = -1;
 
-        if (!(item is TOriginalValue))
+        if (item is not TOriginalValue)
         {
             return index;
         }
@@ -175,7 +179,7 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
             }
 
             // Convert the items to a list
-            var items = o.Values.ToList();
+            var items = o.Values!.ToList();
             // Insert the item at the relative index within the list
             items.Insert(index - i, value);
             // Set the new list
@@ -189,38 +193,42 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
         IterateValues((o, i, count) =>
         {
             // Determine if this index is found within this object
-            if (index >= i && index < count)
-            {
-                // Convert the items to a list
-                var items = o.Values.ToList();
-                // Remove the item at the relative index within the list
-                items.RemoveAt(index - i);
-                // Set the new list
-                o.SetValue(items);
-                return false;
-            }
-            return true;
+            if (index < i || index >= count) return true;
+            // Convert the items to a list
+            var items = o.Values!.ToList();
+            // Remove the item at the relative index within the list
+            items.RemoveAt(index - i);
+            // Set the new list
+            o.SetValue(items);
+            return false;
         });
     }
 
-    public virtual TNewValue this[int index]
+    /// <summary>
+    /// The indexer for the IList interface. This is the virtual, primary implementation of the indexer.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns>
+    /// The value at the specified index, or null if the index is out of range.
+    /// </returns>
+    public virtual TNewValue? this[int index]
     {
         get
         {
             if (index >= 0 && index < Count)
             {
                 return Items
-                    .SelectMany(i => i.Values?.OfType<TNewValue>())
+                    .SelectMany(i => i.Values!.OfType<TNewValue>())
                     .Skip(index)
                     .FirstOrDefault();
             }
-            return default(TNewValue);
+            return null;
         }
         set
         {
             if (index >= 0 && index < Count)
             {
-                if (!Equals(value, default(TNewValue)))
+                if (!Equals(value, null))
                 {
                     Insert(index, value);
                     index++;
@@ -230,7 +238,26 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
         }
     }
 
-    public virtual IEnumerable<TInterface> Items => _group == null
-        ? _realObject
-        : _realObject.AllOf(_group);
+    /// <summary>
+    /// This is the explicit non-nullable implementation IList interface IList&lt;TNewValue&gt;?.this[int].
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    TNewValue IList<TNewValue>.this[int index]
+    {
+        get
+        {
+            var result = this[index];
+            if (result == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+            return result;
+        }
+        set => this[index] = value;
+    }
+
+    public virtual IEnumerable<TInterface> Items
+        => _realObject.AllOf(_group);
 }

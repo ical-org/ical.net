@@ -47,7 +47,8 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
 
     public override bool Equals(object? obj)
     {
-        if (obj is VTimeZoneInfo tzi)
+        var tzi = obj as VTimeZoneInfo;
+        if (tzi != null)
         {
             return Equals(TimeZoneName, tzi.TimeZoneName) &&
                    Equals(OffsetFrom, tzi.OffsetFrom) &&
@@ -99,7 +100,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
             TimeZoneNames.Add(value ?? string.Empty);
         }
     }
-    
+
     public virtual UtcOffset? OffsetFrom
     {
         get => Properties.Get<UtcOffset>("TZOFFSETFROM");
@@ -111,7 +112,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         get => Properties.Get<UtcOffset>("TZOFFSETTO");
         set => Properties.Set("TZOFFSETTO", value);
     }
-    
+
     public virtual IList<string> TimeZoneNames
     {
         get => Properties.GetMany<string>("TZNAME");

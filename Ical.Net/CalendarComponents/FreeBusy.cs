@@ -130,25 +130,25 @@ public class FreeBusy : UniqueComponent, IMergeable
         set => Properties.Set("FREEBUSY", value);
     }
 
-    public virtual CalDateTime DtStart
+    public virtual CalDateTime? DtStart
     {
         get => Properties.Get<CalDateTime>("DTSTART");
         set => Properties.Set("DTSTART", value);
     }
 
-    public virtual CalDateTime DtEnd
+    public virtual CalDateTime? DtEnd
     {
         get => Properties.Get<CalDateTime>("DTEND");
         set => Properties.Set("DTEND", value);
     }
 
-    public virtual CalDateTime Start
+    public virtual CalDateTime? Start
     {
         get => Properties.Get<CalDateTime>("DTSTART");
         set => Properties.Set("DTSTART", value);
     }
 
-    public virtual CalDateTime End
+    public virtual CalDateTime? End
     {
         get => Properties.Get<CalDateTime>("DTEND");
         set => Properties.Set("DTEND", value);

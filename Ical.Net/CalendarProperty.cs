@@ -62,9 +62,7 @@ public class CalendarProperty : CalendarObject, ICalendarProperty
     /// Adds a parameter to the iCalendar object.
     /// </summary>
     public virtual void AddParameter(CalendarParameter p)
-    {
-        Parameters.Add(p);
-    }
+        => Parameters.Add(p);
 
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable obj)

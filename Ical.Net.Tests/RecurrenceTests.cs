@@ -108,7 +108,7 @@ public class RecurrenceTests
             """;
 
         var cal = Calendar.Load(calendarIcalStr);
-        var tzid = cal.Events.Single().Start?.TzId;
+        var tzid = cal.Events.Single().Start!.TzId;
 
         var periodSerializer = new PeriodSerializer();
         var periods = expectedPeriods
@@ -2337,7 +2337,7 @@ public class RecurrenceTests
     public void Bug2912657()
     {
         var iCal = Calendar.Load(IcsFiles.Bug2912657);
-        var localTzid = iCal.Events.First().Start?.TzId;
+        var localTzid = iCal.Events.First().Start!.TzId;
 
         // Daily recurrence
         EventOccurrenceTest(
@@ -2602,7 +2602,7 @@ public class RecurrenceTests
         for (var index = 0; index < expectedPeriods.Length; index++)
         {
             var p = expectedPeriods[index];
-            var newStart = p.StartTime.ToTimeZone(start?.TzId);
+            var newStart = p.StartTime.ToTimeZone(start!.TzId);
             expectedPeriods[index] = Period.Create(newStart, end: newStart.Add(p.Duration!.Value));
         }
 

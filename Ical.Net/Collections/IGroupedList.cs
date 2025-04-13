@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.Collections.Generic;
 
 namespace Ical.Net.Collections;
@@ -10,6 +11,7 @@ namespace Ical.Net.Collections;
 public interface IGroupedList<TGroup, TItem> :
     IGroupedCollection<TGroup, TItem>,
     IList<TItem>
+    where TGroup : notnull
     where TItem : class, IGroupedObject<TGroup>
 {
     /// <summary>
@@ -22,5 +24,5 @@ public interface IGroupedList<TGroup, TItem> :
     /// <summary>
     /// Gets the object at the specified index.
     /// </summary>
-    new TItem this[int index] { get; }
+    new TItem? this[int index] { get; }
 }

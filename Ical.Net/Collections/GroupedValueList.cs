@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace Ical.Net.Collections;
 
 public class GroupedValueList<TGroup, TInterface, TItem, TValueType> :
     GroupedList<TGroup, TInterface>
+    where TGroup : notnull
     where TInterface : class, IGroupedObject<TGroup>, IValueObject<TValueType>
     where TItem : new()
 {
@@ -38,7 +40,7 @@ public class GroupedValueList<TGroup, TInterface, TItem, TValueType> :
         }
     }
 
-    public virtual TType Get<TType>(TGroup group)
+    public virtual TType? Get<TType>(TGroup group)
     {
         var firstItem = AllOf(group).FirstOrDefault();
         if (firstItem?.Values != null)
@@ -51,5 +53,5 @@ public class GroupedValueList<TGroup, TInterface, TItem, TValueType> :
         return default(TType);
     }
 
-    public virtual IList<TType> GetMany<TType>(TGroup group) => new GroupedValueListProxy<TGroup, TInterface, TItem, TValueType, TType>(this, group);
+    public virtual IList<TType> GetMany<TType>(TGroup group) where TType : class => new GroupedValueListProxy<TGroup, TInterface, TItem, TValueType, TType>(this, group);
 }

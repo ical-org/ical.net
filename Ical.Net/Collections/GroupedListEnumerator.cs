@@ -3,23 +3,25 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace Ical.Net.Collections;
 
 public class GroupedListEnumerator<TType> :
-    IEnumerator<TType>
+   IEnumerator<TType> where TType : class
 {
-    private readonly IList<IMultiLinkedList<TType>> _lists;
-    private IEnumerator<IMultiLinkedList<TType>> _listsEnumerator;
-    private IEnumerator<TType> _listEnumerator;
+    private readonly IList<IMultiLinkedList<TType>>? _lists;
+    private IEnumerator<IMultiLinkedList<TType>>? _listsEnumerator;
+    private IEnumerator<TType>? _listEnumerator;
 
     public GroupedListEnumerator(IList<IMultiLinkedList<TType>> lists) => _lists = lists;
 
     public virtual TType Current
-        => _listEnumerator == null
-            ? default(TType)
+        => _listEnumerator == null || _listEnumerator.Current == null
+            ? throw new InvalidOperationException("Current is null.")
             : _listEnumerator.Current;
 
     public virtual void Dispose()
@@ -38,15 +40,15 @@ public class GroupedListEnumerator<TType> :
     }
 
     object IEnumerator.Current
-        => _listEnumerator == null
-            ? default(TType)
+        => _listEnumerator == null || _listEnumerator.Current == null
+            ? throw new InvalidOperationException("Current is null.")
             : _listEnumerator.Current;
 
     private bool MoveNextList()
     {
         if (_listsEnumerator == null)
         {
-            _listsEnumerator = _lists.GetEnumerator();
+            _listsEnumerator = _lists?.GetEnumerator();
         }
 
         if (_listsEnumerator == null)
@@ -60,10 +62,6 @@ public class GroupedListEnumerator<TType> :
         }
 
         DisposeListEnumerator();
-        if (_listsEnumerator.Current == null)
-        {
-            return false;
-        }
 
         _listEnumerator = _listsEnumerator.Current.GetEnumerator();
         return true;

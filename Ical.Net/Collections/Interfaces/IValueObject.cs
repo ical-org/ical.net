@@ -3,13 +3,14 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.Collections.Generic;
 
 namespace Ical.Net.Collections.Interfaces;
 
 public interface IValueObject<T>
 {
-    IEnumerable<T> Values { get; }
+    IEnumerable<T>? Values { get; }
 
     bool ContainsValue(T value);
     void SetValue(T value);
