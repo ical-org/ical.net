@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Reflection;
 using Ical.Net.CalendarComponents;
@@ -29,7 +30,7 @@ public class SerializerFactory : ISerializerFactory
     /// </summary>
     /// <param name="objectType">The type of object to be serialized.</param>
     /// <param name="ctx">The serialization context.</param>
-    public virtual ISerializer Build(Type objectType, SerializationContext ctx)
+    public virtual ISerializer? Build(Type? objectType, SerializationContext ctx)
     {
         if (objectType == null)
         {
@@ -81,7 +82,7 @@ public class SerializerFactory : ISerializerFactory
         }
         else if (typeof(ICalendarDataType).IsAssignableFrom(objectType))
         {
-            s = _mDataTypeSerializerFactory.Build(objectType, ctx);
+            s = _mDataTypeSerializerFactory.Build(objectType, ctx)!;
         }
         // Default to a string serializer, which simply calls
         // ToString() on the value to serialize it.

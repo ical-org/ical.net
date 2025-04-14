@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -53,14 +54,14 @@ internal class SerializationUtil
     }
 
     private static ConcurrentDictionary<Type, List<MethodInfo>> _onDeserializedMethods = new ConcurrentDictionary<Type, List<MethodInfo>>();
-    private static List<MethodInfo> GetDeserializedMethods(Type targetType)
+    private static List<MethodInfo> GetDeserializedMethods(Type? targetType)
     {
         if (targetType == null)
         {
             return new List<MethodInfo>();
         }
-        List<MethodInfo> methodInfos;
-        if (_onDeserializedMethods.TryGetValue(targetType, out methodInfos))
+
+        if (_onDeserializedMethods.TryGetValue(targetType, out var methodInfos))
         {
             return methodInfos;
         }

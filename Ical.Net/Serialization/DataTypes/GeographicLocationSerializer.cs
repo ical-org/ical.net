@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Globalization;
 using System.IO;
@@ -18,50 +19,47 @@ public class GeographicLocationSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(GeographicLocation);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
-        var g = obj as GeographicLocation;
-        if (g == null)
+        if (obj is not GeographicLocation location)
         {
             return null;
         }
 
-        var value = g.Latitude.ToString("0.000000", CultureInfo.InvariantCulture.NumberFormat) + ";"
-            + g.Longitude.ToString("0.000000", CultureInfo.InvariantCulture.NumberFormat);
-        return Encode(g, value);
+        var value = location.Latitude.ToString("0.000000", CultureInfo.InvariantCulture.NumberFormat) + ";"
+            + location.Longitude.ToString("0.000000", CultureInfo.InvariantCulture.NumberFormat);
+        return Encode(location, value);
     }
 
-    public GeographicLocation Deserialize(string value)
+    public GeographicLocation? Deserialize(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
             return null;
         }
 
-        var g = CreateAndAssociate() as GeographicLocation;
-        if (g == null)
+        if (CreateAndAssociate() is not GeographicLocation location)
         {
             return null;
         }
 
         // Decode the value, if necessary!
-        value = Decode(g, value);
+        var decoded = Decode(location, value);
+        if (decoded == null) return null;
 
-        var values = value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+        var values = decoded.Split([';'], StringSplitOptions.RemoveEmptyEntries);
         if (values.Length != 2)
         {
             return null;
         }
 
-        double lat;
-        double lon;
-        double.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out lat);
-        double.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out lon);
-        g.Latitude = lat;
-        g.Longitude = lon;
+        double.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out var lat);
+        double.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out var lon);
+        location.Latitude = lat;
+        location.Longitude = lon;
 
-        return g;
+        return location;
     }
 
-    public override object Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
+    public override object? Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
 }

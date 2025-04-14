@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,7 @@ namespace Ical.Net.Serialization;
 
 public class CalendarSerializer : ComponentSerializer
 {
-    private readonly Calendar _calendar;
+    private readonly Calendar? _calendar;
 
     public CalendarSerializer()
         : this(new SerializationContext()) { }
@@ -23,16 +24,16 @@ public class CalendarSerializer : ComponentSerializer
 
     public CalendarSerializer(SerializationContext ctx) : base(ctx) { }
 
-    public virtual string SerializeToString() => SerializeToString(_calendar);
+    public virtual string? SerializeToString() => SerializeToString(_calendar);
 
     protected override IComparer<ICalendarProperty> PropertySorter => new CalendarPropertySorter();
 
 
-    public override object Deserialize(TextReader tr) => null;
+    public override object? Deserialize(TextReader tr) => null;
 
     private class CalendarPropertySorter : IComparer<ICalendarProperty>
     {
-        public int Compare(ICalendarProperty x, ICalendarProperty y)
+        public int Compare(ICalendarProperty? x, ICalendarProperty? y)
         {
             if (x == y)
             {

@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -10,7 +11,7 @@ namespace Ical.Net.Serialization;
 
 public class SerializationContext
 {
-    private static SerializationContext _default;
+    private static SerializationContext? _default;
 
     /// <summary>
     /// Gets the Singleton instance of the SerializationContext class.
@@ -19,10 +20,7 @@ public class SerializationContext
     {
         get
         {
-            if (_default == null)
-            {
-                _default = new SerializationContext();
-            }
+            _default ??= new SerializationContext();
 
             // Create a new serialization context that doesn't contain any objects
             // (and is non-static).  That way, if any objects get pushed onto
@@ -51,7 +49,7 @@ public class SerializationContext
         SetService(new EncodingProvider(this));
     }
 
-    public virtual void Push(object item)
+    public virtual void Push(object? item)
     {
         if (item != null)
         {
@@ -59,7 +57,7 @@ public class SerializationContext
         }
     }
 
-    public virtual object Pop()
+    public virtual object? Pop()
     {
         if (_mStack.Count > 0)
         {
@@ -72,7 +70,7 @@ public class SerializationContext
         return null;
     }
 
-    public virtual object Peek()
+    public virtual object? Peek()
     {
         if (_mStack.Count > 0)
         {
@@ -93,23 +91,11 @@ public class SerializationContext
 
     public virtual T GetService<T>(string name) => _mServiceProvider.GetService<T>(name);
 
-    public virtual void SetService(string name, object obj)
-    {
-        _mServiceProvider.SetService(name, obj);
-    }
+    public virtual void SetService(string name, object obj) => _mServiceProvider.SetService(name, obj);
 
-    public virtual void SetService(object obj)
-    {
-        _mServiceProvider.SetService(obj);
-    }
+    public virtual void SetService(object obj) => _mServiceProvider.SetService(obj);
 
-    public virtual void RemoveService(Type type)
-    {
-        _mServiceProvider.RemoveService(type);
-    }
+    public virtual void RemoveService(Type type) => _mServiceProvider.RemoveService(type);
 
-    public virtual void RemoveService(string name)
-    {
-        _mServiceProvider.RemoveService(name);
-    }
+    public virtual void RemoveService(string name) => _mServiceProvider.RemoveService(name);
 }
