@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace Ical.Net;
 [DebuggerDisplay("{Name}:{Value}")]
 public class CalendarProperty : CalendarObject, ICalendarProperty
 {
-    private List<object> _values = new List<object>();
+    private readonly List<object?> _values = new List<object?>();
 
     /// <summary>
     /// Returns a list of parameters that are associated with the iCalendar object.
@@ -77,36 +78,40 @@ public class CalendarProperty : CalendarObject, ICalendarProperty
         SetValue(p.Values);
     }
 
-    public virtual IEnumerable<object> Values => _values;
+    public virtual IEnumerable<object?> Values => _values;
 
-    public object Value
+    /// <summary>
+    /// Gets or sets the first value in the list of values.
+    /// Using <see langword="null"/> for <paramref name="value"/> will clear all values.
+    /// </summary>
+    public object? Value
     {
-        get => _values?.FirstOrDefault();
+        get => _values.FirstOrDefault();
         set
         {
             if (value == null)
             {
-                _values = null;
+                _values.Clear();
                 return;
             }
 
-            if (_values != null && _values.Count > 0)
+            if (_values.Count > 0)
             {
                 _values[0] = value;
             }
             else
             {
-                _values?.Clear();
-                _values?.Add(value);
+                // collection is known to be empty here
+                _values.Add(value);
             }
         }
     }
 
-    public virtual bool ContainsValue(object value) => _values.Contains(value);
+    public virtual bool ContainsValue(object? value) => _values.Contains(value);
 
-    public virtual int ValueCount => _values?.Count ?? 0;
+    public virtual int ValueCount => _values.Count;
 
-    public virtual void SetValue(object value)
+    public virtual void SetValue(object? value)
     {
         if (_values.Count == 0)
         {
@@ -114,7 +119,7 @@ public class CalendarProperty : CalendarObject, ICalendarProperty
         }
         else if (value != null)
         {
-            // Our list contains values.  Let's set the first value!
+            // Our list contains values. Let's set the first value!
             _values[0] = value;
         }
         else
@@ -123,32 +128,26 @@ public class CalendarProperty : CalendarObject, ICalendarProperty
         }
     }
 
-    public virtual void SetValue(IEnumerable<object> values)
+    /// <summary>
+    /// Sets the value of the property to the specified <paramref name="values"/>.
+    /// Using <see langword="null"/> for <paramref name="values"/> will clear all values.
+    /// </summary>
+    /// <param name="values"></param>
+    public virtual void SetValue(IEnumerable<object?>? values)
     {
         // Remove all previous values
         _values.Clear();
         // If the values are ICopyable, create a deep copy of each value,
         // otherwise just add the value
-        var toAdd = values?.Select(x => (x as ICopyable)?.Copy<object>() ?? x) ?? Enumerable.Empty<object>();
+        var toAdd = values?.Select(x => (x as ICopyable)?.Copy<object?>() ?? x) ?? Enumerable.Empty<object?>();
         _values.AddRange(toAdd);
     }
 
-    public virtual void AddValue(object value)
+    public virtual bool AddValue(object? value)
     {
-        if (value == null)
-        {
-            return;
-        }
-
         _values.Add(value);
+        return true;
     }
 
-    public virtual void RemoveValue(object value)
-    {
-        if (value == null)
-        {
-            return;
-        }
-        _values.Remove(value);
-    }
+    public virtual bool RemoveValue(object? value) => _values.Remove(value);
 }

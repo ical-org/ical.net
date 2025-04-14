@@ -39,7 +39,7 @@ public class ParameterCollectionProxy : GroupedCollectionProxy<string, CalendarP
 
     public virtual IList<string> GetMany(string name) => new GroupedValueListProxy<string, CalendarParameter, CalendarParameter, string, string>(Parameters, name);
 
-    public virtual void Set(string name, string value)
+    public virtual void Set(string name, string? value)
     {
         var parameter = RealObject.FirstOrDefault(o => string.Equals(o.Name, name, StringComparison.Ordinal));
 
@@ -53,7 +53,7 @@ public class ParameterCollectionProxy : GroupedCollectionProxy<string, CalendarP
         }
     }
 
-    public virtual void Set(string name, IEnumerable<string> values)
+    public virtual void Set(string name, IEnumerable<string?> values)
     {
         var parameter = RealObject.FirstOrDefault(o => string.Equals(o.Name, name, StringComparison.Ordinal));
 

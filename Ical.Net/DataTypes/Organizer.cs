@@ -41,7 +41,7 @@ public class Organizer : EncodableDataType
         }
     }
 
-    public virtual string CommonName
+    public virtual string? CommonName
     {
         get => Parameters.Get("CN");
         set => Parameters.Set("CN", value);
@@ -51,7 +51,7 @@ public class Organizer : EncodableDataType
     {
         get
         {
-            string dir = Parameters.Get("DIR");
+            var dir = Parameters.Get("DIR");
             if (!string.IsNullOrWhiteSpace(dir))
             {
                 return new Uri(dir);

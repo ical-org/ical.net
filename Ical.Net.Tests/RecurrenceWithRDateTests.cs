@@ -158,7 +158,7 @@ public class RecurrenceWithRDateTests
 
         // Deserialization
 
-        cal = Calendar.Load(ics);
+        cal = Calendar.Load(ics)!;
         occurrences = cal.Events.First().GetOccurrences().ToList();
 
         Assert.Multiple(() =>

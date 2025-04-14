@@ -16,7 +16,7 @@ namespace Ical.Net;
 [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
 public class CalendarParameter : CalendarObject, IValueObject<string>
 {
-    private HashSet<string> _values = new();
+    private HashSet<string?> _values = new();
 
     public CalendarParameter()
     {
@@ -34,7 +34,7 @@ public class CalendarParameter : CalendarObject, IValueObject<string>
         AddValue(value);
     }
 
-    public CalendarParameter(string name, IEnumerable<string> values) : base(name)
+    public CalendarParameter(string name, IEnumerable<string?> values) : base(name)
     {
         Initialize();
         foreach (var v in values)
@@ -45,7 +45,7 @@ public class CalendarParameter : CalendarObject, IValueObject<string>
 
     private void Initialize()
     {
-        _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        _values = new HashSet<string?>(StringComparer.OrdinalIgnoreCase);
     }
 
     protected override void OnDeserializing(StreamingContext context)
@@ -66,22 +66,22 @@ public class CalendarParameter : CalendarObject, IValueObject<string>
             return;
         }
 
-        _values = new HashSet<string>(p.Values.Where(IsValidValue), StringComparer.OrdinalIgnoreCase);
+        _values = new HashSet<string?>(p.Values.Where(IsValidValue), StringComparer.OrdinalIgnoreCase);
     }
 
-    public virtual IEnumerable<string> Values => _values;
+    public virtual IEnumerable<string?> Values => _values;
 
     public virtual bool ContainsValue(string value) => _values.Contains(value);
 
     public virtual int ValueCount => _values.Count;
 
-    public virtual void SetValue(string value)
+    public virtual void SetValue(string? value)
     {
         _values.Clear();
         _values.Add(value);
     }
 
-    public virtual void SetValue(IEnumerable<string> values)
+    public virtual void SetValue(IEnumerable<string?> values)
     {
         // Remove all previous values
         _values.Clear();
@@ -90,16 +90,16 @@ public class CalendarParameter : CalendarObject, IValueObject<string>
 
     private static bool IsValidValue(string? value) => !string.IsNullOrWhiteSpace(value);
 
-    public virtual void AddValue(string? value)
+    public virtual bool AddValue(string? value)
     {
         if (!IsValidValue(value))
         {
-            return;
+            return false;
         }
-        _values.Add(value!);
+        return _values.Add(value!);
     }
 
-    public virtual void RemoveValue(string value) => _values.Remove(value);
+    public virtual bool RemoveValue(string? value) => _values.Remove(value);
 
     public virtual string? Value
     {

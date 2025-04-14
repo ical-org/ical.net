@@ -417,8 +417,8 @@ END:VCALENDAR";
             Assert.That(e.Resources.Any(r => resources.Contains(r)), Is.False);
         });
 
-        e.Resources = null;
-        //See https://github.com/rianjs/ical.net/issues/208 -- this should be changed later so the collection is really null
+        //See https://github.com/rianjs/ical.net/issues/208
+        e.Resources = Array.Empty<string>();
         Assert.That(e.Resources?.Count, Is.EqualTo(0));
     }
 
