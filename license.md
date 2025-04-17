@@ -1,7 +1,7 @@
 ﻿The MIT License (MIT)
 =====================
 
-Copyright © `2016` `Douglas Day`, `Rian Stockbower`
+Copyright © `Douglas Day`, `Rian Stockbower`, `ical-org Project`
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
