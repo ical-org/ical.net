@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using Ical.Net.DataTypes;
@@ -17,16 +18,14 @@ public class UriSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(string);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
-        if (!(obj is Uri))
+        if (obj is not Uri uri)
         {
             return null;
         }
 
-        var uri = (Uri) obj;
-
-        if (SerializationContext.Peek() is ICalendarObject co)
+        if (SerializationContext?.Peek() is ICalendarObject co)
         {
             var dt = new EncodableDataType
             {
@@ -37,7 +36,7 @@ public class UriSerializer : EncodableDataTypeSerializer
         return uri.OriginalString;
     }
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader? tr)
     {
         if (tr == null)
         {
@@ -46,13 +45,14 @@ public class UriSerializer : EncodableDataTypeSerializer
 
         var value = tr.ReadToEnd();
 
-        if (SerializationContext.Peek() is ICalendarObject co)
+        if (SerializationContext?.Peek() is ICalendarObject co)
         {
             var dt = new EncodableDataType
             {
                 AssociatedObject = co
             };
             value = Decode(dt, value);
+            if (value == null) return null;
         }
 
         try
@@ -60,7 +60,10 @@ public class UriSerializer : EncodableDataTypeSerializer
             var uri = new Uri(value, UriKind.RelativeOrAbsolute);
             return uri;
         }
-        catch { }
+        catch
+        {
+            // Return null instead of throwing an exception
+        }
         return null;
     }
 }

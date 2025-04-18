@@ -3,7 +3,10 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization.DataTypes;
 
@@ -11,86 +14,42 @@ namespace Ical.Net.Serialization;
 
 public class DataTypeSerializerFactory : ISerializerFactory
 {
+    private static readonly Dictionary<Type, Func<SerializationContext, ISerializer>> _serializerMap =
+        new()
+        {
+            { typeof(Attachment), ctx => new AttachmentSerializer(ctx) },
+            { typeof(Attendee), ctx => new AttendeeSerializer(ctx) },
+            { typeof(CalDateTime), ctx => new DateTimeSerializer(ctx) },
+            { typeof(FreeBusyEntry), ctx => new FreeBusyEntrySerializer(ctx) },
+            { typeof(GeographicLocation), ctx => new GeographicLocationSerializer(ctx) },
+            { typeof(Organizer), ctx => new OrganizerSerializer(ctx) },
+            { typeof(Period), ctx => new PeriodSerializer(ctx) },
+            { typeof(PeriodList), ctx => new PeriodListSerializer(ctx) },
+            { typeof(RecurrencePattern), ctx => new RecurrencePatternSerializer(ctx) },
+            { typeof(RequestStatus), ctx => new RequestStatusSerializer(ctx) },
+            { typeof(StatusCode), ctx => new StatusCodeSerializer(ctx) },
+            { typeof(Trigger), ctx => new TriggerSerializer(ctx) },
+            { typeof(UtcOffset), ctx => new UtcOffsetSerializer(ctx) },
+            { typeof(WeekDay), ctx => new WeekDaySerializer(ctx) }
+        };
+
     /// <summary>
     /// Returns a serializer that can be used to serialize and object
     /// of type <paramref name="objectType"/>.
-    /// <note>
-    ///     TODO: Add support for caching.
-    /// </note>
     /// </summary>
     /// <param name="objectType">The type of object to be serialized.</param>
     /// <param name="ctx">The serialization context.</param>
-    public virtual ISerializer Build(Type objectType, SerializationContext ctx)
+    public virtual ISerializer? Build(Type? objectType, SerializationContext ctx)
     {
-        if (objectType != null)
-        {
-            ISerializer s;
+        if (objectType == null) return null;
 
-            if (typeof(Attachment).IsAssignableFrom(objectType))
-            {
-                s = new AttachmentSerializer(ctx);
-            }
-            else if (typeof(Attendee).IsAssignableFrom(objectType))
-            {
-                s = new AttendeeSerializer(ctx);
-            }
-            else if (typeof(CalDateTime).IsAssignableFrom(objectType))
-            {
-                s = new DateTimeSerializer(ctx);
-            }
-            else if (typeof(FreeBusyEntry).IsAssignableFrom(objectType))
-            {
-                s = new FreeBusyEntrySerializer(ctx);
-            }
-            else if (typeof(GeographicLocation).IsAssignableFrom(objectType))
-            {
-                s = new GeographicLocationSerializer(ctx);
-            }
-            else if (typeof(Organizer).IsAssignableFrom(objectType))
-            {
-                s = new OrganizerSerializer(ctx);
-            }
-            else if (typeof(Period).IsAssignableFrom(objectType))
-            {
-                s = new PeriodSerializer(ctx);
-            }
-            else if (typeof(PeriodList).IsAssignableFrom(objectType))
-            {
-                s = new PeriodListSerializer(ctx);
-            }
-            else if (typeof(RecurrencePattern).IsAssignableFrom(objectType))
-            {
-                s = new RecurrencePatternSerializer(ctx);
-            }
-            else if (typeof(RequestStatus).IsAssignableFrom(objectType))
-            {
-                s = new RequestStatusSerializer(ctx);
-            }
-            else if (typeof(StatusCode).IsAssignableFrom(objectType))
-            {
-                s = new StatusCodeSerializer(ctx);
-            }
-            else if (typeof(Trigger).IsAssignableFrom(objectType))
-            {
-                s = new TriggerSerializer(ctx);
-            }
-            else if (typeof(UtcOffset).IsAssignableFrom(objectType))
-            {
-                s = new UtcOffsetSerializer(ctx);
-            }
-            else if (typeof(WeekDay).IsAssignableFrom(objectType))
-            {
-                s = new WeekDaySerializer(ctx);
-            }
-            // Default to a string serializer, which simply calls
-            // ToString() on the value to serialize it.
-            else
-            {
-                s = new StringSerializer(ctx);
-            }
+        // Check if the type exists in the map
+        var serializer = _serializerMap
+            .Where(entry => entry.Key.IsAssignableFrom(objectType))
+            .Select(entry => entry.Value(ctx))
+            .FirstOrDefault();
 
-            return s;
-        }
-        return null;
+        // Return the found serializer or default to a string serializer
+        return serializer ?? new StringSerializer(ctx);
     }
 }

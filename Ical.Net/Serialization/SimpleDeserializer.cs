@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -83,7 +84,7 @@ public class SimpleDeserializer
             var contentLine = ParseContentLine(context, contentLineString);
             if (string.Equals(contentLine.Name, "BEGIN", StringComparison.OrdinalIgnoreCase))
             {
-                stack.Push(current);
+                stack.Push(current!); // Must push to stack!
                 current = _componentFactory.Build((string) contentLine.Value);
                 SerializationUtil.OnDeserializing(current);
             }
@@ -164,10 +165,10 @@ public class SimpleDeserializer
     private void SetPropertyValue(SerializationContext context, CalendarProperty property, string value)
     {
         var type = _dataTypeMapper.GetPropertyMapping(property) ?? typeof(string);
-        var serializer = (SerializerBase) _serializerFactory.Build(type, context);
+        var serializer = (SerializerBase?) _serializerFactory.Build(type, context);
         using var valueReader = new StringReader(value);
 
-        var propertyValue = serializer.Deserialize(valueReader);
+        var propertyValue = serializer?.Deserialize(valueReader);
 
         if (propertyValue is IEnumerable<string> propertyValues)
         {

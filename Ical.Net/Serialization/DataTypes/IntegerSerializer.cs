@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using Ical.Net.DataTypes;
@@ -17,19 +18,18 @@ public class IntegerSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(int);
 
-    public override string SerializeToString(object integer)
+    public override string? SerializeToString(object? obj)
     {
         try
         {
-            var i = Convert.ToInt32(integer);
+            var i = Convert.ToInt32(obj);
 
-            var obj = SerializationContext.Peek() as ICalendarObject;
-            if (obj != null)
+            if (SerializationContext?.Peek() is ICalendarObject calObject)
             {
                 // Encode the value as needed.
                 var dt = new EncodableDataType
                 {
-                    AssociatedObject = obj
+                    AssociatedObject = calObject
                 };
                 return Encode(dt, i.ToString());
             }
@@ -41,14 +41,13 @@ public class IntegerSerializer : EncodableDataTypeSerializer
         }
     }
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
         var value = tr.ReadToEnd();
 
         try
         {
-            var obj = SerializationContext.Peek() as ICalendarObject;
-            if (obj != null)
+            if (SerializationContext?.Peek() is ICalendarObject obj)
             {
                 // Decode the value, if necessary!
                 var dt = new EncodableDataType
@@ -58,14 +57,16 @@ public class IntegerSerializer : EncodableDataTypeSerializer
                 value = Decode(dt, value);
             }
 
-            int i;
-            if (Int32.TryParse(value, out i))
+            if (int.TryParse(value, out var i))
             {
                 return i;
             }
         }
-        catch { }
+        catch
+        {
+            // Return null instead of throwing an exception
+        }
 
-        return value;
+        return null;
     }
 }

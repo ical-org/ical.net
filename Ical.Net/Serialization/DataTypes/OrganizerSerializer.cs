@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using Ical.Net.DataTypes;
@@ -17,7 +18,7 @@ public class OrganizerSerializer : StringSerializer
 
     public override Type TargetType => typeof(Organizer);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
         try
         {
@@ -32,17 +33,23 @@ public class OrganizerSerializer : StringSerializer
         }
     }
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader? tr)
     {
+        if (tr == null) return null;
+
         var value = tr.ReadToEnd();
 
-        Organizer o = null;
+        Organizer? organizer = null;
         try
         {
-            o = CreateAndAssociate() as Organizer;
-            if (o != null)
+            organizer = CreateAndAssociate() as Organizer;
+            if (organizer != null)
             {
-                var uriString = Unescape(Decode(o, value));
+                var uriString = Unescape(Decode(organizer, value));
+                if (uriString == null)
+                {
+                    return null;
+                }
 
                 // Prepend "mailto:" if necessary
                 if (!uriString.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
@@ -50,11 +57,14 @@ public class OrganizerSerializer : StringSerializer
                     uriString = "mailto:" + uriString;
                 }
 
-                o.Value = new Uri(uriString);
+                organizer.Value = new Uri(uriString);
             }
         }
-        catch { }
+        catch
+        {
+            // Return null instead of throwing an exception
+        }
 
-        return o;
+        return organizer;
     }
 }

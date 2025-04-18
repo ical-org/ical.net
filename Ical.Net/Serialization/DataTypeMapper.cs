@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
@@ -16,8 +17,8 @@ internal class DataTypeMapper
 {
     private class PropertyMapping
     {
-        public Type ObjectType { get; set; }
-        public TypeResolverDelegate Resolver { get; set; }
+        public Type? ObjectType { get; set; }
+        public TypeResolverDelegate? Resolver { get; set; }
         public bool AllowsMultipleValuesPerProperty { get; set; }
     }
 
@@ -66,25 +67,21 @@ internal class DataTypeMapper
 
     protected Type ResolveStatusProperty(object context)
     {
-        if (!(context is ICalendarObject obj))
+        if (context is not ICalendarObject obj)
         {
-            return null;
+            return typeof(object); // Return a default type to match the delegate signature  
         }
 
-        switch (obj.Parent)
+        return obj.Parent switch
         {
-            case CalendarEvent _:
-                return typeof(EventStatus);
-            case Todo _:
-                return typeof(TodoStatus);
-            case Journal _:
-                return typeof(JournalStatus);
-        }
-
-        return null;
+            CalendarEvent _ => typeof(EventStatus),
+            Todo _ => typeof(TodoStatus),
+            Journal _ => typeof(JournalStatus),
+            _ => typeof(object) // Return a default type to match the delegate signature  
+        };
     }
 
-    public void AddPropertyMapping(string name, Type objectType, bool allowsMultipleValues)
+    public void AddPropertyMapping(string? name, Type? objectType, bool allowsMultipleValues)
     {
         if (name == null || objectType == null)
         {
@@ -100,7 +97,7 @@ internal class DataTypeMapper
         _propertyMap[name] = m;
     }
 
-    public void AddPropertyMapping(string name, TypeResolverDelegate resolver, bool allowsMultipleValues)
+    public void AddPropertyMapping(string? name, TypeResolverDelegate? resolver, bool allowsMultipleValues)
     {
         if (name == null || resolver == null)
         {
@@ -116,7 +113,7 @@ internal class DataTypeMapper
         _propertyMap[name] = m;
     }
 
-    public void RemovePropertyMapping(string name)
+    public void RemovePropertyMapping(string? name)
     {
         if (name != null && _propertyMap.ContainsKey(name))
         {
@@ -132,7 +129,7 @@ internal class DataTypeMapper
                && m.AllowsMultipleValuesPerProperty;
     }
 
-    public virtual Type GetPropertyMapping(object obj)
+    public virtual Type? GetPropertyMapping(object obj)
     {
         var p = obj as ICalendarProperty;
         if (p?.Name == null)

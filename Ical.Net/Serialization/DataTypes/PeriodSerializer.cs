@@ -19,7 +19,7 @@ public class PeriodSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(Period);
 
-    public override string? SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
         var factory = GetService<ISerializerFactory>();
 
@@ -29,7 +29,7 @@ public class PeriodSerializer : EncodableDataTypeSerializer
         }
 
         // Push the period onto the serialization context stack
-        SerializationContext.Push(p);
+        SerializationContext?.Push(p);
 
         try
         {
@@ -71,7 +71,7 @@ public class PeriodSerializer : EncodableDataTypeSerializer
         finally
         {
             // Pop the period off the serialization context stack
-            SerializationContext.Pop();
+            SerializationContext?.Pop();
         }
     }
 
@@ -95,11 +95,12 @@ public class PeriodSerializer : EncodableDataTypeSerializer
 
         // Decode the value as necessary
         value = Decode(p, value);
+        if (value == null) return null;
 
         var values = value.Split('/');
         if (values.Length != 2)
         {
-            return false;
+            return null;
         }
 
         var start = dtSerializer.Deserialize(new StringReader(values[0])) as CalDateTime;

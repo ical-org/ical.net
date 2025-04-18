@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using Ical.Net.CalendarComponents;
 
@@ -16,14 +17,15 @@ public class EventSerializer : ComponentSerializer
 
     public override Type TargetType => typeof(CalendarEvent);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
-        var evt = obj as CalendarEvent;
+        if (obj is not CalendarEvent evt)
+            return null;
 
-        CalendarEvent actualEvent;
+        CalendarEvent? actualEvent;
         if (evt.Properties.ContainsKey("DURATION") && evt.Properties.ContainsKey("DTEND"))
         {
-            actualEvent = evt.Copy<CalendarEvent>();
+            actualEvent = evt.Copy<CalendarEvent>()!;
             actualEvent.Properties.Remove("DURATION");
         }
         else

@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.Serialization;

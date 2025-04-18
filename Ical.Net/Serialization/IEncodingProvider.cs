@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 namespace Ical.Net.Serialization;
 
 internal interface IEncodingProvider

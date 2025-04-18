@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using System.Text;
@@ -19,12 +20,16 @@ public class RequestStatusSerializer : StringSerializer
 
     public override Type TargetType => typeof(RequestStatus);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
+        if (SerializationContext == null)
+        {
+            return null;
+        }
+
         try
         {
-            var rs = obj as RequestStatus;
-            if (rs == null)
+            if (obj is not RequestStatus rs)
             {
                 return null;
             }
@@ -55,7 +60,7 @@ public class RequestStatusSerializer : StringSerializer
             finally
             {
                 // Pop the object off the serialization stack
-                SerializationContext.Pop();
+                SerializationContext?.Pop();
             }
         }
         catch
@@ -67,18 +72,20 @@ public class RequestStatusSerializer : StringSerializer
     internal static readonly Regex NarrowRequestMatch = new Regex(@"(.*?[^\\]);(.*?[^\\]);(.+)", RegexOptions.Compiled, RegexDefaults.Timeout);
     internal static readonly Regex BroadRequestMatch = new Regex(@"(.*?[^\\]);(.+)", RegexOptions.Compiled, RegexDefaults.Timeout);
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader? tr)
     {
+        if (tr == null || SerializationContext == null) return null;
+        
         var value = tr.ReadToEnd();
 
-        var rs = CreateAndAssociate() as RequestStatus;
-        if (rs == null)
+        if (CreateAndAssociate() is not RequestStatus rs)
         {
             return null;
         }
 
         // Decode the value as needed
         value = Decode(rs, value);
+        if (value == null) return null;
 
         // Push the object onto the serialization stack
         SerializationContext.Push(rs);
@@ -105,7 +112,10 @@ public class RequestStatusSerializer : StringSerializer
                     return null;
                 }
 
-                rs.StatusCode = serializer.Deserialize(new StringReader(Unescape(match.Groups[1].Value))) as StatusCode;
+                var unescaped = Unescape(match.Groups[1].Value);
+                if (unescaped != null)
+                    rs.StatusCode = serializer.Deserialize(new StringReader(unescaped)) as StatusCode;
+
                 rs.Description = Unescape(match.Groups[2].Value);
                 if (match.Groups.Count == 4)
                 {
@@ -118,7 +128,7 @@ public class RequestStatusSerializer : StringSerializer
         finally
         {
             // Pop the object off the serialization stack
-            SerializationContext.Pop();
+            SerializationContext?.Pop();
         }
         return null;
     }

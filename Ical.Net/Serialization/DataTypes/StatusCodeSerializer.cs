@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -18,10 +19,9 @@ public class StatusCodeSerializer : StringSerializer
 
     public override Type TargetType => typeof(StatusCode);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
-        var sc = obj as StatusCode;
-        if (sc == null)
+        if (obj is not StatusCode sc)
         {
             return null;
         }
@@ -36,18 +36,20 @@ public class StatusCodeSerializer : StringSerializer
 
     internal static readonly Regex StatusCode = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant, RegexDefaults.Timeout);
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader? tr)
     {
+        if (tr == null) return null;
+
         var value = tr.ReadToEnd();
 
-        var sc = CreateAndAssociate() as StatusCode;
-        if (sc == null)
+        if (CreateAndAssociate() is not StatusCode sc)
         {
             return null;
         }
 
         // Decode the value as needed
         value = Decode(sc, value);
+        if (value == null) return null;
 
         var match = StatusCode.Match(value);
         if (!match.Success)
@@ -56,17 +58,16 @@ public class StatusCodeSerializer : StringSerializer
         }
 
         var parts = match.Value.Split('.');
-        var iparts = new int[parts.Length];
+        var intParts = new int[parts.Length];
         for (var i = 0; i < parts.Length; i++)
         {
-            int num;
-            if (!int.TryParse(parts[i], out num))
+            if (!int.TryParse(parts[i], out var num))
             {
                 return false;
             }
-            iparts[i] = num;
+            intParts[i] = num;
         }
 
-        return new StatusCode(iparts);
+        return new StatusCode(intParts);
     }
 }

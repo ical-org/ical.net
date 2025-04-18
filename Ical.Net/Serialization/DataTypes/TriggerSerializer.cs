@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using Ical.Net.DataTypes;
@@ -17,17 +18,17 @@ public class TriggerSerializer : StringSerializer
 
     public override Type TargetType => typeof(Trigger);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
         try
         {
-            if (!(obj is Trigger t))
+            if (obj is not Trigger t)
             {
                 return null;
             }
 
             // Push the trigger onto the serialization stack
-            SerializationContext.Push(t);
+            SerializationContext?.Push(t);
             try
             {
                 var factory = GetService<ISerializerFactory>();
@@ -44,13 +45,14 @@ public class TriggerSerializer : StringSerializer
 
                 var value = valueType == typeof(CalDateTime)
                     ? t.DateTime
-                    : (object) t.Duration;
+                    : (object?) t.Duration;
+
                 return serializer.SerializeToString(value);
             }
             finally
             {
                 // Pop the trigger off the serialization stack
-                SerializationContext.Pop();
+                SerializationContext?.Pop();
             }
         }
         catch
@@ -59,8 +61,10 @@ public class TriggerSerializer : StringSerializer
         }
     }
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader? tr)
     {
+        if (tr == null) return null;
+
         var value = tr.ReadToEnd();
 
         if (!(CreateAndAssociate() is Trigger t))
@@ -69,11 +73,13 @@ public class TriggerSerializer : StringSerializer
         }
 
         // Push the trigger onto the serialization stack
-        SerializationContext.Push(t);
+        SerializationContext?.Push(t);
         try
         {
             // Decode the value as needed
             value = Decode(t, value);
+
+            if (value == null) return null;
 
             // Set the trigger relation
             if (t.Parameters.ContainsKey("RELATED") && t.Parameters.Get("RELATED").Equals("END"))
@@ -94,8 +100,8 @@ public class TriggerSerializer : StringSerializer
             {
                 case null:
                     return null;
-                case CalDateTime _:
-                    t.DateTime = (CalDateTime) obj;
+                case CalDateTime dt:
+                    t.DateTime = dt;
                     break;
                 default:
                     t.Duration = (Duration) obj;
@@ -107,7 +113,7 @@ public class TriggerSerializer : StringSerializer
         finally
         {
             // Pop the trigger off the serialization stack
-            SerializationContext.Pop();
+            SerializationContext?.Pop();
         }
     }
 }

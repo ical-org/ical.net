@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,9 +24,9 @@ public class ComponentSerializer : SerializerBase
 
     public override Type TargetType => typeof(CalendarComponent);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
-        if (!(obj is ICalendarComponent c))
+        if (obj is not ICalendarComponent c || SerializationContext == null)
         {
             return null;
         }
@@ -44,27 +45,29 @@ public class ComponentSerializer : SerializerBase
         foreach (var p in properties)
         {
             // Get a serializer for each property.
-            var serializer = sf.Build(p.GetType(), SerializationContext) as IStringSerializer;
-            sb.Append(serializer.SerializeToString(p));
+            var serializer = sf?.Build(p.GetType(), SerializationContext) as IStringSerializer;
+            var val = serializer?.SerializeToString(p);
+            if (val != null) sb.Append(val);
         }
 
         // Serialize child objects
         foreach (var child in c.Children)
         {
             // Get a serializer for each child object.
-            var serializer = sf.Build(child.GetType(), SerializationContext) as IStringSerializer;
-            sb.Append(serializer.SerializeToString(child));
+            var serializer = sf?.Build(child.GetType(), SerializationContext) as IStringSerializer;
+            var val = serializer?.SerializeToString(child);
+            if (val != null) sb.Append(val);
         }
 
         sb.FoldLines($"END:{upperName}");
         return sb.ToString();
     }
 
-    public override object Deserialize(TextReader tr) => null;
+    public override object? Deserialize(TextReader tr) => null;
 
     public class PropertyAlphabetizer : IComparer<ICalendarProperty>
     {
-        public int Compare(ICalendarProperty x, ICalendarProperty y)
+        public int Compare(ICalendarProperty? x, ICalendarProperty? y)
         {
             if (x == y)
             {

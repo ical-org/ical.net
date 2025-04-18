@@ -103,10 +103,10 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(RecurrencePattern);
 
-    public override string? SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
         var factory = GetService<ISerializerFactory>();
-        if (obj is not RecurrencePattern recur || factory == null)
+        if (obj is not RecurrencePattern recur || factory == null || SerializationContext == null)
         {
             return null;
         }
@@ -154,7 +154,11 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
             if (factory.Build(typeof(WeekDay), SerializationContext) is IStringSerializer serializer)
             {
-                bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));
+                bydayValues.AddRange(recur.ByDay
+                    .Select(byday => serializer.SerializeToString(byday))
+                    .Where(serialized => serialized != null)
+                    // tell the compiler that the filtered values are not null after the Where clause
+                    .Select(serialized => serialized!));
             }
 
             values.Add($"BYDAY={string.Join(",", bydayValues)}");
@@ -203,6 +207,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
         // Decode the value, if necessary
         value = Decode(r, value);
+        if (value == null) return null;
 
         DeserializePattern(value, r, factory);
         return r;
@@ -250,6 +255,11 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
     private void ProcessKeyValuePair(string key, string value, RecurrencePattern r, ISerializerFactory factory)
     {
+        if (SerializationContext == null)
+        {
+            throw new InvalidOperationException("SerializationContext is not set.");
+        }
+
         switch (key)
         {
             case "freq":

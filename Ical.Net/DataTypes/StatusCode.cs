@@ -68,7 +68,7 @@ public class StatusCode : EncodableDataType
         statusCode.Parts.CopyTo(Parts, 0);
     }
 
-    public override string ToString() => new StatusCodeSerializer().SerializeToString(this);
+    public override string? ToString() => new StatusCodeSerializer().SerializeToString(this);
 
     protected bool Equals(StatusCode other) => Parts.SequenceEqual(other.Parts);
 

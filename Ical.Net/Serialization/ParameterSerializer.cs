@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using System.Text;
@@ -17,9 +18,9 @@ public class ParameterSerializer : SerializerBase
 
     public override Type TargetType => typeof(CalendarParameter);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
-        if (!(obj is CalendarParameter p))
+        if (obj is not CalendarParameter p)
         {
             return null;
         }
@@ -41,5 +42,5 @@ public class ParameterSerializer : SerializerBase
         return builder.ToString();
     }
 
-    public override object Deserialize(TextReader tr) => null;
+    public override object? Deserialize(TextReader tr) => null;
 }

@@ -27,12 +27,12 @@ public class GenericListSerializer : SerializerBase
 
     public override Type TargetType => _objectType;
 
-    public override string SerializeToString(object obj) => throw new NotImplementedException();
+    public override string SerializeToString(object? obj) => throw new NotImplementedException();
 
     private MethodInfo? _addMethodInfo;
     public override object? Deserialize(TextReader tr)
     {
-        var p = SerializationContext.Peek() as ICalendarProperty;
+        var p = SerializationContext?.Peek() as ICalendarProperty;
         if (p == null)
         {
             return null;
@@ -47,7 +47,7 @@ public class GenericListSerializer : SerializerBase
 
         // Get a serializer for the inner type
         var sf = GetService<ISerializerFactory>();
-        var stringSerializer = sf.Build(_innerType, SerializationContext) as IStringSerializer;
+        var stringSerializer = sf?.Build(_innerType, SerializationContext) as IStringSerializer;
         if (stringSerializer == null)
         {
             return null;

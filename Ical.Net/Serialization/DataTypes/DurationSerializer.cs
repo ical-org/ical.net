@@ -20,7 +20,7 @@ public class DurationSerializer : SerializerBase
 
     public override Type TargetType => typeof(Duration);
 
-    public override string? SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
         => (obj is not Duration duration) ? null : SerializeToString(duration);
 
     private static string SerializeToString(Duration ts)

@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using Ical.Net.DataTypes;
 
@@ -14,7 +15,7 @@ public abstract class DataTypeSerializer : SerializerBase
 
     protected DataTypeSerializer(SerializationContext ctx) : base(ctx) { }
 
-    protected virtual ICalendarDataType CreateAndAssociate()
+    protected virtual ICalendarDataType? CreateAndAssociate()
     {
         // Create an instance of the object
         if (Activator.CreateInstance(TargetType, true) is not ICalendarDataType dt)
@@ -22,7 +23,7 @@ public abstract class DataTypeSerializer : SerializerBase
             return null;
         }
 
-        if (SerializationContext.Peek() is ICalendarObject associatedObject)
+        if (SerializationContext?.Peek() is ICalendarObject associatedObject)
         {
             dt.AssociatedObject = associatedObject;
         }

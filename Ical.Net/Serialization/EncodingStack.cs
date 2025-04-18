@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.Collections.Generic;
 using System.Text;
 
@@ -22,7 +23,7 @@ internal class EncodingStack
             ? _mStack.Peek()
             : Encoding.UTF8;
 
-    public void Push(Encoding encoding)
+    public void Push(Encoding? encoding)
     {
         if (encoding != null)
         {
@@ -30,7 +31,7 @@ internal class EncodingStack
         }
     }
 
-    public Encoding Pop() => _mStack.Count > 0
+    public Encoding? Pop() => _mStack.Count > 0
         ? _mStack.Pop()
         : null;
 }
