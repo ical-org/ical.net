@@ -18,16 +18,14 @@ public class GroupedValueList<TGroup, TInterface, TItem, TValueType> :
     where TInterface : class, IGroupedObject<TGroup>, IValueObject<TValueType>
     where TItem : new()
 {
-    public virtual void Set(TGroup group, TValueType value)
-    {
-        Set(group, new[] { value });
-    }
+    public virtual void Set(TGroup group, TValueType? value)
+        => Set(group, new[] { value });
 
-    public virtual void Set(TGroup group, IEnumerable<TValueType> values)
+    public virtual void Set(TGroup group, IEnumerable<TValueType?> values)
     {
         if (ContainsKey(group))
         {
-            AllOf(group)?.FirstOrDefault()?.SetValue(values);
+            AllOf(group).FirstOrDefault()?.SetValue(values);
             return;
         }
 

@@ -22,7 +22,7 @@ public class GroupedList<TGroup, TItem> :
     private readonly List<IMultiLinkedList<TItem>> _lists = new();
     private readonly Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new();
 
-    private IMultiLinkedList<TItem>? EnsureList(TGroup group)
+    private IMultiLinkedList<TItem> EnsureList(TGroup group)
     {
         if (_dictionary.TryGetValue(group, out var existingList))
         {
@@ -62,10 +62,6 @@ public class GroupedList<TGroup, TItem> :
 
         var group = item.Group;
         var list = EnsureList(group);
-        if (list == null)
-        {
-            return;
-        }
 
         var index = list.Count;
         list.Add(item);
@@ -184,12 +180,8 @@ public class GroupedList<TGroup, TItem> :
     public virtual void RemoveAt(int index)
     {
         var list = ListForIndex(index, out var relativeIndex);
-        if (list == null)
-        {
-            return;
-        }
 
-        list.RemoveAt(relativeIndex);
+        list?.RemoveAt(relativeIndex);
     }
 
     /// <summary>

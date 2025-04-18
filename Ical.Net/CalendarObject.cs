@@ -20,6 +20,7 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
 
     internal CalendarObject()
     {
+        Name = string.Empty;
         Initialize();
     }
 
@@ -61,7 +62,7 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
         return obj.GetType() == GetType() && Equals((CalendarObject) obj);
     }
 
-    public override int GetHashCode() => Name?.GetHashCode() ?? 0;
+    public override int GetHashCode() => Name.GetHashCode();
 
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable c)
@@ -82,7 +83,7 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
         foreach (var child in obj.Children)
         {
             // Add a deep copy of the child instead of the child itself
-            this.AddChild(child.Copy<ICalendarObject>());
+            this.AddChild(child.Copy<ICalendarObject>()!);
         }
     }
 
@@ -97,9 +98,9 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
     public virtual ICalendarObjectList<ICalendarObject> Children => _children;
 
     /// <summary>
-    /// Gets or sets the name of the iCalObject.  For iCalendar components, this is the RFC 5545 name of the component.
+    /// Gets or sets the name of the iCalObject. For iCalendar components, this is the RFC 5545 name of the component.
     /// </summary>
-    public virtual string? Name { get; set; }
+    public virtual string Name { get; set; }
 
     /// <summary>
     /// Gets the <see cref="Net.Calendar"/> object.
@@ -124,7 +125,7 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
 
     public virtual int Column { get; set; }
 
-    public virtual string? Group
+    public virtual string Group
     {
         get => Name;
         set => Name = value;

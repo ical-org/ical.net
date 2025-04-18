@@ -40,8 +40,10 @@ public class Attendee : EncodableDataType
     }
 
     private string? _commonName;
-    /// <summary> CN: to show the common or displayable name associated with the calendar address </summary>
-    public virtual string CommonName
+    /// <summary>
+    /// CN: to show the common or displayable name associated with the calendar address.
+    /// </summary>
+    public virtual string? CommonName
     {
         get
         {
@@ -63,7 +65,9 @@ public class Attendee : EncodableDataType
     }
 
     private Uri? _directoryEntry;
-    /// <summary> DIR, to indicate the URI that points to the directory information corresponding to the attendee </summary>
+    /// <summary>
+    /// DIR, to indicate the URI that points to the directory information corresponding to the attendee.
+    /// </summary>
     public virtual Uri? DirectoryEntry
     {
         get
@@ -89,8 +93,10 @@ public class Attendee : EncodableDataType
     }
 
     private string? _type;
-    /// <summary> CUTYPE: the type of calendar user </summary>
-    public virtual string Type
+    /// <summary>
+    /// CUTYPE: the type of calendar user.
+    /// </summary>
+    public virtual string? Type
     {
         get
         {
@@ -113,7 +119,9 @@ public class Attendee : EncodableDataType
     }
 
     private List<string>? _members;
-    /// <summary> MEMBER: the groups the user belongs to </summary>
+    /// <summary>
+    /// MEMBER: the groups the user belongs to.
+    /// </summary>
     public virtual IList<string> Members
     {
         get => _members ?? (_members = new List<string>(Parameters.GetMany("MEMBER")));
@@ -125,8 +133,10 @@ public class Attendee : EncodableDataType
     }
 
     private string? _role;
-    /// <summary> ROLE: the intended role the attendee will have </summary>
-    public virtual string Role
+    /// <summary>
+    /// ROLE: the intended role the attendee will have.
+    /// </summary>
+    public virtual string? Role
     {
         get
         {
@@ -148,7 +158,7 @@ public class Attendee : EncodableDataType
     }
 
     private string? _participationStatus;
-    public virtual string ParticipationStatus
+    public virtual string? ParticipationStatus
     {
         get
         {
@@ -170,7 +180,9 @@ public class Attendee : EncodableDataType
     }
 
     private bool? _rsvp;
-    /// <summary> RSVP, to indicate whether a reply is requested </summary>
+    /// <summary>
+    /// RSVP, to indicate whether a reply is requested.
+    /// </summary>
     public virtual bool Rsvp
     {
         get
@@ -197,7 +209,9 @@ public class Attendee : EncodableDataType
     }
 
     private List<string>? _delegatedTo;
-    /// <summary> DELEGATED-TO, to indicate the calendar users that the original request was delegated to </summary>
+    /// <summary>
+    /// DELEGATED-TO, to indicate the calendar users that the original request was delegated to.
+    /// </summary>
     public virtual IList<string> DelegatedTo
     {
         get => _delegatedTo ?? (_delegatedTo = new List<string>(Parameters.GetMany("DELEGATED-TO")));
@@ -209,7 +223,9 @@ public class Attendee : EncodableDataType
     }
 
     private List<string>? _delegatedFrom;
-    /// <summary> DELEGATED-FROM, to indicate whom the request was delegated from </summary>
+    /// <summary>
+    /// DELEGATED-FROM, to indicate whom the request was delegated from.
+    /// </summary>
     public virtual IList<string> DelegatedFrom
     {
         get => _delegatedFrom ?? (_delegatedFrom = new List<string>(Parameters.GetMany("DELEGATED-FROM")));
@@ -220,7 +236,9 @@ public class Attendee : EncodableDataType
         }
     }
 
-    /// <summary> Uri associated with the attendee, typically an email address </summary>
+    /// <summary>
+    /// Uri associated with the attendee, typically an email address.
+    /// </summary>
     public virtual Uri? Value { get; set; }
 
     public Attendee() { }
@@ -259,17 +277,20 @@ public class Attendee : EncodableDataType
         DirectoryEntry = atn.DirectoryEntry;
     }
 
-    protected bool Equals(Attendee other) => Equals(SentBy, other.SentBy)
-                                             && string.Equals(CommonName, other.CommonName, StringComparison.OrdinalIgnoreCase)
-                                             && Equals(DirectoryEntry, other.DirectoryEntry)
-                                             && string.Equals(Type, other.Type, StringComparison.OrdinalIgnoreCase)
-                                             && string.Equals(Role, other.Role)
-                                             && string.Equals(ParticipationStatus, other.ParticipationStatus, StringComparison.OrdinalIgnoreCase)
-                                             && Rsvp == other.Rsvp
-                                             && Equals(Value, other.Value)
-                                             && Members.SequenceEqual(other.Members)
-                                             && DelegatedTo.SequenceEqual(other.DelegatedTo)
-                                             && DelegatedFrom.SequenceEqual(other.DelegatedFrom);
+    protected bool Equals(Attendee other)
+        => Equals(SentBy, other.SentBy)
+           && string.Equals(CommonName, other.CommonName,
+               StringComparison.OrdinalIgnoreCase)
+           && Equals(DirectoryEntry, other.DirectoryEntry)
+           && string.Equals(Type, other.Type, StringComparison.OrdinalIgnoreCase)
+           && string.Equals(Role, other.Role)
+           && string.Equals(ParticipationStatus, other.ParticipationStatus,
+               StringComparison.OrdinalIgnoreCase)
+           && Rsvp == other.Rsvp
+           && Equals(Value, other.Value)
+           && Members.SequenceEqual(other.Members)
+           && DelegatedTo.SequenceEqual(other.DelegatedTo)
+           && DelegatedFrom.SequenceEqual(other.DelegatedFrom);
     public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;

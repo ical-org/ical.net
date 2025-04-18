@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ public static class DefaultTimeZoneResolver
     /// <param name="tzId">A BCL, IANA, or serialization time zone identifier</param>
     /// <exception cref="ArgumentException">Processing failed</exception>
     /// <remarks>The DateTimeZone if found or null otherwise.</remarks>
-    public static DateTimeZone GetZone(string tzId)
+    public static DateTimeZone? GetZone(string? tzId)
     {
         var exMsg = $"Unrecognized time zone id {tzId}";
 

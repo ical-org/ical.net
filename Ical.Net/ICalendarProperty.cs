@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using Ical.Net.Collections.Interfaces;
 using Ical.Net.DataTypes;
 
@@ -10,5 +11,5 @@ namespace Ical.Net;
 
 public interface ICalendarProperty : ICalendarParameterCollectionContainer, ICalendarObject, IValueObject<object>
 {
-    object Value { get; set; }
+    object? Value { get; set; }
 }

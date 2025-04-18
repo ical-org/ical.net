@@ -46,7 +46,7 @@ public class RecurrenceTests_From_Issues
              END:VCALENDAR
              """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         // Event ends on 2024-10-27, at 02:00:00 GMT (when DST ends). The end time is excluded by RFC 5545 definition.
         var occurrences = calendar.GetOccurrences(endDate, new CalDateTime("20250101T000000", "Europe/London")).ToList();
 

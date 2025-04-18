@@ -40,11 +40,11 @@ public class ProgramTest
     [Test]
     public void Merge1()
     {
-        var iCal1 = Calendar.Load(IcsFiles.MonthlyCountByMonthDay3);
-        var iCal2 = Calendar.Load(IcsFiles.MonthlyByDay1);
+        var iCal1 = Calendar.Load(IcsFiles.MonthlyCountByMonthDay3)!;
+        var iCal2 = Calendar.Load(IcsFiles.MonthlyByDay1)!;
 
         // Change the UID of the 2nd event to make sure it's different
-        iCal2.Events[iCal1.Events[0].Uid].Uid = "1234567890";
+        iCal2.Events[iCal1.Events[0].Uid!].Uid = "1234567890";
         iCal1.MergeWith(iCal2);
 
         var evt1 = iCal1.Events.First();

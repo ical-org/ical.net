@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using Ical.Net.Collections;
 
 namespace Ical.Net;
@@ -19,7 +20,7 @@ public interface ICalendarObject : IGroupedObject<string>, ILoadable, ICopyable
     /// <summary>
     /// Returns the parent of this object.
     /// </summary>
-    ICalendarObject Parent { get; set; }
+    ICalendarObject? Parent { get; set; }
 
     /// <summary>
     /// Returns a collection of children of this object.
@@ -30,7 +31,7 @@ public interface ICalendarObject : IGroupedObject<string>, ILoadable, ICopyable
     /// Returns the iCalendar that this object
     /// is associated with.
     /// </summary>
-    Calendar Calendar { get; }
+    Calendar? Calendar { get; }
 
     /// <summary>
     /// Returns the line number where this calendar
