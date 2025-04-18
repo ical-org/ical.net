@@ -1,33 +1,67 @@
-﻿<img src="assets/logo.png" style="width:300px;">
+﻿# <img src="assets/logo.png" style="width:300px;">
+
+
+| [![GitHub release](https://img.shields.io/github/release/ical-org/ical.net.svg?sort=semver)](https://github.com/ical-org/ical.net/releases/latest) | ![GitHub Pre-Release](https://img.shields.io/github/v/release/ical-org/ical.net?include_prereleases&sort=semver&display_name=tag&label=pre-release&color=green) | [![codecov](https://codecov.io/gh/ical-org/ical.net/branch/main/graph/badge.svg)](https://codecov.io/gh/ical-org/ical.net) | [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/ical-org/ical.net/blob/main/license.md) |  
+|----------|----------|----------|----------|  
+| [![NuGet Version](https://img.shields.io/nuget/v/ical.net)](https://www.nuget.org/packages/Ical.Net)  | [![NuGet Pre-Version](https://img.shields.io/nuget/vpre/ical.net?color=green&label=pre-nuget)](https://www.nuget.org/packages/Ical.Net#versions-body-tab)  |   |   |  
 
 ## What is iCal.NET?
-iCal.NET is an iCalendar (RFC 5545) class library for .NET aimed at providing RFC 5545 compliance, while providing full compatibility with popular calendaring applications and libraries.
+iCal.NET is a robust and feature-rich iCalendar (RFC 5545) library for .NET, designed to simplify working with calendar data while ensuring full compliance with the iCalendar standard. Here are the main features and benefits:
+
+### Key Features
+
+* **RFC 5545 Compliance**: Guarantees compatibility with the iCalendar standard, ensuring seamless integration with popular calendaring applications.
+• **Event Management**: Easily create, modify, and manage calendar events programmatically.
+* **Recurrence Rules**: Supports complex recurrence patterns, making it ideal for scheduling recurring events.
+* **Serialization/Deserialization**: Effortlessly convert calendar data to and from iCalendar (.ics) files.
+* **Time Zone Support**: Handle events across different time zones with ease.
+* **Attachments**: Add attachments to calendar events (including invites) for enhanced functionality.
+
+### Benefits
+
+* **Performance and Usability**: The latest version (v5) is extensively rewritten for improved performance, correctness, and usability. Memory usage is optimized down to 50% of v4.
+* **Compatibility**: Works seamlessly with .NET 8, .NET 6, .NET Standard, and .NET Framework, making it versatile for various projects.
+* **Community-Driven**: Actively maintained and supported by a dedicated community, with extensive documentation and examples to get started quickly.
+* **Open Source**: Open Source: Free to use and contribute to under the MIT license, fostering collaboration and innovation.
 
 ## Mission Statement
-Make ICal.NET the best in class for .NET - in terms of usability, performance and reliability (RFC compliance / compatibility).
 
-**Join the project and help to achieve this goal!**
+Our mission is to provide a robust and reliable iCalendar library for .NET, ensuring full RFC 5545 compliance and seamless integration with popular calendaring applications. We strive to enhance usability, performance, and compatibility, empowering developers to create exceptional calendaring solutions. 
 
-## Getting iCal.Net
+**Join us in making iCal.NET the premier choice for .NET calendaring needs!**
 
-### iCal.Net v5 pre-releases 
+## iCal.NET Versions
+
+### iCal.NET v5
 
 Starting with 5.0.0-pre.39, iCal.Net v5 pre-releases are available as [NuGet Packages](https://www.nuget.org/packages/Ical.Net)
 
-v5 is an extensive rewrite of the library, with a focus on performance, correctness and usability. All issues reported in prior versions have been addressed, and the library has been thoroughly tested.
+v5 is a comprehensive rewrite of the library, incorporating over 100 merged pull requests and focusing on enhanced performance, correctness, and usability. All reported issues from previous versions have been resolved, and unit tests have been added or enhanced for greater reliability.
 
-Daily pre-releases are available as [GitHub Packages](https://github.com/ical-org/ical.net/pkgs/nuget/Ical.Net)<br/>
-and from the [zipped packages folder](https://github.com/ical-org/ical.net/tree/main/v5-daily-builds).
+See the **[API Changes Document](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5)** for more information.
 
-**We strongly recommend using the pre-release packages**. They are stable and contain many bug fixes and improvements over the v4 release.<br/>
-See the [API Changes Document](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5) for more information.
+### iCal.NET v4
+is still available up to v4.3.1. Is is out of support and will not receive any further updates. We recommend using the v5 packages instead.
 
-### iCal.Net v4
-is still available as [a NuGet Package](https://www.nuget.org/packages/Ical.Net).
+## Getting Started
+
+### iCalendar Key Concepts
+
+A basic understanding of the iCalendar standard (RFC 5545) is essential for using iCal.NET effectively. The complete [RFC 5545 specification](https://www.rfc-editor.org/info/rfc5545) is available for reference in your preferred format.
+
+### Install
+
+Install the NuGet packing using the following command:
+
+```sh
+dotnet add package iCal.NET
+-- or --
+dotnet add package iCal.NET --prerelease
+```
 
 ## Examples
 
-The wiki contains several pages of examples of common ical.net usage scenarios.
+The wiki contains several pages of examples of common iCal.NET usage scenarios.
 
 * [Simple event with a recurrence](https://github.com/ical-org/ical.net/wiki)
 * [Deserializing an ics file](https://github.com/ical-org/ical.net/wiki/Deserialize-an-ics-file)
@@ -38,42 +72,29 @@ The wiki contains several pages of examples of common ical.net usage scenarios.
 
 ## Versioning
 
-ical.net uses [semantic versioning](http://semver.org/). In a nutshell:
-
-> Given a version number MAJOR.MINOR.PATCH, increment the:
->
-> 1. MAJOR version when you make incompatible API changes,
-> 2. MINOR version when you add functionality in a backwards-compatible manner, and
-> 3. PATCH version when you make backwards-compatible bug fixes.
+iCal.NET uses [semantic versioning](http://semver.org/).
 
 ## Contributing
 
 * [Submit a bug report or issue](https://github.com/ical-org/ical.net/wiki/Filing-a-(good)-bug-report)
 * [Contribute code by submitting a pull request](https://github.com/ical-org/ical.net/wiki/Contributing-a-(good)-pull-request). **Always open an issue first**, so we can discuss necessary changes.
-* [Ask a question](https://github.com/ical-org/ical.net/discussions). **Please never use the issue tracker for questions.**
+* [Ask a question](https://github.com/ical-org/ical.net/discussions). **Please only use the discussion area for questions.**
 
 ## Support
 
 * We ask and encourage you to contribute back to the project. This is especially true if you are using the library in a commercial product.
-
 * Questions asked in the discussion area are open to the community or experienced users to answer. Give maintainers a helping hand by answering questions whenever you can.
+* Remember that keeping ical.net up is something ical.net maintainers and contributors do in their spare time.
 
-* Remember that keeping ical.net up is something ical.net maintainers and many contributors do in their spare time.
+## Credits
 
-<details closed>
-    <summary>
-      Paid support
-    </summary>
+Big thanks to [JetBrains](https://www.jetbrains.com/) for supporting the project with free licenses of their fantastic tools.
 
-In case you need it, [Rian Stockbower may offer paid support and bugfixes](https://rianjs.net/consulting).
- A few basic rules to consider when asking for this kind of support:
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg" alt="JetBrains logo" width="200"><br/>
 
-* Any changes made to the ical.net library are open source, and will always be published on nuget for others to consume.
-* You do not own the changes made to the library even if you paid for them.
-* Congruence with the ical-org vision for the future of ical.net is required. That means we step back from things like "add Exchange interop", or take  dependencies on third-party libraries that benefit only your one or very few use cases.
+Without those two guys, iCal.NET would not exist today:
 
-</details>
+* [Rian Stockbower](https://github.com/rianjs/) took over the project in 2016, after obtaining permission from Douglas Day to relicense and continue developing the library. Rian maintained the library until Sept 2024. He added support to newer versions of .NET and focused on performance.
+* [Douglas Day](https://github.com/douglasday) founded and maintained the iCal.NET open-source project from 2007 to 2016. During this period, he contributed significantly to the development and enhancement of the library.
 
-## Creative Commons
-
-iCal.Net logo adapted from [Love Calendar](https://thenounproject.com/term/love-calendar/116866/) By Sergey Demushkin, RU
+* iCal.NET logo adapted from [Love Calendar](https://thenounproject.com/term/love-calendar/116866/) by Sergey Demushkin
