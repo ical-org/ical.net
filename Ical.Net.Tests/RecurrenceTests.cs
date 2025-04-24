@@ -3916,22 +3916,35 @@ END:VCALENDAR";
         Assert.That(expectedStartTimes.SequenceEqual(occurrencesStartTimes), Is.True);
     }
 
-    [Test]
-    [TestCase(null, false)]
-    [TestCase(0, true)]
-    [TestCase(1000, true)]
-    [TestCase(1440, false)]
-    public void TestMaxIncrementCount(int? limit, bool expectException)
-    {
-        var ical = """
+    // Between 00:59 and 00:00 there's a gap of 1380 minutes, which is 690 increments.
+    private const string TestMaxIncrementCountWithGaps = """
             BEGIN:VCALENDAR
             BEGIN:VEVENT
             DTSTART:20250305T000000
-            RRULE:FREQ=MINUTELY;BYHOUR=0;COUNT=100
+            RRULE:FREQ=MINUTELY;INTERVAL=2;BYHOUR=0;COUNT=100
             END:VEVENT
             END:VCALENDAR
             """;
 
+    private const string TestMaxIncrementCountWithoutGaps = """
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            DTSTART:20250305T000000
+            RRULE:FREQ=DAILY;INTERVAL=10;COUNT=100
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+    [Test]
+    [TestCase(null, TestMaxIncrementCountWithGaps, false)]
+    [TestCase(0, TestMaxIncrementCountWithGaps, true)]
+    [TestCase(1, TestMaxIncrementCountWithGaps, true)]
+    [TestCase(689, TestMaxIncrementCountWithGaps, true)]
+    [TestCase(690, TestMaxIncrementCountWithGaps, false)]
+    [TestCase(0, TestMaxIncrementCountWithoutGaps, false)]
+    [TestCase(1, TestMaxIncrementCountWithoutGaps, false)]
+    public void TestMaxIncrementCount(int? limit, string ical, bool expectException)
+    {
         var cal = Calendar.Load(ical);
 
         var options = new EvaluationOptions
