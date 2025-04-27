@@ -32,9 +32,8 @@ public class AttendeeSerializer : StringSerializer
         {
             if (CreateAndAssociate() is not Attendee a) return null;
 
-            var uriString = Unescape(Decode(a, attendee));
-
-            if (uriString == null) return a;
+            // Note: Returned value can't be null here when args are not null.
+            var uriString = Unescape(Decode(a, attendee))!;
 
             // Prepend "mailto:" if necessary
             if (!uriString.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))

@@ -44,16 +44,15 @@ public class UtcOffsetSerializer : EncodableDataTypeSerializer
         }
     }
 
+    private static readonly string[] _supportedFormats = ["hhmmss", "hhmm", "hh"];
+
     public static TimeSpan GetOffset(string rawOffset)
     {
         // Determine if the offset is negative
         var isNegative = rawOffset.StartsWith("-");
         rawOffset = rawOffset.TrimStart('+', '-');
 
-        // Supported formats
-        var formats = new[] { "hhmmss", "hhmm", "hh" };
-
-        if (TimeSpan.TryParseExact(rawOffset, formats, CultureInfo.InvariantCulture, out var ts))
+        if (TimeSpan.TryParseExact(rawOffset, _supportedFormats, CultureInfo.InvariantCulture, out var ts))
         {
             return isNegative ? -ts : ts;
         }

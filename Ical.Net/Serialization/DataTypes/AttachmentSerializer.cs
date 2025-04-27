@@ -82,9 +82,8 @@ public class AttachmentSerializer : EncodableDataTypeSerializer
 
             // The default VALUE type for attachments is URI.
             // So, let's grab the URI by default.
-            var uriValue = Decode(a, attachment);
-
-            if (string.IsNullOrEmpty(uriValue)) return null;
+            // Note: Returned value can't be null here when args are not null.
+            var uriValue = Decode(a, attachment)!; 
 
             a.Uri = new Uri(uriValue, UriKind.RelativeOrAbsolute);
 
