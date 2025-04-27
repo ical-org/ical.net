@@ -241,7 +241,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
         var recurrenceIdsAndUids = this.Children.OfType<IRecurrable>()
             .Where(r => r.RecurrenceId != null)
-            .Select(r => new { ((IUniqueComponent) r).Uid, Dt = r.RecurrenceId!.Value })
+            .Select(r => new { (r as IUniqueComponent).Uid, Dt = r.RecurrenceId!.Value })
             .Where(r => r.Uid != null)
             .ToDictionary(x => x);
 
@@ -294,7 +294,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             this.AddChild(cal);
             return (T) cal;
         }
-        throw new ArgumentException($"Creating {typeof(T)} failed.");
+        throw new ArgumentException($"Creating {typeof(T).FullName} failed.");
     }
 
     public virtual void MergeWith(IMergeable obj)
