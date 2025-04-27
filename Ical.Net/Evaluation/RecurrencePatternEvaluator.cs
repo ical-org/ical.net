@@ -192,9 +192,10 @@ public class RecurrencePatternEvaluator : Evaluator
                 dateCount++;
             }
 
-            noCandidateIncrementCount++;
             if (noCandidateIncrementCount > options?.MaxUnmatchedIncrementsLimit)
                 throw new EvaluationLimitExceededException();
+
+            noCandidateIncrementCount++;
 
             IncrementDate(ref intervalRefTime, pattern, pattern.Interval);
         }
