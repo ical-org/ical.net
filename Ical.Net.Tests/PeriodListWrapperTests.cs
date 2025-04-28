@@ -187,14 +187,14 @@ public class PeriodListWrapperTests
         var serializer = new CalendarSerializer(cal);
         var serialized = serializer.SerializeToString();
         // Assign the deserialized event
-        cal = Calendar.Load(serialized);
+        cal = Calendar.Load(serialized)!;
         evt = cal.Events[0];
 
         // Assert the serialized string and the deserialized event
         Assert.Multiple(() =>
         {
             // 2 dedicate PeriodList objects
-            Assert.That(evt.RecurrenceDatesPeriodLists, Has.Count.EqualTo(3));
+            Assert.That(evt!.RecurrenceDatesPeriodLists, Has.Count.EqualTo(3));
 
             // First PeriodList has date-only periods
             Assert.That(evt.RecurrenceDatesPeriodLists[0], Has.Count.EqualTo(3));

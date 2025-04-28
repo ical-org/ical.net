@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 namespace Ical.Net;
 
 public interface ICopyable
@@ -21,5 +22,5 @@ public interface ICopyable
     /// of the object when it is overridden, otherwise is used the implementation of the base class.
     /// This is necessary when working with mutable reference types.
     /// </summary>
-    T Copy<T>();
+    T? Copy<T>();
 }

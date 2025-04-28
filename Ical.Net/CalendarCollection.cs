@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,6 @@ using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
-using static NodaTime.TimeZones.ZoneEqualityComparer;
 
 namespace Ical.Net;
 
@@ -57,38 +57,41 @@ public class CalendarCollection : List<Calendar>
         // being ordered to avoid full enumeration.
         .OrderedMergeMany();
 
-    public IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default)
+    public IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null)
         => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime, options));
 
-    public IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default) where T : IRecurringComponent
+    public IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
         => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime, options));
 
-    private FreeBusy CombineFreeBusy(FreeBusy main, FreeBusy current)
+    private FreeBusy CombineFreeBusy(FreeBusy? main, FreeBusy current)
     {
         main?.MergeWith(current);
         return current;
     }
 
-    public FreeBusy GetFreeBusy(FreeBusy freeBusyRequest)
+    public FreeBusy? GetFreeBusy(FreeBusy freeBusyRequest)
     {
-        return this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(freeBusyRequest)));
+        return this.Aggregate<Calendar, FreeBusy?>(null, (current, iCal) =>
+        {
+            var freeBusy = iCal.GetFreeBusy(freeBusyRequest);
+            return current is null ? freeBusy : CombineFreeBusy(current, freeBusy);
+        });
     }
 
-    public FreeBusy GetFreeBusy(CalDateTime fromInclusive, CalDateTime toExclusive)
+    public FreeBusy? GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, CalDateTime fromInclusive, CalDateTime toExclusive)
     {
-        return this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(fromInclusive, toExclusive)));
-    }
-
-    public FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, CalDateTime fromInclusive, CalDateTime toExclusive)
-    {
-        return this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive)));
+        return this.Aggregate<Calendar, FreeBusy?>(null, (current, iCal) =>
+        {
+            var freeBusy = iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive);
+            return current is null ? freeBusy : CombineFreeBusy(current, freeBusy);
+        });
     }
 
     public override int GetHashCode() => CollectionHelpers.GetHashCode(this);
 
     protected bool Equals(CalendarCollection obj) => CollectionHelpers.Equals(this, obj);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;

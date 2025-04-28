@@ -31,5 +31,5 @@ public class CalendarObjectListProxy<TType> : GroupedCollectionProxy<string, ICa
     /// <param name="index"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    TType ICalendarObjectList<TType>.this[int index] => this[index] ?? throw new ArgumentOutOfRangeException(nameof(index));
+    TType ICalendarObjectList<TType>.this[int index] => this.Skip(index).FirstOrDefault() ?? throw new ArgumentOutOfRangeException(nameof(index));
 }
