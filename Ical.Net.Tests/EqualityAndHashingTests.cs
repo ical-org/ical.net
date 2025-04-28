@@ -256,17 +256,17 @@ public class EqualityAndHashingTests
         e.Resources.Add("Baz");
         Assert.That(e.Resources.Count == 3, Is.True);
         var serialized = SerializeEvent(e);
-        Assert.That(serialized.Contains("Baz"), Is.True);
+        Assert.That(serialized, Does.Contain("Baz"));
 
         e.Resources.Remove("Baz");
         Assert.That(e.Resources.Count == 2, Is.True);
         serialized = SerializeEvent(e);
-        Assert.That(serialized.Contains("Baz"), Is.False);
+        Assert.That(serialized, Does.Not.Contain("Baz"));
 
         e.Resources.Add("Hello");
         Assert.That(e.Resources.Contains("Hello"), Is.True);
         serialized = SerializeEvent(e);
-        Assert.That(serialized.Contains("Hello"), Is.True);
+        Assert.That(serialized, Does.Contain("Hello"));
 
         e.Resources.Clear();
         e.Resources.AddRange(origContents);
@@ -274,10 +274,10 @@ public class EqualityAndHashingTests
         serialized = SerializeEvent(e);
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("Foo"), Is.True);
-            Assert.That(serialized.Contains("Bar"), Is.True);
-            Assert.That(serialized.Contains("Baz"), Is.False);
-            Assert.That(serialized.Contains("Hello"), Is.False);
+            Assert.That(serialized, Does.Contain("Foo"));
+            Assert.That(serialized, Does.Contain("Bar"));
+            Assert.That(serialized, Does.Not.Contain("Baz"));
+            Assert.That(serialized, Does.Not.Contain("Hello"));
         });
     }
 
