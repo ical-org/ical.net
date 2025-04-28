@@ -185,7 +185,7 @@ public class PeriodListWrapperTests
         ]);
 
         var serializer = new CalendarSerializer(cal);
-        var serialized = serializer.SerializeToString();
+        var serialized = serializer.SerializeToString()!;
         // Assign the deserialized event
         cal = Calendar.Load(serialized)!;
         evt = cal.Events[0];

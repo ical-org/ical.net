@@ -102,7 +102,7 @@ public class RecurrenceWithExDateTests
         var serializer = new CalendarSerializer();
         ics = serializer.SerializeToString(cal);
         // serialize and deserialize to ensure the exclusion dates de/serialized
-        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString())!;
+        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString()!)!;
 
         // Start date: 2024-10-19 at 18:00 (GMT Standard Time)
         // Recurrence: Every hour, 4 occurrences
@@ -150,7 +150,7 @@ public class RecurrenceWithExDateTests
         var serializer = new CalendarSerializer();
         ics = serializer.SerializeToString(cal);
         // serialize and deserialize to ensure the exclusion dates de/serialized
-        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString())!;
+        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString()!)!;
 
         // Occurrences:
         // 2023-10-25 09:00 (UTC Offset: +0200)
