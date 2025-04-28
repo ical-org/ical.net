@@ -37,8 +37,8 @@ public class VTimeZoneTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZID:America/Phoenix"), Is.True, "Time zone not found in serialization");
-            Assert.That(serialized.Contains("DTSTART:19670430T020000"), Is.True, "Daylight savings for Phoenix was not serialized properly.");
+            Assert.That(serialized, Does.Contain("TZID:America/Phoenix"), "Time zone not found in serialization");
+            Assert.That(serialized, Does.Contain("DTSTART:19670430T020000"), "Daylight savings for Phoenix was not serialized properly.");
         });
     }
 
@@ -51,8 +51,8 @@ public class VTimeZoneTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZID:America/Phoenix"), Is.True, "Time zone not found in serialization");
-            Assert.That(serialized.Contains("BEGIN:DAYLIGHT"), Is.False, "Daylight savings should not exist for Phoenix.");
+            Assert.That(serialized, Does.Contain("TZID:America/Phoenix"), "Time zone not found in serialization");
+            Assert.That(serialized, Does.Not.Contain("BEGIN:DAYLIGHT"), "Daylight savings should not exist for Phoenix.");
         });
     }
 
@@ -65,10 +65,10 @@ public class VTimeZoneTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZID:US Mountain Standard Time"), Is.True, "Time zone not found in serialization");
-            Assert.That(serialized.Contains("BEGIN:STANDARD"), Is.True);
-            Assert.That(serialized.Contains("BEGIN:DAYLIGHT"), Is.True);
-            Assert.That(serialized.Contains("X-LIC-LOCATION"), Is.True, "X-LIC-LOCATION was not serialized");
+            Assert.That(serialized, Does.Contain("TZID:US Mountain Standard Time"), "Time zone not found in serialization");
+            Assert.That(serialized, Does.Contain("BEGIN:STANDARD"));
+            Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"));
+            Assert.That(serialized, Does.Contain("X-LIC-LOCATION"), "X-LIC-LOCATION was not serialized");
         });
     }
 
@@ -87,7 +87,7 @@ public class VTimeZoneTest
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.That(serialized.Contains("TZID:Central America Standard Time"), Is.True, "Time zone not found in serialization");
+        Assert.That(serialized, Does.Contain("TZID:Central America Standard Time"), "Time zone not found in serialization");
     }
 
     [Test, Category("VTimeZone")]
@@ -97,7 +97,7 @@ public class VTimeZoneTest
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.That(serialized.Contains("TZID:Eastern Standard Time"), Is.True, "Time zone not found in serialization");
+        Assert.That(serialized, Does.Contain("TZID:Eastern Standard Time"), "Time zone not found in serialization");
     }
 
     [Test, Category("VTimeZone")]
@@ -110,21 +110,21 @@ public class VTimeZoneTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZID:Europe/Moscow"), Is.True, "Time zone not found in serialization");
-            Assert.That(serialized.Contains("BEGIN:STANDARD"), Is.True, "The standard timezone info was not serialized");
-            Assert.That(serialized.Contains("BEGIN:DAYLIGHT"), Is.True, "The daylight timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("TZID:Europe/Moscow"), "Time zone not found in serialization");
+            Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
         });
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZNAME:MSD"), Is.True, "MSD was not serialized");
-            Assert.That(serialized.Contains("TZNAME:MSK"), Is.True, "MSK info was not serialized");
-            Assert.That(serialized.Contains("TZNAME:MSD"), Is.True, "MSD was not serialized");
-            Assert.That(serialized.Contains("TZNAME:MST"), Is.True, "MST was not serialized");
-            Assert.That(serialized.Contains("TZNAME:MMT"), Is.True, "MMT was not serialized");
-            Assert.That(serialized.Contains("TZOFFSETFROM:+023017"), Is.True, "TZOFFSETFROM:+023017 was not serialized");
-            Assert.That(serialized.Contains("TZOFFSETTO:+023017"), Is.True, "TZOFFSETTO:+023017 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19180916T010000"), Is.True, "DTSTART:19180916T010000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19171228T000000"), Is.True, "DTSTART:19171228T000000 was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:MSD"), "MSD was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:MSK"), "MSK info was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:MSD"), "MSD was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:MST"), "MST was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:MMT"), "MMT was not serialized");
+            Assert.That(serialized, Does.Contain("TZOFFSETFROM:+023017"), "TZOFFSETFROM:+023017 was not serialized");
+            Assert.That(serialized, Does.Contain("TZOFFSETTO:+023017"), "TZOFFSETTO:+023017 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:19180916T010000"), "DTSTART:19180916T010000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:19171228T000000"), "DTSTART:19171228T000000 was not serialized");
             // RDATE may contain multiple dates, separated by a comma
             Assert.That(Regex.IsMatch(serialized, $@"RDATE:.*\b19991031T030000\b", RegexOptions.Compiled, RegexDefaults.Timeout), Is.True, "RDATE:19731028T020000 was not serialized");
         });
@@ -139,20 +139,20 @@ public class VTimeZoneTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZID:America/Chicago"), Is.True, "Time zone not found in serialization");
-            Assert.That(serialized.Contains("BEGIN:STANDARD"), Is.True, "The standard timezone info was not serialized");
-            Assert.That(serialized.Contains("BEGIN:DAYLIGHT"), Is.True, "The daylight timezone info was not serialized");
-            Assert.That(serialized.Contains("TZNAME:CDT"), Is.True, "CDT was not serialized");
-            Assert.That(serialized.Contains("TZNAME:CST"), Is.True, "CST was not serialized");
-            Assert.That(serialized.Contains("TZNAME:EST"), Is.True, "EST was not serialized");
-            Assert.That(serialized.Contains("TZNAME:CWT"), Is.True, "CWT was not serialized");
-            Assert.That(serialized.Contains("TZNAME:CPT"), Is.True, "CPT was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19181027T020000"), Is.True, "DTSTART:19181027T020000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19450814T180000"), Is.True, "DTSTART:19450814T180000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19420209T020000"), Is.True, "DTSTART:19420209T020000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19360301T020000"), Is.True, "DTSTART:19360301T020000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:20070311T020000"), Is.True, "DTSTART:20070311T020000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:20071104T020000"), Is.True, "DTSTART:20071104T020000 was not serialized");
+            Assert.That(serialized, Does.Contain("TZID:America/Chicago"), "Time zone not found in serialization");
+            Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:CDT"), "CDT was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:CST"), "CST was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:EST"), "EST was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:CWT"), "CWT was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:CPT"), "CPT was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:19181027T020000"), "DTSTART:19181027T020000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:19450814T180000"), "DTSTART:19450814T180000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:19420209T020000"), "DTSTART:19420209T020000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:19360301T020000"), "DTSTART:19360301T020000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:20070311T020000"), "DTSTART:20070311T020000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
         });
     }
 
@@ -165,17 +165,17 @@ public class VTimeZoneTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZID:America/Los_Angeles"), Is.True, "Time zone not found in serialization");
-            Assert.That(serialized.Contains("BEGIN:STANDARD"), Is.True, "The standard timezone info was not serialized");
-            Assert.That(serialized.Contains("BEGIN:DAYLIGHT"), Is.True, "The daylight timezone info was not serialized");
-            Assert.That(serialized.Contains("BYDAY=2SU"), Is.True, "BYDAY=2SU was not serialized");
-            Assert.That(serialized.Contains("TZNAME:PDT"), Is.True, "PDT was not serialized");
-            Assert.That(serialized.Contains("TZNAME:PST"), Is.True, "PST was not serialized");
-            Assert.That(serialized.Contains("TZNAME:PPT"), Is.True, "PPT was not serialized");
-            Assert.That(serialized.Contains("TZNAME:PWT"), Is.True, "PWT was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19180331T020000"), Is.True, "DTSTART:19180331T020000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:20071104T020000"), Is.True, "DTSTART:20071104T020000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:20070311T020000"), Is.True, "DTSTART:20070311T020000 was not serialized");
+            Assert.That(serialized, Does.Contain("TZID:America/Los_Angeles"), "Time zone not found in serialization");
+            Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("BYDAY=2SU"), "BYDAY=2SU was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:PDT"), "PDT was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:PST"), "PST was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:PPT"), "PPT was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:PWT"), "PWT was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:19180331T020000"), "DTSTART:19180331T020000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:20070311T020000"), "DTSTART:20070311T020000 was not serialized");
         });
 
         //Assert.IsTrue(serialized.Contains("TZURL:http://tzurl.org/zoneinfo/America/Los_Angeles"), "TZURL:http://tzurl.org/zoneinfo/America/Los_Angeles was not serialized");
@@ -191,11 +191,11 @@ public class VTimeZoneTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZID:Europe/Oslo"), Is.True, "Time zone not found in serialization");
-            Assert.That(serialized.Contains("BEGIN:STANDARD"), Is.True, "The standard timezone info was not serialized");
-            Assert.That(serialized.Contains("BEGIN:DAYLIGHT"), Is.True, "The daylight timezone info was not serialized");
-            Assert.That(serialized.Contains("BYDAY=-1SU;BYMONTH=3"), Is.True, "BYDAY=-1SU;BYMONTH=3 was not serialized");
-            Assert.That(serialized.Contains("BYDAY=-1SU;BYMONTH=10"), Is.True, "BYDAY=-1SU;BYMONTH=10 was not serialized");
+            Assert.That(serialized, Does.Contain("TZID:Europe/Oslo"), "Time zone not found in serialization");
+            Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("BYDAY=-1SU;BYMONTH=3"), "BYDAY=-1SU;BYMONTH=3 was not serialized");
+            Assert.That(serialized, Does.Contain("BYDAY=-1SU;BYMONTH=10"), "BYDAY=-1SU;BYMONTH=10 was not serialized");
         });
 
     }
@@ -210,20 +210,20 @@ public class VTimeZoneTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZID:America/Anchorage"), Is.True, "Time zone not found in serialization");
-            Assert.That(serialized.Contains("BEGIN:STANDARD"), Is.True, "The standard timezone info was not serialized");
-            Assert.That(serialized.Contains("BEGIN:DAYLIGHT"), Is.True, "The daylight timezone info was not serialized");
-            Assert.That(serialized.Contains("TZNAME:AHST"), Is.True, "AHST was not serialized");
-            Assert.That(serialized.Contains("TZNAME:AHDT"), Is.True, "AHDT was not serialized");
-            Assert.That(serialized.Contains("TZNAME:AKST"), Is.True, "AKST was not serialized");
-            Assert.That(serialized.Contains("TZNAME:YST"), Is.True, "YST was not serialized");
-            Assert.That(serialized.Contains("TZNAME:AHDT"), Is.True, "AHDT was not serialized");
-            Assert.That(serialized.Contains("TZNAME:LMT"), Is.True, "LMT was not serialized");
+            Assert.That(serialized, Does.Contain("TZID:America/Anchorage"), "Time zone not found in serialization");
+            Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:AHST"), "AHST was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:AHDT"), "AHDT was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:AKST"), "AKST was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:YST"), "YST was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:AHDT"), "AHDT was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:LMT"), "LMT was not serialized");
             // RDATE may contain multiple dates, separated by a comma
             Assert.That(Regex.IsMatch(serialized, $@"RDATE:.*\b19731028T020000\b", RegexOptions.Compiled, RegexDefaults.Timeout), Is.True, "RDATE:19731028T020000 was not serialized");
             Assert.That(Regex.IsMatch(serialized, $@"RDATE:.*\b19801026T020000\b", RegexOptions.Compiled, RegexDefaults.Timeout), Is.True, "RDATE:19731028T020000 was not serialized");
-            Assert.That(serialized.Contains("RDATE:19670401/P1D"), Is.False, "RDate was not properly serialized for vtimezone, should be RDATE:19670401T000000");
-            Assert.That(serialized.Contains("DTSTART:19420209T020000"), Is.True, "DTSTART:19420209T020000 was not serialized");
+            Assert.That(serialized, Does.Not.Contain("RDATE:19670401/P1D"), "RDate was not properly serialized for vtimezone, should be RDATE:19670401T000000");
+            Assert.That(serialized, Does.Contain("DTSTART:19420209T020000"), "DTSTART:19420209T020000 was not serialized");
         });
     }
 
@@ -236,19 +236,19 @@ public class VTimeZoneTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZID:America/Eirunepe"), Is.True, "Time zone not found in serialization");
-            Assert.That(serialized.Contains("BEGIN:STANDARD"), Is.True, "The standard timezone info was not serialized");
-            Assert.That(serialized.Contains("BEGIN:DAYLIGHT"), Is.True, "The daylight timezone info was not serialized");
-            Assert.That(serialized.Contains("TZNAME:-04"), Is.True, "-04 was not serialized");
-            Assert.That(serialized.Contains("TZNAME:-05"), Is.True, "-05 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19311003T110000"), Is.True, "DTSTART:19311003T110000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19320401T000000"), Is.True, "DTSTART:19320401T000000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:20080624T000000"), Is.True, "DTSTART:20080624T000000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19501201T000000"), Is.True, "DTSTART:19501201T000000 was not serialized");
+            Assert.That(serialized, Does.Contain("TZID:America/Eirunepe"), "Time zone not found in serialization");
+            Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:-04"), "-04 was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:-05"), "-05 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:19311003T110000"), "DTSTART:19311003T110000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:19320401T000000"), "DTSTART:19320401T000000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:20080624T000000"), "DTSTART:20080624T000000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:19501201T000000"), "DTSTART:19501201T000000 was not serialized");
         });
 
         // Should not contain the following
-        Assert.That(serialized.Contains("RDATE:19501201T000000/P1D"), Is.False, "The RDATE was not serialized correctly, should be RDATE:19501201T000000");
+        Assert.That(serialized, Does.Not.Contain("RDATE:19501201T000000/P1D"), "The RDATE was not serialized correctly, should be RDATE:19501201T000000");
     }
 
     [Test, Category("VTimeZone")]
@@ -260,14 +260,14 @@ public class VTimeZoneTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(serialized.Contains("TZID:America/Detroit"), Is.True, "Time zone not found in serialization");
-            Assert.That(serialized.Contains("BEGIN:STANDARD"), Is.True, "The standard timezone info was not serialized");
-            Assert.That(serialized.Contains("BEGIN:DAYLIGHT"), Is.True, "The daylight timezone info was not serialized");
-            Assert.That(serialized.Contains("TZNAME:EDT"), Is.True, "EDT was not serialized");
-            Assert.That(serialized.Contains("TZNAME:EPT"), Is.True, "EPT was not serialized");
-            Assert.That(serialized.Contains("TZNAME:EST"), Is.True, "EST was not serialized");
-            Assert.That(serialized.Contains("DTSTART:20070311T020000"), Is.True, "DTSTART:20070311T020000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:20071104T020000"), Is.True, "DTSTART:20071104T020000 was not serialized");
+            Assert.That(serialized, Does.Contain("TZID:America/Detroit"), "Time zone not found in serialization");
+            Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:EDT"), "EDT was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:EPT"), "EPT was not serialized");
+            Assert.That(serialized, Does.Contain("TZNAME:EST"), "EST was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:20070311T020000"), "DTSTART:20070311T020000 was not serialized");
+            Assert.That(serialized, Does.Contain("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
         });
     }
 

@@ -52,7 +52,7 @@ public class CalendarPropertiesTest
         calendar.Events.Add(@event);
 
         var serialized = new CalendarSerializer().SerializeToString(calendar);
-        Assert.That(serialized.Contains("X-ALT-DESC;"), Is.True);
+        Assert.That(serialized, Does.Contain("X-ALT-DESC;"));
     }
 
     [Test]

@@ -127,7 +127,7 @@ public class SerializationTests
 
         foreach (var e in elements)
         {
-            Assert.That(searchRegion.Contains(SerializationConstants.LineBreak + e + SerializationConstants.LineBreak), Is.True, () => string.Format(notFound, e));
+            Assert.That(searchRegion, Does.Contain(SerializationConstants.LineBreak + e + SerializationConstants.LineBreak), () => string.Format(notFound, e));
         }
 
         return searchRegion;
@@ -270,7 +270,7 @@ public class SerializationTests
 
         foreach (var p in expectProperties)
         {
-            Assert.That(serializedCalendar.Contains(SerializationConstants.LineBreak + p + SerializationConstants.LineBreak), Is.True, "expected '" + p + "' not found");
+            Assert.That(serializedCalendar, Does.Contain(SerializationConstants.LineBreak + p + SerializationConstants.LineBreak), "expected '" + p + "' not found");
         }
 
         InspectSerializedSection(serializedCalendar, "VEVENT",
@@ -374,7 +374,7 @@ public class SerializationTests
         Assert.Multiple(() =>
         {
             Assert.That(e.Duration, Is.EqualTo(originalDuration));
-            Assert.That(serialized.Contains("DURATION"), Is.True);
+            Assert.That(serialized, Does.Contain("DURATION"));
         });
     }
 
@@ -457,9 +457,9 @@ public class SerializationTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(deserializedEvent.Description.Contains("\t"), Is.True);
-            Assert.That(deserializedEvent.Description.Contains("�"), Is.True);
-            Assert.That(deserializedEvent.Description.Contains("�"), Is.True);
+            Assert.That(deserializedEvent.Description, Does.Contain("\t"));
+            Assert.That(deserializedEvent.Description, Does.Contain("�"));
+            Assert.That(deserializedEvent.Description, Does.Contain("�"));
         });
     }
 
