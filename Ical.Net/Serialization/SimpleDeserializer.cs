@@ -77,15 +77,19 @@ public class SimpleDeserializer
     public IEnumerable<ICalendarComponent> Deserialize(TextReader reader)
     {
         var context = new SerializationContext();
-        var stack = new Stack<ICalendarComponent>();
+        var stack = new Stack<ICalendarComponent?>();
         var current = default(ICalendarComponent);
         foreach (var contentLineString in GetContentLines(reader))
         {
             var contentLine = ParseContentLine(context, contentLineString);
             if (string.Equals(contentLine.Name, "BEGIN", StringComparison.OrdinalIgnoreCase))
             {
-                stack.Push(current!); // Must push to stack!
-                current = _componentFactory.Build((string) contentLine.Value);
+                stack.Push(current); // Must push to stack!
+                if (contentLine.Value is not string value)
+                {
+                    throw new SerializationException("Content line value is null or not a string.");
+                }
+                current = _componentFactory.Build(value);
                 SerializationUtil.OnDeserializing(current);
             }
             else
@@ -96,10 +100,15 @@ public class SimpleDeserializer
                 }
                 if (string.Equals(contentLine.Name, "END", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!string.Equals((string) contentLine.Value, current.Name, StringComparison.OrdinalIgnoreCase))
+                    if (contentLine.Value is not string value)
                     {
-                        throw new SerializationException($"Expected 'END:{current.Name}', found 'END:{contentLine.Value}'");
+                        throw new SerializationException("Content line value is null or not a string.");
                     }
+                    if (!string.Equals(value, current.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new SerializationException($"Expected 'END:{current.Name}', found 'END:{value}'");
+                    }
+
                     SerializationUtil.OnDeserialized(current);
                     var finished = current;
                     current = stack.Pop();
@@ -165,7 +174,7 @@ public class SimpleDeserializer
     private void SetPropertyValue(SerializationContext context, CalendarProperty property, string value)
     {
         var type = _dataTypeMapper.GetPropertyMapping(property) ?? typeof(string);
-        var serializer = (SerializerBase?) _serializerFactory.Build(type, context);
+        var serializer = _serializerFactory.Build(type, context) as SerializerBase;
         using var valueReader = new StringReader(value);
 
         var propertyValue = serializer?.Deserialize(valueReader);

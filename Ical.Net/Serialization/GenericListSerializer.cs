@@ -32,7 +32,7 @@ public class GenericListSerializer : SerializerBase
     private MethodInfo? _addMethodInfo;
     public override object? Deserialize(TextReader tr)
     {
-        var p = SerializationContext?.Peek() as ICalendarProperty;
+        var p = SerializationContext.Peek() as ICalendarProperty;
         if (p == null)
         {
             return null;

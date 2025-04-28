@@ -29,7 +29,7 @@ public class PeriodSerializer : EncodableDataTypeSerializer
         }
 
         // Push the period onto the serialization context stack
-        SerializationContext?.Push(p);
+        SerializationContext.Push(p);
 
         try
         {

@@ -55,7 +55,7 @@ public class RecurrenceWithExDateTests
 
         // Act
         var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(calendar);
+        var ics = serializer.SerializeToString(calendar)!;
 
         var deserializedCalendar = Calendar.Load(ics)!;
         var occurrences = deserializedCalendar.GetOccurrences<CalendarEvent>().ToList();
@@ -206,7 +206,7 @@ public class RecurrenceWithExDateTests
 
         var cal = Calendar.Load(ics)!;
         // serialize and deserialize to ensure the exclusion dates de/serialized
-        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString())!;
+        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString()!)!;
         var occurrences = cal.GetOccurrences<CalendarEvent>().ToList();
 
         // Occurrences:

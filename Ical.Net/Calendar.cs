@@ -227,7 +227,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
         var recurrenceIdsAndUids = this.Children.OfType<IRecurrable>()
             .Where(r => r.RecurrenceId != null)
-            .Select(r => new { (r as IUniqueComponent).Uid, Dt = r.RecurrenceId!.Value })
+            .Select(r => new { (r as IUniqueComponent)?.Uid, Dt = r.RecurrenceId!.Value })
             .Where(r => r.Uid != null)
             .ToDictionary(x => x);
 
@@ -297,7 +297,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         ProductId = c.ProductId;
         Scale = c.Scale;
 
-        foreach (var p in c.Properties.Where(p => p.Name != null && !Properties.ContainsKey(p.Name)))
+        foreach (var p in c.Properties.Where(p => !Properties.ContainsKey(p.Name)))
         {
             Properties.Add(p);
         }

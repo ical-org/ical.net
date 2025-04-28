@@ -3940,7 +3940,7 @@ END:VCALENDAR";
     [TestCase(1, TestMaxIncrementCountWithoutGaps, false)]
     public void TestMaxIncrementCount(int? limit, string ical, bool expectException)
     {
-        var cal = Calendar.Load(ical);
+        var cal = Calendar.Load(ical)!;
 
         var options = new EvaluationOptions
         {
