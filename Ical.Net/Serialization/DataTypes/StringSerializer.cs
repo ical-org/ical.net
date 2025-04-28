@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ public class StringSerializer : EncodableDataTypeSerializer
 
     internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled, RegexDefaults.Timeout);
 
-    protected virtual string Unescape(string value)
+    protected virtual string? Unescape(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -43,7 +44,7 @@ public class StringSerializer : EncodableDataTypeSerializer
         return value;
     }
 
-    protected virtual string Escape(string value)
+    protected virtual string? Escape(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -63,7 +64,7 @@ public class StringSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(string);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
         if (obj == null)
         {
@@ -71,17 +72,16 @@ public class StringSerializer : EncodableDataTypeSerializer
         }
 
         var values = new List<string>();
-        if (obj is string)
+        if (obj is string s)
         {
-            values.Add((string) obj);
+            values.Add(s);
         }
-        else if (obj is IEnumerable)
+        else if (obj is IEnumerable enumerable)
         {
-            values.AddRange(from object child in (IEnumerable) obj select child.ToString());
+            values.AddRange(from object child in enumerable select child.ToString());
         }
 
-        var co = SerializationContext.Peek() as ICalendarObject;
-        if (co != null)
+        if (SerializationContext?.Peek() is ICalendarObject co)
         {
             // Encode the string as needed.
             var dt = new EncodableDataType
@@ -90,7 +90,11 @@ public class StringSerializer : EncodableDataTypeSerializer
             };
             for (var i = 0; i < values.Count; i++)
             {
-                values[i] = Encode(dt, Escape(values[i]));
+                var value = Encode(dt, Escape(values[i]));
+                if (value != null)
+                {
+                    values[i] = value;
+                }
             }
 
             return string.Join(",", values);
@@ -98,13 +102,17 @@ public class StringSerializer : EncodableDataTypeSerializer
 
         for (var i = 0; i < values.Count; i++)
         {
-            values[i] = Escape(values[i]);
+            var escaped = Escape(values[i]);
+            if (escaped != null)
+            {
+                values[i] = escaped;
+            }
         }
         return string.Join(",", values);
     }
 
     internal static readonly Regex UnescapedCommas = new Regex(@"(?<!\\),", RegexOptions.Compiled, RegexDefaults.Timeout);
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader? tr)
     {
         if (tr == null)
         {
@@ -113,35 +121,28 @@ public class StringSerializer : EncodableDataTypeSerializer
 
         var value = tr.ReadToEnd();
 
-        // NOTE: this can deserialize into an IList<string> or simply a string,
-        // depending on the input text.  Anything that uses this serializer should
-        // be prepared to receive either a string, or an IList<string>.
-
         var serializeAsList = false;
 
-        // Determine if we can serialize this property
-        // with multiple values per line.
-        var co = SerializationContext.Peek() as ICalendarObject;
-        if (co is ICalendarProperty)
+        // Ensure SerializationContext is not null before accessing Peek()
+        var context = SerializationContext;
+        if (context?.Peek() is ICalendarProperty cp)
         {
-            serializeAsList = GetService<DataTypeMapper>().GetPropertyAllowsMultipleValues(co);
+            var dataTypeMapper = GetService<DataTypeMapper>();
+            if (dataTypeMapper != null)
+            {
+                serializeAsList = dataTypeMapper.GetPropertyAllowsMultipleValues(cp);
+            }
         }
 
-        // Try to decode the string
-        EncodableDataType dt = null;
-        if (co != null)
+        var dt = new EncodableDataType
         {
-            dt = new EncodableDataType
-            {
-                AssociatedObject = co
-            };
-        }
+            AssociatedObject = context?.Peek() as ICalendarObject
+        };
 
         var encodedValues = serializeAsList ? UnescapedCommas.Split(value) : new[] { value };
         var escapedValues = encodedValues.Select(v => Decode(dt, v)).ToList();
         var values = escapedValues.Select(Unescape).ToList();
 
-        // Return either a single value, or the entire list.
         if (values.Count == 1)
         {
             return values[0];

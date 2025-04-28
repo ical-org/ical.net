@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using Ical.Net.DataTypes;
@@ -25,21 +26,20 @@ public class EnumSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => _mEnumType;
 
-    public override string SerializeToString(object enumValue)
+    public override string? SerializeToString(object? obj)
     {
         try
         {
-            var obj = SerializationContext.Peek() as ICalendarObject;
-            if (obj != null)
+            if (SerializationContext?.Peek() is ICalendarObject calObject)
             {
                 // Encode the value as needed.
                 var dt = new EncodableDataType
                 {
-                    AssociatedObject = obj
+                    AssociatedObject = calObject
                 };
-                return Encode(dt, enumValue.ToString());
+                return Encode(dt, obj?.ToString());
             }
-            return enumValue.ToString();
+            return obj?.ToString();
         }
         catch
         {
@@ -47,14 +47,13 @@ public class EnumSerializer : EncodableDataTypeSerializer
         }
     }
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
         var value = tr.ReadToEnd();
 
         try
         {
-            var obj = SerializationContext.Peek() as ICalendarObject;
-            if (obj != null)
+            if (SerializationContext?.Peek() is ICalendarObject obj)
             {
                 // Decode the value, if necessary!
                 var dt = new EncodableDataType
@@ -65,9 +64,13 @@ public class EnumSerializer : EncodableDataTypeSerializer
             }
 
             // Remove "-" characters while parsing Enum values.
-            return Enum.Parse(_mEnumType, value.Replace("-", ""), true);
+            if (value != null)
+                return Enum.Parse(_mEnumType, value.Replace("-", ""), true);
         }
-        catch { }
+        catch
+        {
+            // Return null instead of throwing an exception
+        }
 
         return value;
     }

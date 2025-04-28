@@ -20,10 +20,10 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(PeriodList);
 
-    public override string? SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
         var factory = GetService<ISerializerFactory>();
-        if (obj is not PeriodList periodList || factory == null)
+        if (obj is not PeriodList periodList || factory == null || SerializationContext == null)
         {
             return null;
         }
@@ -35,7 +35,7 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
             return null;
         }
 
-        var parts = new List<string>(periodList.Count);
+        var parts = new List<string?>(periodList.Count);
 
         var firstPeriod = periodList.FirstOrDefault();
 
@@ -72,7 +72,7 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
         // Create the day specifier and associate it with a calendar object
         var rdt = CreateAndAssociate() as PeriodList;
         var factory = GetService<ISerializerFactory>();
-        if (rdt == null || factory == null)
+        if (rdt == null || factory == null || SerializationContext == null)
         {
             return null;
         }
@@ -82,7 +82,7 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
 
         var dtSerializer = factory.Build(typeof(CalDateTime), SerializationContext) as IStringSerializer;
         var periodSerializer = factory.Build(typeof(Period), SerializationContext) as IStringSerializer;
-        if (dtSerializer == null || periodSerializer == null)
+        if (value == null || dtSerializer == null || periodSerializer == null)
         {
             return null;
         }

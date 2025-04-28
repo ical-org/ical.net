@@ -61,7 +61,7 @@ public class RequestStatus : EncodableDataType
         ExtraData = rs.ExtraData;
     }
 
-    public override string ToString()
+    public override string? ToString()
     {
         var serializer = new RequestStatusSerializer();
         return serializer.SerializeToString(this);

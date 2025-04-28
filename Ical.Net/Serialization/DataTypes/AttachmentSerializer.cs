@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using Ical.Net.DataTypes;
@@ -17,7 +18,7 @@ public class AttachmentSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(Attachment);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
         var a = obj as Attachment;
         if (a == null)
@@ -49,17 +50,22 @@ public class AttachmentSerializer : EncodableDataTypeSerializer
         return Encode(a, a.Data);
     }
 
-    public Attachment Deserialize(string attachment)
+    public Attachment? Deserialize(string attachment)
     {
         try
         {
             var a = CreateAndAssociate() as Attachment;
+            if (a == null) return null;
+
             // Decode the value, if necessary
             var data = DecodeData(a, attachment);
 
             // Get the currently-used encoding off the encoding stack.
             var encodingStack = GetService<EncodingStack>();
-            a.ValueEncoding = encodingStack.Current;
+            if (encodingStack != null)
+            {
+                a.ValueEncoding = encodingStack.Current;
+            }
 
             // Get the format of the attachment
             var valueType = a.GetValueType();
@@ -74,11 +80,12 @@ public class AttachmentSerializer : EncodableDataTypeSerializer
                 };
             }
 
-            // The default VALUE type for attachments is URI.  So, let's
-            // grab the URI by default.
-            var uriValue = Decode(a, attachment);
-            a.Uri = new Uri(uriValue, UriKind.RelativeOrAbsolute);
+            // The default VALUE type for attachments is URI.
+            // So, let's grab the URI by default.
+            // Note: Returned value can't be null here when args are not null.
+            var uriValue = Decode(a, attachment)!; 
 
+            a.Uri = new Uri(uriValue, UriKind.RelativeOrAbsolute);
 
             return a;
         }
@@ -90,5 +97,5 @@ public class AttachmentSerializer : EncodableDataTypeSerializer
         return null;
     }
 
-    public override object Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
+    public override object? Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
 }

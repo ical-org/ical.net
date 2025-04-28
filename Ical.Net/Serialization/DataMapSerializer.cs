@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
@@ -15,11 +16,11 @@ public class DataMapSerializer : SerializerBase
 
     public DataMapSerializer(SerializationContext ctx) : base(ctx) { }
 
-    protected IStringSerializer GetMappedSerializer()
+    protected IStringSerializer? GetMappedSerializer()
     {
         var sf = GetService<ISerializerFactory>();
         var mapper = GetService<DataTypeMapper>();
-        if (sf == null || mapper == null)
+        if (sf == null || mapper == null || SerializationContext == null)
         {
             return null;
         }
@@ -27,7 +28,7 @@ public class DataMapSerializer : SerializerBase
         var obj = SerializationContext.Peek();
 
         // Get the data type for this object
-        var type = mapper.GetPropertyMapping(obj);
+        var type = obj != null ? mapper.GetPropertyMapping(obj) : null;
 
         return type == null
             ? new StringSerializer(SerializationContext)
@@ -38,18 +39,18 @@ public class DataMapSerializer : SerializerBase
     {
         get
         {
-            ISerializer serializer = GetMappedSerializer();
-            return serializer?.TargetType;
+            ISerializer serializer = GetMappedSerializer() ?? throw new InvalidOperationException("Cannot detect the mapped serializer");
+            return serializer.TargetType;
         }
     }
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
         var serializer = GetMappedSerializer();
         return serializer?.SerializeToString(obj);
     }
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
         var serializer = GetMappedSerializer();
         if (serializer == null)

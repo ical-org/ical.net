@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System.Collections.Generic;
 
 namespace Ical.Net.Serialization;

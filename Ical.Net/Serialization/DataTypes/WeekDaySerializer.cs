@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -18,9 +19,9 @@ public class WeekDaySerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(WeekDay);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
-        if (!(obj is WeekDay ds))
+        if (obj is not WeekDay ds)
         {
             return null;
         }
@@ -30,22 +31,35 @@ public class WeekDaySerializer : EncodableDataTypeSerializer
         {
             value += ds.Offset;
         }
-        value += Enum.GetName(typeof(DayOfWeek), ds.DayOfWeek).ToUpper().Substring(0, 2);
+
+        try
+        {
+            var name = Enum.GetName(typeof(DayOfWeek), ds.DayOfWeek);
+            if (name == null) return null;
+
+            value += name.ToUpper().Substring(0, 2);
+        }
+        catch
+        {
+            return null;
+        }
 
         return Encode(ds, value);
     }
 
     private static readonly Regex _dayOfWeek = new Regex(@"(\+|-)?(\d{1,2})?(\w{2})", RegexOptions.Compiled | RegexOptions.IgnoreCase, RegexDefaults.Timeout);
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
         var value = tr.ReadToEnd();
 
         // Create the day specifier and associate it with a calendar object
-        var ds = CreateAndAssociate() as WeekDay;
+        if (CreateAndAssociate() is not WeekDay ds)
+            return null;
 
         // Decode the value, if necessary
         value = Decode(ds, value);
+        if (value == null) return null;
 
         var match = _dayOfWeek.Match(value);
         if (!match.Success)

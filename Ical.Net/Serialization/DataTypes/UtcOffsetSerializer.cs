@@ -3,10 +3,10 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
@@ -19,7 +19,7 @@ public class UtcOffsetSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(UtcOffset);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
         if (obj is not UtcOffset offset) return null;
 
@@ -30,43 +30,33 @@ public class UtcOffsetSerializer : EncodableDataTypeSerializer
         return Encode(offset, value);
     }
 
-    internal static readonly Regex DecodeOffset = new Regex(@"(\+|-)(\d{2})(\d{2})(\d{2})?", RegexOptions.Compiled | RegexOptions.IgnoreCase, RegexDefaults.Timeout);
-
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
         var offsetString = tr.ReadToEnd();
-        var offset = new UtcOffset(offsetString);
-        return offset;
+        try
+        {
+            var offset = new UtcOffset(offsetString);
+            return offset;
+        }
+        catch
+        {
+            return null;
+        }
     }
+
+    private static readonly string[] _supportedFormats = ["hhmmss", "hhmm", "hh"];
 
     public static TimeSpan GetOffset(string rawOffset)
     {
-        if (rawOffset.EndsWith("00"))
-        {
-            rawOffset = rawOffset.Substring(0, rawOffset.Length - 2);
-        }
-
-        DateTimeOffset temp;
-        if (DateTimeOffset.TryParse("2016-01-01 00:00:00 " + rawOffset, out temp))
-        {
-            return temp.Offset;
-        }
-
-        TimeSpan ts;
+        // Determine if the offset is negative
         var isNegative = rawOffset.StartsWith("-");
+        rawOffset = rawOffset.TrimStart('+', '-');
 
-        if (isNegative || rawOffset.StartsWith("+"))
+        if (TimeSpan.TryParseExact(rawOffset, _supportedFormats, CultureInfo.InvariantCulture, out var ts))
         {
-            rawOffset = rawOffset.Substring(1, rawOffset.Length - 1);
+            return isNegative ? -ts : ts;
         }
 
-        if (!TimeSpan.TryParseExact(rawOffset, "hhmmss", CultureInfo.InvariantCulture, out ts))
-        {
-            throw new FormatException($"{rawOffset} is not a valid UTC offset");
-        }
-
-        return isNegative
-            ? -ts
-            : ts;
+        throw new FormatException($"{rawOffset} is not a valid UTC offset.");
     }
 }

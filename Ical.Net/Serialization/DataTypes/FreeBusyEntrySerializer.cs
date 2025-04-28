@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using Ical.Net.DataTypes;
@@ -17,10 +18,9 @@ public class FreeBusyEntrySerializer : PeriodSerializer
 
     public override Type TargetType => typeof(FreeBusyEntry);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object? obj)
     {
-        var entry = obj as FreeBusyEntry;
-        if (entry == null)
+        if (obj is not FreeBusyEntry entry)
         {
             return base.SerializeToString(obj);
         }
@@ -44,12 +44,11 @@ public class FreeBusyEntrySerializer : PeriodSerializer
         return base.SerializeToString(obj);
     }
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
-        var entry = base.Deserialize(tr) as FreeBusyEntry;
-        if (entry == null)
+        if (base.Deserialize(tr) is not FreeBusyEntry entry)
         {
-            return entry;
+            return null;
         }
 
         if (!entry.Parameters.ContainsKey("FBTYPE"))
