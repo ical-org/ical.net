@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +21,7 @@ namespace Ical.Net;
 
 public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
 {
-    public static Calendar Load(string iCalendarString)
+    public static Calendar? Load(string iCalendarString)
         => CalendarCollection.Load(new StringReader(iCalendarString)).SingleOrDefault();
 
     /// <summary>
@@ -28,11 +29,11 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     /// <param name="s">The stream from which to load the <see cref="Calendar"/> object</param>
     /// <returns>An <see cref="Calendar"/> object</returns>
-    public static Calendar Load(Stream s)
+    public static Calendar? Load(Stream s)
         => CalendarCollection.Load(new StreamReader(s, Encoding.UTF8)).SingleOrDefault();
 
-    public static Calendar Load(TextReader tr)
-        => CalendarCollection.Load(tr)?.SingleOrDefault();
+    public static Calendar? Load(TextReader tr)
+        => CalendarCollection.Load(tr).SingleOrDefault();
 
     public static IList<T> Load<T>(Stream s, Encoding e)
         => Load<T>(new StreamReader(s, e));
@@ -65,6 +66,14 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         ProductId = LibraryMetadata.ProdId;
         Version = LibraryMetadata.Version;
 
+        // Initialize the members to make the compiler happy.
+        _mUniqueComponents = null!;
+        _mEvents = null!;
+        _mTodos = null!;
+        _mJournals = null!;
+        _mFreeBusy = null!;
+        _mTimeZones = null!;
+
         Initialize();
     }
 
@@ -95,7 +104,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
            && CollectionHelpers.Equals(FreeBusy, other.FreeBusy)
            && CollectionHelpers.Equals(TimeZones, other.TimeZones);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
         {
@@ -163,7 +172,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <para/>
     /// The default value does not apply to deserialized objects.
     /// </summary>
-    public virtual string Version
+    public virtual string? Version
     {
         get => Properties.Get<string>("VERSION");
         set => Properties.Set("VERSION", value);
@@ -178,19 +187,19 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <para/>
     /// The default value does not apply to deserialized objects.
     /// </summary>
-    public virtual string ProductId
+    public virtual string? ProductId
     {
         get => Properties.Get<string>("PRODID");
         set => Properties.Set("PRODID", value);
     }
 
-    public virtual string Scale
+    public virtual string? Scale
     {
         get => Properties.Get<string>("CALSCALE");
         set => Properties.Set("CALSCALE", value);
     }
 
-    public virtual string Method
+    public virtual string? Method
     {
         get => Properties.Get<string>("METHOD");
         set => Properties.Set("METHOD", value);
@@ -214,8 +223,9 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     /// <param name="startTime">The beginning date/time of the range.</param>
     /// <param name="endTime">The end date/time of the range.</param>
+    /// <param name="options"></param>
     /// <returns>A list of occurrences that fall between the date/time arguments provided.</returns>
-    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default)
+    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null)
         => GetOccurrences<IRecurringComponent>(startTime, endTime, options);
 
     /// <summary>
@@ -225,12 +235,13 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     /// <param name="startTime">The starting date range</param>
     /// <param name="endTime">The ending date range</param>
-    public virtual IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime startTime = null, CalDateTime endTime = null, EvaluationOptions options = default) where T : IRecurringComponent
+    /// <param name="options"></param>
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
     {
         // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
         var recurrenceIdsAndUids = this.Children.OfType<IRecurrable>()
             .Where(r => r.RecurrenceId != null)
-            .Select(r => new { (r as IUniqueComponent)?.Uid, Dt = r.RecurrenceId.Value })
+            .Select(r => new { (r as IUniqueComponent).Uid, Dt = r.RecurrenceId!.Value })
             .Where(r => r.Uid != null)
             .ToDictionary(x => x);
 
@@ -283,37 +294,33 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             this.AddChild(cal);
             return (T) cal;
         }
-        return default(T);
+        throw new ArgumentException($"Creating {typeof(T).FullName} failed.");
     }
 
     public virtual void MergeWith(IMergeable obj)
     {
-        var c = obj as Calendar;
-        if (c == null)
+        if (obj is not Calendar c)
         {
             return;
         }
 
-        if (Name == null)
-        {
-            Name = c.Name;
-        }
+        Name ??= c.Name;
 
         Method = c.Method;
         Version = c.Version;
         ProductId = c.ProductId;
         Scale = c.Scale;
 
-        foreach (var p in c.Properties.Where(p => !Properties.ContainsKey(p.Name)))
+        foreach (var p in c.Properties.Where(p => p.Name != null && !Properties.ContainsKey(p.Name)))
         {
             Properties.Add(p);
         }
 
         foreach (var child in c.Children)
         {
-            if (child is IUniqueComponent)
+            if (child is IUniqueComponent component)
             {
-                if (!UniqueComponents.ContainsKey(((IUniqueComponent) child).Uid))
+                if (component.Uid != null && !UniqueComponents.ContainsKey(component.Uid))
                 {
                     this.AddChild(child);
                 }
@@ -325,20 +332,20 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         }
     }
 
-    public virtual FreeBusy GetFreeBusy(FreeBusy freeBusyRequest) => CalendarComponents.FreeBusy.Create(this, freeBusyRequest);
+    public virtual FreeBusy? GetFreeBusy(FreeBusy freeBusyRequest) => CalendarComponents.FreeBusy.Create(this, freeBusyRequest);
 
-    public virtual FreeBusy GetFreeBusy(CalDateTime fromInclusive, CalDateTime toExclusive)
+    public virtual FreeBusy? GetFreeBusy(CalDateTime fromInclusive, CalDateTime toExclusive)
         => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
 
-    public virtual FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, CalDateTime fromInclusive, CalDateTime toExclusive)
+    public virtual FreeBusy? GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, CalDateTime fromInclusive, CalDateTime toExclusive)
         => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
 
     /// <summary>
-    /// Adds a system time zone to the iCalendar.  This time zone may
+    /// Adds a system time zone to the iCalendar. This time zone may
     /// then be used in date/time objects contained in the
     /// calendar.
     /// </summary>
-    /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
+    /// <param name="tzi">A <see cref="TimeZoneInfo"/> object to add to the calendar.</param>
     /// <returns>The time zone added to the calendar.</returns>
     public VTimeZone AddTimeZone(TimeZoneInfo tzi)
     {

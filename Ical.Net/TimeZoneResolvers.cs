@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using NodaTime;
 
@@ -13,7 +14,8 @@ public static class TimeZoneResolvers
     /// <summary>
     /// The default time zone resolver.
     /// </summary>
-    public static Func<string, DateTimeZone> Default => tzId => DefaultTimeZoneResolver.GetZone(tzId);
+    public static Func<string, DateTimeZone> Default
+        => tzId => DefaultTimeZoneResolver.GetZone(tzId) ?? throw new ArgumentException($"Unrecognized time zone id {tzId}", nameof(tzId));
 
     /// <summary>
     /// Gets or sets a function that returns the NodaTime DateTimeZone for the given TZID.

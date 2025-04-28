@@ -57,7 +57,7 @@ public class RecurrenceWithExDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(calendar);
 
-        var deserializedCalendar = Calendar.Load(ics);
+        var deserializedCalendar = Calendar.Load(ics)!;
         var occurrences = deserializedCalendar.GetOccurrences<CalendarEvent>().ToList();
 
         Assert.Multiple(() =>
@@ -96,13 +96,13 @@ public class RecurrenceWithExDateTests
                   END:VCALENDAR
                   """;
 
-        var cal = Calendar.Load(ics);
+        var cal = Calendar.Load(ics)!;
         var occurrences = cal.GetOccurrences<CalendarEvent>().ToList();
 
         var serializer = new CalendarSerializer();
         ics = serializer.SerializeToString(cal);
         // serialize and deserialize to ensure the exclusion dates de/serialized
-        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString());
+        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString())!;
 
         // Start date: 2024-10-19 at 18:00 (GMT Standard Time)
         // Recurrence: Every hour, 4 occurrences
@@ -118,7 +118,7 @@ public class RecurrenceWithExDateTests
             Assert.That(
                 occurrences.All(
                     o => !cal
-                        .Events[0]
+                        .Events[0]!
                         .ExceptionDates.GetAllDates()
                         .Any(ex => ex.Equals(o.Period.StartTime))), Is.True);
             Assert.That(ics, Does.Contain("EXDATE:20241019T190000Z"));
@@ -144,13 +144,13 @@ public class RecurrenceWithExDateTests
                   END:VCALENDAR
                   """;
 
-        var cal = Calendar.Load(ics);
+        var cal = Calendar.Load(ics)!;
         var occurrences = cal.GetOccurrences<CalendarEvent>().ToList();
 
         var serializer = new CalendarSerializer();
         ics = serializer.SerializeToString(cal);
         // serialize and deserialize to ensure the exclusion dates de/serialized
-        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString());
+        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString())!;
 
         // Occurrences:
         // 2023-10-25 09:00 (UTC Offset: +0200)
@@ -173,11 +173,11 @@ public class RecurrenceWithExDateTests
         Assert.Multiple(() =>
         {
             Assert.That(occurrences.Count, Is.EqualTo(10));
-            Assert.That(cal.Events[0].ExceptionDates.GetAllDates().Count(), Is.EqualTo(3));
+            Assert.That(cal.Events[0]!.ExceptionDates.GetAllDates().Count(), Is.EqualTo(3));
             Assert.That(
                 occurrences.All(
                     o => !cal
-                        .Events[0]
+                        .Events[0]!
                         .ExceptionDates.GetAllDates()
                         .Any(ex => ex.Equals(o.Period.StartTime))), Is.True);
             Assert.That(ics, Does.Contain("EXDATE;TZID=Europe/Berlin:20231029T090000,20231105T090000,20231112T090000"));
@@ -204,9 +204,9 @@ public class RecurrenceWithExDateTests
                   END:VCALENDAR
                   """;
 
-        var cal = Calendar.Load(ics);
+        var cal = Calendar.Load(ics)!;
         // serialize and deserialize to ensure the exclusion dates de/serialized
-        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString());
+        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString())!;
         var occurrences = cal.GetOccurrences<CalendarEvent>().ToList();
 
         // Occurrences:
@@ -226,11 +226,11 @@ public class RecurrenceWithExDateTests
         Assert.Multiple(() =>
         {
             Assert.That(occurrences.Count, Is.EqualTo(9));
-            Assert.That(cal.Events[0].ExceptionDates.GetAllDates().Count(), Is.EqualTo(2));
+            Assert.That(cal.Events[0]!.ExceptionDates.GetAllDates().Count(), Is.EqualTo(2));
             Assert.That(
                 occurrences.All(
                     o => !cal
-                        .Events[0]
+                        .Events[0]!
                         .ExceptionDates.GetAllDates()
                         .Any(ex => ex.Equals(o.Period.StartTime))), Is.True);
         });

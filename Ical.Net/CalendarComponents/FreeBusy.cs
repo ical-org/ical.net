@@ -65,8 +65,9 @@ public class FreeBusy : UniqueComponent, IMergeable
                 var participatingAttendeeQuery = uc.Attendees
                     .Where(attendee =>
                         attendee.Value != null
+                        && attendee.ParticipationStatus != null
                         && contacts.Contains(attendee.Value.OriginalString.Trim()))
-                    .Select(pa => pa.ParticipationStatus.ToUpperInvariant());
+                    .Select(pa => pa.ParticipationStatus!.ToUpperInvariant());
 
                 foreach (var participatingAttendee in participatingAttendeeQuery)
                 {

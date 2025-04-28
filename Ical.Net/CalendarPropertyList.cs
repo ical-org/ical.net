@@ -3,6 +3,8 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
+using System;
 using System.Linq;
 using Ical.Net.Collections;
 
@@ -10,7 +12,7 @@ namespace Ical.Net;
 
 public class CalendarPropertyList : GroupedValueList<string, ICalendarProperty, CalendarProperty, object>
 {
-    private readonly ICalendarObject _mParent;
+    private readonly ICalendarObject? _mParent;
 
     public CalendarPropertyList() { }
 
@@ -20,12 +22,10 @@ public class CalendarPropertyList : GroupedValueList<string, ICalendarProperty, 
         ItemAdded += CalendarPropertyList_ItemAdded;
     }
 
-    private void CalendarPropertyList_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
-    {
-        e.First.Parent = _mParent;
-    }
+    private void CalendarPropertyList_ItemAdded(object? sender, ObjectEventArgs<ICalendarProperty, int> e)
+        => e.First.Parent = _mParent;
 
-    public ICalendarProperty this[string name] => ContainsKey(name)
+    public ICalendarProperty? this[string name] => ContainsKey(name)
         ? AllOf(name).FirstOrDefault()
         : null;
 }

@@ -23,20 +23,13 @@ public class Attachment : EncodableDataType
     public virtual byte[]? Data { get; private set; } // private set for CopyFrom
 
     private Encoding _valueEncoding = System.Text.Encoding.UTF8;
-    public virtual Encoding ValueEncoding
+    public virtual Encoding ValueEncoding //NOSONAR
     {
         get => _valueEncoding;
-        set
-        {
-            if (value == null)
-            {
-                return;
-            }
-            _valueEncoding = value;
-        }
+        set => _valueEncoding = value;
     }
 
-    public virtual string FormatType
+    public virtual string? FormatType
     {
         get => Parameters.Get("FMTTYPE");
         set => Parameters.Set("FMTTYPE", value);
@@ -66,7 +59,7 @@ public class Attachment : EncodableDataType
             throw new ArgumentException($"{value} is not a valid ATTACH component");
         }
 
-        ValueEncoding = a.ValueEncoding;
+        _valueEncoding = a.ValueEncoding;
 
         Data = a.Data;
         Uri = a.Uri;

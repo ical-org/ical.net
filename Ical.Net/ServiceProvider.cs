@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,43 +15,41 @@ public class ServiceProvider
     private readonly IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
     private readonly IDictionary<string, object> _mNamedServices = new Dictionary<string, object>();
 
-    public virtual object GetService(Type serviceType)
+    public virtual object? GetService(Type serviceType)
     {
-        object service;
-        _mTypedServices.TryGetValue(serviceType, out service);
+        _mTypedServices.TryGetValue(serviceType, out var service);
         return service;
     }
 
-    public virtual object GetService(string name)
+    public virtual object? GetService(string name)
     {
-        object service;
-        _mNamedServices.TryGetValue(name, out service);
+        _mNamedServices.TryGetValue(name, out var service);
         return service;
     }
 
-    public virtual T GetService<T>()
+    public virtual T? GetService<T>()
     {
         var service = GetService(typeof(T));
-        if (service is T)
+        if (service is T svc)
         {
-            return (T) service;
+            return svc;
         }
         return default(T);
     }
 
-    public virtual T GetService<T>(string name)
+    public virtual T? GetService<T>(string name)
     {
         var service = GetService(name);
-        if (service is T)
+        if (service is T svc)
         {
-            return (T) service;
+            return svc;
         }
         return default(T);
     }
 
     public virtual void SetService(string name, object obj)
     {
-        if (!string.IsNullOrEmpty(name) && obj != null)
+        if (!string.IsNullOrEmpty(name))
         {
             _mNamedServices[name] = obj;
         }
@@ -58,33 +57,26 @@ public class ServiceProvider
 
     public virtual void SetService(object obj)
     {
-        if (obj != null)
-        {
-            var type = obj.GetType();
-            _mTypedServices[type] = obj;
+        var type = obj.GetType();
+        _mTypedServices[type] = obj;
 
-            // Get interfaces for the given type
-            foreach (var iface in type.GetInterfaces())
-            {
-                _mTypedServices[iface] = obj;
-            }
+        // Get interfaces for the given type
+        foreach (var interfaceType in type.GetInterfaces())
+        {
+            _mTypedServices[interfaceType] = obj;
         }
     }
 
     public virtual void RemoveService(Type type)
     {
-        if (type != null)
+        if (_mTypedServices.ContainsKey(type))
         {
-            if (_mTypedServices.ContainsKey(type))
-            {
-                _mTypedServices.Remove(type);
-            }
+            _mTypedServices.Remove(type);
+        }
 
-            // Get interfaces for the given type
-            foreach (var iface in type.GetInterfaces().Where(iface => _mTypedServices.ContainsKey(iface)))
-            {
-                _mTypedServices.Remove(iface);
-            }
+        foreach (var interfaceType in type.GetInterfaces().Where(interfaceType => _mTypedServices.ContainsKey(interfaceType)))
+        {
+            _mTypedServices.Remove(interfaceType);
         }
     }
 
