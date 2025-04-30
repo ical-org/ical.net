@@ -46,7 +46,8 @@ public class TodoEvaluator : RecurringEvaluator
             throw new InvalidOperationException("Todo.Start must not be null.");
         }
 
-        return Evaluate(Todo.Start, beginningDate, currDt.AddSeconds(1), options);
+        return Evaluate(Todo.Start, beginningDate, options)
+            .Where(p => p.StartTime <= currDt);
     }
 
     private static void DetermineStartingRecurrence(IEnumerable<Period> rdate, ref CalDateTime referenceDateTime)
@@ -82,13 +83,12 @@ public class TodoEvaluator : RecurringEvaluator
         }
     }
 
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
     {
         // Items can only recur if a start date is specified
         if (Todo.Start == null)
             return [];
 
-        return base.Evaluate(referenceDate, periodStart, periodEnd, options)
-            .Select(p => p);
+        return base.Evaluate(referenceDate, periodStart, options);
     }
 }

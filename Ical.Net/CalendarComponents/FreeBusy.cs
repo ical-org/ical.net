@@ -22,7 +22,9 @@ public class FreeBusy : UniqueComponent, IMergeable
             return null;
         }
 
-        var occurrences = occ.GetOccurrences<CalendarEvent>(freeBusyRequest.Start, freeBusyRequest.End, options);
+        var occurrences = occ.GetOccurrences<CalendarEvent>(freeBusyRequest.Start, options)
+            .TakeWhile(p => (freeBusyRequest.End == null) || (p.Period.StartTime < freeBusyRequest.End));
+
         var contacts = new List<string>();
         var isFilteredByAttendees = false;
 

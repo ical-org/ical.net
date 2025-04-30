@@ -14,13 +14,12 @@ public interface IEvaluator
 {
     /// <summary>
     /// Evaluates this item to determine the dates and times for which it occurs/recurs.
-    /// This method only evaluates items which occur/recur between <paramref name="periodStart"/>
-    /// and <paramref name="periodEnd"/>; therefore, if you require a list of items which
-    /// occur outside of this range, you must specify a <paramref name="periodStart"/> and
-    /// <paramref name="periodEnd"/> which encapsulate the date(s) of interest.
+    /// This method only evaluates items which occur/recur at or after <paramref name="periodStart"/>.
+    /// To apply an upper bound, consider using <see cref="System.Linq.Enumerable.TakeWhile{TSource}(IEnumerable{TSource}, Func{TSource, bool})"/>.
     /// This method evaluates using the <paramref name="periodStart" /> as the beginning
-    /// point.  For example, for a WEEKLY occurrence, the <paramref name="periodStart"/>
-    /// determines the day of week that this item will recur on.
+    /// point. For example, for a WEEKLY occurrence, the <paramref name="periodStart"/>
+    /// determines the day of week that this item will recur on. If <paramref name="periodStart"/>
+    /// is set to null, all recurrences will be returned.
     ///
     /// Items are returned in ascending order.
     /// <note type="caution">
@@ -31,11 +30,10 @@ public interface IEvaluator
     /// </summary>
     /// <param name="referenceDate"></param>
     /// <param name="periodStart"></param>
-    /// <param name="periodEnd"></param>
     /// <param name="options"></param>
     /// <returns>
     ///     A sequence of <see cref="Ical.Net.DataTypes.Period"/> objects for
     ///     each date/time when this item occurs/recurs.
     /// </returns>
-    IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options);
+    IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options);
 }

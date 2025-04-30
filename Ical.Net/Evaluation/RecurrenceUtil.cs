@@ -13,10 +13,7 @@ namespace Ical.Net.Evaluation;
 
 internal class RecurrenceUtil
 {
-    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime dt, EvaluationOptions? options = null) => GetOccurrences(recurrable,
-        new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)), options);
-
-    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options = null)
+    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime? periodStart, EvaluationOptions? options = null)
     {
         var evaluator = recurrable.Evaluator;
         if (evaluator == null || recurrable.Start == null)
@@ -27,28 +24,25 @@ internal class RecurrenceUtil
         // Ensure the start time is associated with the object being queried
         var start = recurrable.Start;
 
-        // Change the time zone of periodStart/periodEnd as needed
+        // Change the time zone of periodStart as needed
         // so they can be used during the evaluation process.
 
         if (periodStart != null)
             periodStart = new CalDateTime(periodStart.Date, periodStart.Time, start.TzId);
-        if (periodEnd != null)
-            periodEnd = new CalDateTime(periodEnd.Date, periodEnd.Time, start.TzId);
 
-        var periods = evaluator.Evaluate(start, periodStart, periodEnd, options);
+        var periods = evaluator.Evaluate(start, periodStart, options);
+        if (periodStart != null)
+        {
+            periods =
+                from p in periods
+                let endTime = p.EndTime ?? p.StartTime
+                where
+                    p.StartTime.GreaterThanOrEqual(periodStart)
+                    || endTime.GreaterThan(periodStart)
+                select p;
+        }
 
-        var occurrences =
-            from p in periods
-            let endTime = p.EndTime ?? p.StartTime
-            where
-                (((periodStart == null) || endTime.GreaterThan(periodStart)) && ((periodEnd == null) || p.StartTime.LessThan(periodEnd)) ||
-                (periodStart != null && periodStart.Equals(periodEnd)
-                 && p.StartTime.LessThanOrEqual(periodStart)
-                 && endTime.GreaterThan(periodEnd))) || //A period that starts at the same time it ends
-                (p.StartTime.Equals(endTime) && p.StartTime.Equals(periodStart)) //An event that starts at the same time it ends
-            select new Occurrence(recurrable, p);
-
-        return occurrences;
+        return periods.Select(p => new Occurrence(recurrable, p));
     }
 
     public static bool?[] GetExpandBehaviorList(RecurrencePattern p)

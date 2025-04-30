@@ -167,6 +167,6 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
 
     public IEvaluator? Evaluator => _evaluator;
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null)
-        => RecurrenceUtil.GetOccurrences(this, startTime, endTime, options);
+    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, EvaluationOptions? options = null)
+        => RecurrenceUtil.GetOccurrences(this, startTime, options);
 }
