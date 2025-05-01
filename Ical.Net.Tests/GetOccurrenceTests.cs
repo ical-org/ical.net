@@ -34,7 +34,7 @@ internal class GetOccurrenceTests
 
         var searchStart = new CalDateTime(2015, 12, 29);
         var searchEnd = new CalDateTime(2017, 02, 10);
-        var occurrences = calendar.GetOccurrences(searchStart).TakeUntil(searchEnd).OrderBy(o => o.Period.StartTime).ToList();
+        var occurrences = calendar.GetOccurrences(searchStart).TakeUntil(searchEnd).ToList();
 
         var firstOccurrence = occurrences.First();
         var firstStartCopy = firstStart.Copy();

@@ -328,7 +328,7 @@ public class DeserializationTests
 
         CalDateTime dtStart = new CalDateTime(2006, 12, 18);
         CalDateTime dtEnd = new CalDateTime(2006, 12, 23);
-        var occurrences = iCal.GetOccurrences(dtStart).TakeUntil(dtEnd).OrderBy(o => o.Period.StartTime).ToList();
+        var occurrences = iCal.GetOccurrences(dtStart).TakeUntil(dtEnd).ToList();
 
         var dateTimes = new[]
         {
@@ -504,7 +504,7 @@ public class DeserializationTests
     {
         var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
         var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds);
-        var events = iCal.GetOccurrences<CalendarEvent>(new CalDateTime(2009, 06, 20)).TakeUntil(new CalDateTime(2009, 06, 22)).OrderBy(o => o.Period.StartTime).ToList();
+        var events = iCal.GetOccurrences<CalendarEvent>(new CalDateTime(2009, 06, 20)).TakeUntil(new CalDateTime(2009, 06, 22)).ToList();
         Assert.That(((CalendarEvent)events[0].Source).Location, Is.EqualTo(longName));
     }
 

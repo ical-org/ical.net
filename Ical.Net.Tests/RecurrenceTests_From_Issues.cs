@@ -362,9 +362,7 @@ public class RecurrenceTests_From_Issues
         var occurrences = calendarEvent.GetOccurrences(new CalDateTime(startDate)).TakeUntil(new CalDateTime(endDate));
         var occurrencesDates = occurrences.Select(o => new CalDateTime(o.Period.StartTime.Date)).ToList();
 
-        // Sort both collections to ensure they are in the same order
-        occurrencesDates.Sort();
-        var sortedExpectedDates = expectedDates.OrderBy(d => d).ToList();
+        var sortedExpectedDates = expectedDates.ToList();
 
         Assert.That(occurrencesDates, Is.EquivalentTo(sortedExpectedDates));
     }
