@@ -49,11 +49,16 @@ public class RecurringEvaluator : Evaluator
     /// <summary> Evaluates the RDate component. </summary>
     protected IEnumerable<Period> EvaluateRDate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
     {
-        var recurrences =
-            new SortedSet<Period>(Recurrable.RecurrenceDates
-                .GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime));
+        var recurrences = Recurrable.RecurrenceDates
+                .GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime)
+                .AsEnumerable();
 
-        return recurrences;
+        if (periodStart != null)
+            recurrences = recurrences.Where(p => p.StartTime.GreaterThanOrEqual(periodStart));
+        if (periodEnd != null)
+            recurrences = recurrences.Where(p => p.StartTime.LessThan(periodEnd));
+
+        return new SortedSet<Period>(recurrences);
     }
 
     /// <summary>
@@ -89,9 +94,15 @@ public class RecurringEvaluator : Evaluator
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     protected IEnumerable<Period> EvaluateExDate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
     {
-        var exDates = new SortedSet<Period>(Recurrable
-            .ExceptionDates.GetAllPeriodsByKind(PeriodKind.DateOnly, PeriodKind.DateTime));
-        return exDates;
+        var exDates = Recurrable.ExceptionDates.GetAllPeriodsByKind(PeriodKind.DateOnly, PeriodKind.DateTime)
+            .AsEnumerable();
+
+        if (periodStart != null)
+            exDates = exDates.Where(p => p.StartTime.GreaterThanOrEqual(periodStart));
+        if (periodEnd != null)
+            exDates = exDates.Where(p => p.StartTime.LessThan(periodEnd));
+
+        return new SortedSet<Period>(exDates);
     }
 
     public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
