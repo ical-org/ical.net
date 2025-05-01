@@ -37,7 +37,7 @@ public class RecurrenceTests
         var evt = cal.Events.Skip(eventIndex).First();
         var rule = evt.RecurrenceRules.FirstOrDefault();
 
-        var occurrences = evt.GetOccurrences(fromDate, toDate)
+        var occurrences = evt.GetOccurrences(fromDate).TakeUntil(toDate)
             .OrderBy(o => o.Period.StartTime)
             .ToList();
 
@@ -132,8 +132,8 @@ public class RecurrenceTests
         ProgramTest.TestCal(iCal);
         var evt = iCal.Events.First();
         var occurrences = evt.GetOccurrences(
-            new CalDateTime(2006, 1, 1),
-            new CalDateTime(2011, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
+            new CalDateTime(2006, 1, 1))
+            .TakeUntil(new CalDateTime(2011, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
 
         var dt = new CalDateTime(2007, 1, 1, 8, 30, 0, _tzid);
         var i = 0;
@@ -196,8 +196,8 @@ public class RecurrenceTests
         var evt = iCal.Events.First();
 
         var occurrences = evt.GetOccurrences(
-            new CalDateTime(1997, 9, 1),
-            new CalDateTime(1998, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
+            new CalDateTime(1997, 9, 1))
+            .TakeUntil(new CalDateTime(1998, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
 
         var dt = new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid);
         var i = 0;
@@ -368,8 +368,8 @@ public class RecurrenceTests
         var evt = iCal.Events.First();
 
         var occurrences = evt.GetOccurrences(
-            new CalDateTime(1998, 1, 1),
-            new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
+            new CalDateTime(1998, 1, 1))
+            .TakeUntil(new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
 
         var dt = new CalDateTime(1998, 1, 1, 9, 0, 0, _tzid);
         var i = 0;
@@ -405,8 +405,8 @@ public class RecurrenceTests
         var evt1 = iCal1.Events.First();
         var evt2 = iCal2.Events.First();
 
-        var evt1Occurrences = evt1.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
-        var evt2Occurrences = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
+        var evt1Occurrences = evt1.GetOccurrences(new CalDateTime(1997, 9, 1)).TakeUntil(new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
+        var evt2Occurrences = evt2.GetOccurrences(new CalDateTime(1997, 9, 1)).TakeUntil(new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
         Assert.That(evt1Occurrences.Count == evt2Occurrences.Count, Is.True, "ByMonth1 does not match ByMonth2 as it should");
         for (var i = 0; i < evt1Occurrences.Count; i++)
             Assert.That(evt2Occurrences[i].Period, Is.EqualTo(evt1Occurrences[i].Period), "PERIOD " + i + " from ByMonth1 (" + evt1Occurrences[i] + ") does not match PERIOD " + i + " from ByMonth2 (" + evt2Occurrences[i] + ")");
@@ -587,8 +587,8 @@ public class RecurrenceTests
         var evt1 = iCal1.Events.First();
         var evt2 = iCal2.Events.First();
 
-        var evt1Occ = evt1.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(1999, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
-        var evt2Occ = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(1999, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
+        var evt1Occ = evt1.GetOccurrences(new CalDateTime(1997, 9, 1)).TakeUntil(new CalDateTime(1999, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
+        var evt2Occ = evt2.GetOccurrences(new CalDateTime(1997, 9, 1)).TakeUntil(new CalDateTime(1999, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
         Assert.That(evt2Occ, Has.Count.EqualTo(evt1Occ.Count), "WeeklyCountWkst1() does not match WeeklyUntilWkst1() as it should");
         for (var i = 0; i < evt1Occ.Count; i++)
         {
@@ -1232,8 +1232,8 @@ public class RecurrenceTests
         var rpe1 = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53"));
         var rpe2 = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=53,51,49,47,45,43,41,39,37,35,33,31,29,27,25,23,21,19,17,15,13,11,9,7,5,3,1"));
 
-        var recurringPeriods1 = rpe1.Evaluate(new CalDateTime(start), start, end, null).ToList();
-        var recurringPeriods2 = rpe2.Evaluate(new CalDateTime(start), start, end, null).ToList();
+        var recurringPeriods1 = rpe1.Evaluate(new CalDateTime(start), start, null).TakeUntil(end).ToList();
+        var recurringPeriods2 = rpe2.Evaluate(new CalDateTime(start), start, null).TakeUntil(end).ToList();
 
         Assert.That(recurringPeriods2, Has.Count.EqualTo(recurringPeriods1.Count));
     }
@@ -1831,8 +1831,8 @@ public class RecurrenceTests
         var evt1 = iCal1.Events.First();
         var evt2 = iCal2.Events.First();
 
-        var evt1Occ = evt1.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(1997, 9, 3)).OrderBy(o => o.Period.StartTime).ToList();
-        var evt2Occ = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(1997, 9, 3)).OrderBy(o => o.Period.StartTime).ToList();
+        var evt1Occ = evt1.GetOccurrences(new CalDateTime(1997, 9, 1)).TakeUntil(new CalDateTime(1997, 9, 3)).OrderBy(o => o.Period.StartTime).ToList();
+        var evt2Occ = evt2.GetOccurrences(new CalDateTime(1997, 9, 1)).TakeUntil(new CalDateTime(1997, 9, 3)).OrderBy(o => o.Period.StartTime).ToList();
         Assert.That(evt1Occ.Count == evt2Occ.Count, Is.True, "MinutelyByHour1() does not match DailyByHourMinute1() as it should");
         for (var i = 0; i < evt1Occ.Count; i++)
             Assert.That(evt2Occ[i].Period, Is.EqualTo(evt1Occ[i].Period), "PERIOD " + i + " from DailyByHourMinute1 (" + evt1Occ[i].Period + ") does not match PERIOD " + i + " from MinutelyByHour1 (" + evt2Occ[i].Period + ")");
@@ -2627,7 +2627,7 @@ public class RecurrenceTests
         var end = new CalDateTime(2019, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYWEEKNO=2"));
 
-        var recurringPeriods = rpe.Evaluate(start, start, end, default).ToList();
+        var recurringPeriods = rpe.Evaluate(start, start, default).TakeUntil(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(1));
         Assert.That(recurringPeriods.First().StartTime, Is.EqualTo(new CalDateTime(2019, 1, 7)));
@@ -2643,7 +2643,7 @@ public class RecurrenceTests
         var end = new CalDateTime(2020, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1"));
 
-        var recurringPeriods = rpe.Evaluate(start, start, end, default).OrderBy(x => x).ToList();
+        var recurringPeriods = rpe.Evaluate(start, start, default).TakeUntil(end).OrderBy(x => x).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
@@ -2672,7 +2672,7 @@ public class RecurrenceTests
 
         evt.RecurrenceRules.Add(pattern);
 
-        var occurrences = evt.GetOccurrences(new CalDateTime(2018, 1, 1), new CalDateTime(DateTime.MaxValue, false)).ToList();
+        var occurrences = evt.GetOccurrences(new CalDateTime(2018, 1, 1)).TakeUntil(new CalDateTime(DateTime.MaxValue, false)).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(10), "There should be 10 occurrences of this event.");
     }
 
@@ -2686,7 +2686,7 @@ public class RecurrenceTests
         var end = new CalDateTime(2020, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1"));
 
-        var recurringPeriods = rpe.Evaluate(start, start, end, default).OrderBy(x => x).ToList();
+        var recurringPeriods = rpe.Evaluate(start, start, default).TakeUntil(end).OrderBy(x => x).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
@@ -2710,7 +2710,7 @@ public class RecurrenceTests
         var serializer = new RecurrencePatternSerializer();
         var rp = (RecurrencePattern)serializer.Deserialize(sr)!;
         var rpe = new RecurrencePatternEvaluator(rp);
-        var recurringPeriods = rpe.Evaluate(start, start, rp.Until, default).ToList();
+        var recurringPeriods = rpe.Evaluate(start, start, default).TakeUntil(rp.Until).ToList();
 
         var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
 
@@ -2741,7 +2741,7 @@ public class RecurrenceTests
 
         evt.RecurrenceRules.Add(pattern);
 
-        var occurrences = evt.GetOccurrences(new CalDateTime(2011, 1, 1), new CalDateTime(2012, 1, 1)).ToList();
+        var occurrences = evt.GetOccurrences(new CalDateTime(2011, 1, 1)).TakeUntil(new CalDateTime(2012, 1, 1)).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(10), "There should be 10 occurrences of this event, one for each month except February and December.");
     }
 
@@ -2785,19 +2785,19 @@ public class RecurrenceTests
             var checkTime = new CalDateTime(2019, 01, 04, 08, 00, 00, CalDateTime.UtcTzId);
             checkTime = checkTime.AddDays(i);
             //Valid asking for the exact moment
-            var occurrences = vEvent.GetOccurrences(checkTime, checkTime).ToList();
+            var occurrences = vEvent.GetOccurrences(checkTime).TakeWhile(p => p.Period.StartTime == checkTime).ToList();
             Assert.That(occurrences, Has.Count.EqualTo(1));
 
             //Valid if asking for a range starting at the same moment
-            occurrences = vEvent.GetOccurrences(checkTime, checkTime.AddSeconds(1)).ToList();
+            occurrences = vEvent.GetOccurrences(checkTime).TakeUntil(checkTime.AddSeconds(1)).ToList();
             Assert.That(occurrences, Has.Count.EqualTo(1));
 
             //Valid if asking for a range starting before and ending after
-            occurrences = vEvent.GetOccurrences(checkTime.AddSeconds(-1), checkTime.AddSeconds(1)).ToList();
+            occurrences = vEvent.GetOccurrences(checkTime.AddSeconds(-1)).TakeUntil(checkTime.AddSeconds(1)).ToList();
             Assert.That(occurrences, Has.Count.EqualTo(1));
 
             //Not valid if asking for a range starting before but ending at the same moment
-            occurrences = vEvent.GetOccurrences(checkTime.AddSeconds(-1), checkTime).ToList();
+            occurrences = vEvent.GetOccurrences(checkTime.AddSeconds(-1)).TakeUntil(checkTime).ToList();
             Assert.That(occurrences.Count, Is.EqualTo(0));
         }
     }
@@ -2811,7 +2811,7 @@ public class RecurrenceTests
             End = new CalDateTime(DateTime.Parse("2020-01-11T00:00")),
         };
 
-        var occurrences = vEvent.GetOccurrences(new CalDateTime(2020,01, 10, 0, 0, 0), new CalDateTime(2020, 01, 11, 00, 00, 00));
+        var occurrences = vEvent.GetOccurrences(new CalDateTime(2020,01, 10, 0, 0, 0)).TakeUntil(new CalDateTime(2020, 01, 11, 00, 00, 00));
         Assert.That(occurrences.Count, Is.EqualTo(0));
     }
 
@@ -2855,8 +2855,8 @@ public class RecurrenceTests
         };
 
         var occurrences = iCal.GetOccurrences(
-            new CalDateTime(2006, 1, 1),
-            new CalDateTime(2006, 12, 31))
+            new CalDateTime(2006, 1, 1))
+            .TakeUntil(new CalDateTime(2006, 12, 31))
             .ToList();
 
         Assert.That(occurrences, Has.Count.EqualTo(items.Count), "The number of holidays did not evaluate correctly.");
@@ -2896,7 +2896,7 @@ public class RecurrenceTests
         // ical.net handles the case by pretending DTSTART has the time set to midnight.
         evt.RecurrenceRules.Add(new RecurrencePattern($"FREQ={freq};INTERVAL=10;COUNT=5"));
 
-        var occurrences = evt.GetOccurrences(evt.Start.AddDays(-1), evt.Start.AddDays(100))
+        var occurrences = evt.GetOccurrences(evt.Start.AddDays(-1)).TakeUntil(evt.Start.AddDays(100))
             .OrderBy(x => x)
             .ToList();
 
@@ -2930,7 +2930,8 @@ public class RecurrenceTests
         var occurrences = evaluator.Evaluate(
             startDate,
             fromDate,
-            toDate, default)
+            default)
+            .TakeUntil(toDate)
             .OrderBy(o => o.StartTime)
             .ToList();
         Assert.That(occurrences, Has.Count.EqualTo(4));
@@ -2961,7 +2962,8 @@ public class RecurrenceTests
         var occurrences = evaluator.Evaluate(
             startDate,
             fromDate,
-            toDate, default);
+            default)
+            .TakeUntil(toDate);
         Assert.That(occurrences.Count, Is.Not.EqualTo(0));
     }
 
@@ -2981,32 +2983,32 @@ public class RecurrenceTests
         var laterDateAndTime = new CalDateTime(2009, 11, 19, 11, 0, 0);
         var end = new CalDateTime(2009, 11, 23, 0, 0, 0);
 
-        var occurrences = evt.GetOccurrences(previousDateAndTime, end).ToList();
+        var occurrences = evt.GetOccurrences(previousDateAndTime).TakeUntil(end).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(5));
 
-        occurrences = evt.GetOccurrences(previousDateOnly, end).ToList();
+        occurrences = evt.GetOccurrences(previousDateOnly).TakeUntil(end).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(5));
 
-        occurrences = evt.GetOccurrences(laterDateOnly, end).ToList();
+        occurrences = evt.GetOccurrences(laterDateOnly).TakeUntil(end).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(4));
 
-        occurrences = evt.GetOccurrences(laterDateAndTime, end).ToList();
+        occurrences = evt.GetOccurrences(laterDateAndTime).TakeUntil(end).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(3));
 
         // Add ByHour "9" and "12"            
         evt.RecurrenceRules[0].ByHour.Add(9);
         evt.RecurrenceRules[0].ByHour.Add(12);
 
-        occurrences = evt.GetOccurrences(previousDateAndTime, end).ToList();
+        occurrences = evt.GetOccurrences(previousDateAndTime).TakeUntil(end).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(10));
 
-        occurrences = evt.GetOccurrences(previousDateOnly, end).ToList();
+        occurrences = evt.GetOccurrences(previousDateOnly).TakeUntil(end).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(10));
 
-        occurrences = evt.GetOccurrences(laterDateOnly, end).ToList();
+        occurrences = evt.GetOccurrences(laterDateOnly).TakeUntil(end).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(8));
 
-        occurrences = evt.GetOccurrences(laterDateAndTime, end).ToList();
+        occurrences = evt.GetOccurrences(laterDateAndTime).TakeUntil(end).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(7));
     }
 
@@ -3023,7 +3025,7 @@ public class RecurrenceTests
 
         Assert.That(() =>
         {
-            _ = evt.GetOccurrences(CalDateTime.Today.AddDays(1), CalDateTime.Today.AddDays(2));
+            _ = evt.GetOccurrences(CalDateTime.Today.AddDays(1)).TakeUntil(CalDateTime.Today.AddDays(2));
         }, Throws.Exception, "An exception should be thrown when evaluating a recurrence with no specified FREQUENCY");
     }
 
@@ -3067,7 +3069,8 @@ public class RecurrenceTests
         var periods = evaluator.Evaluate(
             evtStart,
             evtStart,
-            evtEnd, default)
+            default)
+            .TakeUntil(evtEnd)
             .OrderBy(p => p.StartTime)
             .ToList();
         Assert.That(periods, Has.Count.EqualTo(10));
@@ -3109,7 +3112,7 @@ END:VCALENDAR";
         var startSearch = new CalDateTime(2010, 1, 1);
         var endSearch = new CalDateTime(2016, 12, 31);
 
-        var occurrences = firstEvent.GetOccurrences(startSearch, endSearch).Select(o => o.Period).ToList();
+        var occurrences = firstEvent.GetOccurrences(startSearch).TakeUntil(endSearch).Select(o => o.Period).ToList();
         Assert.That(occurrences.Count == 0, Is.True);
     }
 
@@ -3138,7 +3141,7 @@ END:VCALENDAR";
         var startSearch = new CalDateTime(DateTime.Parse("2015-08-28T07:00:00"), _tzid);
         var endSearch = new CalDateTime(DateTime.Parse("2016-08-28T07:00:00").AddDays(7), _tzid);
 
-        var occurrences = firstEvent.GetOccurrences(startSearch, endSearch)
+        var occurrences = firstEvent.GetOccurrences(startSearch).TakeUntil(endSearch)
             .Select(o => o.Period)
             .OrderBy(p => p.StartTime)
             .ToList();
@@ -3199,7 +3202,7 @@ END:VCALENDAR";
         var endSearch = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00"), "UTC");
 
         var lastExpected = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00"), "UTC");
-        var occurrences = firstEvent.GetOccurrences(startSearch, endSearch)
+        var occurrences = firstEvent.GetOccurrences(startSearch).TakeUntil(endSearch)
                 .Select(o => o.Period)
                 .OrderBy(p => p.StartTime)
                 .ToList();
@@ -3208,7 +3211,7 @@ END:VCALENDAR";
 
         //Create 1 second of overlap
         endSearch = new CalDateTime(endSearch.Value.AddSeconds(1), "UTC");
-        occurrences = firstEvent.GetOccurrences(startSearch, endSearch)
+        occurrences = firstEvent.GetOccurrences(startSearch).TakeUntil(endSearch)
             .Select(o => o.Period)
             .OrderBy(p => p.StartTime)
             .ToList();
@@ -3307,18 +3310,18 @@ END:VCALENDAR";
         var searchStart = _now.AddDays(-1);
         var searchEnd = _now.AddDays(7);
         var e = GetEventWithRecurrenceRules();
-        var occurrences = e.GetOccurrences(searchStart, searchEnd).ToList();
+        var occurrences = e.GetOccurrences(searchStart).TakeUntil(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(5));
 
         var exDate = _now.AddDays(1);
         e.ExceptionDates.Add(exDate);
-        occurrences = e.GetOccurrences(searchStart, searchEnd).ToList();
+        occurrences = e.GetOccurrences(searchStart).TakeUntil(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(4));
 
         //Specifying just a date should "black out" that date
         var excludeTwoDaysFromNow = new CalDateTime(_now.Date).AddDays(2);
         e.ExceptionDates.Add(excludeTwoDaysFromNow);
-        occurrences = e.GetOccurrences(searchStart, searchEnd).ToList();
+        occurrences = e.GetOccurrences(searchStart).TakeUntil(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(3));
     }
 
@@ -3407,7 +3410,7 @@ END:VCALENDAR";
             checkTime = checkTime.AddDays(i);
 
             //Valid if asking for a range starting at the same moment
-            var occurrences = vEvent.GetOccurrences(checkTime, checkTime.AddDays(1)).ToList();
+            var occurrences = vEvent.GetOccurrences(checkTime).TakeUntil(checkTime.AddDays(1)).ToList();
             Assert.That(occurrences, Has.Count.EqualTo(i == 0 ? 1 : 0));
         }
     }
@@ -3430,19 +3433,19 @@ END:VCALENDAR";
         // Exactly on start time
         var testingTime = new CalDateTime(2019, 6, 7, 9, 0, 0);
 
-        var occurrences = vEvent.GetOccurrences(testingTime, testingTime).ToList();
+        var occurrences = vEvent.GetOccurrences(testingTime).TakeWhile(p => p.Period.StartTime == testingTime).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(1));
 
         // One second before end time
         testingTime = new CalDateTime(2019, 6, 7, 16, 59, 59);
 
-        occurrences = vEvent.GetOccurrences(testingTime, testingTime).ToList();
+        occurrences = vEvent.GetOccurrences(testingTime).TakeUntil(testingTime).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(1));
 
         // Exactly on end time
         testingTime = new CalDateTime(2019, 6, 7, 17, 0, 0);
 
-        occurrences = vEvent.GetOccurrences(testingTime, testingTime).ToList();
+        occurrences = vEvent.GetOccurrences(testingTime).TakeUntil(testingTime).ToList();
         Assert.That(occurrences.Count, Is.EqualTo(0));
     }
 
@@ -3670,7 +3673,7 @@ END:VCALENDAR";
         var startSearch = new CalDateTime(DateTime.Parse("2017-07-01T00:00:00"), timeZoneId);
         var endSearch = new CalDateTime(DateTime.Parse("2018-07-01T00:00:00"), timeZoneId);
 
-        var occurrences = firstEvent.GetOccurrences(startSearch, endSearch).ToList();
+        var occurrences = firstEvent.GetOccurrences(startSearch).TakeUntil(endSearch).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(5));
     }
 
@@ -3789,7 +3792,7 @@ END:VCALENDAR";
 
         evt.RecurrenceRules.Add(new RecurrencePattern(testCase.RRule!));
 
-        var occurrences = evt.GetOccurrences(testCase.StartAt ?? new CalDateTime(DateTime.MinValue), new CalDateTime(DateTime.MaxValue))
+        var occurrences = evt.GetOccurrences(testCase.StartAt ?? new CalDateTime(DateTime.MinValue)).TakeUntil(new CalDateTime(DateTime.MaxValue))
             .OrderBy(x => x)
             .ToList();
 
@@ -3816,7 +3819,7 @@ END:VCALENDAR";
         calendar.Events.Add(springAdminEvent);
         var searchStart = new CalDateTime(2024, 04, 15);
         var searchEnd = new CalDateTime(2050, 05, 31);
-        var occurrences = calendar.GetOccurrences(searchStart, searchEnd);
+        var occurrences = calendar.GetOccurrences(searchStart).TakeUntil(searchEnd);
         Assert.That(occurrences.Count, Is.EqualTo(27));
 
         springAdminEvent.Start = new CalDateTime(2024, 04, 16);
@@ -3825,7 +3828,7 @@ END:VCALENDAR";
 
         searchStart = new CalDateTime(2024, 04, 16);
         searchEnd = new CalDateTime(2050, 05, 31);
-        occurrences = calendar.GetOccurrences(searchStart, searchEnd);
+        occurrences = calendar.GetOccurrences(searchStart).TakeUntil(searchEnd);
 
         // occurrences are 26 here, omitting 4/16/2024
         Assert.That(occurrences.Count, Is.EqualTo(27));
@@ -3850,7 +3853,7 @@ END:VCALENDAR";
 
         var calendar = Calendar.Load(ical)!;
         // Set start date for occurrences to search to the end date of the event
-        var occurrences = calendar.GetOccurrences(new CalDateTime(2024, 12, 2), new CalDateTime(2024, 12, 3));
+        var occurrences = calendar.GetOccurrences(new CalDateTime(2024, 12, 2)).TakeUntil(new CalDateTime(2024, 12, 3));
 
         Assert.That(occurrences, Is.Empty);
     }
@@ -3904,7 +3907,7 @@ END:VCALENDAR";
         var cal = Calendar.Load(icalText)!;
         var evt = cal.Events.First();
         var ev = new EventEvaluator(evt);
-        var occurrences = ev.Evaluate(evt.DtStart!, evt.DtStart!.ToTimeZone(tzId), evt.DtStart.AddMinutes(61).ToTimeZone(tzId), null);
+        var occurrences = ev.Evaluate(evt.DtStart!, evt.DtStart!.ToTimeZone(tzId), null).TakeUntil(evt.DtStart.AddMinutes(61).ToTimeZone(tzId));
         var occurrencesStartTimes = occurrences.Select(x => x.StartTime).Take(2).ToList();
 
         var expectedStartTimes = new[]
