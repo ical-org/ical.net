@@ -6,6 +6,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Ical.Net.DataTypes;
 
@@ -184,14 +185,10 @@ public class RecurrencePatternEvaluator : Evaluator
                 //
                 // exclude candidates that start at the same moment as periodEnd if the period is a range but keep them if targeting a specific moment
                 if (dateCount >= pattern.Count)
-                {
                     break;
-                }
 
                 if ((candidate >= periodEnd && periodStart != periodEnd) || candidate > periodEnd && periodStart == periodEnd)
-                {
                     continue;
-                }
 
                 // UNTIL is applied outside of this method, after TZ conversion has been applied.
 
@@ -315,9 +312,7 @@ public class RecurrencePatternEvaluator : Evaluator
     private IEnumerable<CalDateTime> GetMonthVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByMonth.Count == 0)
-        {
             return dates;
-        }
 
         if (expand.Value)
         {
@@ -339,17 +334,23 @@ public class RecurrencePatternEvaluator : Evaluator
     private IEnumerable<CalDateTime> GetWeekNoVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByWeekNo.Count == 0)
-        {
             return dates;
-        }
 
-        if (!expand.Value)
-        {
-            return new List<CalDateTime>();
-        }
+        Debug.Assert(expand.Value);
 
         // Expand behavior
-        var weekNoDates = new List<CalDateTime>();
+        var weekNoDates = GetWeekNoVariantsExpanded(dates, pattern);
+
+        // subsequent parts should only limit, not expand
+        expandContext.DatesFullyExpanded = true;
+
+        // Apply BYMONTH limit behavior, as we might have expanded over month/year boundaries
+        // in this method and BYMONTH has already been applied before, so wouldn't be again.
+        return GetMonthVariants(weekNoDates, pattern, expand: false);
+    }
+
+    private static IEnumerable<CalDateTime> GetWeekNoVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    {
         foreach ((var t, var weekNo) in dates.SelectMany(t => GetByWeekNoForYearNormalized(pattern, t.Year), (t, weekNo) => (t, weekNo)))
         {
             var date = t;
@@ -375,15 +376,9 @@ public class RecurrencePatternEvaluator : Evaluator
             // Step backward single days until we're at the correct DayOfWeek
             date = GetFirstDayOfWeekDate(date, pattern.FirstDayOfWeek);
 
-            weekNoDates.AddRange(Enumerable.Range(0, 7).Select(i => date.AddDays(i)));
+            foreach (var d in Enumerable.Range(0, 7).Select(i => date.AddDays(i)))
+                yield return d;
         }
-
-        // subsequent parts should only limit, not expand
-        expandContext.DatesFullyExpanded = true;
-
-        // Apply BYMONTH limit behavior, as we might have expanded over month/year boundaries
-        // in this method and BYMONTH has already been applied before, so wouldn't be again.
-        return GetMonthVariants(weekNoDates, pattern, expand: false);
     }
 
     private static CalDateTime GetFirstDayOfWeekDate(CalDateTime date, DayOfWeek firstDayOfWeek)
@@ -443,23 +438,14 @@ public class RecurrencePatternEvaluator : Evaluator
     {
         foreach (var date in dates)
         {
-            var keepDate = false;
-            for (var j = 0; j < pattern.ByYearDay.Count; j++)
-            {
-                var yearDay = pattern.ByYearDay[j];
-
-                var newDate = yearDay > 0
+            var candidates =
+                from yearDay in pattern.ByYearDay
+                let newDate = yearDay > 0
                     ? date.AddDays(-date.DayOfYear + yearDay)
-                    : date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
+                    : date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay)
+                select newDate;
 
-                if (newDate.Date == date.Date)
-                {
-                    keepDate = true;
-                    break;
-                }
-            }
-
-            if (keepDate)
+            if (candidates.Contains(date))
                 yield return date;
         }
     }
@@ -487,35 +473,18 @@ public class RecurrencePatternEvaluator : Evaluator
 
     private static IEnumerable<CalDateTime> GetMonthDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
     {
-
-        // Limit behavior
         foreach (var date in dates)
         {
-            var keepDate = false;
-            for (var j = 0; j < pattern.ByMonthDay.Count; j++)
+            var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+            foreach (var monthDay in pattern.ByMonthDay)
             {
-                var monthDay = pattern.ByMonthDay[j];
-
-                var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
-                if (Math.Abs(monthDay) > daysInMonth)
+                var byMonthDay = (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1);
+                if (date.Day == byMonthDay)
                 {
-                    throw new ArgumentException("Invalid day of month: " + date + " (day " + monthDay + ")");
-                }
-
-                // Account for positive or negative numbers
-                var newDate = monthDay > 0
-                    ? date.AddDays(-date.Day + monthDay)
-                    : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
-
-                if (newDate.Day.Equals(date.Day))
-                {
-                    keepDate = true;
+                    yield return date;
                     break;
                 }
             }
-
-            if (keepDate)
-                yield return date;
         }
     }
 
@@ -526,10 +495,9 @@ public class RecurrencePatternEvaluator : Evaluator
             var monthDayDates = new SortedSet<CalDateTime>(
                 from monthDay in pattern.ByMonthDay
                 let daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month)
-                where Math.Abs(monthDay) <= daysInMonth
-                select monthDay > 0
-                    ? date.AddDays(-date.Day + monthDay)
-                    : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay));
+                let monthDayAbs = (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1)
+                where (monthDayAbs > 0) && (monthDayAbs <= daysInMonth)
+                select date.AddDays(-date.Day + monthDayAbs));
 
             foreach (var d in monthDayDates)
                 yield return d;
@@ -559,29 +527,10 @@ public class RecurrencePatternEvaluator : Evaluator
     }
 
     private static IEnumerable<CalDateTime> GetDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
-    {
-        foreach (var date in dates)
-        {
-            var keepDate = false;
-            for (var j = 0; j < pattern.ByDay.Count; j++)
-            {
-                var weekDay = pattern.ByDay[j];
-                if (weekDay.DayOfWeek.Equals(date.DayOfWeek))
-                {
-                    // If no offset is specified, simply test the day of week!
-                    // FIXME: test with offset...
-                    if (date.DayOfWeek.Equals(weekDay.DayOfWeek))
-                    {
-                        keepDate = true;
-                        break;
-                    }
-                }
-            }
-
-            if (keepDate)
-                yield return date;
-        }
-    }
+        =>
+        // If no offset is specified, simply test the day of week!
+        // FIXME: test with offset...
+        dates.Where(date => pattern.ByDay.Any(weekDay => weekDay.DayOfWeek.Equals(date.DayOfWeek)));
 
     private IEnumerable<CalDateTime> GetDayVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
     {
