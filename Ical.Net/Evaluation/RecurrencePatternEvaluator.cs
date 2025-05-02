@@ -97,6 +97,13 @@ public class RecurrencePatternEvaluator : Evaluator
             }
         }
 
+        // Pre-order those BY values that don't allow for negative values. Those with negative values can only
+        // be ordered once the individual position is known.
+        if (r.BySecond?.Count > 0) r.BySecond = r.BySecond.OrderBy(x => x).ToList();
+        if (r.ByMinute?.Count > 0) r.ByMinute = r.ByMinute.OrderBy(x => x).ToList();
+        if (r.ByHour?.Count > 0) r.ByHour = r.ByHour.OrderBy(x => x).ToList();
+        if (r.ByMonth?.Count > 0) r.ByMonth = r.ByMonth.OrderBy(x => x).ToList();
+
         return r;
     }
 
@@ -251,11 +258,11 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expandBehaviors"></param>
     /// <returns>A list of possible dates.</returns>
-    private ISet<CalDateTime> GetCandidates(CalDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
+    private IEnumerable<CalDateTime> GetCandidates(CalDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
     {
         var expandContext = new ExpandContext() { DatesFullyExpanded = false };
 
-        var dates = new List<CalDateTime> { date };
+        IEnumerable<CalDateTime> dates = [ date ];
         dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
         dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1], ref expandContext);
         dates = GetYearDayVariants(dates, pattern, expandBehaviors[2], ref expandContext);
@@ -265,7 +272,8 @@ public class RecurrencePatternEvaluator : Evaluator
         dates = GetMinuteVariants(dates, pattern, expandBehaviors[6]);
         dates = GetSecondVariants(dates, pattern, expandBehaviors[7]);
         dates = ApplySetPosRules(dates, pattern);
-        return new SortedSet<CalDateTime>(dates);
+
+        return dates;
     }
 
     /// <summary>
@@ -274,25 +282,26 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYSETPOS rules will be applied.</param>
     /// <param name="pattern"></param>
-    private List<CalDateTime> ApplySetPosRules(List<CalDateTime> dates, RecurrencePattern pattern)
+    private IEnumerable<CalDateTime> ApplySetPosRules(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
     {
         // return if no SETPOS rules specified..
         if (pattern.BySetPosition.Count == 0)
-        {
             return dates;
+
+        ISet<int> bySetPos;
+
+        if (pattern.BySetPosition.Any(p => p < 0)) {
+            var tmp = dates.ToList();
+            var count = tmp.Count;
+            dates = tmp;
+            bySetPos = new HashSet<int>(
+                pattern.BySetPosition
+                .Select(p => (p < 0) ? count + p + 1 : p));
+        } else {
+            bySetPos = new HashSet<int>(pattern.BySetPosition);
         }
 
-        // sort the list before processing..
-        dates.Sort();
-
-        var size = dates.Count;
-        var setPosDates = pattern.BySetPosition
-            .Where(p => p > 0 && p <= size || p < 0 && p >= -size)  //Protect against out of range access
-            .Select(p => p > 0 && p <= size
-                ? dates[p - 1]
-                : dates[size + p])
-            .ToList();
-        return setPosDates;
+        return dates.Where((d, i) => bySetPos.Contains(i + 1));
     }
 
     /// <summary>
@@ -303,7 +312,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYMONTH rules.</returns>
-    private List<CalDateTime> GetMonthVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private IEnumerable<CalDateTime> GetMonthVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByMonth.Count == 0)
         {
@@ -314,14 +323,11 @@ public class RecurrencePatternEvaluator : Evaluator
         {
             // Expand behavior
             return dates
-                .SelectMany(d => pattern.ByMonth.Select(month => d.AddMonths(month - d.Month)))
-                .ToList();
+                .SelectMany(d => pattern.ByMonth.Select(month => d.AddMonths(month - d.Month)));
         }
 
         // Limit behavior
-        var dateSet = new HashSet<CalDateTime>(dates);
-        dateSet.ExceptWith(dates.Where(date => pattern.ByMonth.All(t => t != date.Month)));
-        return dateSet.ToList();
+        return dates.Where(date => pattern.ByMonth.Contains(date.Month));
     }
 
     /// <summary>
@@ -330,7 +336,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYWEEKNO rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYWEEKNO rules.</returns>
-    private List<CalDateTime> GetWeekNoVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private IEnumerable<CalDateTime> GetWeekNoVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByWeekNo.Count == 0)
         {
@@ -377,9 +383,7 @@ public class RecurrencePatternEvaluator : Evaluator
 
         // Apply BYMONTH limit behavior, as we might have expanded over month/year boundaries
         // in this method and BYMONTH has already been applied before, so wouldn't be again.
-        weekNoDates = GetMonthVariants(weekNoDates, pattern, expand: false);
-
-        return weekNoDates;
+        return GetMonthVariants(weekNoDates, pattern, expand: false);
     }
 
     private static CalDateTime GetFirstDayOfWeekDate(CalDateTime date, DayOfWeek firstDayOfWeek)
@@ -388,11 +392,12 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <summary>
     /// Normalize the BYWEEKNO values to be positive integers.
     /// </summary>
-    private List<int> GetByWeekNoForYearNormalized(RecurrencePattern pattern, int year)
+    private static List<int> GetByWeekNoForYearNormalized(RecurrencePattern pattern, int year)
     {
         var weeksInYear = new Lazy<int>(() => Calendar.GetIso8601WeeksInYear(year, pattern.FirstDayOfWeek));
         return pattern.ByWeekNo
             .Select(weekNo => weekNo >= 0 ? weekNo : weeksInYear.Value + weekNo + 1)
+            .OrderBy(x => x)
             .ToList();
     }
 
@@ -402,33 +407,42 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYYEARDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYYEARDAY rules.</returns>
-    private static List<CalDateTime> GetYearDayVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static IEnumerable<CalDateTime> GetYearDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
-        if (expand == null || pattern.ByYearDay.Count == 0)
-        {
+        if (expand is null || pattern.ByYearDay.Count == 0)
             return dates;
-        }
 
-        if (expand.Value && !expandContext.DatesFullyExpanded)
+        if ((expand == true) && !expandContext.DatesFullyExpanded)
         {
-            var yearDayDates = new List<CalDateTime>(dates.Count);
-            foreach (var date in dates)
-            {
-                var date1 = date;
-                yearDayDates.AddRange(pattern.ByYearDay.Select(yearDay => yearDay > 0
-                    ? date1.AddDays(-date1.DayOfYear + yearDay)
-                    : date1.AddDays(-date1.DayOfYear + 1).AddYears(1).AddDays(yearDay))
-                    // Ignore the BY values that don't fit into the current year (i.e. +-366 in non-leap-years).
-                    .Where(d => d.Year == date1.Year));
-            }
-
             expandContext.DatesFullyExpanded = true;
-            return yearDayDates;
+            return GetYearDayVariantsExpanded(dates, pattern);
         }
+
         // Limit behavior
-        for (var i = dates.Count - 1; i >= 0; i--)
+        return GetYearDayVariantsLimited(dates, pattern);
+    }
+
+    private static IEnumerable<CalDateTime> GetYearDayVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    {
+        foreach (var date in dates)
         {
-            var date = dates[i];
+            var date1 = date;
+            var yearDayDates = new SortedSet<CalDateTime>(
+                pattern.ByYearDay.Select(yearDay => yearDay > 0
+                ? date1.AddDays(-date1.DayOfYear + yearDay)
+                : date1.AddDays(-date1.DayOfYear + 1).AddYears(1).AddDays(yearDay))
+                // Ignore the BY values that don't fit into the current year (i.e. +-366 in non-leap-years).
+                .Where(d => d.Year == date1.Year));
+
+            foreach (var d in yearDayDates)
+                yield return d;
+        }
+    }
+
+    private static IEnumerable<CalDateTime> GetYearDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    {
+        foreach (var date in dates)
+        {
             var keepDate = false;
             for (var j = 0; j < pattern.ByYearDay.Count; j++)
             {
@@ -445,13 +459,9 @@ public class RecurrencePatternEvaluator : Evaluator
                 }
             }
 
-            if (!keepDate)
-            {
-                dates.RemoveAt(i);
-            }
+            if (keepDate)
+                yield return date;
         }
-
-        return dates;
     }
 
     /// <summary>
@@ -460,36 +470,27 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYMONTHDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYMONTHDAY rules.</returns>
-    private List<CalDateTime> GetMonthDayVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private IEnumerable<CalDateTime> GetMonthDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByMonthDay.Count == 0)
-        {
             return dates;
-        }
 
         if (expand.Value && !expandContext.DatesFullyExpanded)
         {
-            var monthDayDates = new List<CalDateTime>();
-            foreach (var date in dates)
-            {
-                monthDayDates.AddRange(
-                    from monthDay in pattern.ByMonthDay
-                    let daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month)
-                    where Math.Abs(monthDay) <= daysInMonth
-                    select monthDay > 0
-                        ? date.AddDays(-date.Day + monthDay)
-                        : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay)
-                );
-            }
-
             expandContext.DatesFullyExpanded = true;
-            return monthDayDates;
+            return GetMonthDayVariantsExpanded(dates, pattern);
         }
 
+        // limit behavior
+        return GetMonthDayVariantsLimited(dates, pattern);
+    }
+
+    private static IEnumerable<CalDateTime> GetMonthDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    {
+
         // Limit behavior
-        for (var i = dates.Count - 1; i >= 0; i--)
+        foreach (var date in dates)
         {
-            var date = dates[i];
             var keepDate = false;
             for (var j = 0; j < pattern.ByMonthDay.Count; j++)
             {
@@ -513,13 +514,26 @@ public class RecurrencePatternEvaluator : Evaluator
                 }
             }
 
-            if (!keepDate)
-            {
-                dates.RemoveAt(i);
-            }
+            if (keepDate)
+                yield return date;
         }
+    }
 
-        return dates;
+    private static IEnumerable<CalDateTime> GetMonthDayVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    {
+        foreach (var date in dates)
+        {
+            var monthDayDates = new SortedSet<CalDateTime>(
+                from monthDay in pattern.ByMonthDay
+                let daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month)
+                where Math.Abs(monthDay) <= daysInMonth
+                select monthDay > 0
+                    ? date.AddDays(-date.Day + monthDay)
+                    : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay));
+
+            foreach (var d in monthDayDates)
+                yield return d;
+        }
     }
 
     /// <summary>
@@ -528,33 +542,26 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which BYDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying BYDAY rules, or the original list if no BYDAY rules are specified.</returns>
-    private List<CalDateTime> GetDayVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private IEnumerable<CalDateTime> GetDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByDay.Count == 0)
-        {
             return dates;
-        }
 
         if (expand.Value && !expandContext.DatesFullyExpanded)
         {
             // Expand behavior
-            var weekDayDates = new List<CalDateTime>();
-            foreach (var date in dates)
-            {
-                foreach (var day in pattern.ByDay)
-                {
-                    weekDayDates.AddRange(GetAbsWeekDays(date, day, pattern));
-                }
-            }
-
             expandContext.DatesFullyExpanded = true;
-            return weekDayDates;
+            return GetDayVariantsExpanded(dates, pattern);
         }
 
         // Limit behavior
-        for (var i = dates.Count - 1; i >= 0; i--)
+        return GetDayVariantsLimited(dates, pattern);
+    }
+
+    private static IEnumerable<CalDateTime> GetDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    {
+        foreach (var date in dates)
         {
-            var date = dates[i];
             var keepDate = false;
             for (var j = 0; j < pattern.ByDay.Count; j++)
             {
@@ -571,13 +578,23 @@ public class RecurrencePatternEvaluator : Evaluator
                 }
             }
 
-            if (!keepDate)
-            {
-                dates.RemoveAt(i);
-            }
+            if (keepDate)
+                yield return date;
         }
+    }
 
-        return dates;
+    private IEnumerable<CalDateTime> GetDayVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    {
+        foreach (var date in dates)
+        {
+            var weekDayDates = new SortedSet<CalDateTime>();
+            foreach (var day in pattern.ByDay)
+                foreach (var d in GetAbsWeekDays(date, day, pattern))
+                    weekDayDates.Add(d);
+
+            foreach (var d in weekDayDates)
+                yield return d;
+        }
     }
 
     /// <summary>
@@ -587,17 +604,16 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="date">The date to start the evaluation from.</param>
     /// <param name="weekDay">The week day to evaluate.</param>
     /// <returns>A list of applicable dates.</returns>
-    private List<CalDateTime> GetAbsWeekDays(CalDateTime date, WeekDay weekDay, RecurrencePattern pattern)
-    {
-        var days = new List<CalDateTime>();
+    private static IEnumerable<CalDateTime> GetAbsWeekDays(CalDateTime date, WeekDay weekDay, RecurrencePattern pattern)
+        => GetOffsetDates(GetAbsWeekDaysInternal(date, weekDay, pattern), weekDay.Offset);
 
+    private static IEnumerable<CalDateTime> GetAbsWeekDaysInternal(CalDateTime date, WeekDay weekDay, RecurrencePattern pattern)
+    {
         var dayOfWeek = weekDay.DayOfWeek;
         if (pattern.Frequency == FrequencyType.Daily)
         {
             if (date.DayOfWeek == dayOfWeek)
-            {
-                days.Add(date);
-            }
+                yield return date;
         }
         else if (pattern.Frequency == FrequencyType.Weekly || pattern.ByWeekNo.Count > 0)
         {
@@ -624,7 +640,7 @@ public class RecurrencePatternEvaluator : Evaluator
                 if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
                     && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
                 {
-                    days.Add(date);
+                    yield return date;
                 }
 
                 date = date.AddDays(7);
@@ -650,7 +666,7 @@ public class RecurrencePatternEvaluator : Evaluator
                 if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
                     && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
                 {
-                    days.Add(date);
+                    yield return date;
                 }
                 date = date.AddDays(7);
             }
@@ -668,11 +684,10 @@ public class RecurrencePatternEvaluator : Evaluator
 
             while (date.Year == year)
             {
-                days.Add(date);
+                yield return date;
                 date = date.AddDays(7);
             }
         }
-        return GetOffsetDates(days, weekDay.Offset);
     }
 
     /// <summary>
@@ -688,24 +703,20 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list from which to extract the element.</param>
     /// <param name="offset">The position of the element to extract.</param>
-    private List<CalDateTime> GetOffsetDates(List<CalDateTime> dates, int? offset)
+    private static IEnumerable<CalDateTime> GetOffsetDates(IEnumerable<CalDateTime> dates, int? offset)
     {
         if (offset is null)
-        {
             return dates;
+
+        if (offset == 0)
+            throw new EvaluationException("Encountered a day offset of 0 which is not allowed.");
+
+        if (offset < 0) {
+            offset = -offset;
+            dates = dates.Reverse();
         }
 
-        var offsetDates = new List<CalDateTime>();
-        var size = dates.Count;
-        if (offset < 0 && offset >= -size)
-        {
-            offsetDates.Add(dates[size + offset.Value]);
-        }
-        else if (offset > 0 && offset <= size)
-        {
-            offsetDates.Add(dates[offset.Value - 1]);
-        }
-        return offsetDates;
+        return dates.Skip(offset.Value - 1).Take(1);
     }
 
     /// <summary>
@@ -716,50 +727,19 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYHOUR rules.</returns>
-    private List<CalDateTime> GetHourVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private IEnumerable<CalDateTime> GetHourVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByHour.Count == 0)
-        {
             return dates;
-        }
 
         if (expand.Value)
         {
             // Expand behavior
-            var hourlyDates = new List<CalDateTime>();
-            for (var i = 0; i < dates.Count; i++)
-            {
-                var date = dates[i];
-                for (var j = 0; j < pattern.ByHour.Count; j++)
-                {
-                    var hour = pattern.ByHour[j];
-                    date = date.AddHours(-date.Hour + hour);
-                    hourlyDates.Add(date);
-                }
-            }
-            return hourlyDates;
+            return dates.SelectMany(date => pattern.ByHour.Select(hour => date.AddHours(-date.Hour + hour)));
         }
+
         // Limit behavior
-        for (var i = dates.Count - 1; i >= 0; i--)
-        {
-            var date = dates[i];
-            var keepDate = false;
-            for (var j = 0; j < pattern.ByHour.Count; j++)
-            {
-                var hour = pattern.ByHour[j];
-                if (date.Hour == hour)
-                {
-                    keepDate = true;
-                    break;
-                }
-            }
-            // Remove unmatched dates
-            if (!keepDate)
-            {
-                dates.RemoveAt(i);
-            }
-        }
-        return dates;
+        return dates.Where(date => pattern.ByHour.Contains(date.Hour));
     }
 
     /// <summary>
@@ -770,49 +750,19 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYMINUTE rules.</returns>
-    private List<CalDateTime> GetMinuteVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private IEnumerable<CalDateTime> GetMinuteVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByMinute.Count == 0)
-        {
             return dates;
-        }
 
         if (expand.Value)
         {
             // Expand behavior
-            var minutelyDates = new List<CalDateTime>();
-            for (var i = 0; i < dates.Count; i++)
-            {
-                var date = dates[i];
-                for (var j = 0; j < pattern.ByMinute.Count; j++)
-                {
-                    var minute = pattern.ByMinute[j];
-                    date = date.AddMinutes(-date.Minute + minute);
-                    minutelyDates.Add(date);
-                }
-            }
-            return minutelyDates;
+            return dates.SelectMany(date => pattern.ByMinute.Select(minute => date.AddMinutes(-date.Minute + minute)));
         }
+
         // Limit behavior
-        for (var i = dates.Count - 1; i >= 0; i--)
-        {
-            var date = dates[i];
-            var keepDate = false;
-            for (var j = 0; j < pattern.ByMinute.Count; j++)
-            {
-                var minute = pattern.ByMinute[j];
-                if (date.Minute == minute)
-                {
-                    keepDate = true;
-                }
-            }
-            // Remove unmatched dates
-            if (!keepDate)
-            {
-                dates.RemoveAt(i);
-            }
-        }
-        return dates;
+        return dates.Where(date => pattern.ByMinute.Contains(date.Minute));
     }
 
     /// <summary>
@@ -823,52 +773,19 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYSECOND rules.</returns>
-    private List<CalDateTime> GetSecondVariants(List<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private IEnumerable<CalDateTime> GetSecondVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.BySecond.Count == 0)
-        {
             return dates;
-        }
 
         if (expand.Value)
         {
             // Expand behavior
-            var secondlyDates = new List<CalDateTime>();
-            for (var i = 0; i < dates.Count; i++)
-            {
-                var date = dates[i];
-                for (var j = 0; j < pattern.BySecond.Count; j++)
-                {
-                    var second = pattern.BySecond[j];
-                    date = date.AddSeconds(-date.Second + second);
-                    secondlyDates.Add(date);
-                }
-            }
-            return secondlyDates;
+            return dates.SelectMany(date => pattern.BySecond.Select(second => date.AddSeconds(-date.Second + second)));
         }
+
         // Limit behavior
-        for (var i = dates.Count - 1; i >= 0; i--)
-        {
-            var date = dates[i];
-            var keepDate = false;
-            for (var j = 0; j < pattern.BySecond.Count; j++)
-            {
-                var second = pattern.BySecond[j];
-                if (date.Second == second)
-                {
-                    keepDate = true;
-                    break;
-                }
-            }
-
-            // Remove unmatched dates
-            if (!keepDate)
-            {
-                dates.RemoveAt(i);
-            }
-        }
-
-        return dates;
+        return dates.Where(date => pattern.BySecond.Contains(date.Second));
     }
 
     /// <summary>
