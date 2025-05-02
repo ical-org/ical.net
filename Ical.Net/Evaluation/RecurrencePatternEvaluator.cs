@@ -554,88 +554,95 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="weekDay">The week day to evaluate.</param>
     /// <returns>A list of applicable dates.</returns>
     private static IEnumerable<CalDateTime> GetAbsWeekDays(CalDateTime date, WeekDay weekDay, RecurrencePattern pattern)
-        => GetOffsetDates(GetAbsWeekDaysInternal(date, weekDay, pattern), weekDay.Offset);
-
-    private static IEnumerable<CalDateTime> GetAbsWeekDaysInternal(CalDateTime date, WeekDay weekDay, RecurrencePattern pattern)
     {
-        var dayOfWeek = weekDay.DayOfWeek;
-        if (pattern.Frequency == FrequencyType.Daily)
+        var dates = pattern switch
         {
-            if (date.DayOfWeek == dayOfWeek)
-                yield return date;
+            { Frequency: FrequencyType.Daily } => GetAbsWeekDaysDaily(date, weekDay),
+            { Frequency: FrequencyType.Weekly } or { ByWeekNo: { Count: > 0 } } => GetAbsWeekDaysWeekly(date, pattern, weekDay),
+            { Frequency: FrequencyType.Monthly } or { ByMonth: { Count: > 0 } } => GetAbsWeekDaysMonthly(date, pattern, weekDay),
+            { Frequency: FrequencyType.Yearly } => GetAbsWeekDaysYearly(date, weekDay),
+            _ => []
+        };
+
+        return GetOffsetDates(dates, weekDay.Offset);
+    }
+
+    private static IEnumerable<CalDateTime> GetAbsWeekDaysDaily(CalDateTime date, WeekDay weekDay)
+        => (date.DayOfWeek == weekDay.DayOfWeek) ? [date] : [];
+
+    private static IEnumerable<CalDateTime> GetAbsWeekDaysYearly(CalDateTime date, WeekDay weekDay)
+    {
+        var year = date.Year;
+
+        // construct a list of possible year days..
+        date = date.AddDays(-date.DayOfYear + 1);
+        while (date.DayOfWeek != weekDay.DayOfWeek)
+        {
+            date = date.AddDays(1);
         }
-        else if (pattern.Frequency == FrequencyType.Weekly || pattern.ByWeekNo.Count > 0)
+
+        while (date.Year == year)
         {
-            var weekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+            yield return date;
+            date = date.AddDays(7);
+        }
+    }
 
-            // Go to the first day of the week
-            date = date.AddDays(-GetWeekDayOffset(date, pattern.FirstDayOfWeek));
+    private static IEnumerable<CalDateTime> GetAbsWeekDaysMonthly(CalDateTime date, RecurrencePattern pattern, WeekDay weekDay)
+    {
+        var month = date.Month;
 
-            // construct a list of possible week days..
-            while (date.DayOfWeek != dayOfWeek)
-            {
-                date = date.AddDays(1);
-            }
+        // construct a list of possible month days..
+        date = date.AddDays(-date.Day + 1);
+        while (date.DayOfWeek != weekDay.DayOfWeek)
+        {
+            date = date.AddDays(1);
+        }
 
-            var nextWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+        var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
+        while (date.Month == month)
+        {
             var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
-            var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
 
-            //When we manage weekly recurring pattern and we have boundary case:
-            //Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - It's the 53th week of the year, but all another are 1st week number.
-            //So we need an EXRULE for this situation, but only for weekly events
-            while (currentWeekNo == weekNo || (nextWeekNo < weekNo && currentWeekNo == nextWeekNo && pattern.Frequency == FrequencyType.Weekly))
-            {
-                if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
-                    && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
-                {
-                    yield return date;
-                }
-
-                date = date.AddDays(7);
-                currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
-            }
-        }
-        else if (pattern.Frequency == FrequencyType.Monthly || pattern.ByMonth.Count > 0)
-        {
-            var month = date.Month;
-
-            // construct a list of possible month days..
-            date = date.AddDays(-date.Day + 1);
-            while (date.DayOfWeek != dayOfWeek)
-            {
-                date = date.AddDays(1);
-            }
-
-            var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
-            while (date.Month == month)
-            {
-                var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
-
-                if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
-                    && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
-                {
-                    yield return date;
-                }
-                date = date.AddDays(7);
-            }
-        }
-        else if (pattern.Frequency == FrequencyType.Yearly)
-        {
-            var year = date.Year;
-
-            // construct a list of possible year days..
-            date = date.AddDays(-date.DayOfYear + 1);
-            while (date.DayOfWeek != dayOfWeek)
-            {
-                date = date.AddDays(1);
-            }
-
-            while (date.Year == year)
+            if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
+                && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
             {
                 yield return date;
-                date = date.AddDays(7);
             }
+            date = date.AddDays(7);
+        }
+    }
+
+    private static IEnumerable<CalDateTime> GetAbsWeekDaysWeekly(CalDateTime date, RecurrencePattern pattern, WeekDay weekDay)
+    {
+        var weekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+
+        // Go to the first day of the week
+        date = date.AddDays(-GetWeekDayOffset(date, pattern.FirstDayOfWeek));
+
+        // construct a list of possible week days..
+        while (date.DayOfWeek != weekDay.DayOfWeek)
+        {
+            date = date.AddDays(1);
+        }
+
+        var nextWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+        var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+        var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
+
+        //When we manage weekly recurring pattern and we have boundary case:
+        //Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - It's the 53th week of the year, but all another are 1st week number.
+        //So we need an EXRULE for this situation, but only for weekly events
+        while (currentWeekNo == weekNo || (nextWeekNo < weekNo && currentWeekNo == nextWeekNo && pattern.Frequency == FrequencyType.Weekly))
+        {
+            if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
+                && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
+            {
+                yield return date;
+            }
+
+            date = date.AddDays(7);
+            currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
         }
     }
 
