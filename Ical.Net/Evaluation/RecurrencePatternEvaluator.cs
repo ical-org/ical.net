@@ -279,7 +279,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYSETPOS rules will be applied.</param>
     /// <param name="pattern"></param>
-    private IEnumerable<CalDateTime> ApplySetPosRules(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IEnumerable<CalDateTime> ApplySetPosRules(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
     {
         // return if no SETPOS rules specified..
         if (pattern.BySetPosition.Count == 0)
@@ -309,7 +309,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYMONTH rules.</returns>
-    private IEnumerable<CalDateTime> GetMonthVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private static IEnumerable<CalDateTime> GetMonthVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByMonth.Count == 0)
             return dates;
@@ -331,7 +331,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYWEEKNO rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYWEEKNO rules.</returns>
-    private IEnumerable<CalDateTime> GetWeekNoVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static IEnumerable<CalDateTime> GetWeekNoVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByWeekNo.Count == 0)
             return dates;
@@ -456,7 +456,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYMONTHDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYMONTHDAY rules.</returns>
-    private IEnumerable<CalDateTime> GetMonthDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static IEnumerable<CalDateTime> GetMonthDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByMonthDay.Count == 0)
             return dates;
@@ -510,7 +510,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which BYDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying BYDAY rules, or the original list if no BYDAY rules are specified.</returns>
-    private IEnumerable<CalDateTime> GetDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static IEnumerable<CalDateTime> GetDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByDay.Count == 0)
             return dates;
@@ -532,7 +532,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // FIXME: test with offset...
         dates.Where(date => pattern.ByDay.Any(weekDay => weekDay.DayOfWeek.Equals(date.DayOfWeek)));
 
-    private IEnumerable<CalDateTime> GetDayVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IEnumerable<CalDateTime> GetDayVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
     {
         foreach (var date in dates)
         {
@@ -676,7 +676,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYHOUR rules.</returns>
-    private IEnumerable<CalDateTime> GetHourVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private static IEnumerable<CalDateTime> GetHourVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByHour.Count == 0)
             return dates;
@@ -699,7 +699,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYMINUTE rules.</returns>
-    private IEnumerable<CalDateTime> GetMinuteVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private static IEnumerable<CalDateTime> GetMinuteVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByMinute.Count == 0)
             return dates;
@@ -722,7 +722,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYSECOND rules.</returns>
-    private IEnumerable<CalDateTime> GetSecondVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private static IEnumerable<CalDateTime> GetSecondVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.BySecond.Count == 0)
             return dates;
