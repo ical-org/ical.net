@@ -125,7 +125,7 @@ internal class PeriodList : EncodableDataType, IList<Period>
     }
 
     /// <inheritdoc/>
-    public void RemoveAt(int index) => Periods?.RemoveAt(index);
+    public void RemoveAt(int index) => Periods.RemoveAt(index);
 
     /// <summary>
     /// Adds a <see cref="Period"/> to the list if it does not already exist.<br/>
@@ -159,7 +159,7 @@ internal class PeriodList : EncodableDataType, IList<Period>
     public bool Contains(Period item) => Periods.Contains(item);
 
     /// <inheritdoc/>
-    public void CopyTo(Period[] array, int arrayIndex) => Periods?.CopyTo(array, arrayIndex);
+    public void CopyTo(Period[] array, int arrayIndex) => Periods.CopyTo(array, arrayIndex);
 
     /// <inheritdoc/>
     public IEnumerator<Period> GetEnumerator() => Periods.GetEnumerator();

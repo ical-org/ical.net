@@ -31,12 +31,11 @@ public class PropertySerializer : SerializerBase
         }
 
         // Push this object on the serialization context.
-        SerializationContext?.Push(prop);
+        SerializationContext.Push(prop);
 
         // Get a serializer factory that we can use to serialize
         // the property and parameter values
         var sf = GetService<ISerializerFactory>();
-        if (sf == null) return null;
 
         var result = new StringBuilder();
         foreach (var v in prop.Values.Where(value => value != null))
@@ -45,7 +44,7 @@ public class PropertySerializer : SerializerBase
         }
 
         // Pop the object off the serialization context.
-        SerializationContext?.Pop();
+        SerializationContext.Pop();
         return result.ToString();
     }
 

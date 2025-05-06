@@ -172,7 +172,7 @@ public class Alarm : CalendarComponent
         for (var i = 0; i < len; i++)
         {
             var ao = occurrences[i];
-            if (ao?.DateTime == null || ao.Component == null)
+            if (ao.DateTime == null || ao.Component == null)
             {
                 continue;
             }

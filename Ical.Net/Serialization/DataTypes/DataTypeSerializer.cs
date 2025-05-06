@@ -23,7 +23,7 @@ public abstract class DataTypeSerializer : SerializerBase
             return null;
         }
 
-        if (SerializationContext?.Peek() is ICalendarObject associatedObject)
+        if (SerializationContext.Peek() is ICalendarObject associatedObject)
         {
             dt.AssociatedObject = associatedObject;
         }

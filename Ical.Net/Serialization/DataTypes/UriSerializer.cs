@@ -25,7 +25,7 @@ public class UriSerializer : EncodableDataTypeSerializer
             return null;
         }
 
-        if (SerializationContext?.Peek() is ICalendarObject co)
+        if (SerializationContext.Peek() is ICalendarObject co)
         {
             var dt = new EncodableDataType
             {
@@ -45,7 +45,7 @@ public class UriSerializer : EncodableDataTypeSerializer
 
         var value = tr.ReadToEnd();
 
-        if (SerializationContext?.Peek() is ICalendarObject co)
+        if (SerializationContext.Peek() is ICalendarObject co)
         {
             var dt = new EncodableDataType
             {

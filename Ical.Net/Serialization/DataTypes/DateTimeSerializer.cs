@@ -68,7 +68,7 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
         var value = tr.ReadToEnd();
 
         // CalDateTime is defined as the Target type
-        var parent = SerializationContext?.Peek();
+        var parent = SerializationContext.Peek();
 
         // The associated object is an ICalendarObject of type CalendarProperty
         // that contains any timezone ("TZID" property) deserialized in a prior step

@@ -119,7 +119,7 @@ public class Trigger : EncodableDataType
         {
             var hashCode = _mDateTime?.GetHashCode() ?? 0;
             hashCode = (hashCode * 397) ^ _mDuration.GetHashCode();
-            hashCode = (hashCode * 397) ^ _mRelated?.GetHashCode() ?? 0;
+            hashCode = (hashCode * 397) ^ _mRelated.GetHashCode();
             return hashCode;
         }
     }

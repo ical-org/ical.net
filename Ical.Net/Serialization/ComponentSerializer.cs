@@ -45,7 +45,7 @@ public class ComponentSerializer : SerializerBase
         foreach (var p in properties)
         {
             // Get a serializer for each property.
-            var serializer = sf?.Build(p.GetType(), SerializationContext) as IStringSerializer;
+            var serializer = sf.Build(p.GetType(), SerializationContext) as IStringSerializer;
             var val = serializer?.SerializeToString(p);
             if (val != null) sb.Append(val);
         }

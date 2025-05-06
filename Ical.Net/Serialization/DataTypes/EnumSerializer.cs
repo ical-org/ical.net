@@ -30,7 +30,7 @@ public class EnumSerializer : EncodableDataTypeSerializer
     {
         try
         {
-            if (SerializationContext?.Peek() is ICalendarObject calObject)
+            if (SerializationContext.Peek() is ICalendarObject calObject)
             {
                 // Encode the value as needed.
                 var dt = new EncodableDataType
@@ -53,7 +53,7 @@ public class EnumSerializer : EncodableDataTypeSerializer
 
         try
         {
-            if (SerializationContext?.Peek() is ICalendarObject obj)
+            if (SerializationContext.Peek() is ICalendarObject obj)
             {
                 // Decode the value, if necessary!
                 var dt = new EncodableDataType

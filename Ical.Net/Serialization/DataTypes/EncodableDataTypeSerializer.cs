@@ -28,9 +28,8 @@ public abstract class EncodableDataTypeSerializer : DataTypeSerializer
 
         // Return the value in the current encoding
         var encodingStack = GetService<EncodingStack>();
-        return encodingStack?.Current == null
-            ? value
-            : Encode(dt, encodingStack.Current.GetBytes(value));
+
+        return Encode(dt, encodingStack.Current.GetBytes(value));
     }
 
     protected string? Encode(IEncodableDataType dt, byte[]? data)
@@ -44,11 +43,11 @@ public abstract class EncodableDataTypeSerializer : DataTypeSerializer
         {
             // Default to the current encoding
             var encodingStack = GetService<EncodingStack>();
-            return encodingStack?.Current.GetString(data);
+            return encodingStack.Current.GetString(data);
         }
 
         var encodingProvider = GetService<IEncodingProvider>();
-        return encodingProvider?.Encode(dt.Encoding, data);
+        return encodingProvider.Encode(dt.Encoding, data);
     }
 
     protected string? Decode(IEncodableDataType dt, string value)
@@ -66,7 +65,7 @@ public abstract class EncodableDataTypeSerializer : DataTypeSerializer
 
         // Default to the current encoding
         var encodingStack = GetService<EncodingStack>();
-        return encodingStack?.Current.GetString(data);
+        return encodingStack.Current.GetString(data);
     }
 
     protected byte[]? DecodeData(IEncodableDataType dt, string? value)
@@ -80,10 +79,10 @@ public abstract class EncodableDataTypeSerializer : DataTypeSerializer
         {
             // Default to the current encoding
             var encodingStack = GetService<EncodingStack>();
-            return encodingStack?.Current.GetBytes(value);
+            return encodingStack.Current.GetBytes(value);
         }
 
         var encodingProvider = GetService<IEncodingProvider>();
-        return encodingProvider?.DecodeData(dt.Encoding, value);
+        return encodingProvider.DecodeData(dt.Encoding, value);
     }
 }

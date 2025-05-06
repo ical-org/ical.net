@@ -85,7 +85,7 @@ public class Todo : RecurringComponent, IAlarmContainer
     public virtual IList<string> Resources
     {
         get => Properties.GetMany<string>("RESOURCES");
-        set => Properties.Set("RESOURCES", value ?? new List<string>());
+        set => Properties.Set("RESOURCES", value);
     }
 
     /// <summary>

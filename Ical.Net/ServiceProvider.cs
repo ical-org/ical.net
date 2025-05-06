@@ -15,37 +15,25 @@ public class ServiceProvider
     private readonly IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
     private readonly IDictionary<string, object> _mNamedServices = new Dictionary<string, object>();
 
-    public virtual object? GetService(Type serviceType)
+    public virtual object GetService(Type serviceType)
     {
-        _mTypedServices.TryGetValue(serviceType, out var service);
+        if (!_mTypedServices.TryGetValue(serviceType, out var service))
+            throw new ArgumentException($"Service of type {serviceType.FullName} not found.", nameof(serviceType));
+
         return service;
     }
 
-    public virtual object? GetService(string name)
+    public virtual object GetService(string name)
     {
-        _mNamedServices.TryGetValue(name, out var service);
+        if (!_mNamedServices.TryGetValue(name, out var service))
+            throw new ArgumentException($"Service with name {name} not found.", nameof(name));
+
         return service;
     }
 
-    public virtual T? GetService<T>()
-    {
-        var service = GetService(typeof(T));
-        if (service is T svc)
-        {
-            return svc;
-        }
-        return default(T);
-    }
+    public virtual T GetService<T>() => (T) GetService(typeof(T));
 
-    public virtual T? GetService<T>(string name)
-    {
-        var service = GetService(name);
-        if (service is T svc)
-        {
-            return svc;
-        }
-        return default(T);
-    }
+    public virtual T GetService<T>(string name) => (T) GetService(name);
 
     public virtual void SetService(string name, object obj)
     {

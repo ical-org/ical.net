@@ -100,10 +100,10 @@ public class RecurrencePatternEvaluator : Evaluator
 
         // Pre-order those BY values that don't allow for negative values. Those with negative values can only
         // be ordered once the individual position is known.
-        if (r.BySecond?.Count > 0) r.BySecond = r.BySecond.OrderBy(x => x).ToList();
-        if (r.ByMinute?.Count > 0) r.ByMinute = r.ByMinute.OrderBy(x => x).ToList();
-        if (r.ByHour?.Count > 0) r.ByHour = r.ByHour.OrderBy(x => x).ToList();
-        if (r.ByMonth?.Count > 0) r.ByMonth = r.ByMonth.OrderBy(x => x).ToList();
+        if (r.BySecond.Count > 0) r.BySecond = r.BySecond.OrderBy(x => x).ToList();
+        if (r.ByMinute.Count > 0) r.ByMinute = r.ByMinute.OrderBy(x => x).ToList();
+        if (r.ByHour.Count > 0) r.ByHour = r.ByHour.OrderBy(x => x).ToList();
+        if (r.ByMonth.Count > 0) r.ByMonth = r.ByMonth.OrderBy(x => x).ToList();
 
         return r;
     }

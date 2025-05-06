@@ -38,9 +38,9 @@ public abstract class SerializerBase : IStringSerializer
     {
         using var sr = new StreamReader(stream, encoding);
         var encodingStack = GetService<EncodingStack>();
-        encodingStack?.Push(encoding);
+        encodingStack.Push(encoding);
         var obj = Deserialize(sr);
-        encodingStack?.Pop();
+        encodingStack.Pop();
         return obj;
     }
 
@@ -58,25 +58,25 @@ public abstract class SerializerBase : IStringSerializer
 
         // Push the current encoding on the stack
         var encodingStack = GetService<EncodingStack>();
-        encodingStack?.Push(encoding);
+        encodingStack.Push(encoding);
 
         sw.Write(SerializeToString(obj));
 
         // Pop the current encoding off the serialization stack
-        encodingStack?.Pop();
+        encodingStack.Pop();
 
         // Pop the current object off the serialization stack
         SerializationContext.Pop();
     }
 
-    public virtual object? GetService(Type serviceType) => SerializationContext?.GetService(serviceType);
+    public virtual object GetService(Type serviceType) => SerializationContext.GetService(serviceType);
 
-    public virtual object? GetService(string name) => SerializationContext?.GetService(name);
+    public virtual object GetService(string name) => SerializationContext.GetService(name);
 
-    public virtual T? GetService<T>()
+    public virtual T GetService<T>()
         => SerializationContext.GetService<T>();
 
-    public virtual T? GetService<T>(string name) =>
+    public virtual T GetService<T>(string name) =>
         SerializationContext.GetService<T>(name);
 
     public void SetService(string name, object obj)

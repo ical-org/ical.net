@@ -121,7 +121,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     {
         unchecked
         {
-            var hashCode = Name?.GetHashCode() ?? 0;
+            var hashCode = Name.GetHashCode();
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(UniqueComponents);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Events);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Todos);
@@ -289,8 +289,6 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         {
             return;
         }
-
-        Name ??= c.Name;
 
         Method = c.Method;
         Version = c.Version;

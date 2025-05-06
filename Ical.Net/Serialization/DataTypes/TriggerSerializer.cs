@@ -52,7 +52,7 @@ public class TriggerSerializer : StringSerializer
             finally
             {
                 // Pop the trigger off the serialization stack
-                SerializationContext?.Pop();
+                SerializationContext.Pop();
             }
         }
         catch
@@ -114,7 +114,7 @@ public class TriggerSerializer : StringSerializer
         finally
         {
             // Pop the trigger off the serialization stack
-            SerializationContext?.Pop();
+            SerializationContext.Pop();
         }
     }
 }

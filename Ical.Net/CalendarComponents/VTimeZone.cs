@@ -383,7 +383,7 @@ public class VTimeZone : CalendarComponent
     {
         unchecked
         {
-            var hashCode = Name?.GetHashCode() ?? 0;
+            var hashCode = Name.GetHashCode();
             hashCode = (hashCode * 397) ^ (TzId?.GetHashCode() ?? 0);
             hashCode = (hashCode * 397) ^ (Url?.GetHashCode() ?? 0);
             return hashCode;

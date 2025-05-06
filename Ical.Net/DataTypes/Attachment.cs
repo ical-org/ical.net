@@ -113,8 +113,8 @@ public class Attachment : EncodableDataType
         unchecked
         {
             var hashCode = Uri?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ (CollectionHelpers.GetHashCode(Data));
-            hashCode = (hashCode * 397) ^ (ValueEncoding?.GetHashCode() ?? 0);
+            hashCode = (hashCode * 397) ^ (Data != null ? CollectionHelpers.GetHashCode(Data) : 0);
+            hashCode = (hashCode * 397) ^ (ValueEncoding.GetHashCode());
             return hashCode;
         }
     }

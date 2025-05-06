@@ -41,7 +41,7 @@ public class Occurrence : IComparable<Occurrence>
     {
         unchecked
         {
-            return ((Period?.GetHashCode() ?? 0) * 397) ^ (Source?.GetHashCode() ?? 0);
+            return ((Period.GetHashCode()) * 397) ^ (Source.GetHashCode());
         }
     }
 

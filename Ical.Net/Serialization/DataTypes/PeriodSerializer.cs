@@ -71,7 +71,7 @@ public class PeriodSerializer : EncodableDataTypeSerializer
         finally
         {
             // Pop the period off the serialization context stack
-            SerializationContext?.Pop();
+            SerializationContext.Pop();
         }
     }
 
