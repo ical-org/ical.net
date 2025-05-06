@@ -72,9 +72,9 @@ public class Alarm : CalendarComponent
 
     /// <summary>
     /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
-    /// that occur between <paramref name="fromDate"/> and <paramref name="toDate"/>.
+    /// that occur at or after <paramref name="fromDate"/>.
     /// </summary>
-    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, CalDateTime? fromDate, CalDateTime? toDate, EvaluationOptions? options)
+    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, CalDateTime? fromDate, EvaluationOptions? options)
     {
         if (Trigger == null)
         {
@@ -95,7 +95,7 @@ public class Alarm : CalendarComponent
             }
 
             Duration? duration = null;
-            foreach (var o in rc.GetOccurrences(fromDate, toDate, options))
+            foreach (var o in rc.GetOccurrences(fromDate, options))
             {
                 var dt = o.Period.StartTime;
                 if (string.Equals(Trigger.Related, TriggerRelation.End, TriggerRelation.Comparison))
@@ -145,10 +145,9 @@ public class Alarm : CalendarComponent
     /// is null, all triggered alarms will be returned.
     /// </summary>
     /// <param name="start">The earliest date/time to poll triggered alarms for.</param>
-    /// <param name="end"></param>
     /// <param name="options"></param>
     /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-    public virtual IList<AlarmOccurrence> Poll(CalDateTime? start, CalDateTime? end, EvaluationOptions? options = null)
+    public virtual IList<AlarmOccurrence> Poll(CalDateTime? start, EvaluationOptions? options = null)
     {
         var results = new List<AlarmOccurrence>();
 
@@ -158,7 +157,7 @@ public class Alarm : CalendarComponent
             return results;
         }
 
-        results.AddRange(GetOccurrences(rc, start, end, options));
+        results.AddRange(GetOccurrences(rc, start, options));
         return results;
     }
 

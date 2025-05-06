@@ -38,7 +38,7 @@ public class ApplicationWorkflows
         return _manyCalendars
             .SelectMany(Calendar.Load<Calendar>)
             .SelectMany(c => c.Events)
-            .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd))
+            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Period.StartTime < _searchEnd))
             .ToList();
     }
 
@@ -49,7 +49,7 @@ public class ApplicationWorkflows
             .AsParallel()
             .SelectMany(Calendar.Load<Calendar>)
             .SelectMany(c => c.Events)
-            .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd))
+            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Period.StartTime < _searchEnd))
             .ToList();
     }
 
@@ -60,7 +60,7 @@ public class ApplicationWorkflows
             .SelectMany(Calendar.Load<Calendar>)
             .SelectMany(c => c.Events)
             .AsParallel()
-            .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd))
+            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Period.StartTime < _searchEnd))
             .ToList();
     }
 
@@ -72,7 +72,7 @@ public class ApplicationWorkflows
             .SelectMany(Calendar.Load<Calendar>)
             .AsSequential()
             .SelectMany(c => c.Events)
-            .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd))
+            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Period.StartTime < _searchEnd))
             .ToList();
     }
 }

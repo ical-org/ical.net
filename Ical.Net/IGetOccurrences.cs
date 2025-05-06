@@ -15,25 +15,23 @@ public interface IGetOccurrences
 {
     /// <summary>
     /// Returns all occurrences of this component that overlap with the date range provided.
-    /// All components that overlap with the time range between <paramref name="startTime"/> and <paramref name="endTime"/> will be returned.
+    /// All components that start at or after or end after <paramref name="startTime"/> will be returned.
     /// </summary>
     /// <param name="startTime">The starting date range</param>
-    /// <param name="endTime">The ending date range</param>
     /// <param name="options"></param>
     /// <returns>An IEnumerable that calculates and returns Periods representing the occurrences of this object in ascending order.</returns>
-    IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null);
+    IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, EvaluationOptions? options = null);
 }
 
 public interface IGetOccurrencesTyped : IGetOccurrences
 {
     /// <summary>
     /// Returns all occurrences of components of type T that start within the date range provided.
-    /// All components occurring between <paramref name="startTime"/> and <paramref name="endTime"/>
+    /// All components occurring at or after <paramref name="startTime"/>
     /// will be returned.
     /// </summary>
     /// <param name="startTime">The starting date range. If set to null, occurrences are returned from the beginning.</param>
-    /// <param name="endTime">The ending date range. If set to null, occurrences are returned until the end.</param>
     /// <param name="options"></param>
     /// <returns>An IEnumerable that calculates and returns Periods representing the occurrences of this object in ascending order.</returns>
-    IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null) where T : IRecurringComponent;
+    IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent;
 }

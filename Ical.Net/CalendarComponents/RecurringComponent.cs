@@ -190,13 +190,13 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         Initialize();
     }
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null)
-        => RecurrenceUtil.GetOccurrences(this, startTime, endTime, options);
+    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, EvaluationOptions? options = null)
+        => RecurrenceUtil.GetOccurrences(this, startTime, options);
 
     public virtual IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 
     public virtual IList<AlarmOccurrence> PollAlarms(CalDateTime? startTime, CalDateTime? endTime)
-        => Alarms.SelectMany(a => a.Poll(startTime, endTime)).ToList();
+        => Alarms.SelectMany(a => a.Poll(startTime).TakeWhile(p => (endTime == null) || (p.Period?.StartTime < endTime))).ToList();
 
     protected bool Equals(RecurringComponent other)
     {

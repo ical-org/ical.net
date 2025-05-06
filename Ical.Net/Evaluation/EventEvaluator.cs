@@ -27,25 +27,21 @@ public class EventEvaluator : RecurringEvaluator
 
     /// <summary>
     /// Evaluates this event to determine the dates and times for which the event occurs.
-    /// This method only evaluates events which occur between <paramref name="periodStart"/>
-    /// and <paramref name="periodEnd"/>; therefore, if you require a list of events which
-    /// occur outside of this range, you must specify a <paramref name="periodStart"/> and
-    /// <paramref name="periodEnd"/> which encapsulate the date(s) of interest.
+    /// This method only evaluates events which occur at or after<paramref name="periodStart"/>.
     /// </summary>
     /// <remarks>
     /// For events with very complex recurrence rules, this method may be a bottleneck
     /// during processing time, especially when this method in called for a large number
     /// of events, in sequence, or for a very large time span.
     /// </remarks>
-    /// <param name="referenceTime"></param>
+    /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-    /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceTime, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
     {
         // Evaluate recurrences normally
-        var periods = base.Evaluate(referenceTime, periodStart, periodEnd, options)
+        var periods = base.Evaluate(referenceDate, periodStart, options)
             .Select(WithEndTime);
 
         return periods;

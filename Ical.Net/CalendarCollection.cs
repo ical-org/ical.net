@@ -57,11 +57,11 @@ public class CalendarCollection : List<Calendar>
         // being ordered to avoid full enumeration.
         .OrderedMergeMany();
 
-    public IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null)
-        => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime, options));
+    public IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, EvaluationOptions? options = null)
+        => GetOccurrences(iCal => iCal.GetOccurrences(startTime, options));
 
-    public IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, CalDateTime? endTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
-        => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime, options));
+    public IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
+        => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, options));
 
     private FreeBusy CombineFreeBusy(FreeBusy? main, FreeBusy current)
     {

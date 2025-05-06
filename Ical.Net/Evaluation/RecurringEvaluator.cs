@@ -26,9 +26,8 @@ public class RecurringEvaluator : Evaluator
     /// </summary>
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-    /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="options"></param>
-    protected IEnumerable<Period> EvaluateRRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
+    protected IEnumerable<Period> EvaluateRRule(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
     {
         if (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any())
             return [];
@@ -36,7 +35,7 @@ public class RecurringEvaluator : Evaluator
         var periodsQueries = Recurrable.RecurrenceRules.Select(rule =>
         {
             var ruleEvaluator = new RecurrencePatternEvaluator(rule);
-            return ruleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, options);
+            return ruleEvaluator.Evaluate(referenceDate, periodStart, options);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -47,13 +46,16 @@ public class RecurringEvaluator : Evaluator
     }
 
     /// <summary> Evaluates the RDate component. </summary>
-    protected IEnumerable<Period> EvaluateRDate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
+    protected IEnumerable<Period> EvaluateRDate(CalDateTime referenceDate, CalDateTime? periodStart)
     {
-        var recurrences =
-            new SortedSet<Period>(Recurrable.RecurrenceDates
-                .GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime));
+        var recurrences = Recurrable.RecurrenceDates
+                .GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime)
+                .AsEnumerable();
 
-        return recurrences;
+        if (periodStart != null)
+            recurrences = recurrences.Where(p => p.StartTime.GreaterThanOrEqual(periodStart));
+
+        return new SortedSet<Period>(recurrences);
     }
 
     /// <summary>
@@ -61,9 +63,8 @@ public class RecurringEvaluator : Evaluator
     /// </summary>
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-    /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="options"></param>
-    protected IEnumerable<Period> EvaluateExRule(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
+    protected IEnumerable<Period> EvaluateExRule(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
     {
         if (Recurrable.ExceptionRules == null || !Recurrable.ExceptionRules.Any())
             return [];
@@ -71,7 +72,7 @@ public class RecurringEvaluator : Evaluator
         var exRuleEvaluatorQueries = Recurrable.ExceptionRules.Select(exRule =>
         {
             var exRuleEvaluator = new RecurrencePatternEvaluator(exRule);
-            return exRuleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, options);
+            return exRuleEvaluator.Evaluate(referenceDate, periodStart, options);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -86,15 +87,18 @@ public class RecurringEvaluator : Evaluator
     /// </summary>
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-    /// <param name="periodEnd">The end date of the range to evaluate.</param>
-    protected IEnumerable<Period> EvaluateExDate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd)
+    protected IEnumerable<Period> EvaluateExDate(CalDateTime referenceDate, CalDateTime? periodStart)
     {
-        var exDates = new SortedSet<Period>(Recurrable
-            .ExceptionDates.GetAllPeriodsByKind(PeriodKind.DateOnly, PeriodKind.DateTime));
-        return exDates;
+        var exDates = Recurrable.ExceptionDates.GetAllPeriodsByKind(PeriodKind.DateOnly, PeriodKind.DateTime)
+            .AsEnumerable();
+
+        if (periodStart != null)
+            exDates = exDates.Where(p => p.StartTime.GreaterThanOrEqual(periodStart));
+
+        return new SortedSet<Period>(exDates);
     }
 
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
     {
         IEnumerable<Period> rruleOccurrences;
 
@@ -104,12 +108,12 @@ public class RecurringEvaluator : Evaluator
         if ((Recurrable.RecurrenceRules == null) || !Recurrable.RecurrenceRules.Any())
             rruleOccurrences = [new Period(referenceDate)];
         else
-            rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, options);
+            rruleOccurrences = EvaluateRRule(referenceDate, periodStart, options);
 
-        var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
+        var rdateOccurrences = EvaluateRDate(referenceDate, periodStart);
 
-        var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, periodEnd, options);
-        var exDateExclusions = EvaluateExDate(referenceDate, periodStart, periodEnd);
+        var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, options);
+        var exDateExclusions = EvaluateExDate(referenceDate, periodStart);
 
         var periods =
             rruleOccurrences

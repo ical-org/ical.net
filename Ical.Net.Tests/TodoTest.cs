@@ -211,8 +211,8 @@ public class TodoTest
         };
 
         var occurrences = todo[0].GetOccurrences(
-            new CalDateTime(2006, 7, 1, 9, 0, 0),
-            new CalDateTime(2007, 7, 1, 9, 0, 0)).OrderBy(o => o.Period.StartTime).ToList();
+            new CalDateTime(2006, 7, 1, 9, 0, 0))
+            .TakeUntil(new CalDateTime(2007, 7, 1, 9, 0, 0)).ToList();
 
         Assert.That(
             occurrences,

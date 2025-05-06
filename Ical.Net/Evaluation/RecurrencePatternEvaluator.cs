@@ -115,14 +115,13 @@ public class RecurrencePatternEvaluator : Evaluator
     /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
-    private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, CalDateTime? periodEnd, RecurrencePattern pattern,
+    private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, RecurrencePattern pattern,
          EvaluationOptions? options)
     {
         // In the first step, we work with DateTime values, so we need to convert the CalDateTime to DateTime
         var originalDate = seed;
         var seedCopy = seed;
         var periodStartDt = periodStart?.ToTimeZone(seed.TzId);
-        var periodEndDt = periodEnd?.ToTimeZone(seed.TzId);
 
         if ((pattern.Frequency == FrequencyType.Yearly) && (pattern.ByWeekNo.Count != 0))
         {
@@ -151,14 +150,14 @@ public class RecurrencePatternEvaluator : Evaluator
         // Do the enumeration in a separate method, as it is a generator method that is
         // only executed after enumeration started. In order to do most validation upfront,
         // do as many steps outside the generator as possible.
-        return EnumerateDates(originalDate, seedCopy, periodStartDt, periodEndDt, pattern, options);
+        return EnumerateDates(originalDate, seedCopy, pattern, options);
     }
 
-    private IEnumerable<CalDateTime> EnumerateDates(CalDateTime originalDate, CalDateTime intervalRefTime, CalDateTime? periodStart, CalDateTime? periodEnd, RecurrencePattern pattern, EvaluationOptions? options)
+    private IEnumerable<CalDateTime> EnumerateDates(CalDateTime originalDate, CalDateTime intervalRefTime, RecurrencePattern pattern, EvaluationOptions? options)
     {
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
-        var searchEndDate = GetSearchEndDate(periodEnd, pattern);
+        var searchEndDate = GetSearchEndDate(pattern);
 
         var noCandidateIncrementCount = 0;
 
@@ -168,7 +167,6 @@ public class RecurrencePatternEvaluator : Evaluator
             if (dateCount >= pattern.Count)
                 break;
 
-            //No need to continue if the interval's lower limit is after the periodEnd
             if (searchEndDate < GetIntervalLowerLimit(intervalRefTime, pattern))
                 break;
 
@@ -182,13 +180,9 @@ public class RecurrencePatternEvaluator : Evaluator
                 // candidates MAY occur before periodStart
                 // For example, FREQ=YEARLY;BYWEEKNO=1 could return dates
                 // from the previous year.
-                //
-                // exclude candidates that start at the same moment as periodEnd if the period is a range but keep them if targeting a specific moment
+
                 if (dateCount >= pattern.Count)
                     break;
-
-                if ((candidate >= periodEnd && periodStart != periodEnd) || candidate > periodEnd && periodStart == periodEnd)
-                    continue;
 
                 // UNTIL is applied outside of this method, after TZ conversion has been applied.
 
@@ -205,7 +199,7 @@ public class RecurrencePatternEvaluator : Evaluator
         }
     }
 
-    private static CalDateTime? GetSearchEndDate(CalDateTime? periodEnd, RecurrencePattern pattern)
+    private static CalDateTime? GetSearchEndDate(RecurrencePattern pattern)
     {
         // This value is only used for performance reasons to stop incrementing after
         // until is passed, even if no recurrences are being found.
@@ -214,10 +208,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // Precise UNTIL handling is done outside this method after TZ conversion.
         var coarseUntil = pattern.Until?.AddDays(1);
 
-        if ((coarseUntil == null) || (periodEnd == null))
-            return (coarseUntil ?? periodEnd);
-
-        return (coarseUntil < periodEnd ? coarseUntil : periodEnd);
+        return coarseUntil;
     }
 
     /// <summary>
@@ -768,10 +759,9 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="referenceDate">The reference date, i.e. DTSTART.</param>
     /// <param name="periodStart">Start (incl.) of the period occurrences are generated for.</param>
-    /// <param name="periodEnd">End (excl.) of the period occurrences are generated for.</param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, EvaluationOptions? options)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
     {
         if (Pattern.Frequency != FrequencyType.None && Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
         {
@@ -783,7 +773,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // Create a recurrence pattern suitable for use during evaluation.
         var pattern = ProcessRecurrencePattern(referenceDate);
 
-        var periodQuery = GetDates(referenceDate, periodStart, periodEnd, pattern, options)
+        var periodQuery = GetDates(referenceDate, periodStart, pattern, options)
             .Select(dt => CreatePeriod(dt, referenceDate));
 
         if (pattern.Until is not null)
