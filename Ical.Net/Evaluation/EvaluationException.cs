@@ -12,4 +12,9 @@ namespace Ical.Net.Evaluation;
 /// Represents an exception that may occur during calendar evaluation.
 /// </summary>
 public class EvaluationException : Exception
-{ }
+{
+    public EvaluationException() { }
+
+    public EvaluationException(string message) : base(message)
+    { }
+}
