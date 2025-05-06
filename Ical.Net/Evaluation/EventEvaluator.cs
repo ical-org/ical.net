@@ -34,14 +34,14 @@ public class EventEvaluator : RecurringEvaluator
     /// during processing time, especially when this method in called for a large number
     /// of events, in sequence, or for a very large time span.
     /// </remarks>
-    /// <param name="referenceTime"></param>
+    /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceTime, CalDateTime? periodStart, EvaluationOptions? options)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
     {
         // Evaluate recurrences normally
-        var periods = base.Evaluate(referenceTime, periodStart, options)
+        var periods = base.Evaluate(referenceDate, periodStart, options)
             .Select(WithEndTime);
 
         return periods;
