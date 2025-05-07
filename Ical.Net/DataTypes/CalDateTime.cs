@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using NodaTime;

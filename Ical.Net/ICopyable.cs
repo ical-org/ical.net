@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 namespace Ical.Net;
 
 public interface ICopyable

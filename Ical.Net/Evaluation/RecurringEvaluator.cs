@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
