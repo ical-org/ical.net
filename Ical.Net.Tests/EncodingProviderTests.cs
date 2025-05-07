@@ -5,6 +5,7 @@
 
 #nullable enable
 using System;
+using System.Runtime.Serialization;
 using Ical.Net.Serialization;
 using NUnit.Framework;
 using EncodingProvider = Ical.Net.Serialization.EncodingProvider;
@@ -33,7 +34,7 @@ public class EncodingProviderTests
         const string encoding = "Invalid-Encoding";
         var data = "Hello"u8.ToArray();
 
-        Assert.That(GetEncodingProvider().Encode(encoding, data), Is.Null);
+        Assert.That(() => GetEncodingProvider().Encode(encoding, data), Throws.TypeOf<SerializationException>());
     }
 
     [Test]
@@ -53,7 +54,7 @@ public class EncodingProviderTests
         const string encoding = "Invalid-Encoding";
         const string data = "Hello";
 
-        Assert.That(GetEncodingProvider().DecodeString(encoding, data), Is.Null);
+        Assert.That(() => GetEncodingProvider().DecodeString(encoding, data), Throws.TypeOf<SerializationException>());
     }
 
     [Test]

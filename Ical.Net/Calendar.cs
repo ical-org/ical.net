@@ -121,7 +121,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     {
         unchecked
         {
-            var hashCode = Name?.GetHashCode() ?? 0;
+            var hashCode = Name.GetHashCode();
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(UniqueComponents);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Events);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Todos);
@@ -227,7 +227,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
         var recurrenceIdsAndUids = this.Children.OfType<IRecurrable>()
             .Where(r => r.RecurrenceId != null)
-            .Select(r => new { (r as IUniqueComponent).Uid, Dt = r.RecurrenceId!.Value })
+            .Select(r => new { (r as IUniqueComponent)?.Uid, Dt = r.RecurrenceId!.Value })
             .Where(r => r.Uid != null)
             .ToDictionary(x => x);
 
@@ -290,14 +290,12 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             return;
         }
 
-        Name ??= c.Name;
-
         Method = c.Method;
         Version = c.Version;
         ProductId = c.ProductId;
         Scale = c.Scale;
 
-        foreach (var p in c.Properties.Where(p => p.Name != null && !Properties.ContainsKey(p.Name)))
+        foreach (var p in c.Properties.Where(p => !Properties.ContainsKey(p.Name)))
         {
             Properties.Add(p);
         }

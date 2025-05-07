@@ -5,6 +5,7 @@
 
 #nullable enable
 using System;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Ical.Net.Serialization;
@@ -19,7 +20,7 @@ internal class EncodingProvider : IEncodingProvider
     /// <summary>
     /// Represents a method that encodes a byte array into a string.
     /// </summary>
-    public delegate string? EncoderDelegate(byte[] data);
+    public delegate string EncoderDelegate(byte[] data);
 
     /// <summary>
     /// Represents a method that decodes a string into a byte array.
@@ -60,14 +61,14 @@ internal class EncodingProvider : IEncodingProvider
     /// Gets a decoder for the specified encoding.
     /// </summary>
     /// <param name="encoding"></param>
-    /// <returns></returns>
-    protected virtual DecoderDelegate? GetDecoderFor(string encoding)
+    /// <exception cref="SerializationException">Decoder not supported.</exception>
+    protected virtual DecoderDelegate GetDecoderFor(string encoding)
     {
         return encoding.ToUpper() switch
         {
             "8BIT" => Decode8Bit,
             "BASE64" => DecodeBase64,
-            _ => null,
+            _ => throw new SerializationException($"Encoding '{encoding}' is not supported.")
         };
     }
 
@@ -96,14 +97,14 @@ internal class EncodingProvider : IEncodingProvider
     /// Gets an encoder for the specified encoding.
     /// </summary>
     /// <param name="encoding"></param>
-    /// <returns></returns>
-    protected virtual EncoderDelegate? GetEncoderFor(string encoding)
+    /// <exception cref="SerializationException">Encoder not supported.</exception>
+    protected virtual EncoderDelegate GetEncoderFor(string encoding)
     {
         return encoding.ToUpper() switch
         {
             "8BIT" => Encode8Bit,
             "BASE64" => EncodeBase64,
-            _ => null
+            _ => throw new SerializationException($"Encoding '{encoding}' is not supported.")
         };
     }
 
@@ -113,10 +114,10 @@ internal class EncodingProvider : IEncodingProvider
     /// <param name="encoding"></param>
     /// <param name="data"></param>
     /// <returns>A string representation of <paramref name="data"/> using the specified <see paramref="encoding"/>, or <see langword="null"/> if encoding fails.</returns>
-    public string? Encode(string encoding, byte[] data)
+    public string Encode(string encoding, byte[] data)
     {
         var encoder = GetEncoderFor(encoding);
-        return encoder?.Invoke(data);
+        return encoder.Invoke(data);
     }
 
     /// <summary>
@@ -126,13 +127,13 @@ internal class EncodingProvider : IEncodingProvider
     /// <param name="value"></param>
     /// <returns>A string representation of <paramref name="value"/> using the specified <see paramref="encoding"/>.</returns>
     /// <exception cref="FormatException">Base64 string is invalid.</exception>
-    public string? DecodeString(string encoding, string value)
+    public string DecodeString(string encoding, string value)
     {
         var data = DecodeData(encoding, value);
 
         // Decode the string into the current encoding
-        var encodingStack = _mSerializationContext.GetService(typeof(EncodingStack)) as EncodingStack;
-        return data != null ? encodingStack?.Current.GetString(data) : null;
+        var encodingStack = (EncodingStack) _mSerializationContext.GetService(typeof(EncodingStack));
+        return encodingStack.Current.GetString(data);
     }
 
     /// <summary>
@@ -141,9 +142,9 @@ internal class EncodingProvider : IEncodingProvider
     /// <param name="encoding"></param>
     /// <param name="value"></param>
     /// <returns>A string representation of <paramref name="value"/> using the specified <see paramref="encoding"/>, or <see langword="null"/> when decoding fails.</returns>
-    public byte[]? DecodeData(string encoding, string value)
+    public byte[] DecodeData(string encoding, string value)
     {
         var decoder = GetDecoderFor(encoding);
-        return decoder?.Invoke(value);
+        return decoder.Invoke(value);
     }
 }

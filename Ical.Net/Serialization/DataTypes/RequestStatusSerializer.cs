@@ -40,7 +40,7 @@ public class RequestStatusSerializer : StringSerializer
             try
             {
                 var factory = GetService<ISerializerFactory>();
-                var serializer = factory?.Build(typeof(StatusCode), SerializationContext) as IStringSerializer;
+                var serializer = factory.Build(typeof(StatusCode), SerializationContext) as IStringSerializer;
                 if (serializer == null)
                 {
                     return null;
@@ -60,7 +60,7 @@ public class RequestStatusSerializer : StringSerializer
             finally
             {
                 // Pop the object off the serialization stack
-                SerializationContext?.Pop();
+                SerializationContext.Pop();
             }
         }
         catch
@@ -128,7 +128,7 @@ public class RequestStatusSerializer : StringSerializer
         finally
         {
             // Pop the object off the serialization stack
-            SerializationContext?.Pop();
+            SerializationContext.Pop();
         }
         return null;
     }

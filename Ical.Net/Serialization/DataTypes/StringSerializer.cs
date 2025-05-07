@@ -81,7 +81,7 @@ public class StringSerializer : EncodableDataTypeSerializer
             values.AddRange(from object child in enumerable select child.ToString());
         }
 
-        if (SerializationContext?.Peek() is ICalendarObject co)
+        if (SerializationContext.Peek() is ICalendarObject co)
         {
             // Encode the string as needed.
             var dt = new EncodableDataType
@@ -125,18 +125,15 @@ public class StringSerializer : EncodableDataTypeSerializer
 
         // Ensure SerializationContext is not null before accessing Peek()
         var context = SerializationContext;
-        if (context?.Peek() is ICalendarProperty cp)
+        if (context.Peek() is ICalendarProperty cp)
         {
             var dataTypeMapper = GetService<DataTypeMapper>();
-            if (dataTypeMapper != null)
-            {
-                serializeAsList = dataTypeMapper.GetPropertyAllowsMultipleValues(cp);
-            }
+            serializeAsList = dataTypeMapper.GetPropertyAllowsMultipleValues(cp);
         }
 
         var dt = new EncodableDataType
         {
-            AssociatedObject = context?.Peek() as ICalendarObject
+            AssociatedObject = context.Peek() as ICalendarObject
         };
 
         var encodedValues = serializeAsList ? UnescapedCommas.Split(value) : new[] { value };

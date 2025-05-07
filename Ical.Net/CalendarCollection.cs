@@ -74,7 +74,7 @@ public class CalendarCollection : List<Calendar>
         return this.Aggregate<Calendar, FreeBusy?>(null, (current, iCal) =>
         {
             var freeBusy = iCal.GetFreeBusy(freeBusyRequest);
-            return current is null ? freeBusy : CombineFreeBusy(current, freeBusy);
+            return current is null || freeBusy is null ? freeBusy : CombineFreeBusy(current, freeBusy);
         });
     }
 
@@ -83,7 +83,7 @@ public class CalendarCollection : List<Calendar>
         return this.Aggregate<Calendar, FreeBusy?>(null, (current, iCal) =>
         {
             var freeBusy = iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive);
-            return current is null ? freeBusy : CombineFreeBusy(current, freeBusy);
+            return current is null || freeBusy is null ? freeBusy : CombineFreeBusy(current, freeBusy);
         });
     }
 

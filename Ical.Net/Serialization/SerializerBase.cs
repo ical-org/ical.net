@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization;
 
 public abstract class SerializerBase : IStringSerializer
 {
-    private SerializationContext? _mSerializationContext;
+    private SerializationContext _mSerializationContext;
 
     protected SerializerBase()
     {
@@ -24,7 +24,7 @@ public abstract class SerializerBase : IStringSerializer
         _mSerializationContext = ctx;
     }
 
-    public virtual SerializationContext? SerializationContext // NOSONAR: auto-property
+    public virtual SerializationContext SerializationContext // NOSONAR: auto-property
     {
         get => _mSerializationContext;
         set => _mSerializationContext = value;
@@ -38,9 +38,9 @@ public abstract class SerializerBase : IStringSerializer
     {
         using var sr = new StreamReader(stream, encoding);
         var encodingStack = GetService<EncodingStack>();
-        encodingStack?.Push(encoding);
+        encodingStack.Push(encoding);
         var obj = Deserialize(sr);
-        encodingStack?.Pop();
+        encodingStack.Pop();
         return obj;
     }
 
@@ -54,40 +54,40 @@ public abstract class SerializerBase : IStringSerializer
         using var sw = new StreamWriter(stream, encoding, defaultBuffer, leaveOpen: true);
 
         // Push the current object onto the serialization stack
-        SerializationContext?.Push(obj);
+        SerializationContext.Push(obj);
 
         // Push the current encoding on the stack
         var encodingStack = GetService<EncodingStack>();
-        encodingStack?.Push(encoding);
+        encodingStack.Push(encoding);
 
         sw.Write(SerializeToString(obj));
 
         // Pop the current encoding off the serialization stack
-        encodingStack?.Pop();
+        encodingStack.Pop();
 
         // Pop the current object off the serialization stack
-        SerializationContext?.Pop();
+        SerializationContext.Pop();
     }
 
-    public virtual object? GetService(Type serviceType) => SerializationContext?.GetService(serviceType);
+    public virtual object GetService(Type serviceType) => SerializationContext.GetService(serviceType);
 
-    public virtual object? GetService(string name) => SerializationContext?.GetService(name);
+    public virtual object GetService(string name) => SerializationContext.GetService(name);
 
-    public virtual T? GetService<T>()
-        => SerializationContext != null ? SerializationContext.GetService<T>() : default;
+    public virtual T GetService<T>()
+        => SerializationContext.GetService<T>();
 
-    public virtual T? GetService<T>(string name) =>
-        SerializationContext != null ? SerializationContext.GetService<T>(name) : default;
+    public virtual T GetService<T>(string name) =>
+        SerializationContext.GetService<T>(name);
 
     public void SetService(string name, object obj)
-        => SerializationContext?.SetService(name, obj);
+        => SerializationContext.SetService(name, obj);
 
     public void SetService(object obj)
-        => SerializationContext?.SetService(obj);
+        => SerializationContext.SetService(obj);
 
     public void RemoveService(Type type)
-        => SerializationContext?.RemoveService(type);
+        => SerializationContext.RemoveService(type);
 
     public void RemoveService(string name)
-        => SerializationContext?.RemoveService(name);
+        => SerializationContext.RemoveService(name);
 }

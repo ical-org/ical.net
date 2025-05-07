@@ -28,7 +28,7 @@ public class TriggerSerializer : StringSerializer
             }
 
             // Push the trigger onto the serialization stack
-            SerializationContext?.Push(t);
+            SerializationContext.Push(t);
             try
             {
                 var factory = GetService<ISerializerFactory>();
@@ -52,7 +52,7 @@ public class TriggerSerializer : StringSerializer
             finally
             {
                 // Pop the trigger off the serialization stack
-                SerializationContext?.Pop();
+                SerializationContext.Pop();
             }
         }
         catch
@@ -73,7 +73,7 @@ public class TriggerSerializer : StringSerializer
         }
 
         // Push the trigger onto the serialization stack
-        SerializationContext?.Push(t);
+        SerializationContext.Push(t);
         try
         {
             // Decode the value as needed
@@ -82,7 +82,8 @@ public class TriggerSerializer : StringSerializer
             if (value == null) return null;
 
             // Set the trigger relation
-            if (t.Parameters.ContainsKey("RELATED") && t.Parameters.Get("RELATED").Equals("END"))
+            var relatedParameter = t.Parameters.Get("RELATED");
+            if (relatedParameter is not null && relatedParameter.Equals("END"))
             {
                 t.Related = TriggerRelation.End;
             }
@@ -113,7 +114,7 @@ public class TriggerSerializer : StringSerializer
         finally
         {
             // Pop the trigger off the serialization stack
-            SerializationContext?.Pop();
+            SerializationContext.Pop();
         }
     }
 }
