@@ -41,12 +41,12 @@ jobs:
          echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
          echo "Commit Hash: $COMMIT_HASH"
     - name: Build Test
-      run: dotnet build --no-restore --configuration Release -p:Nullable=disable -p:nowarn=1591
+      run: dotnet build --no-restore --configuration Release -p:nowarn=1591
     - name: Test
       run: dotnet test --no-build --configuration Release --verbosity normal
     - name: Build and pack daily build
       run: |
-        dotnet build --no-restore --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.VERSION}}.${{github.run_number}} -p:VersionSuffix=${{env.COMMIT_HASH}} -p:Nullable=disable -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
+        dotnet build --no-restore --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.VERSION}}.${{github.run_number}} -p:VersionSuffix=${{env.COMMIT_HASH}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
         dotnet pack --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:PackageReleaseNotes="Commit: ${{env.COMMIT_HASH}}" -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --no-build -p:PackageVersion=${{env.VERSION}}.${{github.run_number}}
     - name: Store artifacts
       uses: actions/upload-artifact@v4

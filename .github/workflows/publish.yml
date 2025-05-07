@@ -37,7 +37,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration Release -p:Nullable=disable -p:nowarn=1591
+      run: dotnet build --no-restore --configuration Release -p:nowarn=1591
     - name: Test
       run: dotnet test --no-build --configuration Release --verbosity quiet
 
@@ -82,7 +82,7 @@ jobs:
       run: |  
         # For version e.g. "5.1.0-pre.1", the FileVersion will be "5.1.0" and the AssemblyVersion will be "5.0.0"
         # AssemblyVersion must only change for major releases
-        dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.FILE_VERSION}} -p:AssemblyVersion=${{env.ASSEMBLY_VERSION}} -p:Nullable=disable -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
+        dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.FILE_VERSION}} -p:AssemblyVersion=${{env.ASSEMBLY_VERSION}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
         dotnet pack --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --no-build -p:PackageVersion=${{env.VERSION}}
     - name: Store artifacts
       uses: actions/upload-artifact@v4

@@ -32,6 +32,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration Release -p:Nullable=disable -p:nowarn=1591
+      run: dotnet build --no-restore --configuration Release -p:nowarn=1591
     - name: Test
       run: dotnet test --no-build --configuration Release --verbosity normal
