@@ -246,6 +246,9 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             // Remove duplicates and take advantage of being ordered to avoid full enumeration.
             .OrderedDistinct()
 
+            // Convert overflow exceptions to expected ones.
+            .HandleEvaluationExceptions()
+
             // Remove the occurrence if it has been replaced by a different one.
             .Where(r =>
                 (r.Source.RecurrenceId != null) ||

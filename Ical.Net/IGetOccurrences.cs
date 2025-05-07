@@ -12,25 +12,38 @@ namespace Ical.Net;
 
 public interface IGetOccurrences
 {
-    /// <summary>
-    /// Returns all occurrences of this component that overlap with the date range provided.
-    /// All components that start at or after or end after <paramref name="startTime"/> will be returned.
-    /// </summary>
-    /// <param name="startTime">The starting date range</param>
-    /// <param name="options"></param>
+    /// <summary>  
+    /// Returns an IEnumerable that generates and returns all occurrences at or after <paramref name="startTime"/>.
+    /// If <paramref name="startTime"/> isn't provided, all occurrences will be generated.
+    /// </summary>  
+    /// <param name="startTime">The starting date range</param>  
+    /// <param name="options">Evaluation options to be applied. If null, default options will be applied.</param>  
     /// <returns>An IEnumerable that calculates and returns Periods representing the occurrences of this object in ascending order.</returns>
+    /// <remarks>  
+    /// The returned enumerable will evaluate as it is enumerated and can therefore also represent an indefinite sequence.
+    /// The sequence is ordered.
+    /// If enumeration hits year 10,000, an <see cref="EvaluationOutOfRangeException"/> is raised.
+    /// This particularly can happen with recurrence rules (rrules) that neither have a count nor an until date specified.
+    /// It is advisable to limit indefinite sequences by applying LINQ methods like <c>.TakeWhile()</c>.
+    /// </remarks>  
     IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, EvaluationOptions? options = null);
 }
 
 public interface IGetOccurrencesTyped : IGetOccurrences
 {
-    /// <summary>
-    /// Returns all occurrences of components of type T that start within the date range provided.
-    /// All components occurring at or after <paramref name="startTime"/>
-    /// will be returned.
-    /// </summary>
-    /// <param name="startTime">The starting date range. If set to null, occurrences are returned from the beginning.</param>
-    /// <param name="options"></param>
+    /// <summary>  
+    /// Returns an IEnumerable that generates and returns all occurrences at or after <paramref name="startTime"/>.
+    /// If <paramref name="startTime"/> isn't provided, all occurrences will be generated.
+    /// </summary>  
+    /// <param name="startTime">The starting date range</param>  
+    /// <param name="options">Evaluation options to be applied. If null, default options will be applied.</param>  
     /// <returns>An IEnumerable that calculates and returns Periods representing the occurrences of this object in ascending order.</returns>
+    /// <remarks>  
+    /// The returned enumerable will evaluate as it is enumerated and can therefore also represent an indefinite sequence.
+    /// The sequence is ordered.
+    /// If enumeration hits year 10,000, an <see cref="EvaluationOutOfRangeException"/> is raised.
+    /// This particularly can happen with recurrence rules (rrules) that neither have a count nor an until date specified.
+    /// It is advisable to limit indefinite sequences by applying LINQ methods like <c>.TakeWhile()</c>.
+    /// </remarks>  
     IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent;
 }

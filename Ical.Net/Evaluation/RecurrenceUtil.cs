@@ -3,14 +3,16 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation;
 
-internal class RecurrenceUtil
+internal static class RecurrenceUtil
 {
     public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime? periodStart, EvaluationOptions? options = null)
     {
@@ -88,4 +90,21 @@ internal class RecurrenceUtil
                 return [false, null, false, false, false, false, false, false, false];
         }
     }
+
+    public static IEnumerable<T> HandleEvaluationExceptions<T>(this IEnumerable<T> sequence)
+        =>
+            sequence
+
+            // ArgumentOutOfRangeException is raised by operations on System.DateOnly et al when exceeding
+            // the maximum supported date/time value, which is 9999-12-31. When evaluation recurrence rules,
+            // these exceptions could basically be raised anywhere, so we handle them here centrally and
+            // convert them to EvaluationOutOfRangeException, which are specified to be raised in such cases.
+            // There shouldn't be other causes for this type of exceptions, as most validations of the pattern
+            // itself are already done earlier, before doing the actual enumeration.
+            // Intentionally don't include the outer exception as this most likely is not a technical but a usage error.
+            .Catch<T, ArgumentOutOfRangeException>(_ => throw new EvaluationOutOfRangeException("The maximum supported date/time value has been exceeded while evaluating occurrences. This is likely to happen in case of unbounded RRULEs. Consider applying .TakeWhile() on the returned sequence."))
+
+            // System.OverflowException is raised by NodaTime when exceeding the maximum supported date/time
+            // value of one tick before 10000-01-01.
+            .Catch<T, OverflowException>(_ => throw new EvaluationOutOfRangeException("The maximum supported date/time value has been exceeded while evaluating occurrences. This is likely to happen in case of unbounded RRULEs. Consider applying .TakeWhile() on the returned sequence."));
 }
