@@ -33,16 +33,16 @@ public class OccurencePerfTests
     [Benchmark]
     public void MultipleEventsWithUntilOccurrencesSearchingByWholeCalendar()
     {
-        var searchStart = _calendarFourEvents.Events.First().DtStart.AddYears(-1);
-        var searchEnd = _calendarFourEvents.Events.Last().DtStart.AddYears(1);
+        var searchStart = _calendarFourEvents.Events.First().DtStart!.AddYears(-1);
+        var searchEnd = _calendarFourEvents.Events.Last().DtStart!.AddYears(1);
         _ = _calendarFourEvents.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd);
     }
 
     [Benchmark]
     public void MultipleEventsWithUntilOccurrences()
     {
-        var searchStart = _calendarFourEvents.Events.First().DtStart.AddYears(-1);
-        var searchEnd = _calendarFourEvents.Events.Last().DtStart.AddYears(1);
+        var searchStart = _calendarFourEvents.Events.First().DtStart!.AddYears(-1);
+        var searchEnd = _calendarFourEvents.Events.Last().DtStart!.AddYears(1);
         _ = _calendarFourEvents.Events
             .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
             .ToList();
@@ -51,8 +51,8 @@ public class OccurencePerfTests
     [Benchmark]
     public void MultipleEventsWithUntilOccurrencesEventsAsParallel()
     {
-        var searchStart = _calendarFourEvents.Events.First().DtStart.AddYears(-1);
-        var searchEnd = _calendarFourEvents.Events.Last().DtStart.AddYears(1).AddDays(10);
+        var searchStart = _calendarFourEvents.Events.First().DtStart!.AddYears(-1);
+        var searchEnd = _calendarFourEvents.Events.Last().DtStart!.AddYears(1).AddDays(10);
         _ = _calendarFourEvents.Events
             .AsParallel()
             .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
@@ -111,8 +111,8 @@ public class OccurencePerfTests
     public void MultipleEventsWithCountOccurrencesSearchingByWholeCalendar()
     {
         var calendar = GetFourCalendarEventsWithCountRule();
-        var searchStart = calendar.Events.First().DtStart.AddYears(-1);
-        var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
+        var searchStart = calendar.Events.First().DtStart!.AddYears(-1);
+        var searchEnd = calendar.Events.Last().DtStart!.AddYears(1);
         _ = calendar.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd);
     }
 
@@ -120,8 +120,8 @@ public class OccurencePerfTests
     public void MultipleEventsWithCountOccurrences()
     {
         var calendar = GetFourCalendarEventsWithCountRule();
-        var searchStart = calendar.Events.First().DtStart.AddYears(-1);
-        var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
+        var searchStart = calendar.Events.First().DtStart!.AddYears(-1);
+        var searchEnd = calendar.Events.Last().DtStart!.AddYears(1);
         _ = calendar.Events
             .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
             .ToList();
@@ -131,8 +131,8 @@ public class OccurencePerfTests
     public void MultipleEventsWithCountOccurrencesEventsAsParallel()
     {
         var calendar = GetFourCalendarEventsWithCountRule();
-        var searchStart = calendar.Events.First().DtStart.AddYears(-1);
-        var searchEnd = calendar.Events.Last().DtStart.AddYears(1).AddDays(10);
+        var searchStart = calendar.Events.First().DtStart!.AddYears(-1);
+        var searchEnd = calendar.Events.Last().DtStart!.AddYears(1).AddDays(10);
         _ = calendar.Events
             .AsParallel()
             .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))

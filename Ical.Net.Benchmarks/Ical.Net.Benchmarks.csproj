@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>net8.0</TargetFrameworks>
         <OutputType>Exe</OutputType>
-        <nullable>disable</nullable>
+        <nullable>enable</nullable>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <ItemGroup>
