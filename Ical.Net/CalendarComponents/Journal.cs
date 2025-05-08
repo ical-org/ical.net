@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System.Runtime.Serialization;
 using Ical.Net.Evaluation;
 

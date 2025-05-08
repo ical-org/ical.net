@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;

@@ -69,7 +69,7 @@ public class SerializationPerfTests
                                        """;
 
     [Benchmark]
-    public void Deserialize() => Calendar.Load(SampleEvent).Events.First();
+    public void Deserialize() => _ = Calendar.Load(SampleEvent)!.Events.First();
 
     [Benchmark]
     public void BenchmarkSerializeCalendar() => new CalendarSerializer().SerializeToString(CreateSimpleCalendar());

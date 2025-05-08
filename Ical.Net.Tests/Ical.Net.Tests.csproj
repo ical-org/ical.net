@@ -3,6 +3,7 @@
         <TargetFrameworks>net8.0;net6.0;net48</TargetFrameworks>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
+        <nullable>disable</nullable>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

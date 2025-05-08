@@ -3,6 +3,7 @@
         <TargetFrameworks>net8.0;net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
+        <nullable>enable</nullable>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <ItemGroup>
