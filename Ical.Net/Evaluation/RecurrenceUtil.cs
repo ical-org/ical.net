@@ -102,9 +102,9 @@ internal static class RecurrenceUtil
             // There shouldn't be other causes for this type of exceptions, as most validations of the pattern
             // itself are already done earlier, before doing the actual enumeration.
             // Intentionally don't include the outer exception as this most likely is not a technical but a usage error.
-            .Catch<T, ArgumentOutOfRangeException>(_ => throw new EvaluationOutOfRangeException("The maximum supported date/time value has been exceeded while evaluating occurrences. This is likely to happen in case of unbounded RRULEs. Consider applying .TakeWhile() on the returned sequence."))
+            .Catch<T, ArgumentOutOfRangeException>(_ => throw new EvaluationOutOfRangeException("An out-of-range value was encountered while evaluating occurrences. This commonly happens when trying to enumerate an unbounded RRULE to its end. Consider applying the .TakeWhile() operator."))
 
             // System.OverflowException is raised by NodaTime when exceeding the maximum supported date/time
             // value of one tick before 10000-01-01.
-            .Catch<T, OverflowException>(_ => throw new EvaluationOutOfRangeException("The maximum supported date/time value has been exceeded while evaluating occurrences. This is likely to happen in case of unbounded RRULEs. Consider applying .TakeWhile() on the returned sequence."));
+            .Catch<T, OverflowException>(_ => throw new EvaluationOutOfRangeException("An overflow was encountered while evaluating the calendar occurrences. This commonly happens when trying to enumerate an unbounded RRULE to its end. Consider applying the .TakeWhile() operator."));
 }

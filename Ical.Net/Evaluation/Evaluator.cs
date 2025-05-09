@@ -51,7 +51,7 @@ public abstract class Evaluator : IEvaluator
         catch (ArgumentOutOfRangeException)
         {
             // intentionally don't include the outer exception
-            throw new EvaluationOutOfRangeException("Evaluation was aborted because an event's start time exceeded the maxium supported date/time value.");
+            throw new EvaluationOutOfRangeException("Evaluation aborted: The maximum supported date-time was exceeded while enumerating a recurrence rule. This commonly happens when trying to enumerate an unbounded RRULE to its end. Consider applying the .TakeWhile() operator.");
         }
     }
 

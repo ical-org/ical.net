@@ -102,7 +102,7 @@ public class EventEvaluator : RecurringEvaluator
         catch (ArgumentOutOfRangeException)
         {
             // intentionally don't include the outer exception
-            throw new EvaluationOutOfRangeException("Evaluation was aborted because an event's end time is out of range. This commonly happens if an event has an unbounded RRULE or a very long duration. Consider applying the .TakeWhile() operator on the returned sequence.");
+            throw new EvaluationOutOfRangeException("Evaluation aborted: Calculating the end time of the event occurrence resulted in an out-of-range value. This commonly happens when trying to enumerate an unbounded RRULE to its end. Consider applying the .TakeWhile() operator.");
         }
     }
 }
