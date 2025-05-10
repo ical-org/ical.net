@@ -112,11 +112,10 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
         // Push the recurrence pattern onto the serialization stack
         SerializationContext.Push(recur);
-        var values = new List<string>()
+        var values = new List<string>
         {
-            $"FREQ={Enum.GetName(typeof(FrequencyType), recur.Frequency)?.ToUpper()}"
+            $"FREQ={recur.Frequency.ToString().ToUpper()}"
         };
-
 
         //-- FROM RFC2445 --
         //The INTERVAL rule part contains a positive integer representing how
@@ -243,10 +242,10 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
             ProcessKeyValuePair(keyValues[0].ToLower(), keyValues[1], r, factory);
         }
 
-        if (!freqPartExists || r.Frequency == FrequencyType.None)
+        if (!freqPartExists)
         {
             throw new ArgumentOutOfRangeException(nameof(value),
-                "The recurrence rule must specify a FREQ part that is not NONE.");
+                "The recurrence rule must specify a valid FREQ part.");
         }
         CheckMutuallyExclusive("COUNT", "UNTIL", r.Count, r.Until);
         CheckRanges(r);
@@ -254,15 +253,10 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
     private void ProcessKeyValuePair(string key, string value, RecurrencePattern r, ISerializerFactory factory)
     {
-        if (SerializationContext == null)
-        {
-            throw new InvalidOperationException("SerializationContext is not set.");
-        }
-
         switch (key)
         {
-            case "freq":
-                r.Frequency = (FrequencyType) Enum.Parse(typeof(FrequencyType), value, true);
+            case "freq" when Enum.TryParse(value, true, out FrequencyType freq):
+                r.Frequency = freq;
                 break;
 
             case "until":
@@ -320,7 +314,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
             default:
                 throw new ArgumentOutOfRangeException(nameof(key),
-                    $"The recurrence rule part '{key}' is not supported.");
+                    $"The recurrence rule part '{key}' or its value {value} is not supported.");
         }
     }
 
