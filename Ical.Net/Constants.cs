@@ -176,7 +176,6 @@ public enum FreeBusyStatus
 
 public enum FrequencyType
 {
-    None,
     Secondly,
     Minutely,
     Hourly,

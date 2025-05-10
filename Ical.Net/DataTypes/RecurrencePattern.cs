@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 
@@ -22,8 +21,16 @@ public class RecurrencePattern : EncodableDataType
     private int? _interval;
     private CalDateTime? _until;
 
+    /// <summary>
+    /// Specifies the frequency <i>FREQ</i> of the recurrence.
+    /// The default value is <see cref="FrequencyType.Yearly"/>.
+    /// </summary>
     public FrequencyType Frequency { get; set; }
 
+    /// <summary>
+    /// Specifies the end date of the recurrence (optional).
+    /// This property <b>must be null</b> if the <see cref="Count"/> property is set.
+    /// </summary>
     public CalDateTime? Until
     {
         get => _until;
@@ -37,13 +44,19 @@ public class RecurrencePattern : EncodableDataType
         }
     }
 
+    /// <summary>
+    /// Specifies the number of occurrences of the recurrence (optional).
+    /// This property <b>must be null</b> if the <see cref="Until"/> property is set.
+    /// </summary>
     public int? Count { get; set; }
 
+
     /// <summary>
-    /// Specifies how often the recurrence should repeat.
-    /// - 1 = every
-    /// - 2 = every second
-    /// - 3 = every third
+    /// Specifies the interval between occurrences of the recurrence. The default value is 1.
+    /// <para/>
+    /// The value represents the number of units of time, as defined by the <see cref="Frequency"/> property, 
+    /// between each occurrence. For example, if <see cref="Frequency"/> is set to "Weekly" and Interval is 2, 
+    /// the recurrence will occur every 2 weeks.
     /// </summary>
     public int Interval
     {
@@ -88,8 +101,15 @@ public class RecurrencePattern : EncodableDataType
 
     public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
 
+    /// <summary>
+    /// Default constructor. Sets the <see cref="Frequency"/> to <see cref="FrequencyType.Yearly"/>
+    /// and <see cref="Interval"/> to 1.
+    /// </summary>
     public RecurrencePattern()
-    { }
+    {
+        Frequency = FrequencyType.Yearly;
+        Interval = 1;
+    }
 
     public RecurrencePattern(FrequencyType frequency) : this(frequency, 1) { }
 
