@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
@@ -119,7 +120,10 @@ public class RecurringEvaluator : Evaluator
             .OrderedMerge(rdateOccurrences)
             .OrderedDistinct()
             .OrderedExclude(exRuleExclusions)
-            .OrderedExclude(exDateExclusions, Comparer<Period>.Create(CompareExDateOverlap));
+            .OrderedExclude(exDateExclusions, Comparer<Period>.Create(CompareExDateOverlap))
+
+            // Convert overflow exceptions to expected ones.
+            .HandleEvaluationExceptions();
 
         return periods;
     }

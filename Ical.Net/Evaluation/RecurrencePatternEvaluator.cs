@@ -163,9 +163,6 @@ public class RecurrencePatternEvaluator : Evaluator
         var dateCount = 0;
         while (true)
         {
-            if (dateCount >= pattern.Count)
-                break;
-
             if (searchEndDate < GetIntervalLowerLimit(intervalRefTime, pattern))
                 break;
 
@@ -180,13 +177,13 @@ public class RecurrencePatternEvaluator : Evaluator
                 // For example, FREQ=YEARLY;BYWEEKNO=1 could return dates
                 // from the previous year.
 
-                if (dateCount >= pattern.Count)
-                    break;
-
                 // UNTIL is applied outside of this method, after TZ conversion has been applied.
 
                 yield return candidate;
                 dateCount++;
+
+                if (dateCount >= pattern.Count)
+                    yield break;
             }
 
             if (noCandidateIncrementCount > options?.MaxUnmatchedIncrementsLimit)

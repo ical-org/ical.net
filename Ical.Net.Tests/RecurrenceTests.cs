@@ -3085,6 +3085,48 @@ public class RecurrenceTests
         });
     }
 
+    [Test]
+
+    // RRULE and RDATE both exceed y10k when converted to UTC, which is done when
+    // ordering the occurrences.
+    [TestCase("""
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            DTSTART;TZID=America/New_York:99991231T220000
+            RRULE:FREQ=DAILY;BYHOUR=22,23;COUNT=2
+            RDATE;TZID=America/Chicago:99991231T221000
+            END:VEVENT
+            END:VCALENDAR
+            """)]
+
+    // y10k exceeded due to the event duration
+    [TestCase("""
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            DTSTART;TZID=America/New_York:99991230T220000
+            DURATION:PT24H
+            RRULE:FREQ=DAILY;BYHOUR=22,23;COUNT=2
+            END:VEVENT
+            END:VCALENDAR
+            """)]
+
+    // Events are merged in different places than individual RRULES of a single event
+    [TestCase("""
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            DTSTART;TZID=America/New_York:99991231T220000
+            END:VEVENT
+            BEGIN:VEVENT
+            DTSTART;TZID=America/Chicago:99991231T221000
+            END:VEVENT
+            END:VCALENDAR
+            """)]
+    public void Recurrence_WithOutOfBoundsUtc_ShouldFailWithCorrectException(string ical)
+    {
+        var cal = Calendar.Load(ical)!;
+        Assert.That(() => cal.GetOccurrences().ToList(), Throws.InstanceOf<EvaluationOutOfRangeException>());
+    }
+
     [Test, Category("Recurrence")]
     public void ExDateShouldFilterOutAllPeriods()
     {
@@ -3670,6 +3712,14 @@ END:VCALENDAR";
         Assert.That(occurrences, Has.Count.EqualTo(5));
     }
 
+    public enum RecurrenceTestExceptionStep
+    {
+        None,
+        Construction,
+        GetOccurrenceInvocation,
+        Enumeration,
+    }
+
     public class RecurrenceTestCase
     {
         public int LineNumber { get; set; }
@@ -3678,11 +3728,15 @@ END:VCALENDAR";
 
         public CalDateTime? DtStart { get; set; }
 
+        public Duration? Duration { get; internal set; }
+
         public CalDateTime? StartAt { get; set; }
 
         public IReadOnlyList<CalDateTime>? Instances { get; set; }
 
         public string? Exception { get; set; }
+
+        public RecurrenceTestExceptionStep? ExceptionStep { get; set; }
 
         public override string ToString()
             => $"Line {LineNumber}: {DtStart}, {RRule}";
@@ -3732,6 +3786,10 @@ END:VCALENDAR";
                     current.DtStart = new CalDateTime(val, "UTC");
                     break;
 
+                case "DURATION":
+                    current.Duration = Duration.Parse(val);
+                    break;
+
                 case "START-AT":
                     current.StartAt = new CalDateTime(val, "UTC");
                     break;
@@ -3742,6 +3800,11 @@ END:VCALENDAR";
 
                 case "EXCEPTION":
                     current.Exception = val;
+                    current.ExceptionStep ??= RecurrenceTestExceptionStep.Construction;
+                    break;
+
+                case "EXCEPTION-STEP":
+                    current.ExceptionStep = (RecurrenceTestExceptionStep)Enum.Parse(typeof(RecurrenceTestExceptionStep), val);
                     break;
             }
         }
@@ -3775,21 +3838,45 @@ END:VCALENDAR";
 
         // Start at midnight, UTC time
         evt.Start = testCase.DtStart!;
+        evt.Duration = testCase.Duration;
 
-        if (testCase.Exception != null)
+        Type LoadType(string name) =>
+            Type.GetType(name) ?? typeof(Calendar).Assembly.GetType(name) ?? throw new Exception();
+
+        var exceptionType = (testCase.Exception == null) ? null : LoadType(testCase.Exception);
+        IConstraint throwsConstraint = (exceptionType == null) ? Throws.InstanceOf(typeof(Exception)) : Throws.InstanceOf(exceptionType);
+
+        RecurrencePattern GetPattern() => new RecurrencePattern(testCase.RRule!);
+
+        if (testCase.ExceptionStep == RecurrenceTestExceptionStep.Construction)
         {
-            var exceptionType = Type.GetType(testCase.Exception)!;
-            Assert.Throws(exceptionType, () => new RecurrencePattern(testCase.RRule!));
+            Assert.That(() => GetPattern(), throwsConstraint);
             return;
         }
 
-        evt.RecurrenceRules.Add(new RecurrencePattern(testCase.RRule!));
+        evt.RecurrenceRules.Add(GetPattern());
 
-        var occurrences = evt.GetOccurrences(testCase.StartAt ?? new CalDateTime(DateTime.MinValue)).TakeUntil(new CalDateTime(DateTime.MaxValue))
-            .ToList();
+        IEnumerable<Occurrence> GetOccurrences() => evt.GetOccurrences(testCase.StartAt ?? null);
+
+        if (testCase.ExceptionStep == RecurrenceTestExceptionStep.GetOccurrenceInvocation)
+        {
+            Assert.That(() => GetOccurrences(), throwsConstraint);
+            return;
+        }
+
+        var occurrencesEnumerator = GetOccurrences();
+
+        List<Occurrence> EnumerateOccurrences() => occurrencesEnumerator.ToList();
+
+        if (testCase.ExceptionStep == RecurrenceTestExceptionStep.Enumeration)
+        {
+            Assert.That(() => EnumerateOccurrences(), throwsConstraint);
+            return;
+        }
+
+        var occurrences = EnumerateOccurrences();
 
         var startDates = occurrences.Select(x => x.Period.StartTime).ToList();
-
         Assert.That(startDates, Is.EqualTo(testCase.Instances));
     }
 

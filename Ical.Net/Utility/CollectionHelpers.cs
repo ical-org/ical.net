@@ -267,4 +267,27 @@ internal static class CollectionHelpers
             first = false;
         }
     }
+
+    /// <summary>
+    /// While iterating the source sequence, catch exceptions of the specified type and call the handler.
+    /// </summary>
+    public static IEnumerable<T> Catch<T, TException>(this IEnumerable<T> source, Action<TException> handler)
+        where TException : Exception
+    {
+        using var enumerator = source.GetEnumerator();
+        while (true)
+        {
+            try
+            {
+                if (!enumerator.MoveNext())
+                    break;
+            } catch (TException ex)
+            {
+                handler(ex);
+                break;
+            }
+
+            yield return enumerator.Current;
+        }
+    }
 }

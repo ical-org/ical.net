@@ -108,3 +108,51 @@ INSTANCES:20250216T015905,20250216T015906,20250216T020305,20250216T020306,202502
 RRULE:FREQ=YEARLY;BYWEEKNO=1;BYDAY=MO;UNTIL=20241230
 DTSTART:20240101
 INSTANCES:20240101,20241230
+
+# Evaluation without bounds must result in a specific exception
+RRULE:FREQ=YEARLY
+DTSTART:20240101
+EXCEPTION:Ical.Net.Evaluation.EvaluationOutOfRangeException
+EXCEPTION-STEP:Enumeration
+
+# Evaluation until year 9999 must succeed
+RRULE:FREQ=YEARLY;COUNT=2
+DTSTART:99980101
+INSTANCES:99980101,99990101
+
+# Evaluation until year 10000 should fail
+RRULE:FREQ=YEARLY;COUNT=3
+DTSTART:99980101
+EXCEPTION:Ical.Net.Evaluation.EvaluationOutOfRangeException
+EXCEPTION-STEP:Enumeration
+
+# The end stil falls in the year 9999, so it should succeed
+RRULE:FREQ=YEARLY;COUNT=1
+DTSTART:99990101
+DURATION:P364D
+INSTANCES:99990101
+
+# The end exceeds year 9999, so it should fail
+RRULE:FREQ=YEARLY;COUNT=1
+DTSTART:99990101
+DURATION:P365D
+EXCEPTION:Ical.Net.Evaluation.EvaluationOutOfRangeException
+EXCEPTION-STEP:Enumeration
+
+# Due to the size of the interval we'll cause a DateTime overflow.
+RRULE:FREQ=YEARLY;INTERVAL=10000000;COUNT=2
+DTSTART:20240101
+EXCEPTION:Ical.Net.Evaluation.EvaluationOutOfRangeException
+EXCEPTION-STEP:Enumeration
+
+# Due to the size of the interval, this time with freq=WEEKLY we'll cause a DateTime overflow.
+RRULE:FREQ=WEEKLY;INTERVAL=2000000000;COUNT=2
+DTSTART:20240101
+EXCEPTION:Ical.Net.Evaluation.EvaluationOutOfRangeException
+EXCEPTION-STEP:Enumeration
+
+# The 3rd recurrence is on 10000-01-02, which exceeds the limit.
+RRULE:FREQ=YEARLY;BYWEEKNO=-1;BYDAY=SU;COUNT=3
+DTSTART:99971228
+EXCEPTION:Ical.Net.Evaluation.EvaluationOutOfRangeException
+EXCEPTION-STEP:Enumeration

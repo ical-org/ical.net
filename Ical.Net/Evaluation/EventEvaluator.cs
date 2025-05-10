@@ -54,47 +54,55 @@ public class EventEvaluator : RecurringEvaluator
     /// <returns>Returns the <paramref name="period"/> with <see cref="Period.EndTime"/> and exact <see cref="Period.Duration"/> set.</returns>
     private Period WithEndTime(Period period)
     {
-        /*
-           We use a time span to calculate the end time of the event.
-           It evaluates the event's definition of DtStart and either DtEnd or Duration.
-           
-           The time span is used, because the period end time gets the same timezone as the event end time.
-           This ensures that the end time is correct, even for DST transitions.
-
-           The exact duration is calculated from the zoned end time and the zoned start time,
-           and it may differ from the time span added to the period start time.
-         */
-        var tsToAdd = CalendarEvent.EffectiveDuration;
-
-        CalDateTime endTime;
-        if (tsToAdd.IsZero)
+        try
         {
-            // For a zero-duration event, the end time is the same as the start time.
-            endTime = period.StartTime;
-        }
-        else
-        {
-            // Calculate the end time of the event as a DateTime
-            var endDt = period.StartTime.Add(tsToAdd);
-            if ((CalendarEvent.End is { } end) && (end.TzId != period.StartTime.TzId) && (end.TzId is { } tzid))
+            /*
+               We use a time span to calculate the end time of the event.
+               It evaluates the event's definition of DtStart and either DtEnd or Duration.
+
+               The time span is used, because the period end time gets the same timezone as the event end time.
+               This ensures that the end time is correct, even for DST transitions.
+
+               The exact duration is calculated from the zoned end time and the zoned start time,
+               and it may differ from the time span added to the period start time.
+             */
+            var tsToAdd = CalendarEvent.EffectiveDuration;
+
+            CalDateTime endTime;
+            if (tsToAdd.IsZero)
             {
-                // Ensure the end time has the same timezone as the event end time.
-                endDt = endDt.ToTimeZone(tzid);
+                // For a zero-duration event, the end time is the same as the start time.
+                endTime = period.StartTime;
+            }
+            else
+            {
+                // Calculate the end time of the event as a DateTime
+                var endDt = period.StartTime.Add(tsToAdd);
+                if ((CalendarEvent.End is { } end) && (end.TzId != period.StartTime.TzId) && (end.TzId is { } tzid))
+                {
+                    // Ensure the end time has the same timezone as the event end time.
+                    endDt = endDt.ToTimeZone(tzid);
+                }
+
+                endTime = endDt;
             }
 
-            endTime = endDt;
+            // Return the Period object with the calculated end time.
+            // Only EndTime is relevant for further processing,
+            // so we have to set it.
+            // If the period duration is not null here, it is an RDATE period
+            // and has priority over the calculated end time.
+
+            return new Period(
+                start: period.StartTime,
+                end: period.Duration == null
+                    ? endTime
+                    : period.EffectiveEndTime);
         }
-
-        // Return the Period object with the calculated end time.
-        // Only EndTime is relevant for further processing,
-        // so we have to set it.
-        // If the period duration is not null here, it is an RDATE period
-        // and has priority over the calculated end time.
-
-        return new Period(
-            start: period.StartTime,
-            end: period.Duration == null
-                ? endTime
-                : period.EffectiveEndTime);
+        catch (ArgumentOutOfRangeException)
+        {
+            // intentionally don't include the outer exception
+            throw new EvaluationOutOfRangeException("Evaluation aborted: Calculating the end time of the event occurrence resulted in an out-of-range value. This commonly happens when trying to enumerate an unbounded RRULE to its end. Consider applying the .TakeWhile() operator.");
+        }
     }
 }
