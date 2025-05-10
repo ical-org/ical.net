@@ -52,11 +52,13 @@ public class RecurrencePattern : EncodableDataType
 
 
     /// <summary>
-    /// Specifies the interval between occurrences of the recurrence. The default value is 1.
-    /// <para/>
-    /// The value represents the number of units of time, as defined by the <see cref="Frequency"/> property, 
-    /// between each occurrence. For example, if <see cref="Frequency"/> is set to "Weekly" and Interval is 2, 
-    /// the recurrence will occur every 2 weeks.
+    /// The INTERVAL rule part contains a positive integer representing at
+    /// which intervals the recurrence rule repeats. The default value is
+    /// 1, meaning every second for a SECONDLY rule, every minute for a
+    /// MINUTELY rule, every hour for an HOURLY rule, every day for a
+    /// DAILY rule, every week for a WEEKLY rule, every month for a
+    /// MONTHLY rule, and every year for a YEARLY rule. For example,
+    /// within a DAILY rule, a value of 8 means every eight days.
     /// </summary>
     public int Interval
     {
