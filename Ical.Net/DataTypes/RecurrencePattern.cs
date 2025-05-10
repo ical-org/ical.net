@@ -19,13 +19,25 @@ namespace Ical.Net.DataTypes;
 public class RecurrencePattern : EncodableDataType
 {
     private int? _interval;
+    private FrequencyType _frequency;
     private CalDateTime? _until;
 
     /// <summary>
     /// Specifies the frequency <i>FREQ</i> of the recurrence.
     /// The default value is <see cref="FrequencyType.Yearly"/>.
     /// </summary>
-    public FrequencyType Frequency { get; set; }
+    public FrequencyType Frequency
+    {
+        get => _frequency;
+        set
+        {
+            if (!Enum.IsDefined(typeof(FrequencyType), value))
+            {
+                throw new ArgumentOutOfRangeException(nameof(Frequency), $"Invalid FrequencyType '{value}'.");
+            }
+            _frequency = value;
+        }
+    }
 
     /// <summary>
     /// Specifies the end date of the recurrence (optional).
@@ -117,7 +129,7 @@ public class RecurrencePattern : EncodableDataType
 
     public RecurrencePattern(FrequencyType frequency, int interval) : this()
     {
-        Frequency = frequency;
+        Frequency = frequency; // for proper validation don't use the backing field
         Interval = interval;
     }
 

@@ -3010,6 +3010,21 @@ public class RecurrenceTests
     }
 
     [Test, Category("Recurrence")]
+    public void TryingToSetInvalidFrequency_ShouldThrow()
+    {
+        Assert.Multiple(() =>
+        {
+            // Using the constructor
+            Assert.That(() => _ = new RecurrencePattern((FrequencyType) int.MaxValue, 1),
+                Throws.TypeOf<ArgumentOutOfRangeException>());
+
+            // Using the property
+            Assert.That(() => _ = new RecurrencePattern {Frequency = (FrequencyType) 9876543 },
+                Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+    }
+
+    [Test, Category("Recurrence")]
     public void Test2()
     {
         var cal = new Calendar();
