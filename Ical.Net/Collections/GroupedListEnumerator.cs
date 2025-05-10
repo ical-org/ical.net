@@ -19,8 +19,8 @@ public class GroupedListEnumerator<TType> :
     public GroupedListEnumerator(IList<IMultiLinkedList<TType>> lists) => _lists = lists;
 
     public virtual TType Current
-        => _listEnumerator == null || _listEnumerator.Current == null
-            ? throw new InvalidOperationException("Current is null.")
+        => _listEnumerator == null
+            ? throw new InvalidOperationException("List enumerator is null.")
             : _listEnumerator.Current;
 
     public virtual void Dispose()
@@ -39,8 +39,8 @@ public class GroupedListEnumerator<TType> :
     }
 
     object IEnumerator.Current
-        => _listEnumerator == null || _listEnumerator.Current == null
-            ? throw new InvalidOperationException("Current is null.")
+        => _listEnumerator == null
+            ? throw new InvalidOperationException("List enumerator is null.")
             : _listEnumerator.Current;
 
     private bool MoveNextList()

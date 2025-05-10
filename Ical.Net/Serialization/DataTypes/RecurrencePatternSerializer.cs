@@ -105,7 +105,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
     public override string? SerializeToString(object? obj)
     {
         var factory = GetService<ISerializerFactory>();
-        if (obj is not RecurrencePattern recur || factory == null || SerializationContext == null)
+        if (obj is not RecurrencePattern recur)
         {
             return null;
         }

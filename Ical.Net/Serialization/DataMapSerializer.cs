@@ -19,10 +19,6 @@ public class DataMapSerializer : SerializerBase
     {
         var sf = GetService<ISerializerFactory>();
         var mapper = GetService<DataTypeMapper>();
-        if (sf == null || mapper == null || SerializationContext == null)
-        {
-            return null;
-        }
 
         var obj = SerializationContext.Peek();
 

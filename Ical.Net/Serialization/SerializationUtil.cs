@@ -35,11 +35,6 @@ internal class SerializationUtil
     private static readonly ConcurrentDictionary<Type, List<MethodInfo>> _onDeserializingMethods = new ConcurrentDictionary<Type, List<MethodInfo>>();
     private static List<MethodInfo> GetDeserializingMethods(Type targetType)
     {
-        if (targetType == null)
-        {
-            return new List<MethodInfo>();
-        }
-
         if (_onDeserializingMethods.ContainsKey(targetType))
         {
             return _onDeserializingMethods[targetType];
