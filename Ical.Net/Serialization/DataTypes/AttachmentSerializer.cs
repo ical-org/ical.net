@@ -61,10 +61,7 @@ public class AttachmentSerializer : EncodableDataTypeSerializer
 
             // Get the currently-used encoding off the encoding stack.
             var encodingStack = GetService<EncodingStack>();
-            if (encodingStack != null)
-            {
-                a.ValueEncoding = encodingStack.Current;
-            }
+            a.ValueEncoding = encodingStack.Current;
 
             // Get the format of the attachment
             var valueType = a.GetValueType();

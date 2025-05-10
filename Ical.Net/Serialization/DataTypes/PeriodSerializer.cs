@@ -22,7 +22,7 @@ public class PeriodSerializer : EncodableDataTypeSerializer
     {
         var factory = GetService<ISerializerFactory>();
 
-        if (obj is not Period p || factory == null)
+        if (obj is not Period p)
         {
             return null;
         }
@@ -78,12 +78,8 @@ public class PeriodSerializer : EncodableDataTypeSerializer
     {
         var value = tr.ReadToEnd();
 
-        var p = CreateAndAssociate() as Period;
+        if (CreateAndAssociate() is not Period p) return null;
         var factory = GetService<ISerializerFactory>();
-        if (p == null || factory == null)
-        {
-            return null;
-        }
 
         var dtSerializer = factory.Build(typeof(CalDateTime), SerializationContext) as IStringSerializer;
         var durationSerializer = factory.Build(typeof(Duration), SerializationContext) as IStringSerializer;

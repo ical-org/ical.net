@@ -21,11 +21,6 @@ public class RequestStatusSerializer : StringSerializer
 
     public override string? SerializeToString(object? obj)
     {
-        if (SerializationContext == null)
-        {
-            return null;
-        }
-
         try
         {
             if (obj is not RequestStatus rs)
@@ -73,7 +68,7 @@ public class RequestStatusSerializer : StringSerializer
 
     public override object? Deserialize(TextReader? tr)
     {
-        if (tr == null || SerializationContext == null) return null;
+        if (tr == null) return null;
         
         var value = tr.ReadToEnd();
 
@@ -92,10 +87,6 @@ public class RequestStatusSerializer : StringSerializer
         try
         {
             var factory = GetService<ISerializerFactory>();
-            if (factory == null)
-            {
-                return null;
-            }
 
             var match = NarrowRequestMatch.Match(value);
             if (!match.Success)

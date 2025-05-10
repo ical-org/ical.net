@@ -94,9 +94,7 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
 
     public virtual void Clear()
     {
-        var items = Items.Where(o => o.Values != null);
-
-        foreach (var original in items)
+        foreach (var original in Items)
         {
             // Clear all values from each matching object
             original.SetValue(default(TOriginalValue)!);
@@ -108,7 +106,6 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
     public virtual void CopyTo(TNewValue[] array, int arrayIndex)
     {
         Items
-            .Where(o => o.Values != null)
             .SelectMany(o => o.Values!)
             .ToArray()
             .CopyTo(array, arrayIndex);
@@ -153,7 +150,7 @@ public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TN
         var value = (TOriginalValue) (object) item;
         IterateValues((o, i, count) =>
         {
-            if (o.Values != null && o.Values.Contains(value))
+            if (o.Values.Contains(value))
             {
                 var list = o.Values.ToList();
                 index = i + list.IndexOf(value);

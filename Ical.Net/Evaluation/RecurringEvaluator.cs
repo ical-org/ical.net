@@ -29,7 +29,7 @@ public class RecurringEvaluator : Evaluator
     /// <param name="options"></param>
     protected IEnumerable<Period> EvaluateRRule(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
     {
-        if (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any())
+        if (!Recurrable.RecurrenceRules.Any())
             return [];
 
         var periodsQueries = Recurrable.RecurrenceRules.Select(rule =>
@@ -66,7 +66,7 @@ public class RecurringEvaluator : Evaluator
     /// <param name="options"></param>
     protected IEnumerable<Period> EvaluateExRule(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
     {
-        if (Recurrable.ExceptionRules == null || !Recurrable.ExceptionRules.Any())
+        if (!Recurrable.ExceptionRules.Any())
             return [];
 
         var exRuleEvaluatorQueries = Recurrable.ExceptionRules.Select(exRule =>
@@ -105,10 +105,9 @@ public class RecurringEvaluator : Evaluator
         // Only add referenceDate if there are no RecurrenceRules defined. This is in line
         // with RFC 5545 which requires DTSTART to match any RRULE. If it doesn't, the behaviour
         // is undefined. It seems to be good practice not to return the referenceDate in this case.
-        if ((Recurrable.RecurrenceRules == null) || !Recurrable.RecurrenceRules.Any())
-            rruleOccurrences = [new Period(referenceDate)];
-        else
-            rruleOccurrences = EvaluateRRule(referenceDate, periodStart, options);
+        rruleOccurrences = !Recurrable.RecurrenceRules.Any()
+            ? [new Period(referenceDate)]
+            : EvaluateRRule(referenceDate, periodStart, options);
 
         var rdateOccurrences = EvaluateRDate(referenceDate, periodStart);
 
