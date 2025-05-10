@@ -31,10 +31,6 @@ public class TriggerSerializer : StringSerializer
             try
             {
                 var factory = GetService<ISerializerFactory>();
-                if (factory == null)
-                {
-                    return null;
-                }
 
                 var valueType = t.GetValueType() ?? typeof(Duration);
                 if (!(factory.Build(valueType, SerializationContext) is IStringSerializer serializer))
@@ -88,10 +84,6 @@ public class TriggerSerializer : StringSerializer
             }
 
             var factory = GetService<ISerializerFactory>();
-            if (factory == null)
-            {
-                return null;
-            }
 
             var valueType = t.GetValueType() ?? typeof(Duration);
             var serializer = factory.Build(valueType, SerializationContext) as IStringSerializer;

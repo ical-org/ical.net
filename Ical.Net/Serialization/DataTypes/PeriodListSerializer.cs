@@ -22,7 +22,7 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
     public override string? SerializeToString(object? obj)
     {
         var factory = GetService<ISerializerFactory>();
-        if (obj is not PeriodList periodList || factory == null || SerializationContext == null)
+        if (obj is not PeriodList periodList)
         {
             return null;
         }
@@ -69,12 +69,9 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
         var value = tr.ReadToEnd();
 
         // Create the day specifier and associate it with a calendar object
-        var rdt = CreateAndAssociate() as PeriodList;
+        if (CreateAndAssociate() is not PeriodList rdt) return null;
+
         var factory = GetService<ISerializerFactory>();
-        if (rdt == null || factory == null || SerializationContext == null)
-        {
-            return null;
-        }
 
         // Decode the value, if necessary
         value = Decode(rdt, value);

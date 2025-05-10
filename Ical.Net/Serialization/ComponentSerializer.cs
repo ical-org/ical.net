@@ -25,7 +25,7 @@ public class ComponentSerializer : SerializerBase
 
     public override string? SerializeToString(object? obj)
     {
-        if (obj is not ICalendarComponent c || SerializationContext == null)
+        if (obj is not ICalendarComponent c)
         {
             return null;
         }
