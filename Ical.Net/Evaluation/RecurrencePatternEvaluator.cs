@@ -759,7 +759,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <returns></returns>
     public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
     {
-        if (Pattern.Frequency != FrequencyType.None && Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
+        if (Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
         {
             // This case is not defined by RFC 5545. We handle it by evaluating the rule
             // as if referenceDate had a time (i.e. set to midnight).

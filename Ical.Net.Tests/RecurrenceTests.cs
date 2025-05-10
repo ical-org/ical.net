@@ -3010,23 +3010,6 @@ public class RecurrenceTests
     }
 
     [Test, Category("Recurrence")]
-    public void Test1()
-    {
-        var cal = new Calendar();
-        var evt = cal.Create<CalendarEvent>();
-        evt.Summary = "Event summary";
-        evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc));
-
-        var recur = new RecurrencePattern();
-        evt.RecurrenceRules.Add(recur);
-
-        Assert.That(() =>
-        {
-            _ = evt.GetOccurrences(CalDateTime.Today.AddDays(1)).TakeUntil(CalDateTime.Today.AddDays(2));
-        }, Throws.Exception, "An exception should be thrown when evaluating a recurrence with no specified FREQUENCY");
-    }
-
-    [Test, Category("Recurrence")]
     public void Test2()
     {
         var cal = new Calendar();
@@ -4070,11 +4053,11 @@ END:VCALENDAR";
     }
 
     [Test]
-    public void Recurrence_RRULE_With_Freq_None_Should_Throw()
+    public void Recurrence_RRULE_With_Freq_Undefined_Should_Throw()
     {
         var serializer = new RecurrencePatternSerializer();
 
-        Assert.That(() => serializer.Deserialize(new StringReader("FREQ=NONE;INTERVAL=2;UNTIL=20250430T000000Z")), Throws.TypeOf<ArgumentOutOfRangeException>());
+        Assert.That(() => serializer.Deserialize(new StringReader("FREQ=UNDEFINED;INTERVAL=2;UNTIL=20250430T000000Z")), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]

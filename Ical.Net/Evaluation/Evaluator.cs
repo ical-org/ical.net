@@ -43,9 +43,10 @@ public abstract class Evaluator : IEvaluator
                 case FrequencyType.Yearly:
                     dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval);
                     break;
-                // FIXME: use a more specific exception.
                 default:
-                    throw new Exception("FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.");
+                    // Frequency should always be valid at this stage.
+                    System.Diagnostics.Debug.Fail($"'{pattern.Frequency}' as RecurrencePattern.Frequency is not implemented.");
+                    break;
             }
         }
         catch (ArgumentOutOfRangeException)
