@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 
@@ -20,10 +19,30 @@ namespace Ical.Net.DataTypes;
 public class RecurrencePattern : EncodableDataType
 {
     private int? _interval;
+    private FrequencyType _frequency;
     private CalDateTime? _until;
 
-    public FrequencyType Frequency { get; set; }
+    /// <summary>
+    /// Specifies the frequency <i>FREQ</i> of the recurrence.
+    /// The default value is <see cref="FrequencyType.Yearly"/>.
+    /// </summary>
+    public FrequencyType Frequency
+    {
+        get => _frequency;
+        set
+        {
+            if (!Enum.IsDefined(typeof(FrequencyType), value))
+            {
+                throw new ArgumentOutOfRangeException(nameof(Frequency), $"Invalid FrequencyType '{value}'.");
+            }
+            _frequency = value;
+        }
+    }
 
+    /// <summary>
+    /// Specifies the end date of the recurrence (optional).
+    /// This property <b>must be null</b> if the <see cref="Count"/> property is set.
+    /// </summary>
     public CalDateTime? Until
     {
         get => _until;
@@ -37,13 +56,21 @@ public class RecurrencePattern : EncodableDataType
         }
     }
 
+    /// <summary>
+    /// Specifies the number of occurrences of the recurrence (optional).
+    /// This property <b>must be null</b> if the <see cref="Until"/> property is set.
+    /// </summary>
     public int? Count { get; set; }
 
+
     /// <summary>
-    /// Specifies how often the recurrence should repeat.
-    /// - 1 = every
-    /// - 2 = every second
-    /// - 3 = every third
+    /// The INTERVAL rule part contains a positive integer representing at
+    /// which intervals the recurrence rule repeats. The default value is
+    /// 1, meaning every second for a SECONDLY rule, every minute for a
+    /// MINUTELY rule, every hour for an HOURLY rule, every day for a
+    /// DAILY rule, every week for a WEEKLY rule, every month for a
+    /// MONTHLY rule, and every year for a YEARLY rule. For example,
+    /// within a DAILY rule, a value of 8 means every eight days.
     /// </summary>
     public int Interval
     {
@@ -88,14 +115,21 @@ public class RecurrencePattern : EncodableDataType
 
     public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
 
+    /// <summary>
+    /// Default constructor. Sets the <see cref="Frequency"/> to <see cref="FrequencyType.Yearly"/>
+    /// and <see cref="Interval"/> to 1.
+    /// </summary>
     public RecurrencePattern()
-    { }
+    {
+        Frequency = FrequencyType.Yearly;
+        Interval = 1;
+    }
 
     public RecurrencePattern(FrequencyType frequency) : this(frequency, 1) { }
 
     public RecurrencePattern(FrequencyType frequency, int interval) : this()
     {
-        Frequency = frequency;
+        Frequency = frequency; // for proper validation don't use the backing field
         Interval = interval;
     }
 
