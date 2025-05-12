@@ -4,6 +4,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using Ical.Net.DataTypes;
 
@@ -21,7 +22,7 @@ public class IntegerSerializer : EncodableDataTypeSerializer
     {
         try
         {
-            var i = Convert.ToInt32(obj);
+            var i = Convert.ToInt32(obj, CultureInfo.InvariantCulture);
 
             if (SerializationContext.Peek() is ICalendarObject calObject)
             {
@@ -30,9 +31,9 @@ public class IntegerSerializer : EncodableDataTypeSerializer
                 {
                     AssociatedObject = calObject
                 };
-                return Encode(dt, i.ToString());
+                return Encode(dt, i.ToString(CultureInfo.InvariantCulture));
             }
-            return i.ToString();
+            return i.ToString(CultureInfo.InvariantCulture);
         }
         catch
         {

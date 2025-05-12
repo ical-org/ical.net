@@ -6,6 +6,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -314,8 +315,8 @@ public class RecurrenceTests_From_Issues
     {
         //  GetOccurrences Creates event with invalid time due to Daylight Savings changes #567 
 
-        var calStart = new CalDateTime(DateTimeOffset.Parse("2023-01-14T19:21:03.700Z").UtcDateTime, "UTC");
-        var calFinish = new CalDateTime(DateTimeOffset.Parse("2023-03-14T18:21:03.700Z").UtcDateTime, "UTC");
+        var calStart = new CalDateTime(DateTimeOffset.Parse("2023-01-14T19:21:03.700Z", CultureInfo.InvariantCulture).UtcDateTime, "UTC");
+        var calFinish = new CalDateTime(DateTimeOffset.Parse("2023-03-14T18:21:03.700Z", CultureInfo.InvariantCulture).UtcDateTime, "UTC");
         var tz = "Pacific Standard Time";
         var pattern = new RecurrencePattern(
             "FREQ=WEEKLY;BYDAY=SU,MO,TU,WE"); //Adjust the date to today so that the times remain constant
@@ -483,8 +484,8 @@ public class RecurrenceTests_From_Issues
             Summary = "BIO CLASS",//subject
             Description = "Details at CLASS",//description of meeting
             Location = "Building 101",//location
-            DtStart = new CalDateTime(DateTime.Parse("2017-06-01T08:00")),
-            DtEnd = new CalDateTime(DateTime.Parse("2017-06-01T09:30")),
+            DtStart = new CalDateTime(DateTime.Parse("2017-06-01T08:00", CultureInfo.InvariantCulture)),
+            DtEnd = new CalDateTime(DateTime.Parse("2017-06-01T09:30", CultureInfo.InvariantCulture)),
             RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) },
         };
 

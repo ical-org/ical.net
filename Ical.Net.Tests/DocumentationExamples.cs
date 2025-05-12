@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -50,8 +51,8 @@ public class DocumentationExamples
         // An event taking place between 07:00 and 08:00, beginning July 5 (a Tuesday)
         var vEvent = new CalendarEvent
         {
-            DtStart = new CalDateTime(DateTime.Parse("2016-07-05T07:00")),
-            DtEnd = new CalDateTime(DateTime.Parse("2016-07-05T08:00")),
+            DtStart = new CalDateTime(DateTime.Parse("2016-07-05T07:00", CultureInfo.InvariantCulture)),
+            DtEnd = new CalDateTime(DateTime.Parse("2016-07-05T08:00",CultureInfo.InvariantCulture)),
         };
 
         // Recurring every other Tuesday until Dec 31
@@ -77,8 +78,8 @@ public class DocumentationExamples
         // An event taking place between 07:00 and 19:00, beginning July 5 (a Tuesday)
         var vEvent = new CalendarEvent
         {
-            DtStart = new CalDateTime(DateTime.Parse("2000-11-23T07:00")),
-            DtEnd = new CalDateTime(DateTime.Parse("2000-11-23T19:00")),
+            DtStart = new CalDateTime(DateTime.Parse("2000-11-23T07:00", CultureInfo.InvariantCulture)),
+            DtEnd = new CalDateTime(DateTime.Parse("2000-11-23T19:00", CultureInfo.InvariantCulture)),
         };
 
         // Recurring every other Tuesday until Dec 31
@@ -108,8 +109,8 @@ public class DocumentationExamples
         //An event that happens daily through 2016, except for Sundays
         var vEvent = new CalendarEvent
         {
-            DtStart = new CalDateTime(DateTime.Parse("2016-01-01T07:00")),
-            DtEnd = new CalDateTime(DateTime.Parse("2016-12-31T08:00")),
+            DtStart = new CalDateTime(DateTime.Parse("2016-01-01T07:00", CultureInfo.InvariantCulture)),
+            DtEnd = new CalDateTime(DateTime.Parse("2016-12-31T08:00", CultureInfo.InvariantCulture)),
             RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) },
         };
 

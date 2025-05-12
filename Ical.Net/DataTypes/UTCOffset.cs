@@ -4,6 +4,7 @@
 //
 
 using System;
+using System.Globalization;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes;
@@ -64,7 +65,11 @@ public class UtcOffset : EncodableDataType
 
     public override int GetHashCode() => Offset.GetHashCode();
 
-    public override string ToString() => (Positive ? "+" : "-") + Hours.ToString("00") + Minutes.ToString("00") + (Seconds != 0 ? Seconds.ToString("00") : string.Empty);
+    public override string ToString() => (Positive ? "+" : "-")
+                                         + Hours.ToString("00", CultureInfo.InvariantCulture) +
+                                         Minutes.ToString("00", CultureInfo.InvariantCulture) + (Seconds != 0
+                                             ? Seconds.ToString("00", CultureInfo.InvariantCulture)
+                                             : string.Empty);
 
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable obj)

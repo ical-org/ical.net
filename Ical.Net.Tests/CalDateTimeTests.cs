@@ -93,7 +93,7 @@ public class CalDateTimeTests
     [Test(Description = "A certain date/time value applied to different timezones should return the same UTC date/time")]
     public void SameDateTimeWithDifferentTzIdShouldReturnSameUtc()
     {
-        var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00");
+        var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00", CultureInfo.InvariantCulture);
 
         var someDt = new CalDateTime(someTime.DateTime, "America/New_York");
         var firstUtc = someDt.AsUtc;
@@ -111,7 +111,7 @@ public class CalDateTimeTests
     public static IEnumerable DateTimeKindOverrideTestCases()
     {
         const string localTz = "America/New_York";
-        var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33"), DateTimeKind.Unspecified);
+        var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33", CultureInfo.InvariantCulture), DateTimeKind.Unspecified);
 
         yield return new TestCaseData(localDt, "UTC")
             .Returns(DateTimeKind.Unspecified)
@@ -317,7 +317,7 @@ public class CalDateTimeTests
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
             Assert.That(c.Time?.ToTimeSpan(), Is.EqualTo(dt.TimeOfDay));
             Assert.That(c.Add(-Duration.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));
-            Assert.That(c.ToString("dd.MM.yyyy"), Is.EqualTo("02.01.2025 Europe/Berlin"));
+            Assert.That(c.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture), Is.EqualTo("02.01.2025 Europe/Berlin"));
             // Create a date-only CalDateTime from a CalDateTime
             Assert.That(new CalDateTime(new CalDateTime(2025, 1, 1)), Is.EqualTo(new CalDateTime(2025, 1, 1)));
         });

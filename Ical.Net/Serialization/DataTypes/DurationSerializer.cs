@@ -4,6 +4,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -34,20 +35,22 @@ public class DurationSerializer : SerializerBase
             sb.Append('-');
 
         sb.Append('P');
+        // NOSONAR: netstandard2.x does not support string.Create(CultureInfo.InvariantCulture, $"{...}");
         if (ts.Weeks != null)
-            sb.Append($"{sign * ts.Weeks}W");
+            sb.Append(FormattableString.Invariant($"{sign * ts.Weeks}W")); // NOSONAR 
         if (ts.Days != null)
-            sb.Append($"{sign * ts.Days}D");
+            sb.Append(FormattableString.Invariant($"{sign * ts.Days}D")); // NOSONAR
 
         if (ts.Hours != null || ts.Minutes != null || ts.Seconds != null)
         {
             sb.Append('T');
+
             if (ts.Hours != null)
-                sb.Append($"{sign * ts.Hours}H");
+                sb.Append(FormattableString.Invariant($"{sign * ts.Hours}H")); // NOSONAR
             if (ts.Minutes != null)
-                sb.Append($"{sign * ts.Minutes}M");
+                sb.Append(FormattableString.Invariant($"{sign * ts.Minutes}M")); // NOSONAR
             if (ts.Seconds != null)
-                sb.Append($"{sign * ts.Seconds}S");
+                sb.Append(FormattableString.Invariant($"{sign * ts.Seconds}S")); // NOSONAR
         }
 
         return sb.ToString();
@@ -91,7 +94,7 @@ public class DurationSerializer : SerializerBase
                 sign = -1;
 
             int? GetGroupInt(string key)
-                => match.Groups[key].Success ? Convert.ToInt32(match.Groups[key].Value) : null;
+                => match.Groups[key].Success ? Convert.ToInt32(match.Groups[key].Value, CultureInfo.InvariantCulture) : null;
 
             weeks = GetGroupInt("week");
             if (match.Groups["main"].Success)

@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Ical.Net.DataTypes;
@@ -38,7 +39,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         var values = value.Split(',');
         foreach (var v in values)
         {
-            list.Add(Convert.ToInt32(v));
+            list.Add(Convert.ToInt32(v, CultureInfo.InvariantCulture));
         }
     }
 
@@ -96,7 +97,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
     {
         if (byValue.Any())
         {
-            aggregate.Add($"{name}={string.Join(",", byValue.Select(i => i.ToString()))}");
+            aggregate.Add($"{name}={string.Join(",", byValue.Select(i => i.ToString(CultureInfo.InvariantCulture)))}");
         }
     }
 
@@ -265,11 +266,11 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                 break;
 
             case "count":
-                r.Count = Convert.ToInt32(value);
+                r.Count = Convert.ToInt32(value, CultureInfo.InvariantCulture);
                 break;
 
             case "interval":
-                r.Interval = Convert.ToInt32(value);
+                r.Interval = Convert.ToInt32(value, CultureInfo.InvariantCulture);
                 break;
 
             case "bysecond":

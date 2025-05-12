@@ -18,6 +18,8 @@ insert_final_newline = true
 csharp_new_line_before_members_in_anonymous_types = true
 
 [*.cs]
+#parsing and formatting should be implemented in a culture-invariant manner
+dotnet_diagnostic.CA1305.severity = warning
 
 #place catch statements on a new line
 csharp_new_line_before_catch = true

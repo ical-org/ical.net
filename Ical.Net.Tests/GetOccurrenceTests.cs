@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -20,12 +21,12 @@ internal class GetOccurrenceTests
     [Test]
     public void WrongDurationTest()
     {
-        var firstStart = new CalDateTime(DateTime.Parse("2016-01-01"));
-        var firstEnd = new CalDateTime(DateTime.Parse("2016-01-05"));
+        var firstStart = new CalDateTime(DateTime.Parse("2016-01-01", CultureInfo.InvariantCulture));
+        var firstEnd = new CalDateTime(DateTime.Parse("2016-01-05", CultureInfo.InvariantCulture));
         var vEvent = new CalendarEvent { DtStart = firstStart, DtEnd = firstEnd, };
 
-        var secondStart = new CalDateTime(DateTime.Parse("2016-03-01"));
-        var secondEnd = new CalDateTime(DateTime.Parse("2016-03-05"));
+        var secondStart = new CalDateTime(DateTime.Parse("2016-03-01", CultureInfo.InvariantCulture));
+        var secondEnd = new CalDateTime(DateTime.Parse("2016-03-05", CultureInfo.InvariantCulture));
         var vEvent2 = new CalendarEvent { DtStart = secondStart, DtEnd = secondEnd, };
 
         var calendar = new Calendar();

@@ -7,7 +7,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -115,19 +114,19 @@ public class SerializationTests
     public static string InspectSerializedSection(string serialized, string sectionName, IEnumerable<string> elements)
     {
         const string notFound = "expected '{0}' not found";
-        var searchFor = "BEGIN:" + sectionName;
+        var searchFor = string.Format(CultureInfo.InvariantCulture, "BEGIN:{0}", sectionName);
         var begin = serialized.IndexOf(searchFor, StringComparison.Ordinal);
-        Assert.That(begin, Is.Not.EqualTo(-1), () => string.Format(notFound, searchFor));
+        Assert.That(begin, Is.Not.EqualTo(-1), () => string.Format(CultureInfo.InvariantCulture, notFound, searchFor));
 
-        searchFor = "END:" + sectionName;
+        searchFor = string.Format(CultureInfo.InvariantCulture, "END:{0}", sectionName);
         var end = serialized.IndexOf(searchFor, begin, StringComparison.Ordinal);
-        Assert.That(end, Is.Not.EqualTo(-1), () => string.Format(notFound, searchFor));
+        Assert.That(end, Is.Not.EqualTo(-1), () => string.Format(CultureInfo.InvariantCulture, notFound, searchFor));
 
         var searchRegion = serialized.Substring(begin, end - begin + searchFor.Length);
 
         foreach (var e in elements)
         {
-            Assert.That(searchRegion, Does.Contain(SerializationConstants.LineBreak + e + SerializationConstants.LineBreak), () => string.Format(notFound, e));
+            Assert.That(searchRegion, Does.Contain(SerializationConstants.LineBreak + e + SerializationConstants.LineBreak), () => string.Format(CultureInfo.InvariantCulture, notFound, e));
         }
 
         return searchRegion;
@@ -601,4 +600,48 @@ public class SerializationTests
             Assert.That(!serialized.Contains("VCALENDAR", StringComparison.Ordinal), Is.True);
         });
     }
+
+    [TestCase("en-US")] // English (United States)
+    [TestCase("de-DE")] // German (Germany)
+    // failed before fixing CA1305 warnings
+    [TestCase("ar-SA")] // Arabic (Saudi Arabia)
+    // failed before fixing CA1305 warnings
+    [TestCase("he-IL")] // Hebrew (Israel)
+    [TestCase("hi-IN")] // Hindi (India)
+    [TestCase("zh-CN")] // Chinese (Simplified, China)
+    [TestCase("ja-JP")] // Japanese (Japan)
+    [TestCase("th-TH")] // Thai (Thailand)
+    [TestCase("ru-RU")] // Russian (Russia)
+    [TestCase("ko-KR")] // Korean (Korea)
+    public void TestConvertToInt32WithNegativeNumberInDifferentCultures(string cultureStr)
+    {
+        var originalCulture = CultureInfo.CurrentCulture;
+        try
+        {
+            var culture = new CultureInfo(cultureStr);
+            CultureInfo.CurrentCulture = culture;
+
+            Assert.Multiple(() =>
+            {
+                // Deserialize
+                Assert.That(() => Calendar.Load(
+                    """
+                    BEGIN:VCALENDAR
+                    BEGIN:VEVENT
+                    DTSTART:20251231
+                    RRULE:FREQ=YEARLY;BYYEARDAY=-1
+                    END:VEVENT
+                    END:VCALENDAR
+                    """), Throws.Nothing);
+                // Serialize
+                Assert.That(() => new DurationSerializer().SerializeToString(new Duration(null, -1)), Is.EqualTo("-P1D"));
+
+            });
+        }    
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
+    }
+
 }
