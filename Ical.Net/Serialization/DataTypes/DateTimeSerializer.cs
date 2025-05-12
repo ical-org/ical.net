@@ -6,6 +6,7 @@
 using Ical.Net.DataTypes;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -44,6 +45,7 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
         // properties whose time values are specified in UTC.
 
         var value = new StringBuilder(512);
+#pragma warning disable CA1305
         value.Append($"{dt.Year:0000}{dt.Month:00}{dt.Day:00}");
         if (dt.HasTime)
         {
@@ -53,6 +55,7 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
                 value.Append("Z");
             }
         }
+#pragma warning restore CA1305
 
         // Encode the value as necessary
         return value.ToString();
@@ -89,15 +92,15 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
 
         if (match.Groups[1].Success)
         {
-            datePart = new DateOnly(Convert.ToInt32(match.Groups[2].Value),
-                Convert.ToInt32(match.Groups[3].Value),
-                Convert.ToInt32(match.Groups[4].Value));
+            datePart = new DateOnly(Convert.ToInt32(match.Groups[2].Value, CultureInfo.InvariantCulture),
+                Convert.ToInt32(match.Groups[3].Value, CultureInfo.InvariantCulture),
+                Convert.ToInt32(match.Groups[4].Value, CultureInfo.InvariantCulture));
         }
         if (match.Groups.Count >= 6 && match.Groups[5].Success)
         {
-            timePart = new TimeOnly(Convert.ToInt32(match.Groups[6].Value),
-                Convert.ToInt32(match.Groups[7].Value),
-                Convert.ToInt32(match.Groups[8].Value));
+            timePart = new TimeOnly(Convert.ToInt32(match.Groups[6].Value, CultureInfo.InvariantCulture),
+                Convert.ToInt32(match.Groups[7].Value, CultureInfo.InvariantCulture),
+                Convert.ToInt32(match.Groups[8].Value, CultureInfo.InvariantCulture));
         }
 
         var isUtc = match.Groups[9].Success;

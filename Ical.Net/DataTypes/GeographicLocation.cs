@@ -4,6 +4,7 @@
 //
 
 using System.Diagnostics;
+using System.Globalization;
 using Ical.Net.CalendarComponents;
 using Ical.Net.Serialization.DataTypes;
 
@@ -48,7 +49,7 @@ public class GeographicLocation : EncodableDataType
         Longitude = geo.Longitude;
     }
 
-    public override string ToString() => Latitude.ToString("0.000000") + ";" + Longitude.ToString("0.000000");
+    public override string ToString() => Latitude.ToString("0.000000", CultureInfo.InvariantCulture) + ";" + Longitude.ToString("0.000000", CultureInfo.InvariantCulture);
 
     protected bool Equals(GeographicLocation other) => Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude);
 

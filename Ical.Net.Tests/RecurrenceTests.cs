@@ -2773,7 +2773,7 @@ public class RecurrenceTests
         };
         var vEvent = new CalendarEvent
         {
-            Start = new CalDateTime(DateTime.Parse("2019-01-04T08:00Z").ToUniversalTime()),
+            Start = new CalDateTime(DateTime.Parse("2019-01-04T08:00Z", CultureInfo.InvariantCulture).ToUniversalTime()),
         };
 
         vEvent.RecurrenceRules.Add(rrule);
@@ -2806,8 +2806,8 @@ public class RecurrenceTests
     {
         var vEvent = new CalendarEvent
         {
-            Start = new CalDateTime(DateTime.Parse("2020-01-11")), // no time means all day
-            End = new CalDateTime(DateTime.Parse("2020-01-11T00:00")),
+            Start = new CalDateTime(DateTime.Parse("2020-01-11", CultureInfo.InvariantCulture)), // no time means all day
+            End = new CalDateTime(DateTime.Parse("2020-01-11T00:00", CultureInfo.InvariantCulture)),
         };
 
         var occurrences = vEvent.GetOccurrences(new CalDateTime(2020,01, 10, 0, 0, 0)).TakeUntil(new CalDateTime(2020, 01, 11, 00, 00, 00));
@@ -3174,20 +3174,20 @@ END:VCALENDAR";
 
         var calendar = Calendar.Load(ical)!;
         var firstEvent = calendar.Events.First();
-        var startSearch = new CalDateTime(DateTime.Parse("2015-08-28T07:00:00"), _tzid);
-        var endSearch = new CalDateTime(DateTime.Parse("2016-08-28T07:00:00").AddDays(7), _tzid);
+        var startSearch = new CalDateTime(DateTime.Parse("2015-08-28T07:00:00", CultureInfo.InvariantCulture), _tzid);
+        var endSearch = new CalDateTime(DateTime.Parse("2016-08-28T07:00:00", CultureInfo.InvariantCulture).AddDays(7), _tzid);
 
         var occurrences = firstEvent.GetOccurrences(startSearch).TakeUntil(endSearch)
             .Select(o => o.Period)
             .ToList();
 
-        var firstExpectedOccurrence = new CalDateTime(DateTime.Parse("2016-08-29T08:00:00"), _tzid);
+        var firstExpectedOccurrence = new CalDateTime(DateTime.Parse("2016-08-29T08:00:00", CultureInfo.InvariantCulture), _tzid);
         Assert.That(occurrences.First().StartTime, Is.EqualTo(firstExpectedOccurrence));
 
-        var firstExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-30T10:00:00"), _tzid);
+        var firstExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-30T10:00:00", CultureInfo.InvariantCulture), _tzid);
         Assert.That(occurrences[1].StartTime.Equals(firstExpectedRDate), Is.True);
 
-        var secondExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-31T10:00:00"), _tzid);
+        var secondExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-31T10:00:00", CultureInfo.InvariantCulture), _tzid);
         Assert.That(occurrences[2].StartTime.Equals(secondExpectedRDate), Is.True);
     }
 
@@ -3215,7 +3215,7 @@ END:VCALENDAR";
             ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday) },
         };
 
-        var start = DateTime.Parse("2016-08-01T07:00:00");
+        var start = DateTime.Parse("2016-08-01T07:00:00", CultureInfo.InvariantCulture);
         var end = start.AddHours(1);
         var e = new CalendarEvent
         {
@@ -3233,10 +3233,10 @@ END:VCALENDAR";
 
         Assert.That(firstEvent, Is.EqualTo(e));
 
-        var startSearch = new CalDateTime(DateTime.Parse("2016-07-01T00:00:00"), "UTC");
-        var endSearch = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00"), "UTC");
+        var startSearch = new CalDateTime(DateTime.Parse("2016-07-01T00:00:00", CultureInfo.InvariantCulture), "UTC");
+        var endSearch = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00", CultureInfo.InvariantCulture), "UTC");
 
-        var lastExpected = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00"), "UTC");
+        var lastExpected = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00", CultureInfo.InvariantCulture), "UTC");
         var occurrences = firstEvent.GetOccurrences(startSearch).TakeUntil(endSearch)
                 .Select(o => o.Period)
                 .ToList();
@@ -3320,16 +3320,16 @@ END:VCALENDAR";
             .Select(o => o.Period)
             .ToList();
 
-        var expectedSept1Start = new CalDateTime(DateTime.Parse("2016-09-01T16:30:00"), "Europe/Bucharest");
-        var expectedSept1End = new CalDateTime(DateTime.Parse("2016-09-01T22:00:00"), "Europe/Bucharest");
+        var expectedSept1Start = new CalDateTime(DateTime.Parse("2016-09-01T16:30:00", CultureInfo.InvariantCulture), "Europe/Bucharest");
+        var expectedSept1End = new CalDateTime(DateTime.Parse("2016-09-01T22:00:00", CultureInfo.InvariantCulture), "Europe/Bucharest");
         Assert.Multiple(() =>
         {
             Assert.That(orderedOccurrences[3].StartTime, Is.EqualTo(expectedSept1Start));
             Assert.That(orderedOccurrences[3].EndTime, Is.EqualTo(expectedSept1End));
         });
 
-        var expectedSept3Start = new CalDateTime(DateTime.Parse("2016-09-03T07:00:00"), "Europe/Bucharest");
-        var expectedSept3End = new CalDateTime(DateTime.Parse("2016-09-03T12:30:00"), "Europe/Bucharest");
+        var expectedSept3Start = new CalDateTime(DateTime.Parse("2016-09-03T07:00:00", CultureInfo.InvariantCulture), "Europe/Bucharest");
+        var expectedSept3End = new CalDateTime(DateTime.Parse("2016-09-03T12:30:00", CultureInfo.InvariantCulture), "Europe/Bucharest");
         Assert.Multiple(() =>
         {
             Assert.That(orderedOccurrences[5].StartTime, Is.EqualTo(expectedSept3Start));
@@ -3432,8 +3432,8 @@ END:VCALENDAR";
     {
         var vEvent = new CalendarEvent
         {
-            Start = new CalDateTime(DateTime.Parse("2019-06-07 0:00:00")),
-            End = new CalDateTime(DateTime.Parse("2019-06-08 00:00:00"))
+            Start = new CalDateTime(DateTime.Parse("2019-06-07 0:00:00", CultureInfo.InvariantCulture)),
+            End = new CalDateTime(DateTime.Parse("2019-06-08 00:00:00", CultureInfo.InvariantCulture))
         };
 
         //Testing on both the first day and the next, results used to be different
@@ -3457,8 +3457,8 @@ END:VCALENDAR";
         };
         var vEvent = new CalendarEvent
         {
-            Start = new CalDateTime(DateTime.Parse("2009-01-01 09:00:00")),
-            End = new CalDateTime(DateTime.Parse("2009-01-01 17:00:00"))
+            Start = new CalDateTime(DateTime.Parse("2009-01-01 09:00:00", CultureInfo.InvariantCulture)),
+            End = new CalDateTime(DateTime.Parse("2009-01-01 17:00:00", CultureInfo.InvariantCulture))
         };
 
         vEvent.RecurrenceRules.Add(rrule);
@@ -3703,8 +3703,8 @@ END:VCALENDAR";
         const string timeZoneId = @"Eastern Standard Time";
         var calendar = Calendar.Load(icalText)!;
         var firstEvent = calendar.Events.First();
-        var startSearch = new CalDateTime(DateTime.Parse("2017-07-01T00:00:00"), timeZoneId);
-        var endSearch = new CalDateTime(DateTime.Parse("2018-07-01T00:00:00"), timeZoneId);
+        var startSearch = new CalDateTime(DateTime.Parse("2017-07-01T00:00:00", CultureInfo.InvariantCulture), timeZoneId);
+        var endSearch = new CalDateTime(DateTime.Parse("2018-07-01T00:00:00", CultureInfo.InvariantCulture), timeZoneId);
 
         var occurrences = firstEvent.GetOccurrences(startSearch).TakeUntil(endSearch).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(5));

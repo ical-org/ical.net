@@ -4,6 +4,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
@@ -28,7 +29,7 @@ public class StatusCodeSerializer : StringSerializer
         var vals = new string[sc.Parts.Length];
         for (var i = 0; i < sc.Parts.Length; i++)
         {
-            vals[i] = sc.Parts[i].ToString();
+            vals[i] = sc.Parts[i].ToString(CultureInfo.InvariantCulture);
         }
         return Encode(sc, Escape(string.Join(".", vals)));
     }

@@ -4,6 +4,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -33,6 +34,7 @@ public class DurationSerializer : SerializerBase
         if (sign < 0)
             sb.Append('-');
 
+#pragma warning disable CA1305
         sb.Append('P');
         if (ts.Weeks != null)
             sb.Append($"{sign * ts.Weeks}W");
@@ -42,6 +44,7 @@ public class DurationSerializer : SerializerBase
         if (ts.Hours != null || ts.Minutes != null || ts.Seconds != null)
         {
             sb.Append('T');
+
             if (ts.Hours != null)
                 sb.Append($"{sign * ts.Hours}H");
             if (ts.Minutes != null)
@@ -49,6 +52,7 @@ public class DurationSerializer : SerializerBase
             if (ts.Seconds != null)
                 sb.Append($"{sign * ts.Seconds}S");
         }
+#pragma warning restore CA1305
 
         return sb.ToString();
     }
@@ -91,7 +95,7 @@ public class DurationSerializer : SerializerBase
                 sign = -1;
 
             int? GetGroupInt(string key)
-                => match.Groups[key].Success ? Convert.ToInt32(match.Groups[key].Value) : null;
+                => match.Groups[key].Success ? Convert.ToInt32(match.Groups[key].Value, CultureInfo.InvariantCulture) : null;
 
             weeks = GetGroupInt("week");
             if (match.Groups["main"].Success)
