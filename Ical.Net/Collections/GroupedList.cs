@@ -218,7 +218,7 @@ public class GroupedList<TGroup, TItem> :
         set => this[index] = value;
     }
 
-    public IEnumerator<TItem> GetEnumerator() => new GroupedListEnumerator<TItem>(_lists);
+    public IEnumerator<TItem> GetEnumerator() => _lists.SelectMany(x => x).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
