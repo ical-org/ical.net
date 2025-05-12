@@ -34,25 +34,24 @@ public class DurationSerializer : SerializerBase
         if (sign < 0)
             sb.Append('-');
 
-#pragma warning disable CA1305
         sb.Append('P');
+        // NOSONAR: netstandard2.x does not support string.Create(CultureInfo.InvariantCulture, $"{...}");
         if (ts.Weeks != null)
-            sb.Append($"{sign * ts.Weeks}W");
+            sb.Append(FormattableString.Invariant($"{sign * ts.Weeks}W")); // NOSONAR 
         if (ts.Days != null)
-            sb.Append($"{sign * ts.Days}D");
+            sb.Append(FormattableString.Invariant($"{sign * ts.Days}D")); // NOSONAR
 
         if (ts.Hours != null || ts.Minutes != null || ts.Seconds != null)
         {
             sb.Append('T');
 
             if (ts.Hours != null)
-                sb.Append($"{sign * ts.Hours}H");
+                sb.Append(FormattableString.Invariant($"{sign * ts.Hours}H")); // NOSONAR
             if (ts.Minutes != null)
-                sb.Append($"{sign * ts.Minutes}M");
+                sb.Append(FormattableString.Invariant($"{sign * ts.Minutes}M")); // NOSONAR
             if (ts.Seconds != null)
-                sb.Append($"{sign * ts.Seconds}S");
+                sb.Append(FormattableString.Invariant($"{sign * ts.Seconds}S")); // NOSONAR
         }
-#pragma warning restore CA1305
 
         return sb.ToString();
     }

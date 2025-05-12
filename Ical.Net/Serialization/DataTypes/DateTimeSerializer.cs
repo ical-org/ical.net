@@ -45,17 +45,16 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
         // properties whose time values are specified in UTC.
 
         var value = new StringBuilder(512);
-#pragma warning disable CA1305
-        value.Append($"{dt.Year:0000}{dt.Month:00}{dt.Day:00}");
+        // NOSONAR: netstandard2.x does not support string.Create(CultureInfo.InvariantCulture, $"{...}");
+        value.Append(FormattableString.Invariant($"{dt.Year:0000}{dt.Month:00}{dt.Day:00}")); // NOSONAR
         if (dt.HasTime)
         {
-            value.Append($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}");
+            value.Append(FormattableString.Invariant($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}")); // NOSONAR
             if (dt.IsUtc)
             {
                 value.Append("Z");
             }
         }
-#pragma warning restore CA1305
 
         // Encode the value as necessary
         return value.ToString();
