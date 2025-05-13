@@ -62,14 +62,13 @@ dotnet add package iCal.NET --prerelease
 
 ## Examples
 
-The wiki contains several pages of examples of common iCal.NET usage scenarios.
+The **[The iCal.NET Wiki](https://github.com/ical-org/ical.net/wiki)** contains several pages of examples of common iCal.NET usage scenarios.
 
 * [Simple event with a recurrence](https://github.com/ical-org/ical.net/wiki)
 * [Deserializing an ics file](https://github.com/ical-org/ical.net/wiki/Deserialize-an-ics-file)
 * [Working with attachments](https://github.com/ical-org/ical.net/wiki/Working-with-attachments)
 * [Working with recurring elements](https://github.com/ical-org/ical.net/wiki/Working-with-recurring-elements)
 * [Concurrency scenarios and PLINQ](https://github.com/ical-org/ical.net/wiki/Concurrency-scenarios-and-PLINQ)
-* [Migrating from dday.ical](https://github.com/ical-org/ical.net/wiki/Migrating-from-dday.ical)
 
 ## Versioning
 
