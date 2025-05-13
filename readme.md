@@ -47,7 +47,8 @@ is still available up to v4.3.1. Is is out of support and will not receive any f
 
 ### iCalendar Key Concepts
 
-A basic understanding of the iCalendar standard (RFC 5545) is essential for using iCal.NET effectively. The complete [RFC 5545 specification](https://www.rfc-editor.org/info/rfc5545) is available for reference in your preferred format.
+A basic understanding of the iCalendar standard (RFC 5545) is essential for using iCal.NET effectively. 
+ **[The iCal.NET Wiki](https://github.com/ical-org/ical.net/wiki)** provides references to and information about the iCalendar specification.
 
 ### Install
 
@@ -61,14 +62,13 @@ dotnet add package iCal.NET --prerelease
 
 ## Examples
 
-The wiki contains several pages of examples of common iCal.NET usage scenarios.
+The **[The iCal.NET Wiki](https://github.com/ical-org/ical.net/wiki)** contains several pages of examples of common iCal.NET usage scenarios.
 
 * [Simple event with a recurrence](https://github.com/ical-org/ical.net/wiki)
 * [Deserializing an ics file](https://github.com/ical-org/ical.net/wiki/Deserialize-an-ics-file)
 * [Working with attachments](https://github.com/ical-org/ical.net/wiki/Working-with-attachments)
 * [Working with recurring elements](https://github.com/ical-org/ical.net/wiki/Working-with-recurring-elements)
 * [Concurrency scenarios and PLINQ](https://github.com/ical-org/ical.net/wiki/Concurrency-scenarios-and-PLINQ)
-* [Migrating from dday.ical](https://github.com/ical-org/ical.net/wiki/Migrating-from-dday.ical)
 
 ## Versioning
 
