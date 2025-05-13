@@ -47,7 +47,8 @@ is still available up to v4.3.1. Is is out of support and will not receive any f
 
 ### iCalendar Key Concepts
 
-A basic understanding of the iCalendar standard (RFC 5545) is essential for using iCal.NET effectively. The complete [RFC 5545 specification](https://www.rfc-editor.org/info/rfc5545) is available for reference in your preferred format.
+A basic understanding of the iCalendar standard (RFC 5545) is essential for using iCal.NET effectively. 
+ **[The iCal.NET Wiki](https://github.com/ical-org/ical.net/wiki)** provides references to and information about the iCalendar specification.
 
 ### Install
 
