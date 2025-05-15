@@ -49,7 +49,7 @@ public class RecurrenceTests_From_Issues
 
         var calendar = Calendar.Load(ical)!;
         // Event ends on 2024-10-27, at 02:00:00 GMT (when DST ends). The end time is excluded by RFC 5545 definition.
-        var occurrences = calendar.GetOccurrences(endDate).TakeUntil(new CalDateTime("20250101T000000", "Europe/London")).ToList();
+        var occurrences = calendar.GetOccurrences(endDate).TakeBefore(new CalDateTime("20250101T000000", "Europe/London")).ToList();
 
         Assert.That(occurrences, Is.Empty);
     }
@@ -76,7 +76,7 @@ public class RecurrenceTests_From_Issues
         CalDateTime start = new CalDateTime(2025, 3, 30, 0, 0, 0, tzId);
         CalDateTime end = new CalDateTime(2025, 3, 31, 0, 0, 0, tzId);
 
-        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeUntil(end).ToList();
+        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeBefore(end).ToList();
         var occurrence = occurrences.Single();
 
         // Assert
@@ -110,7 +110,7 @@ public class RecurrenceTests_From_Issues
         CalDateTime start = new CalDateTime(2024, 10, 27, 0, 0, 0, tzId);
         CalDateTime end = new CalDateTime(2024, 10, 28, 0, 0, 0, tzId);
 
-        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeUntil(end).ToList();
+        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeBefore(end).ToList();
         var occurrence = occurrences.Single();
 
         // Assert
@@ -146,7 +146,7 @@ public class RecurrenceTests_From_Issues
         CalDateTime start = new CalDateTime(2025, 3, 30, 0, 0, 0, timeZoneId);
         CalDateTime end = new CalDateTime(2025, 3, 31, 0, 0, 0, timeZoneId);
 
-        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeUntil(end).ToList();
+        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeBefore(end).ToList();
         var occurrence = occurrences.Single();
 
         // Assert
@@ -185,7 +185,7 @@ public class RecurrenceTests_From_Issues
         CalDateTime end = new CalDateTime(2024, 10, 28, 0, 0, 0, timeZoneId);
         // Duration can't be used at the same time as End.
 
-        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeUntil(end).ToList();
+        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeBefore(end).ToList();
         var occurrence = occurrences.Single();
 
         // Assert
@@ -222,7 +222,7 @@ public class RecurrenceTests_From_Issues
         CalDateTime start = new CalDateTime(2024, 10, 27, 0, 0, 0, timeZoneId);
         CalDateTime end = new CalDateTime(2024, 10, 28, 0, 0, 0, timeZoneId);
 
-        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeUntil(end).ToList();
+        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeBefore(end).ToList();
         var occurrence = occurrences.Single();
 
         // Assert
@@ -260,7 +260,7 @@ public class RecurrenceTests_From_Issues
         CalDateTime start = new CalDateTime(2025, 3, 30, 0, 0, 0, timeZoneId);
         CalDateTime end = new CalDateTime(2025, 3, 31, 0, 0, 0, timeZoneId);
 
-        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeUntil(end).ToList();
+        var occurrences = calendar.GetOccurrences<CalendarEvent>(start).TakeBefore(end).ToList();
         var occurrence = occurrences.Single();
 
         // Assert
@@ -305,7 +305,7 @@ public class RecurrenceTests_From_Issues
 
         var start = new CalDateTime(2024, 12, 9, 8, 5, 0, CalDateTime.UtcTzId);
         var end = new CalDateTime(2024, 12, 10, 7, 59, 59, CalDateTime.UtcTzId);
-        var occurrence = calendar.GetOccurrences(start).TakeUntil(end);
+        var occurrence = calendar.GetOccurrences(start).TakeBefore(end);
 
         Assert.That(occurrence.Count, Is.EqualTo(1));
     }
@@ -330,7 +330,7 @@ public class RecurrenceTests_From_Issues
             Sequence = 0,
             RecurrenceRules = new List<RecurrencePattern> { pattern }
         };
-        var col = ev.GetOccurrences(calStart).TakeUntil(calFinish);
+        var col = ev.GetOccurrences(calStart).TakeBefore(calFinish);
 
         Assert.That(col, Is.Empty);
     }
@@ -360,7 +360,7 @@ public class RecurrenceTests_From_Issues
             RecurrenceRules = new List<RecurrencePattern> { rule }
         };
 
-        var occurrences = calendarEvent.GetOccurrences(new CalDateTime(startDate)).TakeUntil(new CalDateTime(endDate));
+        var occurrences = calendarEvent.GetOccurrences(new CalDateTime(startDate)).TakeBefore(new CalDateTime(endDate));
         var occurrencesDates = occurrences.Select(o => new CalDateTime(o.Period.StartTime.Date)).ToList();
 
         var sortedExpectedDates = expectedDates.ToList();
@@ -500,7 +500,7 @@ public class RecurrenceTests_From_Issues
         var calendar = new Calendar();
         calendar.Events.Add(vEvent);
 
-        var occurrences = vEvent.GetOccurrences(new CalDateTime(2017, 06, 01, 00, 00, 00)).TakeUntil(new CalDateTime(2017, 06, 30, 23, 59, 0)).ToList();
+        var occurrences = vEvent.GetOccurrences(new CalDateTime(2017, 06, 01, 00, 00, 00)).TakeBefore(new CalDateTime(2017, 06, 30, 23, 59, 0)).ToList();
         var excludedDays = new List<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday, DayOfWeek.Tuesday, DayOfWeek.Thursday };
 
         Assert.Multiple(() =>
