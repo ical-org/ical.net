@@ -25,7 +25,7 @@ public interface IGetOccurrences
     /// If enumeration hits year 10,000, an <see cref="EvaluationOutOfRangeException"/> is raised.
     /// This particularly can happen with recurrence rules (rrules) that neither have a count nor an until date specified.
     /// <para/>
-    /// It is advisable to limit indefinite sequences by applying the <see cref="CollectionExtensions.TakeBefore(IEnumerable{Occurrence},Ical.Net.DataTypes.CalDateTime?)"/> extension method,
+    /// It is advisable to limit indefinite sequences by applying the <see cref="CollectionExtensions.TakeWhileBefore(IEnumerable{Occurrence},CalDateTime)"/> extension method,
     /// or LINQ methods like <c>.TakeWhile()</c>
     /// </remarks>  
     IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, EvaluationOptions? options = null);
@@ -46,7 +46,7 @@ public interface IGetOccurrencesTyped : IGetOccurrences
     /// If enumeration hits year 10,000, an <see cref="EvaluationOutOfRangeException"/> is raised.
     /// This particularly can happen with recurrence rules (rrules) that neither have a count nor an until date specified.
     /// <para/>
-    /// It is advisable to limit indefinite sequences by applying the <see cref="CollectionExtensions.TakeBefore(IEnumerable{Occurrence},Ical.Net.DataTypes.CalDateTime?)"/> extension method,
+    /// It is advisable to limit indefinite sequences by applying the <see cref="CollectionExtensions.TakeWhileBefore(IEnumerable{Occurrence},CalDateTime)"/> extension method,
     /// or LINQ methods like <c>.TakeWhile()</c>
     /// </remarks>  
     IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent;

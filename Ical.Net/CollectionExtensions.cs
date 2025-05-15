@@ -30,8 +30,8 @@ public static class CollectionExtensions
     /// <returns>
     /// The elements of the sequence of occurrences to only include those that start before the specified period end.
     /// </returns>
-    public static IEnumerable<Occurrence> TakeBefore(this IEnumerable<Occurrence> sequence, CalDateTime? periodEnd)
-        => (periodEnd == null) ? sequence : sequence.TakeWhile(p => p.Period.StartTime < periodEnd);
+    public static IEnumerable<Occurrence> TakeWhileBefore(this IEnumerable<Occurrence> sequence, CalDateTime periodEnd)
+        => sequence.TakeWhile(p => p.Period.StartTime < periodEnd);
 
     /// <summary>
     /// Returns the elements of the sequence of periods to only include those that start before the specified period end.
@@ -53,6 +53,6 @@ public static class CollectionExtensions
     /// <returns>
     /// The elements of the sequence of periods to only include those that start before the specified period end.
     /// </returns>
-    public static IEnumerable<Period> TakeBefore(this IEnumerable<Period> sequence, CalDateTime? periodEnd)
-        => (periodEnd == null) ? sequence : sequence.TakeWhile(p => p.StartTime < periodEnd);
+    public static IEnumerable<Period> TakeWhileBefore(this IEnumerable<Period> sequence, CalDateTime periodEnd)
+        => sequence.TakeWhile(p => p.StartTime < periodEnd);
 }

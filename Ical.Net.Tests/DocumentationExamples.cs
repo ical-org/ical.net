@@ -41,7 +41,7 @@ public class DocumentationExamples
         // July 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
         var searchStart = new CalDateTime(2016, 07, 20);
         var searchEnd = new CalDateTime(2016, 08, 05);
-        var occurrences = calendar.GetOccurrences(searchStart).TakeBefore(searchEnd).ToList();
+        var occurrences = calendar.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(12));
     }
 
@@ -66,7 +66,7 @@ public class DocumentationExamples
         // The first Tuesday is July 5. There should be 13 in total
         var searchStart = new CalDateTime(2010, 01, 01);
         var searchEnd = new CalDateTime(2016, 12, 31);
-        var tuesdays = vEvent.GetOccurrences(searchStart).TakeBefore(searchEnd).ToList();
+        var tuesdays = vEvent.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
 
         Assert.That(tuesdays, Has.Count.EqualTo(13));
     }
@@ -94,7 +94,7 @@ public class DocumentationExamples
 
         var searchStart = new CalDateTime(2000, 01, 01);
         var searchEnd = new CalDateTime(2017, 01, 01);
-        var usThanksgivings = vEvent.GetOccurrences(searchStart).TakeBefore(searchEnd).ToList();
+        var usThanksgivings = vEvent.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
 
         Assert.That(usThanksgivings, Has.Count.EqualTo(17));
         foreach (var thanksgiving in usThanksgivings)
@@ -127,7 +127,7 @@ public class DocumentationExamples
         // We are essentially counting all the days that aren't Sunday in 2016, so there should be 314
         var searchStart = new CalDateTime(2015, 12, 31);
         var searchEnd = new CalDateTime(2017, 01, 01);
-        var occurrences = calendar.GetOccurrences(searchStart).TakeBefore(searchEnd).ToList();
+        var occurrences = calendar.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(314));
     }
 }

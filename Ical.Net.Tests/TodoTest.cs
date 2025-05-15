@@ -212,7 +212,7 @@ public class TodoTest
 
         var occurrences = todo[0].GetOccurrences(
             new CalDateTime(2006, 7, 1, 9, 0, 0))
-            .TakeBefore(new CalDateTime(2007, 7, 1, 9, 0, 0)).ToList();
+            .TakeWhileBefore(new CalDateTime(2007, 7, 1, 9, 0, 0)).ToList();
 
         Assert.That(
             occurrences,
