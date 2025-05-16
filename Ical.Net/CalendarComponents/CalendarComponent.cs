@@ -75,6 +75,6 @@ public class CalendarComponent : CalendarObject, ICalendarComponent
     public virtual void AddProperty(ICalendarProperty p)
     {
         p.Parent = this;
-        Properties.Set(p.Name, p.Value);
+        Properties.Add(p);
     }
 }

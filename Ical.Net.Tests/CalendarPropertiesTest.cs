@@ -32,13 +32,11 @@ public class CalendarPropertiesTest
     }
 
     [Test]
-    [Ignore("Calendar properties aren't being properly serialized")]
     public void PropertySerialization_Tests()
     {
-        const string formatted =
-            @"FMTTYPE=text/html:<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 3.2//EN"">\n<HTML>\n<HEAD>\n<META NAME=""Generator"" CONTENT=""MS Exchange Server version rmj.rmm.rup.rpr"">\n<TITLE></TITLE>\n</HEAD>\n<BODY>\n<!-- Converted from text/rtf format -->\n\n<P DIR=LTR><SPAN LANG=""en-us""><FONT FACE=""Calibri"">This is some</FONT></SPAN><SPAN LANG=""en-us""><B> <FONT FACE=""Calibri"">HTML</FONT></B></SPAN><SPAN LANG=""en-us""><FONT FACE=""Calibri""></FONT></SPAN><SPAN LANG=""en-us""><U> <FONT FACE=""Calibri"">formatted</FONT></U></SPAN><SPAN LANG=""en-us""><FONT FACE=""Calibri""></FONT></SPAN><SPAN LANG=""en-us""><I> <FONT FACE=""Calibri"">text</FONT></I></SPAN><SPAN LANG=""en-us""><FONT FACE=""Calibri"">.</FONT></SPAN><SPAN LANG=""en-us""></SPAN></P>\n\n</BODY>\n</HTML>";
-
-        var start = DateTime.Now;
+        const string propValue =
+            """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">\n<HTML>\n<HEAD>\n<META NAME="Generator" CONTENT="MS Exchange Server version rmj.rmm.rup.rpr">\n<TITLE></TITLE>\n</HEAD>\n<BODY>\n<!-- Converted from text/rtf format -->\n\n<P DIR=LTR><SPAN LANG="en-us"><FONT FACE="Calibri">This is some</FONT></SPAN><SPAN LANG="en-us"><B> <FONT FACE="Calibri">HTML</FONT></B></SPAN><SPAN LANG="en-us"><FONT FACE="Calibri"></FONT></SPAN><SPAN LANG="en-us"><U> <FONT FACE="Calibri">formatted</FONT></U></SPAN><SPAN LANG="en-us"><FONT FACE="Calibri"></FONT></SPAN><SPAN LANG="en-us"><I> <FONT FACE="Calibri">text</FONT></I></SPAN><SPAN LANG="en-us"><FONT FACE="Calibri">.</FONT></SPAN><SPAN LANG="en-us"></SPAN></P>\n\n</BODY>\n</HTML>""";
+        var start = DateTime.UtcNow;
         var end = start.AddHours(1);
         var @event = new CalendarEvent
         {
@@ -46,13 +44,16 @@ public class CalendarPropertiesTest
             End = new CalDateTime(end),
             Description = "This is a description",
         };
-        var property = new CalendarProperty("X-ALT-DESC", formatted);
+        var property = new CalendarProperty("X-ALT-DESC", propValue);
+        // Parameters most not be part of the value
+        property.Parameters.Add("FMTTYPE", "text/html");
         @event.AddProperty(property);
         var calendar = new Calendar();
         calendar.Events.Add(@event);
 
         var serialized = new CalendarSerializer().SerializeToString(calendar);
-        Assert.That(serialized, Does.Contain("X-ALT-DESC;"));
+        Assert.That(serialized, Does.Contain("X-ALT-DESC;FMTTYPE=text/html:"),
+            "Parameter should get serialized standard compliant");
     }
 
     [Test]
