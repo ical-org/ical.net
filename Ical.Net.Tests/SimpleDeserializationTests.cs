@@ -436,16 +436,17 @@ END:VCALENDAR
         }, Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
     }
 
-    [Test, Category("Deserialization"), Ignore("Ignore until @thoemy commits the EventStatus.ics file")]
+    [Test, Category("Deserialization")]
     public void EventStatus()
     {
         var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.EventStatus)).Cast<Calendar>().Single();
-        Assert.That(iCal.Events, Has.Count.EqualTo(4));
 
-        Assert.That(iCal.Events[0].Summary, Is.EqualTo("No status"));
-        Assert.That(iCal.Events[0].Status, Is.Null);
         Assert.Multiple(() =>
         {
+            Assert.That(iCal.Events, Has.Count.EqualTo(4));
+
+            Assert.That(iCal.Events[0].Summary, Is.EqualTo("No status"));
+            Assert.That(iCal.Events[0].Status, Is.Null);
             Assert.That(iCal.Events[0].IsActive, Is.True);
 
             Assert.That(iCal.Events[1].Summary, Is.EqualTo("Confirmed"));
@@ -454,11 +455,8 @@ END:VCALENDAR
 
             Assert.That(iCal.Events[2].Summary, Is.EqualTo("Cancelled"));
             Assert.That(iCal.Events[2].Status, Is.EqualTo("CANCELLED"));
-        });
-        Assert.That(iCal.Events[2].IsActive, Is.False);
+            Assert.That(iCal.Events[2].IsActive, Is.False);
 
-        Assert.Multiple(() =>
-        {
             Assert.That(iCal.Events[3].Summary, Is.EqualTo("Tentative"));
             Assert.That(iCal.Events[3].Status, Is.EqualTo("TENTATIVE"));
             Assert.That(iCal.Events[3].IsActive, Is.True);
