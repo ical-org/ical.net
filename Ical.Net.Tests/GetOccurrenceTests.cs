@@ -35,7 +35,7 @@ internal class GetOccurrenceTests
 
         var searchStart = new CalDateTime(2015, 12, 29);
         var searchEnd = new CalDateTime(2017, 02, 10);
-        var occurrences = calendar.GetOccurrences(searchStart).TakeUntil(searchEnd).ToList();
+        var occurrences = calendar.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
 
         var firstOccurrence = occurrences.First();
         var firstStartCopy = firstStart.Copy();
@@ -83,7 +83,7 @@ internal class GetOccurrenceTests
         var occurrences = RecurrenceUtil.GetOccurrences(
             recurrable: vEvent,
             periodStart: intervalStart)
-            .TakeUntil(intervalEnd);
+            .TakeWhileBefore(intervalEnd);
         var occurrenceSet = new HashSet<CalDateTime>(occurrences.Select(o => o.Period.StartTime));
 
         Assert.That(occurrenceSet, Has.Count.EqualTo(evaluationsCount));
@@ -145,7 +145,7 @@ END:VCALENDAR";
 
         var calendar = GetCalendars(ical);
         var date = new CalDateTime(2016, 10, 11);
-        var occurrences = calendar.GetOccurrences(date).TakeUntil(date.AddDays(1)).ToList();
+        var occurrences = calendar.GetOccurrences(date).TakeWhileBefore(date.AddDays(1)).ToList();
 
         //We really want to make sure this doesn't explode
         Assert.That(occurrences, Has.Count.EqualTo(1));
@@ -209,7 +209,7 @@ END:VCALENDAR";
 
         var collection = Calendar.Load(ical);
         var startCheck = new CalDateTime(2016, 11, 11);
-        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck).TakeUntil(startCheck.AddMonths(1)).ToList();
+        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck).TakeWhileBefore(startCheck.AddMonths(1)).ToList();
 
         CalDateTime[] expectedStartDates = [
             new CalDateTime("20161114T000100", "W. Europe Standard Time"),
@@ -224,7 +224,7 @@ END:VCALENDAR";
 
         // Specify end time that is between the original occurrence at 20161128T0001 and the overridden one at 20161128T0030.
         // The overridden one shouldn't be returned, because it was replaced and the other one is in the future.
-        var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck)).TakeUntil(new CalDateTime("20161128T002000", "W. Europe Standard Time"))
+        var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck)).TakeWhileBefore(new CalDateTime("20161128T002000", "W. Europe Standard Time"))
             .ToList();
 
         Assert.Multiple(() =>
@@ -263,10 +263,10 @@ END:VCALENDAR";
 
         var collection = Calendar.Load(ical);
         var startCheck = new CalDateTime(2023, 10, 1);
-        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck).TakeUntil(startCheck.AddMonths(1))
+        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck).TakeWhileBefore(startCheck.AddMonths(1))
             .ToList();
 
-        var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck)).TakeUntil(new CalDateTime(2023, 12, 31))
+        var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck)).TakeWhileBefore(new CalDateTime(2023, 12, 31))
             .ToList();
 
         CalDateTime[] expectedStartDates = [

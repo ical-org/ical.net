@@ -53,7 +53,7 @@ public class ProgramTest
         // Get occurrences for the first event
         var occurrences = evt1.GetOccurrences(
             new CalDateTime(1996, 1, 1))
-            .TakeUntil(new CalDateTime(2000, 1, 1)).ToList();
+            .TakeWhileBefore(new CalDateTime(2000, 1, 1)).ToList();
 
         var dateTimes = new[]
         {
@@ -105,7 +105,7 @@ public class ProgramTest
         // Get occurrences for the 2nd event
         occurrences = evt2.GetOccurrences(
             new CalDateTime(1996, 1, 1))
-            .TakeUntil(new CalDateTime(1998, 4, 1)).ToList();
+            .TakeWhileBefore(new CalDateTime(1998, 4, 1)).ToList();
 
         var dateTimes1 = new[]
         {

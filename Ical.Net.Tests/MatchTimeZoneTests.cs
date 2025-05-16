@@ -38,7 +38,7 @@ public class MatchTimeZoneTests
         var until = evt.RecurrenceRules.First().Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 13, 00, 00, CalDateTime.UtcTzId);
-        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeUntil(new CalDateTime(2023, 11, 06));
+        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
 
         Assert.Multiple(() =>
         {
@@ -88,7 +88,7 @@ public class MatchTimeZoneTests
             System.Globalization.DateTimeStyles.AssumeUniversal |
             System.Globalization.DateTimeStyles.AdjustToUniversal).AsCalDateTime();
         
-        var occurrences = evt.GetOccurrences(new CalDateTime(2024, 10, 01)).TakeUntil(new CalDateTime(2024, 10, 07));
+        var occurrences = evt.GetOccurrences(new CalDateTime(2024, 10, 01)).TakeWhileBefore(new CalDateTime(2024, 10, 07));
 
         Assert.Multiple(() =>
         {
@@ -133,7 +133,7 @@ public class MatchTimeZoneTests
         var until = evt.RecurrenceRules.First().Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, CalDateTime.UtcTzId);
-        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeUntil(new CalDateTime(2023, 11, 06));
+        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
         
         Assert.Multiple(() =>
         {
@@ -166,7 +166,7 @@ public class MatchTimeZoneTests
         var until = evt.RecurrenceRules.First().Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, null);
-        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeUntil(new CalDateTime(2023, 11, 06));
+        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
 
         Assert.Multiple(() =>
         {
@@ -200,7 +200,7 @@ public class MatchTimeZoneTests
         var until = evt.RecurrenceRules.First().Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, null);
-        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeUntil(new CalDateTime(2023, 11, 06));
+        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
         
         Assert.Multiple(() =>
         {
@@ -233,7 +233,7 @@ public class MatchTimeZoneTests
         var until = evt.RecurrenceRules.First().Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05);
-        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeUntil(new CalDateTime(2023, 11, 06));
+        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
 
         Assert.Multiple(() =>
         {
