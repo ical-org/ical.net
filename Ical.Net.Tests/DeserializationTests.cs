@@ -162,17 +162,17 @@ public class DeserializationTests
     [Test]
     public void Categories1_2()
     {
-        var iCal = Calendar.Load(IcsFiles.Categories1);
+        var iCal = Calendar.Load(IcsFiles.Categories1)!;
         ProgramTest.TestCal(iCal);
         var evt = iCal.Events.First();
 
         var items = new List<string>();
-        items.AddRange(new[]
-        {
+        items.AddRange([
             "One", "Two", "Three",
             "Four", "Five", "Six",
-            "Seven", "A string of text with nothing less than a comma, semicolon; and a newline\n."
-        });
+            "Seven", // Category has parameter ENCODING=BASE64:U2V2ZW4=
+            "A string of text with comma, semicolon; and a newline\n."
+        ]);
 
         var found = new Dictionary<string, bool>();
         foreach (var s in evt.Categories.Where(s => items.Contains(s)))
@@ -180,7 +180,7 @@ public class DeserializationTests
             found[s] = true;
         }
 
-        foreach (string item in items)
+        foreach (var item in items)
         {
             Assert.That(found.ContainsKey(item), Is.True, "Event should contain CATEGORY '" + item + "', but it was not found.");
         }
