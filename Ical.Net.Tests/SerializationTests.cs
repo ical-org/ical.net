@@ -223,7 +223,7 @@ public class SerializationTests
         cal1.Events.Add(evt);
 
         var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(cal1);
+        var serializedCalendar = serializer.SerializeToString(cal1)!;
         var cal2 = Calendar.Load(serializedCalendar);
         CompareCalendars(cal1, cal2);
     }
@@ -240,24 +240,23 @@ public class SerializationTests
         var evt = new CalendarEvent
         {
             Class = "PRIVATE",
-            Created = new CalDateTime(2010, 3, 25, 12, 53, 35),
-            DtStamp = new CalDateTime(2010, 3, 25, 12, 53, 35),
-            LastModified = new CalDateTime(2010, 3, 27, 13, 53, 35),
+            Created = new CalDateTime(2025, 3, 25, 12, 53, 35),
+            DtStamp = new CalDateTime(2025, 3, 25, 12, 53, 35),
+            LastModified = new CalDateTime(2025, 3, 27, 13, 53, 35),
             Sequence = 0,
             Uid = "42f58d4f-847e-46f8-9f4a-ce52697682cf",
             Priority = 5,
             Location = "here",
             Summary = "test",
-            DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00),
-            DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00)
-            //not yet testing property below as serialized output currently does not comply with RTFC 2445
-            //Transparency = TransparencyType.Opaque,
-            //Status = EventStatus.Confirmed
+            DtStart = new CalDateTime(2025, 3, 25, 12, 50, 00),
+            DtEnd = new CalDateTime(2025, 3, 25, 13, 10, 00),
+            Transparency = TransparencyType.Opaque,
+            Status = EventStatus.Confirmed
         };
         cal.Events.Add(evt);
 
         var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(cal);
+        var serializedCalendar = serializer.SerializeToString(cal)!;
 
         Assert.Multiple(() =>
         {
@@ -269,18 +268,21 @@ public class SerializationTests
 
         foreach (var p in expectProperties)
         {
-            Assert.That(serializedCalendar, Does.Contain(SerializationConstants.LineBreak + p + SerializationConstants.LineBreak), "expected '" + p + "' not found");
+            Assert.That(serializedCalendar,
+                Does.Contain(SerializationConstants.LineBreak + p + SerializationConstants.LineBreak),
+                "expected '" + p + "' not found");
         }
 
         InspectSerializedSection(serializedCalendar, "VEVENT",
-            new[]
-            {
-                "CLASS:" + evt.Class, "CREATED:" + CalDateString(evt.Created), "DTSTAMP:" + CalDateString(evt.DtStamp),
-                "LAST-MODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid, "PRIORITY:" + evt.Priority,
-                "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd)
-                //"TRANSPARENCY:" + TransparencyType.Opaque.ToString().ToUpperInvariant(),
-                //"STATUS:" + EventStatus.Confirmed.ToString().ToUpperInvariant()
-            });
+        [
+            "CLASS:" + evt.Class, "CREATED:" + CalDateString(evt.Created), "DTSTAMP:" + CalDateString(evt.DtStamp),
+            "LAST-MODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid,
+            "PRIORITY:" + evt.Priority,
+            "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart),
+            "DTEND:" + CalDateString(evt.DtEnd),
+            "TRANSP:" + TransparencyType.Opaque.ToUpperInvariant(),
+            "STATUS:" + EventStatus.Confirmed.ToUpperInvariant()
+        ]);
     }
 
     private static readonly IList<Attendee> _attendees = new List<Attendee>
@@ -352,7 +354,7 @@ public class SerializationTests
     public void ZeroDuration_Test()
     {
         var result = new DurationSerializer().SerializeToString(Duration.Zero);
-        Assert.That("P0D".Equals(result, StringComparison.Ordinal), Is.True);
+        Assert.That(result, Is.EqualTo("P0D"));
     }
 
     [Test]
