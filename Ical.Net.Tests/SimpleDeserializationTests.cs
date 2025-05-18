@@ -164,31 +164,6 @@ public class SimpleDeserializationTests
     }
 
     [Test, Category("Deserialization")]
-    public void Categories1_2()
-    {
-        var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.Categories1)).Cast<Calendar>().Single();
-        ProgramTest.TestCal(iCal);
-        var evt = iCal.Events.First();
-
-        var items = new List<string>();
-        items.AddRange(new[]
-        {
-            "One", "Two", "Three",
-            "Four", "Five", "Six",
-            "Seven", "A string of text with nothing less than a comma, semicolon; and a newline\n."
-        });
-
-        var found = new Dictionary<string, bool>();
-        foreach (var s in evt.Categories.Where(s => items.Contains(s)))
-        {
-            found[s] = true;
-        }
-
-        foreach (string item in items)
-            Assert.That(found.ContainsKey(item), Is.True, "Event should contain CATEGORY '" + item + "', but it was not found.");
-    }
-
-    [Test, Category("Deserialization")]
     public void EmptyLines1()
     {
         var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.EmptyLines1)).Cast<Calendar>().Single();
