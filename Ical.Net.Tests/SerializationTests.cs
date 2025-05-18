@@ -160,41 +160,54 @@ public class SerializationTests
             : match.Groups[1].Value.Substring(1).Split(';').Select(v => v.Split('=')).ToDictionary(v => v[0], v => v.Length > 1 ? v[1] : null);
     }
 
-    [Test, Category("Serialization"), Ignore("TODO: standard time, for NZ standard time (current example)")]
-    public void TimeZoneSerialize()
+    [Test, Category("Serialization")]
+    public void SerializeDeserialize_CalendarWithVTimezone()
     {
         var cal = new Calendar
         {
             Method = "PUBLISH",
-            Version = "2.0"
         };
 
-        const string exampleTz = "New Zealand Standard Time";
-        var tzi = TimeZoneInfo.FindSystemTimeZoneById(exampleTz);
-        var tz = new VTimeZone(exampleTz);
-        cal.AddTimeZone(tz);
+        var nodaTz = NodaTime.DateTimeZoneProviders.Tzdb.GetZoneOrNull("Pacific/Auckland");
+
+        // Can be any name, but we use another name for Pacific/Auckland
+        var vTz = new VTimeZone("New Zealand Standard Time");
+
+        // Get the time zone information for the specified time zone and
+        // earliest date to support
+        var tzInfos = VTimeZone
+            .FromDateTimeZone(nodaTz!.Id, new DateTime(2025, 1, 1, 0, 0, 0), false)
+            .TimeZoneInfos;
+
+        // The timezone information must be added to the VTimeZone
+        vTz.TimeZoneInfos.AddRange(tzInfos);
+        cal.AddTimeZone(vTz);
         var evt = new CalendarEvent
         {
             Summary = "Testing",
-            Start = new CalDateTime(2016, 7, 14),
-            End = new CalDateTime(2016, 7, 15)
+            Start = new CalDateTime(2025, 7, 14),
+            End = new CalDateTime(2025, 7, 15)
         };
         cal.Events.Add(evt);
 
-        var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(cal);
+        var serializedCalendar = new CalendarSerializer().SerializeToString(cal)!;
+        var deserializedCalendar = Calendar.Load(serializedCalendar)!;
 
-        var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] { "TZID:" + tz.TzId });
-        var o = tzi.BaseUtcOffset.ToString("hhmm", CultureInfo.InvariantCulture);
+        var vTimezone = InspectSerializedSection(serializedCalendar,
+            "VTIMEZONE", ["TZID:" + vTz.TzId]);
+        var offset = tzInfos[0].OffsetTo!.ToString();
 
-        InspectSerializedSection(vTimezone, "STANDARD", new[] {"TZNAME:" + tzi.StandardName, "TZOFFSETTO:" + o
-            //"DTSTART:20150402T030000",
-            //"RRULE:FREQ=YEARLY;BYDAY=1SU;BYHOUR=3;BYMINUTE=0;BYMONTH=4",
-            //"TZOFFSETFROM:+1300"
+        InspectSerializedSection(vTimezone, "STANDARD",
+            ["TZNAME:" + tzInfos[0].TimeZoneName, "TZOFFSETTO:" + offset]);
+
+        InspectSerializedSection(vTimezone, "DAYLIGHT",
+            ["TZNAME:" + tzInfos[1].TimeZoneName, "TZOFFSETFROM:" + offset]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(deserializedCalendar.TimeZones, Has.Count.EqualTo(1));
+            Assert.That(deserializedCalendar.TimeZones[0].TimeZoneInfos, Has.Count.EqualTo(2));
         });
-
-
-        InspectSerializedSection(vTimezone, "DAYLIGHT", new[] { "TZNAME:" + tzi.DaylightName, "TZOFFSETFROM:" + o });
     }
 
     [Test, Category("Serialization")]
