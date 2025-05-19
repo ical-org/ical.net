@@ -255,4 +255,22 @@ public class SymmetricSerializationTests
         var deserialized = UnserializeCalendar(serialized);
         Assert.That(deserialized, Is.EqualTo(c));
     }
+
+    [TestCase("Foo", "Bar", "Baz")]
+    [TestCase("Hello", "World", null)]
+    public void ResourceTest(string cat1, string cat2, string cat3)
+    {
+        var vEvent = GetSimpleEvent();
+        vEvent.Resources = [cat1, cat2, cat3];
+        var c = new Calendar();
+        c.Events.Add(vEvent);
+
+        var serialized = SerializeToString(c);
+        var categoriesCount = Regex.Matches(serialized, "RESOURCES").Count;
+        Assert.That(categoriesCount, Is.EqualTo(1));
+        Assert.That(serialized, Does.Contain($"RESOURCES:{string.Join(",", vEvent.Categories)}"));
+
+        var deserialized = UnserializeCalendar(serialized);
+        Assert.That(deserialized, Is.EqualTo(c));
+    }
 }

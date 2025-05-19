@@ -39,7 +39,7 @@ public class PropertySerializer : SerializerBase
         // TODO: Exhaust this list with all properties which can be displayed in one line.
         var stringBuilder = prop.Name switch
         {
-            "CATEGORIES" => ToOneLine(prop, sf),
+            "CATEGORIES" or "RESOURCES" => ToOneLine(prop, sf),
             _ => ToMultipleLines(prop, sf),
         };
 
