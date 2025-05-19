@@ -238,7 +238,7 @@ public class SymmetricSerializationTests
         yield return new TestCaseData("\\\\uncPath\\to\\resource.txt", new Uri("\\\\uncPath\\to\\resource.txt")).SetName("UNC path URL");
     }
 
-    [Test, Ignore("TODO: Fix CATEGORIES multiple serializations")]
+    [Test]
     public void CategoriesTest()
     {
         var vEvent = GetSimpleEvent();
