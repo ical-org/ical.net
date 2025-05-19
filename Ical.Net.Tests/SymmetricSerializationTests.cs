@@ -238,17 +238,37 @@ public class SymmetricSerializationTests
         yield return new TestCaseData("\\\\uncPath\\to\\resource.txt", new Uri("\\\\uncPath\\to\\resource.txt")).SetName("UNC path URL");
     }
 
-    [Test, Ignore("TODO: Fix CATEGORIES multiple serializations")]
-    public void CategoriesTest()
+    [TestCase("Foo", "Bar", "Baz")]
+    [TestCase("Hello", "World", null)]
+    public void CategoriesTest(string cat1, string cat2, string cat3)
     {
         var vEvent = GetSimpleEvent();
-        vEvent.Categories = new List<string> { "Foo", "Bar", "Baz" };
+        vEvent.Categories = [cat1, cat2, cat3];
         var c = new Calendar();
         c.Events.Add(vEvent);
 
         var serialized = SerializeToString(c);
         var categoriesCount = Regex.Matches(serialized, "CATEGORIES").Count;
         Assert.That(categoriesCount, Is.EqualTo(1));
+        Assert.That(serialized, Does.Contain($"CATEGORIES:{string.Join(",", vEvent.Categories)}"));
+
+        var deserialized = UnserializeCalendar(serialized);
+        Assert.That(deserialized, Is.EqualTo(c));
+    }
+
+    [TestCase("Foo", "Bar", "Baz")]
+    [TestCase("Hello", "World", null)]
+    public void ResourceTest(string cat1, string cat2, string cat3)
+    {
+        var vEvent = GetSimpleEvent();
+        vEvent.Resources = [cat1, cat2, cat3];
+        var c = new Calendar();
+        c.Events.Add(vEvent);
+
+        var serialized = SerializeToString(c);
+        var categoriesCount = Regex.Matches(serialized, "RESOURCES").Count;
+        Assert.That(categoriesCount, Is.EqualTo(1));
+        Assert.That(serialized, Does.Contain($"RESOURCES:{string.Join(",", vEvent.Categories)}"));
 
         var deserialized = UnserializeCalendar(serialized);
         Assert.That(deserialized, Is.EqualTo(c));

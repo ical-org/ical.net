@@ -36,15 +36,35 @@ public class PropertySerializer : SerializerBase
         // the property and parameter values
         var sf = GetService<ISerializerFactory>();
 
+        // TODO: Exhaust this list with all properties which can be displayed in one line.
+        var stringBuilder = prop.Name switch
+        {
+            "CATEGORIES" or "RESOURCES" => ToOneLine(prop, sf),
+            _ => ToMultipleLines(prop, sf),
+        };
+
+        // Pop the object off the serialization context.
+        SerializationContext.Pop();
+        return stringBuilder.ToString();
+    }
+
+    private StringBuilder ToOneLine(ICalendarProperty prop, ISerializerFactory sf)
+    {
+        var result = new StringBuilder();
+        SerializeValue(result, prop, prop.Values.Where(e => e is not null), sf);
+
+        return result;
+    }
+
+    private StringBuilder ToMultipleLines(ICalendarProperty prop, ISerializerFactory sf)
+    {
         var result = new StringBuilder();
         foreach (var v in prop.Values.Where(value => value != null))
         {
             SerializeValue(result, prop, v!, sf);
         }
 
-        // Pop the object off the serialization context.
-        SerializationContext.Pop();
-        return result.ToString();
+        return result;
     }
 
     private void SerializeValue(StringBuilder result, ICalendarProperty prop, object value, ISerializerFactory sf)
