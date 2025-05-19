@@ -238,39 +238,53 @@ public class SymmetricSerializationTests
         yield return new TestCaseData("\\\\uncPath\\to\\resource.txt", new Uri("\\\\uncPath\\to\\resource.txt")).SetName("UNC path URL");
     }
 
-    [TestCase("Foo", "Bar", "Baz")]
-    [TestCase("Hello", "World", null)]
-    public void CategoriesTest(string cat1, string cat2, string cat3)
+    [Test, TestCaseSource(nameof(CategoryTest_TestCases))]
+    public void CategoriesTest(string[] categories)
     {
         var vEvent = GetSimpleEvent();
-        vEvent.Categories = [cat1, cat2, cat3];
+        vEvent.Categories = categories;
         var c = new Calendar();
         c.Events.Add(vEvent);
 
         var serialized = SerializeToString(c);
         var categoriesCount = Regex.Matches(serialized, "CATEGORIES").Count;
         Assert.That(categoriesCount, Is.EqualTo(1));
-        Assert.That(serialized, Does.Contain($"CATEGORIES:{string.Join(",", vEvent.Categories)}"));
+        var catString = $"CATEGORIES:{string.Join(",", categories.OfType<string>())}";
+        Assert.That(serialized, Does.Contain(catString));
 
         var deserialized = UnserializeCalendar(serialized);
         Assert.That(deserialized, Is.EqualTo(c));
     }
 
-    [TestCase("Foo", "Bar", "Baz")]
-    [TestCase("Hello", "World", null)]
-    public void ResourceTest(string cat1, string cat2, string cat3)
+    private static IEnumerable CategoryTest_TestCases()
+    {
+        yield return new string[] { "Foo", "Bar", "Baz" };
+        yield return new string[] { "Hello", "world" };
+        yield return new string[] { "Hello", "world", null };
+    }
+
+    [Test, TestCaseSource(nameof(ResourceTest_TestCases))]
+    public void ResourceTest(string[] ressources)
     {
         var vEvent = GetSimpleEvent();
-        vEvent.Resources = [cat1, cat2, cat3];
+        vEvent.Resources = ressources;
         var c = new Calendar();
         c.Events.Add(vEvent);
 
         var serialized = SerializeToString(c);
         var categoriesCount = Regex.Matches(serialized, "RESOURCES").Count;
         Assert.That(categoriesCount, Is.EqualTo(1));
-        Assert.That(serialized, Does.Contain($"RESOURCES:{string.Join(",", vEvent.Categories)}"));
+        var resString = $"RESOURCES:{string.Join(",", ressources.OfType<string>())}";
+        Assert.That(serialized, Does.Contain(resString));
 
         var deserialized = UnserializeCalendar(serialized);
         Assert.That(deserialized, Is.EqualTo(c));
+    }
+
+    private static IEnumerable ResourceTest_TestCases()
+    {
+        yield return new string[] { "Foo", "Bar", "Baz" };
+        yield return new string[] { "Hello", "world" };
+        yield return new string[] { "Hello", "world", null };
     }
 }
