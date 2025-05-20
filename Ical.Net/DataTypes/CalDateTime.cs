@@ -29,6 +29,9 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     // The time part that is used to return the Value property.
     private TimeOnly? _timeOnly;
 
+    // Track if this instance was created with ToTimeZone(...)
+    private ZonedDateTime? _zonedDateTime;
+
     /// <summary>
     /// The timezone ID for Universal Coordinated Time (UTC).
     /// </summary>
@@ -58,6 +61,11 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     private CalDateTime()
     {
         // required for the SerializerFactory to work
+    }
+
+    internal CalDateTime(ZonedDateTime zonedDateTime, string? tzId) : this(zonedDateTime.ToDateTimeUnspecified(), tzId)
+    {
+        _zonedDateTime = zonedDateTime;
     }
 
     /// <summary>
@@ -210,6 +218,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     {
         _dateOnly = dateOnly;
         _timeOnly = TruncateTimeToSeconds(timeOnly);
+        _zonedDateTime = null;
 
         _tzId = tzId switch
         {
@@ -218,13 +227,13 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         };
     }
 
-    /// <inheritdoc/>
     private void CopyFrom(CalDateTime calDt)
     {
         // Maintain the private date/time backing fields
         _dateOnly = calDt._dateOnly;
         _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
         _tzId = calDt._tzId;
+        _zonedDateTime = calDt._zonedDateTime;
     }
 
     public bool Equals(CalDateTime? other) => this == other;
@@ -306,7 +315,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// it means that the <see cref="Value"/> is considered as local time for every timezone:
     /// The returned <see cref="Value"/> is unchanged, but with <see cref="DateTimeKind.Utc"/>.
     /// </summary>
-    public DateTime AsUtc => DateTime.SpecifyKind(ToTimeZone(UtcTzId).Value, DateTimeKind.Utc);
+    public DateTime AsUtc => _zonedDateTime?.ToDateTimeUtc() ?? DateTime.SpecifyKind(ToTimeZone(UtcTzId).Value, DateTimeKind.Utc);
 
     /// <summary>
     /// Gets the date and time value in the ISO calendar as a <see cref="DateTime"/> type with <see cref="DateTimeKind.Unspecified"/>.
@@ -463,13 +472,19 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         }
         else
         {
-            var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId!);
-            converted = zonedOriginal.WithZone(DateUtil.GetZone(otherTzId));
+            // If the current instance was created from ToTimeZone(...), it will have the _zonedDateTime set.
+            // Using this value avoids wrong (double) conversions when the original date/time
+            // was in a non-existing time due to DST changes and the value was determined leniently.
+            var zonedOriginal =
+                _zonedDateTime ?? DateUtil.ToZonedDateTimeLeniently(Value, TzId!);
+
+            converted = otherTzId != TzId
+                ? zonedOriginal.WithZone(DateUtil.GetZone(otherTzId))
+                : zonedOriginal;
         }
 
-        return converted.Zone == DateTimeZone.Utc
-            ? new CalDateTime(converted.ToDateTimeUtc(), UtcTzId)
-            : new CalDateTime(converted.ToDateTimeUnspecified(), otherTzId);
+        // Create a new instance with the converted date/time and the new timezone.
+        return new CalDateTime(converted, otherTzId);
     }
 
     /// <summary>
@@ -547,7 +562,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     }
 
     internal CalDateTime Copy()
-        => new CalDateTime(_dateOnly, _timeOnly, _tzId);
+        => new CalDateTime(_dateOnly, _timeOnly, _tzId) { _zonedDateTime = _zonedDateTime};
 
     /// <inheritdoc cref="DateTime.AddYears"/>
     public CalDateTime AddYears(int years)
@@ -654,17 +669,15 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
         formatProvider ??= CultureInfo.InvariantCulture;
-        var dateTimeOffset = DateUtil.ToZonedDateTimeLeniently(Value, _tzId ?? string.Empty).ToDateTimeOffset();
-
+        var dateTimeOffset =
+            _zonedDateTime?.ToDateTimeOffset()
+            ?? DateUtil.ToZonedDateTimeLeniently(Value, _tzId ?? string.Empty).ToDateTimeOffset();
+        
         // Use the .NET format options to format the DateTimeOffset
         var tzIdString = _tzId is not null ? $" {_tzId}" : string.Empty;
 
-        if (HasTime)
-        {
-            return $"{dateTimeOffset.ToString(format, formatProvider)}{tzIdString}";
-        }
-
-        // No time part
-        return $"{DateOnly.FromDateTime(dateTimeOffset.Date).ToString(format ?? "d", formatProvider)}{tzIdString}";
+        return HasTime
+            ? $"{dateTimeOffset.ToString(format, formatProvider)}{tzIdString}"
+            : $"{DateOnly.FromDateTime(dateTimeOffset.Date).ToString(format ?? "d", formatProvider)}{tzIdString}";
     }
 }
