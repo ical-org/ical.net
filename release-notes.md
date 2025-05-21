@@ -4,6 +4,22 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ### v5
 
+#### 5.0.0-pre.43 - (2025-05-21)
+
+* **Breaking:** Enable NRT project wide in https://github.com/ical-org/ical.net/pull/769, https://github.com/ical-org/ical.net/pull/771, https://github.com/ical-org/ical.net/pull/772, https://github.com/ical-org/ical.net/pull/778, https://github.com/ical-org/ical.net/pull/786. NuGet Packages are now published with NRT enabled.
+* Update license.md in https://github.com/ical-org/ical.net/pull/773
+* EvaluationOptions: Fix off-by-one issue of `MaxUnmatchedIncrementsLimit` https://github.com/ical-org/ical.net/pull/775
+* RecurrencePatternEvaluator: Modernize some evaluation code in https://github.com/ical-org/ical.net/pull/783
+* **Breaking:** Evaluation: Remove `periodEnd` param from `GetOccurrences` et al in https://github.com/ical-org/ical.net/pull/781. To limit the elements, it's recommended to used `CollectionExtensions.TakeWhileBefore` (see below), or simple `TakeWhile`.
+* Implement `CollectionExtensions.TakeWhileBefore` extensions in https://github.com/ical-org/ical.net/pull/796. This can e.g. be used on enumerations from `GetOccurrences` methods
+* Evaluation: Raise `EvaluationOutOfRangeException` if year 10k is hit during evaluation in https://github.com/ical-org/ical.net/pull/785
+* Remove unnecessary null checks in https://github.com/ical-org/ical.net/pull/790
+* **Breaking:** Refactor handling of FREQ in recurrence pattern in https://github.com/ical-org/ical.net/pull/789. Removed `FrequencyType.None` from enum `FrequencyType`
+* **Breaking:** Remove `GroupedListEnumerator` in https://github.com/ical-org/ical.net/pull/793 (Different solution made it redundant).
+* Enable `CA1305` warnings and fix them in https://github.com/ical-org/ical.net/pull/794
+* Fix for serialization of property parameters: `CalendarComponent.AddProperty` adds the `CalendarProperty` in https://github.com/ical-org/ical.net/pull/801
+* **Breaking:** Feature: Serialize multiple categories and resources to one line in https://github.com/ical-org/ical.net/pull/803 and https://github.com/ical-org/ical.net/pull/804
+
 #### 5.0.0-pre.42 - (2025-04-12)
 
 * Fix incorrect handling of UNTIL if falling into DST change and some related improvements in https://github.com/ical-org/ical.net/pull/738
