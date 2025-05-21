@@ -5,6 +5,7 @@
 
 using System;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 using NodaTime;
 
 namespace Ical.Net.Utility;
@@ -80,7 +81,7 @@ internal static class DateUtil
         // Thus, TZID=America/New_York:20070311T023000 indicates March 11,
         // 2007 at 3:30 A.M. EDT (UTC-04:00), one hour after 1:30 A.M. EST
         // (UTC-05:00).
-        var lenientZonedDateTime = localDt.InZoneLeniently(zone).WithZone(zone);
+        var lenientZonedDateTime = localDt.InZoneLeniently(zone);
 
         return lenientZonedDateTime;
     }

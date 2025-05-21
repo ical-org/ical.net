@@ -3986,7 +3986,7 @@ END:VCALENDAR";
         var cal = Calendar.Load(icalText)!;
         var evt = cal.Events.First();
         var ev = new EventEvaluator(evt);
-        var occurrences = ev.Evaluate(evt.DtStart!, evt.DtStart!.ToTimeZone(tzId), null).TakeWhileBefore(evt.DtStart.AddMinutes(61).ToTimeZone(tzId));
+        var occurrences = ev.Evaluate(evt.DtStart!, evt.DtStart!.ToTimeZone(tzId), null).TakeWhileBefore(evt.DtStart!.AddMinutes(61).ToTimeZone(tzId));
         var occurrencesStartTimes = occurrences.Select(x => x.StartTime).Take(2).ToList();
 
         var expectedStartTimes = new[]
@@ -4115,6 +4115,8 @@ END:VCALENDAR";
     [Test]
     public void AmbiguousLocalTime_WithShortDurationOfRecurrence()
     {
+        CalDateTimeExtensions.CleanupCache();
+
         // Short recurrence falls into an ambiguous local time
         // for the end time of the second occurrence because
         // of DST transition on 2025-10-25 03:00
@@ -4130,11 +4132,11 @@ END:VCALENDAR";
                   """;
         var cal = Calendar.Load(ics)!;
         var occ = cal.GetOccurrences().ToList();
-
+        
         Assert.Multiple(() =>
         {
             Assert.That(occ.Count, Is.EqualTo(2));
-
+            
             Assert.That(occ[0].Period.StartTime, Is.EqualTo(new CalDateTime(2020, 10, 24, 2, 30, 0, "Europe/Vienna")));
             Assert.That(occ[0].Period.EndTime, Is.EqualTo(new CalDateTime(2020, 10, 24, 3, 15, 0, "Europe/Vienna")));
             Assert.That(occ[0].Period.EffectiveDuration, Is.EqualTo(new Duration(0, 0, 0, 45, 0)));
