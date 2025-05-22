@@ -4115,8 +4115,6 @@ END:VCALENDAR";
     [Test]
     public void AmbiguousLocalTime_WithShortDurationOfRecurrence()
     {
-        CalDateTimeExtensions.CleanupCache();
-
         // Short recurrence falls into an ambiguous local time
         // for the end time of the second occurrence because
         // of DST transition on 2025-10-25 03:00

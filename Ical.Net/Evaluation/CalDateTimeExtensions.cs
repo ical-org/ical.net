@@ -4,8 +4,8 @@
 //
 
 using System;
-using System.Collections.Concurrent;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
 using NodaTime;
@@ -18,62 +18,44 @@ namespace Ical.Net.Evaluation;
 /// </summary>
 public static class CalDateTimeExtensions
 {
-    /// <summary>
-    /// This struct is used as a key for the cache.
-    /// It holds a weak reference to the <see cref="CalDateTime"/> object.
-    /// </summary>
-    private struct WeakCalDateTimeKey : IEquatable<WeakCalDateTimeKey>
+    private sealed class ZonedDateTimeBox(ZonedDateTime value)
     {
-        private readonly WeakReference<CalDateTime> _weakRef;
-        private readonly int _hashCode;
-
-        public WeakCalDateTimeKey(CalDateTime calDateTime)
-        {
-            _weakRef = new WeakReference<CalDateTime>(calDateTime);
-            _hashCode = calDateTime.GetHashCode();
-        }
-
-        public bool TryGetTarget(out CalDateTime? target) => _weakRef.TryGetTarget(out target);
-
-        public bool Equals(WeakCalDateTimeKey other)
-        {
-            if (!_weakRef.TryGetTarget(out var thisTarget) || !other._weakRef.TryGetTarget(out var otherTarget))
-                return false;
-
-            return ReferenceEquals(thisTarget, otherTarget) || thisTarget.Equals(otherTarget);
-        }
-
-        public override bool Equals(object? obj) => obj is WeakCalDateTimeKey other && Equals(other);
-
-        public override int GetHashCode() => _hashCode;
+        public ZonedDateTime Value { get; } = value;
     }
 
     /// <summary>
-    /// The cache for storing resolved <see cref="ZonedDateTime"/> objects for <see cref="CalDateTime"/> objects.
+    /// The cache for storing resolved <see cref="ZonedDateTime"/> objects for <see cref="CalDateTime"/> objects
     /// This is a thread-safe dictionary that uses weak references to avoid memory leaks.
+    /// Dead <see cref="CalDateTime"/> keys are automatically removed from the cache.
+    /// Key and Value must be reference types, so we use <see cref="ZonedDateTimeBox"/> to box the value.
+    /// <para/>
+    /// If a <see cref="CalDateTime"/> is instantiated from a lenient timezone conversion, this leniently
+    /// determined <see cref="CalDateTime"/> must not be converted again.
+    /// Lenient conversions resolve non-existing or ambiguous times caused by DST transitions.
+    /// <para/>
+    /// Therefore, when converting from one timezone to another, the conversion is done with the
+    /// <see cref="ZonedDateTime"/> object created at the time of (first) conversion,
+    /// which is stored in the cache.
     /// </summary>
-    private static readonly ConcurrentDictionary<WeakCalDateTimeKey, ZonedDateTime> _cache = new();
+    private static readonly ConditionalWeakTable<CalDateTime, ZonedDateTimeBox> _cache = new();
 
     /// <summary>
     /// Stores a <see cref="ZonedDateTime"/> in the cache for the given <see cref="CalDateTime"/>.
     /// </summary>
     private static void AddToCache(CalDateTime calDateTime, ZonedDateTime zonedDateTime)
-    {
-        var key = new WeakCalDateTimeKey(calDateTime);
-        _cache[key] = zonedDateTime;
-    }
+        => _cache.Add(calDateTime, new ZonedDateTimeBox(zonedDateTime));
 
     /// <summary>
     /// Resolves a <see cref="CalDateTime"/> to a <see cref="ZonedDateTime"/>,
     /// using the cache if possible.
     /// </summary>
-    public static ZonedDateTime? ResolveZonedDateTime(CalDateTime calDateTime)
+    private static ZonedDateTime? ResolveZonedDateTime(CalDateTime calDateTime)
     {
-        var key = new WeakCalDateTimeKey(calDateTime);
-
         // Try to get from cache
-        if (_cache.TryGetValue(key, out var zoned))
-            return zoned;
+        if (_cache.TryGetValue(calDateTime, out var zoned))
+        {
+            return zoned.Value;
+        }
 
         // Compute and cache
         ZonedDateTime? result = null;
@@ -88,21 +70,9 @@ public static class CalDateTimeExtensions
         }
 
         if (result.HasValue)
-            _cache[key] = result.Value;
+            AddToCache(calDateTime, result.Value);
 
         return result;
-    }
-
-    /// <summary>
-    /// Removes dead entries from the cache.
-    /// </summary>
-    public static void CleanupCache()
-    {
-        foreach (var key in _cache.Keys)
-        {
-            if (!key.TryGetTarget(out _))
-                _cache.TryRemove(key, out _);
-        }
     }
 
     /// <summary>
