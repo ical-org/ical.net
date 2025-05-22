@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes;

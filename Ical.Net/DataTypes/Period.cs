@@ -4,6 +4,7 @@
 //
 
 using System;
+using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes;
@@ -77,8 +78,9 @@ public class Period : EncodableDataType, IComparable<Period>
             throw new ArgumentException(
                 $"Start time ({start}) and end time ({end}) must both have a time or both be date-only.");
 
-        if (end != null && end.LessThan(start))
-            throw new ArgumentException($"End time ({end}) must be greater than start time ({start}).", nameof(end));
+        // Although the timezones are the same, the start and end times may be in different DST offsets.
+        if (end != null && end.AsUtc() < start.AsUtc())
+            throw new ArgumentException($"End time ({end}) as UTC must be greater than start time ({start}) as UTC.", nameof(end));
 
         _startTime = start;
         _endTime = end;
@@ -260,7 +262,7 @@ public class Period : EncodableDataType, IComparable<Period>
             return 1;
         }
 
-        if (StartTime.AsUtc.Equals(other.StartTime.AsUtc))
+        if (StartTime.AsUtc().Equals(other.StartTime.AsUtc()))
         {
             return 0;
         }

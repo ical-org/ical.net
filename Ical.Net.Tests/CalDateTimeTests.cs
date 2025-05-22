@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Ical.Net.Evaluation;
 
 namespace Ical.Net.Tests;
 
@@ -55,10 +56,10 @@ public class CalDateTimeTests
     [Test, TestCaseSource(nameof(ToTimeZoneTestCases))]
     public void ToTimeZoneTests(CalendarEvent calendarEvent, string targetTimeZone)
     {
-        var startAsUtc = calendarEvent.Start.AsUtc;
+        var startAsUtc = calendarEvent.Start!.AsUtc();
 
         var convertedStart = calendarEvent.Start.ToTimeZone(targetTimeZone);
-        var convertedAsUtc = convertedStart.AsUtc;
+        var convertedAsUtc = convertedStart.AsUtc();
 
         Assert.That(convertedAsUtc, Is.EqualTo(startAsUtc));
     }
@@ -96,11 +97,11 @@ public class CalDateTimeTests
         var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00", CultureInfo.InvariantCulture);
 
         var someDt = new CalDateTime(someTime.DateTime, "America/New_York");
-        var firstUtc = someDt.AsUtc;
+        var firstUtc = someDt.AsUtc();
         Assert.That(firstUtc, Is.EqualTo(someTime.UtcDateTime));
 
         someDt = new CalDateTime(someTime.DateTime, "Europe/Berlin");
-        var berlinUtc = someDt.AsUtc;
+        var berlinUtc = someDt.AsUtc();
         Assert.That(berlinUtc, Is.Not.EqualTo(firstUtc));
     }
 
@@ -190,15 +191,15 @@ public class CalDateTimeTests
 
         yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddHours(1)))
             .Returns(dateTime.AddHours(1))
-            .SetName($"{nameof(CalDateTime.AddHours)} 1 hour");
+            .SetName($"{nameof(CalDateTimeExtensions.AddHours)} 1 hour");
 
         yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(Duration.FromSeconds(30))))
             .Returns(dateTime.Add(TimeSpan.FromSeconds(30)))
-            .SetName($"{nameof(CalDateTime.Add)} 30 seconds");
+            .SetName($"{nameof(CalDateTimeExtensions.Add)} 30 seconds");
 
         yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddMinutes(70)))
             .Returns(dateTime.AddMinutes(70))
-            .SetName($"{nameof(CalDateTime.AddMinutes)} 70 minutes");
+            .SetName($"{nameof(CalDateTimeExtensions.AddMinutes)} 70 minutes");
     }
 
     [Test, TestCaseSource(nameof(EqualityTestCases))]
@@ -259,27 +260,27 @@ public class CalDateTimeTests
 
         yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(-Duration.FromDays(1))))
             .Returns((dateTime.AddDays(-1), false))
-            .SetName($"{nameof(CalDateTime.Add)} -1 day TimeSpan");
+            .SetName($"{nameof(CalDateTimeExtensions.Add)} -1 day TimeSpan");
 
         yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddYears(1)))
             .Returns((dateTime.AddYears(1), false))
-            .SetName($"{nameof(CalDateTime.AddYears)} 1 year");
+            .SetName($"{nameof(CalDateTimeExtensions.AddYears)} 1 year");
 
         yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddMonths(2)))
             .Returns((dateTime.AddMonths(2), false))
-            .SetName($"{nameof(CalDateTime.AddMonths)} 2 months");
+            .SetName($"{nameof(CalDateTimeExtensions.AddMonths)} 2 months");
 
         yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddDays(7)))
             .Returns((dateTime.AddDays(7), false))
-            .SetName($"{nameof(CalDateTime.AddDays)} 7 days");
+            .SetName($"{nameof(CalDateTimeExtensions.AddDays)} 7 days");
 
         yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(Duration.FromDays(1))))
             .Returns((dateTime.Add(TimeSpan.FromDays(1)), false))
-            .SetName($"{nameof(CalDateTime.Add)} 1 day TimeSpan");
+            .SetName($"{nameof(CalDateTimeExtensions.Add)} 1 day TimeSpan");
 
         yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(Duration.Zero)))
             .Returns((dateTime.Add(TimeSpan.Zero), false))
-            .SetName($"{nameof(CalDateTime.Add)} TimeSpan.Zero");
+            .SetName($"{nameof(CalDateTimeExtensions.Add)} TimeSpan.Zero");
     }
 
     [Test]

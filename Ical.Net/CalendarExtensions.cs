@@ -6,6 +6,7 @@
 using System;
 using System.Globalization;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 
 namespace Ical.Net;
 
