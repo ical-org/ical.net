@@ -4,11 +4,10 @@
 //
 
 using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
-using NodaTime;
 using System;
 using System.Globalization;
 using System.IO;
+using Ical.Net.Evaluation;
 
 namespace Ical.Net.DataTypes;
 
@@ -24,6 +23,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
 {
+    // private const string ComparisonObsoleteMessage = "Comparison operators and methods are depreciated. Use CalDateTime.AsZoned() and the methods from CalDateTimeEvaluator.";
+    // private const string ArithmeticObsoleteMessage = "Arithmetic methods are depreciated. Use CalDateTime.AsZoned() and the methods from CalDateTimeEvaluator.";
+
     // The date part that is used to return the Value property.
     private DateOnly _dateOnly;
     // The time part that is used to return the Value property.
@@ -218,12 +220,11 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         };
     }
 
-    /// <inheritdoc/>
     private void CopyFrom(CalDateTime calDt)
     {
         // Maintain the private date/time backing fields
         _dateOnly = calDt._dateOnly;
-        _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
+        _timeOnly = calDt._timeOnly;
         _tzId = calDt._tzId;
     }
 
@@ -234,43 +235,38 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         => obj is CalDateTime other && this == other;
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Value.GetHashCode();
-            hashCode = (hashCode * 397) ^ HasTime.GetHashCode();
-            hashCode = (hashCode * 397) ^ (TzId != null ? TzId.GetHashCode() : 0);
-            return hashCode;
-        }
-    }
+    public override int GetHashCode() => HashCode.Combine(Value, HasTime, TzId);
 
+    // [Obsolete(ComparisonObsoleteMessage)]
     public static bool operator <(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value < right.Value : left.AsUtc < right.AsUtc);
+               && left.LessThan(right);
     }
 
+    // [Obsolete(ComparisonObsoleteMessage)]
     public static bool operator >(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value > right.Value : left.AsUtc > right.AsUtc);
+               && left.GreaterThan(right);
     }
 
+    // [Obsolete(ComparisonObsoleteMessage)]
     public static bool operator <=(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
+               && left.LessThanOrEqual(right);
     }
 
+    // [Obsolete(ComparisonObsoleteMessage)]
     public static bool operator >=(CalDateTime? left, CalDateTime? right)
     {
         return left != null
                && right != null
-               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
+               && left.GreaterThanOrEqual(right);
     }
 
     public static bool operator ==(CalDateTime? left, CalDateTime? right)
@@ -437,12 +433,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     }
 
     /// <summary>
-    /// Any <see cref="Time"/> values are truncated to seconds, because
-    /// RFC 5545, Section 3.3.5 does not allow for fractional seconds.
-    /// </summary>
-    private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime) => new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
-
-    /// <summary>
     /// Converts the <see cref="Value"/> to a date/time
     /// within the specified <see paramref="otherTzId"/> timezone.
     /// <para/>
@@ -450,27 +440,9 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// it means that the <see cref="Value"/> is considered as local time for every timezone:
     /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
     /// </summary>
+    // [Obsolete(ArithmeticObsoleteMessage)]
     public CalDateTime ToTimeZone(string? otherTzId)
-    {
-        if (otherTzId is null)
-            return new CalDateTime(Value, null, HasTime);
-
-        ZonedDateTime converted;
-        if (IsFloating)
-        {
-            // Make sure, we properly fix the time if it doesn't exist in the target tz.
-            converted = DateUtil.ToZonedDateTimeLeniently(Value, otherTzId);
-        }
-        else
-        {
-            var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId!);
-            converted = zonedOriginal.WithZone(DateUtil.GetZone(otherTzId));
-        }
-
-        return converted.Zone == DateTimeZone.Utc
-            ? new CalDateTime(converted.ToDateTimeUtc(), UtcTzId)
-            : new CalDateTime(converted.ToDateTimeUnspecified(), otherTzId);
-    }
+        => this.AsZoned().ToTimeZone(otherTzId).CalDateTime;
 
     /// <summary>
     /// Add the specified <see cref="Duration"/> to this instance/>.
@@ -482,51 +454,12 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public CalDateTime Add(Duration d)
-    {
-        if (!HasTime && d.HasTime)
-        {
-            throw new InvalidOperationException($"This instance represents a 'date-only' value '{ToString()}'. Only multiples of full days can be added to a 'date-only' instance, not '{d}'");
-        }
-
-        // RFC 5545 3.3.6:
-        // If the property permits, multiple "duration" values are specified by a COMMA-separated
-        // list of values.The format is based on the[ISO.8601.2004] complete representation basic
-        // format with designators for the duration of time.The format can represent nominal
-        // durations(weeks and days) and accurate durations(hours, minutes, and seconds).
-        // Note that unlike[ISO.8601.2004], this value type doesn't support the "Y" and "M"
-        // designators to specify durations in terms of years and months.
-        //
-        // The duration of a week or a day depends on its position in the calendar. In the case
-        // of discontinuities in the time scale, such as the change from standard time to daylight
-        // time and back, the computation of the exact duration requires the subtraction or
-        // addition of the change of duration of the discontinuity.Leap seconds MUST NOT be
-        // considered when computing an exact duration.When computing an exact duration, the
-        // greatest order time components MUST be added first, that is, the number of days MUST be
-        // added first, followed by the number of hours, number of minutes, and number of seconds.
-
-        (TimeSpan? nominalPart, TimeSpan? exactPart) dt;
-        if (TzId is null)
-            dt = (d.ToTimeSpanUnspecified(), null);
-        else
-            dt = (d.HasDate ? d.DateAsTimeSpan : null, d.HasTime ? d.TimeAsTimeSpan : null);
-
-        var newDateTime = this;
-        if (dt.nominalPart is not null)
-            newDateTime = new CalDateTime(newDateTime.Value.Add(dt.nominalPart.Value), TzId, HasTime);
-
-        if (dt.exactPart is not null)
-            newDateTime = new CalDateTime(newDateTime.AsUtc.Add(dt.exactPart.Value), UtcTzId, HasTime);
-        
-        if (TzId is not null)
-            // Convert to the original timezone even if already set to ensure we're not in a non-existing time.
-            newDateTime = newDateTime.ToTimeZone(TzId);
-
-        return newDateTime;
-    }
+    // [Obsolete(ArithmeticObsoleteMessage)]
+    public CalDateTime Add(Duration d) => this.AsZoned().Add(d).CalDateTime;
 
     /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.</summary>
     /// <param name="dt"></param>
+    // [Obsolete(ArithmeticObsoleteMessage)]
     public TimeSpan SubtractExact(CalDateTime dt) => AsUtc - dt.AsUtc;
 
     /// <summary>
@@ -535,84 +468,78 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// <param name="dt"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
+    // [Obsolete(ArithmeticObsoleteMessage)]
     public Duration Subtract(CalDateTime dt)
-    {
-        if (this.TzId is not null)
-            return SubtractExact(dt).ToDurationExact();
-
-        if (dt.HasTime != HasTime)
-            throw new InvalidOperationException($"Trying to calculate the difference between dates of different types. An instance of type DATE cannot be subtracted from a DATE-TIME and vice versa: {ToString()} - {dt.ToString()}");
-
-        return (Value - dt.Value).ToDuration();
-    }
+        => this.AsZoned().Subtract(dt.AsZoned());
 
     internal CalDateTime Copy()
-        => new CalDateTime(_dateOnly, _timeOnly, _tzId);
+        => new(_dateOnly, _timeOnly, _tzId);
 
     /// <inheritdoc cref="DateTime.AddYears"/>
+    // [Obsolete(ArithmeticObsoleteMessage)]
     public CalDateTime AddYears(int years)
-    {
-        var dt = Copy();
-        dt._dateOnly = dt._dateOnly.AddYears(years);
-        return dt;
-    }
+        => this.AsZoned().AddYears(years).CalDateTime;
 
     /// <inheritdoc cref="DateTime.AddMonths"/>
+    // [Obsolete(ArithmeticObsoleteMessage)]
     public CalDateTime AddMonths(int months)
-    {
-        var dt = Copy();
-        dt._dateOnly = dt._dateOnly.AddMonths(months);
-        return dt;
-    }
+        => this.AsZoned().AddMonths(months).CalDateTime;
 
     /// <inheritdoc cref="DateTime.AddDays"/>
+    // [Obsolete(ArithmeticObsoleteMessage)]
     public CalDateTime AddDays(int days)
-    {
-        var dt = Copy();
-        dt._dateOnly = dt._dateOnly.AddDays(days);
-        return dt;
-    }
+        => this.AsZoned().AddDays(days).CalDateTime;
 
     /// <inheritdoc cref="DateTime.AddHours"/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public CalDateTime AddHours(int hours) => Add(Duration.FromHours(hours));
+    // [Obsolete(ArithmeticObsoleteMessage)]
+    public CalDateTime AddHours(int hours)
+        => this.AsZoned().AddHours(hours).CalDateTime;
 
     /// <inheritdoc cref="DateTime.AddMinutes"/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public CalDateTime AddMinutes(int minutes) => Add(Duration.FromMinutes(minutes));
+    // [Obsolete(ArithmeticObsoleteMessage)]
+    public CalDateTime AddMinutes(int minutes)
+        => this.AsZoned().AddMinutes(minutes).CalDateTime;
 
     /// <inheritdoc cref="DateTime.AddSeconds"/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public CalDateTime AddSeconds(int seconds) => Add(Duration.FromSeconds(seconds));
+    // [Obsolete(ArithmeticObsoleteMessage)]
+    public CalDateTime AddSeconds(int seconds)
+        => this.AsZoned().AddSeconds(seconds).CalDateTime;
 
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is less than <paramref name="dt"/>.
     /// </summary>
-    public bool LessThan(CalDateTime? dt) => this < dt;
+    // [Obsolete(ComparisonObsoleteMessage)]
+    public bool LessThan(CalDateTime dt) => this.AsZoned().LessThan(dt.AsZoned());
 
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than <paramref name="dt"/>.
     /// </summary>
-    public bool GreaterThan(CalDateTime? dt) => this > dt;
+    // [Obsolete(ComparisonObsoleteMessage)]
+    public bool GreaterThan(CalDateTime dt) => this.AsZoned().GreaterThan(dt.AsZoned());
 
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is less than or equal to <paramref name="dt"/>.
     /// </summary>
-    public bool LessThanOrEqual(CalDateTime? dt) => this <= dt;
+    // [Obsolete(ComparisonObsoleteMessage)]
+    public bool LessThanOrEqual(CalDateTime dt) => this.AsZoned().LessThanOrEqual(dt.AsZoned());
 
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than or equal to <paramref name="dt"/>.
     /// </summary>
-    public bool GreaterThanOrEqual(CalDateTime? dt) => this >= dt;
+    // [Obsolete(ComparisonObsoleteMessage)]
+    public bool GreaterThanOrEqual(CalDateTime dt) => this.AsZoned().GreaterThanOrEqual(dt.AsZoned());
 
     /// <summary>
     /// Compares the current instance with another <see cref="CalDateTime"/> object and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other CalDateTime.
@@ -651,20 +578,18 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     public string ToString(string? format) => ToString(format, null);
 
     /// <inheritdoc cref="ToString()"/>
+    /// <remarks>To format including offset<br/>
+    /// * convert with <see cref="CalDateTimeEvaluator.AsZoned"/><br/>
+    /// * and then call <see cref="CalDateTimeZoned.ToString(string?, IFormatProvider?)"/>.
+    /// </remarks>
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
         formatProvider ??= CultureInfo.InvariantCulture;
-        var dateTimeOffset = DateUtil.ToZonedDateTimeLeniently(Value, _tzId ?? string.Empty).ToDateTimeOffset();
 
-        // Use the .NET format options to format the DateTimeOffset
-        var tzIdString = _tzId is not null ? $" {_tzId}" : string.Empty;
+        var tzIdString = TzId is not null ? $" {TzId}" : string.Empty;
 
-        if (HasTime)
-        {
-            return $"{dateTimeOffset.ToString(format, formatProvider)}{tzIdString}";
-        }
-
-        // No time part
-        return $"{DateOnly.FromDateTime(dateTimeOffset.Date).ToString(format ?? "d", formatProvider)}{tzIdString}";
+        return HasTime
+            ? $"{Value.ToString(format, formatProvider)}{tzIdString}"
+            : $"{Date.ToString(format ?? "d", formatProvider)}{tzIdString}";
     }
 }

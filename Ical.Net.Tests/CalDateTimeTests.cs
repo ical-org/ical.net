@@ -142,14 +142,22 @@ public class CalDateTimeTests
             .SetName("DateTime with Kind = Local and null tzid returns DateTimeKind.Unspecified");
     }
 
-    [Test, TestCaseSource(nameof(ToStringTestCases))]
-    public string ToStringTests(CalDateTime calDateTime, string format, IFormatProvider formatProvider)
+    [Test]
+    public void ToStringTest()
+    {
+        var calDateTime = new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland");
+        var expected = "08/30/2024 10:30:00 Pacific/Auckland";
+        Assert.That(calDateTime.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test, TestCaseSource(nameof(ToStringWithFormatTestCases))]
+    public string ToStringWitFormatTests(CalDateTime calDateTime, string format, IFormatProvider formatProvider)
         => calDateTime.ToString(format, formatProvider);
 
-    public static IEnumerable ToStringTestCases()
+    public static IEnumerable ToStringWithFormatTestCases()
     {
         yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"), "O", null)
-            .Returns("2024-08-30T10:30:00.0000000+12:00 Pacific/Auckland")
+            .Returns("2024-08-30T10:30:00.0000000 Pacific/Auckland")
             .SetName("Date and time with 'O' format arg, default culture");
 
         yield return new TestCaseData(new CalDateTime(2024, 8, 30), "O", null)
@@ -158,7 +166,7 @@ public class CalDateTimeTests
 
         yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"), "O",
                 CultureInfo.GetCultureInfo("fr-FR"))
-            .Returns("2024-08-30T10:30:00.0000000+12:00 Pacific/Auckland")
+            .Returns("2024-08-30T10:30:00.0000000 Pacific/Auckland")
             .SetName("Date and time with 'O' format arg, French culture");
 
         yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"),
