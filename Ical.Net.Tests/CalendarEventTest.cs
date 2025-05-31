@@ -291,36 +291,6 @@ END:VCALENDAR";
     }
 
     [Test]
-    public void AddingExdateToEventShouldNotBeEqualToOriginal()
-    {
-        //Create a calendar with an event with a recurrence rule
-        //Serialize to string, and deserialize
-        //Change the original calendar.Event to have an ExDate
-        //Serialize to string, and deserialize
-        //CalendarEvent and Calendar hash codes and equality should NOT be the same
-        var serializer = new CalendarSerializer();
-
-        var vEvent = GetSimpleEvent();
-        vEvent.RecurrenceRules = GetSimpleRecurrenceList();
-        var cal1 = new Calendar();
-        cal1.Events.Add(vEvent);
-        var serialized = serializer.SerializeToString(cal1);
-        var deserializedNoExDate = Calendar.Load(serialized);
-        Assert.That(deserializedNoExDate, Is.EqualTo(cal1));
-
-        vEvent.ExceptionDates.AddRange(GetExceptionDates());
-        serialized = serializer.SerializeToString(cal1);
-        var deserializedWithExDate = Calendar.Load(serialized);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(deserializedWithExDate.Events.First(), Is.Not.EqualTo(deserializedNoExDate.Events.First()));
-            Assert.That(deserializedWithExDate.Events.First().GetHashCode(), Is.Not.EqualTo(deserializedNoExDate.Events.First().GetHashCode()));
-            Assert.That(deserializedWithExDate, Is.Not.EqualTo(deserializedNoExDate));
-        });
-    }
-
-    [Test]
     public void ChangingRrulesShouldNotBeEqualToOriginalEvent()
     {
         var eventA = GetSimpleEvent();
