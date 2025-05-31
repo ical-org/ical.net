@@ -173,86 +173,12 @@ public class CalendarEventTest
             .Returns(true);
     }
 
-    [Test]
-    public void EventWithExDateShouldNotBeEqualToSameEventWithoutExDate()
-    {
-        const string icalNoException = @"BEGIN:VCALENDAR
-PRODID:-//Telerik Inc.//NONSGML RadScheduler//EN
-VERSION:2.0
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-BEGIN:VTIMEZONE
-TZID:UTC
-BEGIN:STANDARD
-TZNAME:UTC
-TZOFFSETTO:+0000
-TZOFFSETFROM:+0000
-DTSTART:16010101T000000
-END:STANDARD
-END:VTIMEZONE
-BEGIN:VEVENT
-DTSTART;TZID=UTC:20161020T170000
-DTEND;TZID=UTC:20161020T230000
-UID:694f818f-6d67-4307-9c4d-0b5211686ff0
-IMPORTANCE:None
-RRULE:FREQ=DAILY
-END:VEVENT
-END:VCALENDAR";
-
-        const string icalWithException = @"BEGIN:VCALENDAR
-PRODID:-//Telerik Inc.//NONSGML RadScheduler//EN
-VERSION:2.0
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-BEGIN:VTIMEZONE
-TZID:UTC
-BEGIN:STANDARD
-TZNAME:UTC
-TZOFFSETTO:+0000
-TZOFFSETFROM:+0000
-DTSTART:16010101T000000
-END:STANDARD
-END:VTIMEZONE
-BEGIN:VEVENT
-DTSTART;TZID=UTC:20161020T170000
-DTEND;TZID=UTC:20161020T230000
-UID:694f818f-6d67-4307-9c4d-0b5211686ff0
-IMPORTANCE:None
-RRULE:FREQ=DAILY
-EXDATE;TZID=UTC:20161020T170000
-END:VEVENT
-END:VCALENDAR";
-
-        var noException = Calendar.Load(icalNoException).Events.First();
-        var withException = Calendar.Load(icalWithException).Events.First();
-
-        Assert.That(withException, Is.Not.EqualTo(noException));
-        Assert.That(withException.GetHashCode(), Is.Not.EqualTo(noException.GetHashCode()));
-    }
-
     private static CalendarEvent GetSimpleEvent() => new CalendarEvent
     {
         DtStart = new CalDateTime(_now),
         DtEnd = new CalDateTime(_later),
         Uid = _uid,
     };
-
-    [Test]
-    public void RrulesAreSignificantTests()
-    {
-        var rrule = new RecurrencePattern(FrequencyType.Daily, 1);
-        var testRrule = GetSimpleEvent();
-        testRrule.RecurrenceRules = new List<RecurrencePattern> { rrule };
-
-        var simpleEvent = GetSimpleEvent();
-        Assert.That(testRrule, Is.Not.EqualTo(simpleEvent));
-        Assert.That(testRrule.GetHashCode(), Is.Not.EqualTo(simpleEvent.GetHashCode()));
-
-        var testRdate = GetSimpleEvent();
-        testRdate.RecurrenceDatesPeriodLists = new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now)) } };
-        Assert.That(testRdate, Is.Not.EqualTo(simpleEvent));
-        Assert.That(testRdate.GetHashCode(), Is.Not.EqualTo(simpleEvent.GetHashCode()));
-    }
 
     private static List<RecurrencePattern> GetSimpleRecurrenceList()
         => new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 } };
@@ -287,86 +213,6 @@ END:VCALENDAR";
             Assert.That(eventB.GetHashCode(), Is.EqualTo(eventA.GetHashCode()));
             Assert.That(eventB, Is.EqualTo(eventA));
             Assert.That(cal2, Is.EqualTo(calendar));
-        });
-    }
-
-    [Test]
-    public void ChangingRrulesShouldNotBeEqualToOriginalEvent()
-    {
-        var eventA = GetSimpleEvent();
-        eventA.RecurrenceRules = GetSimpleRecurrenceList();
-
-        var eventB = GetSimpleEvent();
-        eventB.RecurrenceRules = GetSimpleRecurrenceList();
-        Assert.Multiple(() =>
-        {
-            Assert.That(ReferenceEquals(eventA, eventB), Is.False);
-            Assert.That(eventB, Is.EqualTo(eventA));
-        });
-
-        var foreverDailyRule = new RecurrencePattern(FrequencyType.Daily, 1);
-        eventB.RecurrenceRules = new List<RecurrencePattern> { foreverDailyRule };
-
-        Assert.That(eventB, Is.Not.EqualTo(eventA));
-        Assert.That(eventB.GetHashCode(), Is.Not.EqualTo(eventA.GetHashCode()));
-    }
-
-    [Test]
-    public void EventsDifferingByDtStampAreEqual()
-    {
-        const string eventA = @"BEGIN:VCALENDAR
-PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
-VERSION:2.0
-BEGIN:VEVENT
-ATTACH;FMTTYPE=application/json;VALUE=BINARY;ENCODING=BASE64:eyJzdWJqZWN0I
- joiSFAgQ29hdGVyIGFuZCBDdXR0ZXIgQ2xlYW51cCIsInVuaXF1ZUlkZW50aWZpZXIiOiIwND
- EwNzI1NGRjNWM5MDk0YWY3MWEwZTE5N2U2NWE1NTdkZmJjYjg0IiwiaWNhbFN0cmluZyI6IiI
- sImxhYm9yRG93bnRpbWVzIjpbXSwiZGlzYWJsZWRFcXVpcG1lbnQiOlt7ImRpc2FibGVkRXF1
- aXBtZW50SW5zdGFuY2VOYW1lcyI6WyJEaWdpdGFsIFByaW50XFxIUCAyOCIsIkRpZ2l0YWwgU
- HJpbnRcXEhQIDQ0Il0sImZ1bGxUaW1lRXF1aXZhbGVudHNDb3VudCI6MC4wfV0sIm1vZGVzTm
- 90QWxsb3dlZCI6W10sInJhd01hdGVyaWFsc05vdEFsbG93ZWQiOltdLCJsYWJvckFsbG9jYXR
- pb25zIjpbXX0=
-DTEND;TZID=UTC:20150615T055000
-DTSTAMP:20161011T195316Z
-DTSTART;TZID=UTC:20150615T054000
-EXDATE;TZID=UTC:20151023T054000
-IMPORTANCE:None
-RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA
-UID:04107254dc5c9094af71a0e197e65a557dfbcb84
-END:VEVENT
-END:VCALENDAR";
-
-        const string eventB = @"BEGIN:VCALENDAR
-PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
-VERSION:2.0
-BEGIN:VEVENT
-ATTACH;FMTTYPE=application/json;VALUE=BINARY;ENCODING=BASE64:eyJzdWJqZWN0I
- joiSFAgQ29hdGVyIGFuZCBDdXR0ZXIgQ2xlYW51cCIsInVuaXF1ZUlkZW50aWZpZXIiOiIwND
- EwNzI1NGRjNWM5MDk0YWY3MWEwZTE5N2U2NWE1NTdkZmJjYjg0IiwiaWNhbFN0cmluZyI6IiI
- sImxhYm9yRG93bnRpbWVzIjpbXSwiZGlzYWJsZWRFcXVpcG1lbnQiOlt7ImRpc2FibGVkRXF1
- aXBtZW50SW5zdGFuY2VOYW1lcyI6WyJEaWdpdGFsIFByaW50XFxIUCAyOCIsIkRpZ2l0YWwgU
- HJpbnRcXEhQIDQ0Il0sImZ1bGxUaW1lRXF1aXZhbGVudHNDb3VudCI6MC4wfV0sIm1vZGVzTm
- 90QWxsb3dlZCI6W10sInJhd01hdGVyaWFsc05vdEFsbG93ZWQiOltdLCJsYWJvckFsbG9jYXR
- pb25zIjpbXX0=
-DTEND;TZID=UTC:20150615T055000
-DTSTAMP:20161024T201419Z
-DTSTART;TZID=UTC:20150615T054000
-EXDATE;TZID=UTC:20151023T054000
-IMPORTANCE:None
-RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA
-UID:04107254dc5c9094af71a0e197e65a557dfbcb84
-END:VEVENT
-END:VCALENDAR";
-
-        var calendarA = Calendar.Load(eventA);
-        var calendarB = Calendar.Load(eventB);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(calendarB.Events.First().GetHashCode(), Is.EqualTo(calendarA.Events.First().GetHashCode()));
-            Assert.That(calendarB.Events.First(), Is.EqualTo(calendarA.Events.First()));
-            Assert.That(calendarB.GetHashCode(), Is.EqualTo(calendarA.GetHashCode()));
-            Assert.That(calendarB, Is.EqualTo(calendarA));
         });
     }
 

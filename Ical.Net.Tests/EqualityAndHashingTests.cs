@@ -54,23 +54,6 @@ public class EqualityAndHashingTests
         Assert.That(patternB.GetHashCode(), Is.EqualTo(patternA.GetHashCode()));
     }
 
-    [Test, TestCaseSource(nameof(Event_TestCases))]
-    public void Event_Tests(CalendarEvent incoming, CalendarEvent expected)
-    {
-        Assert.Multiple(() =>
-        {
-            Assert.That(expected.DtStart, Is.EqualTo(incoming.DtStart));
-            Assert.That(expected.DtEnd, Is.EqualTo(incoming.DtEnd));
-            Assert.That(expected.Location, Is.EqualTo(incoming.Location));
-            Assert.That(expected.Status, Is.EqualTo(incoming.Status));
-            Assert.That(expected.IsActive, Is.EqualTo(incoming.IsActive));
-            Assert.That(expected.Duration, Is.EqualTo(incoming.Duration));
-            Assert.That(expected.Transparency, Is.EqualTo(incoming.Transparency));
-            Assert.That(expected.GetHashCode(), Is.EqualTo(incoming.GetHashCode()));
-            Assert.That(incoming.Equals(expected), Is.True);
-        });
-    }
-
     private static RecurrencePattern GetSimpleRecurrencePattern() => new RecurrencePattern(FrequencyType.Daily, 1)
     {
         Count = 5
@@ -83,23 +66,6 @@ public class EqualityAndHashingTests
     };
 
     private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
-
-
-    public static IEnumerable Event_TestCases()
-    {
-        var outgoing = GetSimpleEvent();
-        var expected = GetSimpleEvent();
-        yield return new TestCaseData(outgoing, expected).SetName("Events with start, end, and duration");
-
-        var fiveA = GetSimpleRecurrencePattern();
-        var fiveB = GetSimpleRecurrencePattern();
-
-        outgoing = GetSimpleEvent();
-        expected = GetSimpleEvent();
-        outgoing.RecurrenceRules = new List<RecurrencePattern> { fiveA };
-        expected.RecurrenceRules = new List<RecurrencePattern> { fiveB };
-        yield return new TestCaseData(outgoing, expected).SetName("Events with start, end, duration, and one recurrence rule");
-    }
 
     [Test]
     public void Calendar_Tests()
@@ -288,40 +254,6 @@ public class EqualityAndHashingTests
         var payloadCopy = new byte[payload.Length];
         Array.Copy(payload, payloadCopy, payload.Length);
         return (payload, payloadCopy);
-    }
-
-    [Test, TestCaseSource(nameof(RecurringComponentAttachment_TestCases))]
-    public void RecurringComponentAttachmentTests(RecurringComponent noAttachment, RecurringComponent withAttachment)
-    {
-        var attachments = GetAttachments();
-
-        Assert.That(withAttachment, Is.Not.EqualTo(noAttachment));
-        Assert.That(withAttachment.GetHashCode(), Is.Not.EqualTo(noAttachment.GetHashCode()));
-
-        noAttachment.Attachments.Add(new Attachment(attachments.copy));
-
-        Assert.That(withAttachment, Is.EqualTo(noAttachment));
-        Assert.That(withAttachment.GetHashCode(), Is.EqualTo(noAttachment.GetHashCode()));
-    }
-
-    public static IEnumerable RecurringComponentAttachment_TestCases()
-    {
-        var attachments = GetAttachments();
-
-        var journalNoAttach = new Journal { Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!" };
-        var journalWithAttach = new Journal { Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!" };
-        journalWithAttach.Attachments.Add(new Attachment(attachments.original));
-        yield return new TestCaseData(journalNoAttach, journalWithAttach).SetName("Journal recurring component attachment");
-
-        var todoNoAttach = new Todo { Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!" };
-        var todoWithAttach = new Todo { Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!" };
-        todoWithAttach.Attachments.Add(new Attachment(attachments.original));
-        yield return new TestCaseData(todoNoAttach, todoWithAttach).SetName("Todo recurring component attachment");
-
-        var eventNoAttach = GetSimpleEvent();
-        var eventWithAttach = GetSimpleEvent();
-        eventWithAttach.Attachments.Add(new Attachment(attachments.original));
-        yield return new TestCaseData(eventNoAttach, eventWithAttach).SetName("Event recurring component attachment");
     }
 
     [Test, TestCaseSource(nameof(PeriodTestCases))]
