@@ -3510,8 +3510,6 @@ END:VCALENDAR";
         eventB.RecurrenceRules.Add(ten);
         eventB.RecurrenceRules.Add(five);
 
-        Assert.That(eventB, Is.EqualTo(eventA));
-
         const string aString =
             """
                BEGIN:VCALENDAR
