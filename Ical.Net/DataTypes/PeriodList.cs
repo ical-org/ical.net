@@ -7,7 +7,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 
@@ -77,19 +76,6 @@ internal class PeriodList : EncodableDataType, IList<Period>
     /// </summary>
     /// <returns></returns>
     public override string? ToString() => new PeriodListSerializer().SerializeToString(this);
-
-    protected bool Equals(PeriodList other) => CollectionHelpers.Equals(Periods, other.Periods);
-
-    /// <inheritdoc/>
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((PeriodList) obj);
-    }
-
-    /// <inheritdoc/>
-    public override int GetHashCode() => CollectionHelpers.GetHashCode(Periods);
 
     /// <inheritdoc/>
     public Period this[int index]

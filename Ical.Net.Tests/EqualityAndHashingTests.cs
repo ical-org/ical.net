@@ -255,17 +255,12 @@ public class EqualityAndHashingTests
 
         var collectionEqual = CollectionHelpers.Equals(a, b);
 
-        var listOfListA = new List<PeriodList> { a };
-        var listOfListB = new List<PeriodList> { b };
-
         var aThenB = new List<PeriodList> { a, b };
         var bThenA = new List<PeriodList> { b, a };
 
         Assert.Multiple(() =>
         {
             Assert.That(collectionEqual, Is.EqualTo(true));
-            Assert.That(b.GetHashCode(), Is.EqualTo(a.GetHashCode()));
-            Assert.That(CollectionHelpers.Equals(listOfListA, listOfListB), Is.True);
             Assert.That(CollectionHelpers.Equals(aThenB, bThenA), Is.True);
         });
     }
