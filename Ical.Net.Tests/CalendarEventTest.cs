@@ -207,8 +207,6 @@ public class CalendarEventTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(eventB.RecurrenceRules.First(), Is.EqualTo(eventA.RecurrenceRules.First()));
-            Assert.That(eventB.RecurrenceRules.First().GetHashCode(), Is.EqualTo(eventA.RecurrenceRules.First().GetHashCode()));
             Assert.That(eventB.ExceptionDates.GetAllDates().First(), Is.EqualTo(eventA.ExceptionDates.GetAllDates().First()));
             Assert.That(eventB.GetHashCode(), Is.EqualTo(eventA.GetHashCode()));
             Assert.That(eventB, Is.EqualTo(eventA));

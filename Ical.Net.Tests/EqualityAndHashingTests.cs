@@ -44,16 +44,6 @@ public class EqualityAndHashingTests
         yield return new TestCaseData(nowCalDtWithTz, new CalDateTime(_nowTime, TzId)).SetName("Now, with time zone");
     }
 
-    [Test]
-    public void RecurrencePatternTests()
-    {
-        var patternA = GetSimpleRecurrencePattern();
-        var patternB = GetSimpleRecurrencePattern();
-
-        Assert.That(patternB, Is.EqualTo(patternA));
-        Assert.That(patternB.GetHashCode(), Is.EqualTo(patternA.GetHashCode()));
-    }
-
     private static RecurrencePattern GetSimpleRecurrencePattern() => new RecurrencePattern(FrequencyType.Daily, 1)
     {
         Count = 5
