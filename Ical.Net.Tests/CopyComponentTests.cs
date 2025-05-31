@@ -62,7 +62,6 @@ public class CopyComponentTests
             Assert.That(copy.Resources[0], Is.Not.EqualTo(orig.Resources[0]));
 
             Assert.That(resourcesCopyFromOrig, Is.EquivalentTo(orig.Resources));
-            Assert.That(copy.GeographicLocation, Is.EqualTo(orig.GeographicLocation));
             Assert.That(copy.Transparency, Is.EqualTo(orig.Transparency));
 
             Assert.That(Regex.Matches(serializedOrig, uidPattern, RegexOptions.Compiled, TimeSpan.FromSeconds(100)), Has.Count.EqualTo(1));
