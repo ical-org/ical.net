@@ -108,7 +108,7 @@ public class CopyComponentTests
         Assert.Multiple(() =>
         {
             Assert.That(copy.Action, Is.EqualTo(orig.Action));
-            Assert.That(copy.Trigger, Is.EqualTo(orig.Trigger));
+            Assert.That(copy.Trigger?.DateTime, Is.EqualTo(orig.Trigger.DateTime));
             Assert.That(copy.Description, Is.EqualTo(orig.Description));
         });
     }

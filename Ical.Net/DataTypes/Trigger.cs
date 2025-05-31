@@ -92,34 +92,4 @@ public class Trigger : EncodableDataType
         Duration = t.Duration;
         Related = t.Related;
     }
-
-    protected bool Equals(Trigger other) => Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj))
-        {
-            return false;
-        }
-        if (ReferenceEquals(this, obj))
-        {
-            return true;
-        }
-        if (obj.GetType() != GetType())
-        {
-            return false;
-        }
-        return Equals((Trigger)obj);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = _mDateTime?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ _mDuration.GetHashCode();
-            hashCode = (hashCode * 397) ^ _mRelated.GetHashCode();
-            return hashCode;
-        }
-    }
 }
