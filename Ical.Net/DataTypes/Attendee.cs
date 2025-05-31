@@ -275,45 +275,4 @@ public class Attendee : EncodableDataType
         SentBy = atn.SentBy;
         DirectoryEntry = atn.DirectoryEntry;
     }
-
-    protected bool Equals(Attendee other)
-        => Equals(SentBy, other.SentBy)
-           && string.Equals(CommonName, other.CommonName,
-               StringComparison.OrdinalIgnoreCase)
-           && Equals(DirectoryEntry, other.DirectoryEntry)
-           && string.Equals(Type, other.Type, StringComparison.OrdinalIgnoreCase)
-           && string.Equals(Role, other.Role)
-           && string.Equals(ParticipationStatus, other.ParticipationStatus,
-               StringComparison.OrdinalIgnoreCase)
-           && Rsvp == other.Rsvp
-           && Equals(Value, other.Value)
-           && Members.SequenceEqual(other.Members)
-           && DelegatedTo.SequenceEqual(other.DelegatedTo)
-           && DelegatedFrom.SequenceEqual(other.DelegatedFrom);
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((Attendee) obj);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = SentBy?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ (CommonName?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ (DirectoryEntry?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ (Type?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Members);
-            hashCode = (hashCode * 397) ^ (Role?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ (ParticipationStatus?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ Rsvp.GetHashCode();
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(DelegatedTo);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(DelegatedFrom);
-            hashCode = (hashCode * 397) ^ (Value?.GetHashCode() ?? 0);
-            return hashCode;
-        }
-    }
 }
