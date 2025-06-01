@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace Ical.Net.Tests;
 
 [TestFixture]
-public class CalDateTimeZonedTests
+internal class CalDateTimeZonedTests
 {
 #pragma warning disable NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure
 
@@ -229,11 +229,18 @@ public class CalDateTimeZonedTests
     {
         var zonedDt1 = new CalDateTime(2024, 1, 1).AsZoned();
         var zonedDt2 = new CalDateTime(2024, 1, 2).AsZoned();
-        var zonedDt3 = new CalDateTime(2024, 1, 2, 10, 11, 12).AsZoned();
 
         Assert.Throws<InvalidOperationException>(() => _ = zonedDt1.CompareTo(zonedDt2)); // Both have no zone
-        Assert.Throws<InvalidOperationException>(() => _ = zonedDt1.CompareTo(zonedDt3)); // Self has no zone
-        Assert.Throws<InvalidOperationException>(() => _ = zonedDt3.CompareTo(zonedDt1)); // Other has no zone
+    }
+
+    [Test]
+    public void CompareTo_Throws_WhenOnlyOneHasTimeZone()
+    {
+        var withZone = new CalDateTime(2024, 1, 2, 10, 11, 12, "UTC").AsZoned();
+        var noZone = new CalDateTime(2024, 1, 2, 10, 11, 12).AsZoned();
+
+        Assert.Throws<InvalidOperationException>(() => _ = withZone.CompareTo(noZone));
+        Assert.Throws<InvalidOperationException>(() => _ = noZone.CompareTo(withZone));
     }
 
     [Test]
@@ -310,12 +317,26 @@ public class CalDateTimeZonedTests
                 true
             ).SetName("LessThan_SameTimeZone");
 
+            // Timezone: same
+            yield return new TestCaseData(
+                new CalDateTime(2025, 1, 2, 12, 0, 0, "UTC").AsZoned(),
+                new CalDateTime(2025, 1, 1, 12, 0, 0, "UTC").AsZoned(),
+                false
+            ).SetName("NotLessThan_SameTimeZone");
+
             // Timezone: different
             yield return new TestCaseData(
                 new CalDateTime(2025, 1, 1, 12, 0, 0, "UTC").AsZoned(),
                 new CalDateTime(2025, 1, 2, 12, 0, 0, "Europe/Vienna").AsZoned(),
                 true
             ).SetName("LessThan_DifferentTimeZone");
+
+            // Timezone: different
+            yield return new TestCaseData(
+                new CalDateTime(2025, 1, 2, 12, 0, 0, "Europe/Vienna").AsZoned(),
+                new CalDateTime(2025, 1, 1, 12, 0, 0, "UTC").AsZoned(),
+                false
+            ).SetName("NotLessThan_DifferentTimeZone");
 
             // self is null, other is not
             yield return new TestCaseData(
@@ -387,12 +408,26 @@ public class CalDateTimeZonedTests
                 true
             ).SetName("GreaterThan_SameTimeZone");
 
+            // Timezone: same
+            yield return new TestCaseData(
+                new CalDateTime(2025, 1, 1, 12, 0, 0, "UTC").AsZoned(),
+                new CalDateTime(2025, 1, 2, 12, 0, 0, "UTC").AsZoned(),
+                false
+            ).SetName("NotGreaterThan_SameTimeZone");
+
             // Timezone: different
             yield return new TestCaseData(
                 new CalDateTime(2025, 1, 2, 12, 0, 0, "Europe/Vienna").AsZoned(),
                 new CalDateTime(2025, 1, 1, 12, 0, 0, "UTC").AsZoned(),
                 true
             ).SetName("GreaterThan_DifferentTimeZone");
+
+            // Timezone: different
+            yield return new TestCaseData(
+                new CalDateTime(2025, 1, 1, 12, 0, 0, "UTC").AsZoned(),
+                new CalDateTime(2025, 1, 2, 12, 0, 0, "Europe/Vienna").AsZoned(),
+                false
+            ).SetName("NotGreaterThan_DifferentTimeZone");
 
             yield return new TestCaseData(
                 null,

@@ -16,7 +16,7 @@ namespace Ical.Net.Evaluation;
 /// and <see cref="CalDateTimeZoned"/> objects,  including conversions between timezones,
 /// adding durations, and formatting.
 /// </summary>
-public static class CalDateTimeEvaluator
+internal static class CalDateTimeEvaluator
 {
     private static ZonedDateTime? ResolveZonedDateTime(CalDateTime calDateTime)
     {

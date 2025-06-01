@@ -15,7 +15,7 @@ namespace Ical.Net.Evaluation;
 /// can be evaluated to timezone information.
 /// Test for <see cref="HasZone"/> to determine if the timezone information is available.
 /// </summary>
-public readonly struct CalDateTimeZoned : IEquatable<CalDateTimeZoned?>, IComparable<CalDateTimeZoned>, IFormattable
+internal readonly struct CalDateTimeZoned : IEquatable<CalDateTimeZoned?>, IComparable<CalDateTimeZoned>, IFormattable
 {
     public CalDateTimeZoned(CalDateTime calDateTime, ZonedDateTime? zonedDateTime)
     {
@@ -134,7 +134,7 @@ public readonly struct CalDateTimeZoned : IEquatable<CalDateTimeZoned?>, ICompar
         return
             (self.IsFloating || other.IsFloating || self.TzId == other.TzId)
                 ? self.Value < other.Value
-                : Utc < zoned.Value.Utc;
+                : Utc!.Value < zoned.Value.Utc!.Value; // Both have timezones, so UTC is not null
     }
 
     /// <summary>
@@ -152,7 +152,7 @@ public readonly struct CalDateTimeZoned : IEquatable<CalDateTimeZoned?>, ICompar
         return
             (self.IsFloating || other.IsFloating || self.TzId == other.TzId)
                 ? self.Value <= other.Value
-                : Utc <= zoned.Value.Utc;
+                : Utc!.Value <= zoned.Value.Utc!.Value; // Both have timezones, so UTC is not null
     }
 
     /// <summary>
@@ -170,7 +170,7 @@ public readonly struct CalDateTimeZoned : IEquatable<CalDateTimeZoned?>, ICompar
         return
             (self.IsFloating || other.IsFloating || self.TzId == other.TzId)
                 ? self.Value > other.Value
-                : Utc > zoned.Value.Utc;
+                : Utc!.Value > zoned.Value.Utc!.Value; // Both have timezones, so UTC is not null
     }
 
     /// <summary>
@@ -188,7 +188,7 @@ public readonly struct CalDateTimeZoned : IEquatable<CalDateTimeZoned?>, ICompar
         return
             (self.IsFloating || other.IsFloating || self.TzId == other.TzId)
                 ? self.Value >= other.Value
-                : Utc >= zoned.Value.Utc;
+                : Utc!.Value >= zoned.Value.Utc!.Value; // Both have timezones, so UTC is not null
     }
 
     #endregion
