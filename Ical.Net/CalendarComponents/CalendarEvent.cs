@@ -308,37 +308,5 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     }
 
     /// <inheritdoc/>
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((CalendarEvent)obj);
-    }
-
-    /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = DtStart?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ (Summary?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ (Description?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ (DtEnd?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ Duration.GetHashCode();
-            hashCode = (hashCode * 397) ^ (Location?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ Status?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ IsActive.GetHashCode();
-            hashCode = (hashCode * 397) ^ Transparency?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Attachments);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionDates.GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime));
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionRules);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceDates.GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime));
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceRules);
-            return hashCode;
-        }
-    }
-
-    /// <inheritdoc/>
     public int CompareTo(CalendarEvent? other) => DtStart?.CompareTo(other?.DtStart) ?? -1;
 }

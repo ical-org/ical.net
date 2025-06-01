@@ -94,43 +94,6 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         Initialize();
     }
 
-    protected bool Equals(Calendar other)
-        => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
-           && CollectionHelpers.Equals(UniqueComponents, other.UniqueComponents)
-           && CollectionHelpers.Equals(Events, other.Events)
-           && CollectionHelpers.Equals(Todos, other.Todos)
-           && CollectionHelpers.Equals(Journals, other.Journals)
-           && CollectionHelpers.Equals(FreeBusy, other.FreeBusy)
-           && CollectionHelpers.Equals(TimeZones, other.TimeZones);
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj))
-        {
-            return false;
-        }
-        if (ReferenceEquals(this, obj))
-        {
-            return true;
-        }
-        return obj.GetType() == GetType() && Equals((Calendar) obj);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Name.GetHashCode();
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(UniqueComponents);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Events);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Todos);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Journals);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(FreeBusy);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(TimeZones);
-            return hashCode;
-        }
-    }
-
     public virtual IUniqueComponentList<IUniqueComponent> UniqueComponents => _mUniqueComponents;
 
     public virtual IEnumerable<IRecurrable> RecurringItems => Children.OfType<IRecurrable>();

@@ -85,15 +85,4 @@ public class CalendarCollection : List<Calendar>
             return current is null || freeBusy is null ? freeBusy : CombineFreeBusy(current, freeBusy);
         });
     }
-
-    public override int GetHashCode() => CollectionHelpers.GetHashCode(this);
-
-    protected bool Equals(CalendarCollection obj) => CollectionHelpers.Equals(this, obj);
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((CalendarEvent) obj);
-    }
 }

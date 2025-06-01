@@ -50,21 +50,4 @@ public class GeographicLocation : EncodableDataType
     }
 
     public override string ToString() => Latitude.ToString("0.000000", CultureInfo.InvariantCulture) + ";" + Longitude.ToString("0.000000", CultureInfo.InvariantCulture);
-
-    protected bool Equals(GeographicLocation other) => Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude);
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((GeographicLocation) obj);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return (Latitude.GetHashCode() * 397) ^ Longitude.GetHashCode();
-        }
-    }
 }

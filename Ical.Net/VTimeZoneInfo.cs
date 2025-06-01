@@ -44,30 +44,6 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         Initialize();
     }
 
-    public override bool Equals(object? obj)
-    {
-        var tzi = obj as VTimeZoneInfo;
-        if (tzi != null)
-        {
-            return Equals(TimeZoneName, tzi.TimeZoneName) &&
-                   Equals(OffsetFrom, tzi.OffsetFrom) &&
-                   Equals(OffsetTo, tzi.OffsetTo);
-        }
-        return base.Equals(obj);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = TimeZoneName?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ (OffsetFrom?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ (OffsetTo?.GetHashCode() ?? 0);
-
-            return hashCode;
-        }
-    }
-
     public virtual string? TzId
     {
         get =>

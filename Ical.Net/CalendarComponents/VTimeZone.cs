@@ -364,28 +364,4 @@ public class VTimeZone : CalendarComponent
     }
 
     public ICalendarObjectList<VTimeZoneInfo> TimeZoneInfos => new CalendarObjectListProxy<VTimeZoneInfo>(Children);
-
-    protected bool Equals(VTimeZone other)
-        => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
-            && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
-            && Equals(Url, other.Url);
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((VTimeZone) obj);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Name.GetHashCode();
-            hashCode = (hashCode * 397) ^ (TzId?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ (Url?.GetHashCode() ?? 0);
-            return hashCode;
-        }
-    }
 }
