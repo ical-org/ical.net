@@ -34,28 +34,4 @@ public class Journal : RecurringComponent
     {
         base.OnDeserializing(context);
     }
-
-    protected bool Equals(Journal? other)
-    {
-        if (Start == null || other?.Start == null)
-        {
-            return Start == other?.Start; // Both must be null to be considered equal
-        }
-
-        return Start.Equals(other.Start) && Equals(other as RecurringComponent);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((Journal) obj);
-    }
-
-    public override int GetHashCode()
-    {
-        var hashCode = Start?.GetHashCode() ?? 0;
-        hashCode = (hashCode * 397) ^ base.GetHashCode();
-        return hashCode;
-    }
 }

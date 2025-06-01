@@ -150,52 +150,6 @@ public class RecurrencePattern : EncodableDataType
         return serializer.SerializeToString(this);
     }
 
-    protected bool Equals(RecurrencePattern? other)
-        => other != null
-           && Interval == other.Interval
-           && Frequency == other.Frequency
-           && (Until?.Equals(other.Until!) ?? other.Until == null)
-           && Count == other.Count
-           && FirstDayOfWeek == other.FirstDayOfWeek
-           && CollectionEquals(BySecond, other.BySecond)
-           && CollectionEquals(ByMinute, other.ByMinute)
-           && CollectionEquals(ByHour, other.ByHour)
-           && CollectionEquals(ByDay, other.ByDay)
-           && CollectionEquals(ByMonthDay, other.ByMonthDay)
-           && CollectionEquals(ByYearDay, other.ByYearDay)
-           && CollectionEquals(ByWeekNo, other.ByWeekNo)
-           && CollectionEquals(ByMonth, other.ByMonth)
-           && CollectionEquals(BySetPosition, other.BySetPosition);
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((RecurrencePattern) obj);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Interval.GetHashCode();
-            hashCode = (hashCode * 397) ^ (int) Frequency;
-            hashCode = (hashCode * 397) ^ (Until != null ? Until.GetHashCode() : 0);
-            hashCode = (hashCode * 397) ^ (Count ?? 0);
-            hashCode = (hashCode * 397) ^ (int) FirstDayOfWeek;
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(BySecond);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMinute);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByHour);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByDay);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMonthDay);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByYearDay);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByWeekNo);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMonth);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(BySetPosition);
-            return hashCode;
-        }
-    }
-
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable obj)
     {

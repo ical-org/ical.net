@@ -38,55 +38,7 @@ public class SymmetricSerializationTests
     }
 
     private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
-
-    [Test, TestCaseSource(nameof(Event_TestCases))]
-    public void Event_Tests(Calendar iCalendar)
-    {
-        var originalEvent = iCalendar.Events.Single();
-
-        var serializedCalendar = SerializeToString(iCalendar);
-        var unserializedCalendar = UnserializeCalendar(serializedCalendar);
-
-        var onlyEvent = unserializedCalendar.Events.Single();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(onlyEvent.GetHashCode(), Is.EqualTo(originalEvent.GetHashCode()));
-            Assert.That(onlyEvent, Is.EqualTo(originalEvent));
-            Assert.That(unserializedCalendar, Is.EqualTo(iCalendar));
-        });
-    }
-
-    public static IEnumerable<ITestCaseData> Event_TestCases()
-    {
-        return Event_TestCasesInt(true).Concat(Event_TestCasesInt(false));
-    }
-
-    private static IEnumerable<ITestCaseData> Event_TestCasesInt(bool useDtEnd)
-    {
-        var rrule = new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 };
-        var e = new CalendarEvent
-        {
-            DtStart = new CalDateTime(_nowTime),
-            RecurrenceRules = new List<RecurrencePattern> { rrule },
-        };
-
-        if (useDtEnd)
-            e.DtEnd = new CalDateTime(_later);
-        else
-            e.Duration = (_later - _nowTime).ToDurationExact();
-
-        var calendar = new Calendar();
-        calendar.Events.Add(e);
-        yield return new TestCaseData(calendar).SetName($"readme.md example with {(useDtEnd ? "DTEND" : "DURATION")}");
-
-        e = GetSimpleEvent(useDtEnd);
-        e.Description = "This is an event description that is really rather long. Hopefully the line breaks work now, and it's serialized properly.";
-        calendar = new Calendar();
-        calendar.Events.Add(e);
-        yield return new TestCaseData(calendar).SetName($"Description serialization isn't working properly. Issue #60 {(useDtEnd ? "DTEND" : "DURATION")}");
-    }
-
+    
     [Test]
     public void VTimeZoneSerialization_Test()
     {
@@ -178,8 +130,6 @@ public class SymmetricSerializationTests
         Assert.Multiple(() =>
         {
             Assert.That(unserializedAttachment, Is.EqualTo(expectedAttachment));
-            Assert.That(unserialized.GetHashCode(), Is.EqualTo(calendar.GetHashCode()));
-            Assert.That(unserialized, Is.EqualTo(calendar));
         });
     }
 

@@ -87,27 +87,6 @@ public class Organizer : EncodableDataType
             CopyFrom(deserialized);
     }
 
-    protected bool Equals(Organizer other) => Equals(Value, other.Value);
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj))
-        {
-            return false;
-        }
-        if (ReferenceEquals(this, obj))
-        {
-            return true;
-        }
-        if (obj.GetType() != GetType())
-        {
-            return false;
-        }
-        return Equals((Organizer) obj);
-    }
-
-    public override int GetHashCode() => Value?.GetHashCode() ?? 0;
-
     /// <inheritdoc/>
     public sealed override void CopyFrom(ICopyable obj)
     {

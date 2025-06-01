@@ -44,33 +44,6 @@ public class EqualityAndHashingTests
         yield return new TestCaseData(nowCalDtWithTz, new CalDateTime(_nowTime, TzId)).SetName("Now, with time zone");
     }
 
-    [Test]
-    public void RecurrencePatternTests()
-    {
-        var patternA = GetSimpleRecurrencePattern();
-        var patternB = GetSimpleRecurrencePattern();
-
-        Assert.That(patternB, Is.EqualTo(patternA));
-        Assert.That(patternB.GetHashCode(), Is.EqualTo(patternA.GetHashCode()));
-    }
-
-    [Test, TestCaseSource(nameof(Event_TestCases))]
-    public void Event_Tests(CalendarEvent incoming, CalendarEvent expected)
-    {
-        Assert.Multiple(() =>
-        {
-            Assert.That(expected.DtStart, Is.EqualTo(incoming.DtStart));
-            Assert.That(expected.DtEnd, Is.EqualTo(incoming.DtEnd));
-            Assert.That(expected.Location, Is.EqualTo(incoming.Location));
-            Assert.That(expected.Status, Is.EqualTo(incoming.Status));
-            Assert.That(expected.IsActive, Is.EqualTo(incoming.IsActive));
-            Assert.That(expected.Duration, Is.EqualTo(incoming.Duration));
-            Assert.That(expected.Transparency, Is.EqualTo(incoming.Transparency));
-            Assert.That(expected.GetHashCode(), Is.EqualTo(incoming.GetHashCode()));
-            Assert.That(incoming.Equals(expected), Is.True);
-        });
-    }
-
     private static RecurrencePattern GetSimpleRecurrencePattern() => new RecurrencePattern(FrequencyType.Daily, 1)
     {
         Count = 5
@@ -83,168 +56,6 @@ public class EqualityAndHashingTests
     };
 
     private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
-
-
-    public static IEnumerable Event_TestCases()
-    {
-        var outgoing = GetSimpleEvent();
-        var expected = GetSimpleEvent();
-        yield return new TestCaseData(outgoing, expected).SetName("Events with start, end, and duration");
-
-        var fiveA = GetSimpleRecurrencePattern();
-        var fiveB = GetSimpleRecurrencePattern();
-
-        outgoing = GetSimpleEvent();
-        expected = GetSimpleEvent();
-        outgoing.RecurrenceRules = new List<RecurrencePattern> { fiveA };
-        expected.RecurrenceRules = new List<RecurrencePattern> { fiveB };
-        yield return new TestCaseData(outgoing, expected).SetName("Events with start, end, duration, and one recurrence rule");
-    }
-
-    [Test]
-    public void Calendar_Tests()
-    {
-        var rruleA = new RecurrencePattern(FrequencyType.Daily, 1)
-        {
-            Count = 5
-        };
-
-        var e = new CalendarEvent
-        {
-            DtStart = new CalDateTime(_nowTime),
-            Duration = Duration.FromHours(1),
-            RecurrenceRules = new List<RecurrencePattern> { rruleA },
-        };
-
-        var actualCalendar = new Calendar();
-        actualCalendar.Events.Add(e);
-
-        //Work around referential equality...
-        var rruleB = new RecurrencePattern(FrequencyType.Daily, 1)
-        {
-            Count = 5
-        };
-
-        var expectedCalendar = new Calendar();
-        expectedCalendar.Events.Add(new CalendarEvent
-        {
-            DtStart = new CalDateTime(_nowTime),
-            Duration = Duration.FromHours(1),
-            RecurrenceRules = new List<RecurrencePattern> { rruleB },
-        });
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(expectedCalendar.GetHashCode(), Is.EqualTo(actualCalendar.GetHashCode()));
-            Assert.That(actualCalendar.Equals(expectedCalendar), Is.True);
-        });
-    }
-
-    [Test, TestCaseSource(nameof(VTimeZone_TestCases))]
-    public void VTimeZone_Tests(VTimeZone actual, VTimeZone expected)
-    {
-        Assert.Multiple(() =>
-        {
-            Assert.That(expected.Url, Is.EqualTo(actual.Url));
-            Assert.That(expected.TzId, Is.EqualTo(actual.TzId));
-            Assert.That(expected, Is.EqualTo(actual));
-            Assert.That(expected.GetHashCode(), Is.EqualTo(actual.GetHashCode()));
-        });
-    }
-
-    public static IEnumerable VTimeZone_TestCases()
-    {
-        const string nzSt = "New Zealand Standard Time";
-        var first = new VTimeZone
-        {
-            TzId = nzSt,
-        };
-        var second = new VTimeZone(nzSt);
-        yield return new TestCaseData(first, second);
-
-        first.Url = new Uri("http://example.com/");
-        second.Url = new Uri("http://example.com");
-        yield return new TestCaseData(first, second);
-    }
-
-    [Test, TestCaseSource(nameof(Attendees_TestCases))]
-    public void Attendees_Tests(Attendee actual, Attendee expected)
-    {
-        Assert.Multiple(() =>
-        {
-            Assert.That(actual.GetHashCode(), Is.EqualTo(expected.GetHashCode()));
-            Assert.That(actual, Is.EqualTo(expected));
-        });
-    }
-
-    public static IEnumerable Attendees_TestCases()
-    {
-        var tentative1 = new Attendee("MAILTO:james@example.com")
-        {
-            CommonName = "James Tentative",
-            Role = ParticipationRole.RequiredParticipant,
-            Rsvp = true,
-            ParticipationStatus = EventParticipationStatus.Tentative
-        };
-        var tentative2 = new Attendee("MAILTO:james@example.com")
-        {
-            CommonName = "James Tentative",
-            Role = ParticipationRole.RequiredParticipant,
-            Rsvp = true,
-            ParticipationStatus = EventParticipationStatus.Tentative
-        };
-        yield return new TestCaseData(tentative1, tentative2).SetName("Simple attendee test case");
-
-        var complex1 = new Attendee("MAILTO:mary@example.com")
-        {
-            CommonName = "Mary Accepted",
-            Rsvp = true,
-            ParticipationStatus = EventParticipationStatus.Accepted,
-            SentBy = new Uri("mailto:someone@example.com"),
-            DirectoryEntry = new Uri("ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)"),
-            Type = "CuType",
-            Members = new List<string> { "Group A", "Group B" },
-            Role = ParticipationRole.Chair,
-            DelegatedTo = new List<string> { "Peon A", "Peon B" },
-            DelegatedFrom = new List<string> { "Bigwig A", "Bigwig B" }
-        };
-        var complex2 = new Attendee("MAILTO:mary@example.com")
-        {
-            CommonName = "Mary Accepted",
-            Rsvp = true,
-            ParticipationStatus = EventParticipationStatus.Accepted,
-            SentBy = new Uri("mailto:someone@example.com"),
-            DirectoryEntry = new Uri("ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)"),
-            Type = "CuType",
-            Members = new List<string> { "Group A", "Group B" },
-            Role = ParticipationRole.Chair,
-            DelegatedTo = new List<string> { "Peon A", "Peon B" },
-            DelegatedFrom = new List<string> { "Bigwig A", "Bigwig B" }
-        };
-        yield return new TestCaseData(complex1, complex2).SetName("Complex attendee test");
-    }
-
-    [Test, TestCaseSource(nameof(CalendarCollection_TestCases))]
-    public void CalendarCollection_Tests(string rawCalendar)
-    {
-        var a = Calendar.Load(IcsFiles.UsHolidays);
-        var b = Calendar.Load(IcsFiles.UsHolidays);
-
-        Assert.That(a, Is.Not.Null);
-        Assert.That(b, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(b.GetHashCode(), Is.EqualTo(a.GetHashCode()));
-            Assert.That(b, Is.EqualTo(a));
-        });
-    }
-
-    public static IEnumerable CalendarCollection_TestCases()
-    {
-        yield return new TestCaseData(IcsFiles.Google1).SetName("Google calendar test case");
-        yield return new TestCaseData(IcsFiles.Parse1).SetName("Weird file parse test case");
-        yield return new TestCaseData(IcsFiles.UsHolidays).SetName("US Holidays (quite large)");
-    }
 
     [Test]
     public void Resources_Tests()
@@ -288,40 +99,6 @@ public class EqualityAndHashingTests
         var payloadCopy = new byte[payload.Length];
         Array.Copy(payload, payloadCopy, payload.Length);
         return (payload, payloadCopy);
-    }
-
-    [Test, TestCaseSource(nameof(RecurringComponentAttachment_TestCases))]
-    public void RecurringComponentAttachmentTests(RecurringComponent noAttachment, RecurringComponent withAttachment)
-    {
-        var attachments = GetAttachments();
-
-        Assert.That(withAttachment, Is.Not.EqualTo(noAttachment));
-        Assert.That(withAttachment.GetHashCode(), Is.Not.EqualTo(noAttachment.GetHashCode()));
-
-        noAttachment.Attachments.Add(new Attachment(attachments.copy));
-
-        Assert.That(withAttachment, Is.EqualTo(noAttachment));
-        Assert.That(withAttachment.GetHashCode(), Is.EqualTo(noAttachment.GetHashCode()));
-    }
-
-    public static IEnumerable RecurringComponentAttachment_TestCases()
-    {
-        var attachments = GetAttachments();
-
-        var journalNoAttach = new Journal { Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!" };
-        var journalWithAttach = new Journal { Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!" };
-        journalWithAttach.Attachments.Add(new Attachment(attachments.original));
-        yield return new TestCaseData(journalNoAttach, journalWithAttach).SetName("Journal recurring component attachment");
-
-        var todoNoAttach = new Todo { Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!" };
-        var todoWithAttach = new Todo { Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!" };
-        todoWithAttach.Attachments.Add(new Attachment(attachments.original));
-        yield return new TestCaseData(todoNoAttach, todoWithAttach).SetName("Todo recurring component attachment");
-
-        var eventNoAttach = GetSimpleEvent();
-        var eventWithAttach = GetSimpleEvent();
-        eventWithAttach.Attachments.Add(new Attachment(attachments.original));
-        yield return new TestCaseData(eventNoAttach, eventWithAttach).SetName("Event recurring component attachment");
     }
 
     [Test, TestCaseSource(nameof(PeriodTestCases))]
@@ -380,17 +157,12 @@ public class EqualityAndHashingTests
 
         var collectionEqual = CollectionHelpers.Equals(a, b);
 
-        var listOfListA = new List<PeriodList> { a };
-        var listOfListB = new List<PeriodList> { b };
-
         var aThenB = new List<PeriodList> { a, b };
         var bThenA = new List<PeriodList> { b, a };
 
         Assert.Multiple(() =>
         {
             Assert.That(collectionEqual, Is.EqualTo(true));
-            Assert.That(b.GetHashCode(), Is.EqualTo(a.GetHashCode()));
-            Assert.That(CollectionHelpers.Equals(listOfListA, listOfListB), Is.True);
             Assert.That(CollectionHelpers.Equals(aThenB, bThenA), Is.True);
         });
     }

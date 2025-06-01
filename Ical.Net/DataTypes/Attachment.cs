@@ -4,10 +4,8 @@
 //
 
 using System;
-using System.Linq;
 using System.Text;
 using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes;
 
@@ -84,37 +82,5 @@ public class Attachment : EncodableDataType
 
         ValueEncoding = att.ValueEncoding;
         FormatType = att.FormatType;
-    }
-
-    protected bool Equals(Attachment? other)
-    {
-        var firstPart = Equals(Uri, other?.Uri) && ValueEncoding.Equals(other?.ValueEncoding);
-        if (Data == null && other?.Data == null)
-        {
-            return firstPart;
-        }
-        if (Data == null || other?.Data == null)
-        {
-            return false;
-        }
-        return firstPart && Data.SequenceEqual(other.Data);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((Attachment) obj);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Uri?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ (Data != null ? CollectionHelpers.GetHashCode(Data) : 0);
-            hashCode = (hashCode * 397) ^ (ValueEncoding.GetHashCode());
-            return hashCode;
-        }
     }
 }

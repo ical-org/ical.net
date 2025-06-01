@@ -30,23 +30,6 @@ public class SerializationTests
     private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), Duration = (_later.Value - _nowTime.Value).ToDurationExact() };
     private static Calendar DeserializeCalendar(string s) => Calendar.Load(s);
 
-    internal static void CompareCalendars(Calendar cal1, Calendar cal2)
-    {
-        CompareComponents(cal1, cal2);
-
-        Assert.That(cal2.Children, Has.Count.EqualTo(cal1.Children.Count), "Children count is different between calendars.");
-
-        for (var i = 0; i < cal1.Children.Count; i++)
-        {
-            var component1 = cal1.Children[i] as ICalendarComponent;
-            var component2 = cal2.Children[i] as ICalendarComponent;
-            if (component1 != null && component2 != null)
-            {
-                CompareComponents(component1, component2);
-            }
-        }
-    }
-
     internal static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
     {
         foreach (var p1 in cb1.Properties)
@@ -208,37 +191,6 @@ public class SerializationTests
             Assert.That(deserializedCalendar.TimeZones, Has.Count.EqualTo(1));
             Assert.That(deserializedCalendar.TimeZones[0].TimeZoneInfos, Has.Count.EqualTo(2));
         });
-    }
-
-    [Test, Category("Serialization")]
-    public void SerializeDeserialize()
-    {
-        var cal1 = new Calendar
-        {
-            Method = "PUBLISH",
-            Version = "2.0"
-        };
-
-        var evt = new CalendarEvent
-        {
-            Class = "PRIVATE",
-            Created = new CalDateTime(2010, 3, 25, 12, 53, 35),
-            DtStamp = new CalDateTime(2010, 3, 25, 12, 53, 35),
-            LastModified = new CalDateTime(2010, 3, 27, 13, 53, 35),
-            Sequence = 0,
-            Uid = "42f58d4f-847e-46f8-9f4a-ce52697682cf",
-            Priority = 5,
-            Location = "here",
-            Summary = "test",
-            DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00),
-            DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00)
-        };
-        cal1.Events.Add(evt);
-
-        var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(cal1)!;
-        var cal2 = Calendar.Load(serializedCalendar);
-        CompareCalendars(cal1, cal2);
     }
 
     [Test, Category("Serialization")]
