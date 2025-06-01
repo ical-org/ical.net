@@ -148,6 +148,9 @@ public class CalDateTimeTests
         var calDateTime = new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland");
         var expected = "08/30/2024 10:30:00 Pacific/Auckland";
         Assert.That(calDateTime.ToString(), Is.EqualTo(expected));
+#pragma warning disable CA1305
+        Assert.That(calDateTime.ToString("yyyy-MM-dd HH:mm:ss"), Is.EqualTo(expected));
+#pragma warning restore CA1305
     }
 
     [Test, TestCaseSource(nameof(ToStringWithFormatTestCases))]
