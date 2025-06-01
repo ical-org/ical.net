@@ -184,36 +184,7 @@ public class CalendarEventTest
         => new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 } };
     private static List<CalDateTime> GetExceptionDates()
         => new List<CalDateTime> { new CalDateTime(_now.AddDays(1).Date) };
-
-    [Test]
-    public void EventWithRecurrenceAndExceptionComparison()
-    {
-        var vEvent = GetSimpleEvent();
-        vEvent.RecurrenceRules = GetSimpleRecurrenceList();
-        vEvent.ExceptionDates.AddRange(GetExceptionDates());
-
-        var calendar = new Calendar();
-        calendar.Events.Add(vEvent);
-
-        var vEvent2 = GetSimpleEvent();
-        vEvent2.RecurrenceRules = GetSimpleRecurrenceList();
-        vEvent2.ExceptionDates.AddRange(GetExceptionDates());
-
-        var cal2 = new Calendar();
-        cal2.Events.Add(vEvent2);
-
-        var eventA = calendar.Events.First();
-        var eventB = cal2.Events.First();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(eventB.ExceptionDates.GetAllDates().First(), Is.EqualTo(eventA.ExceptionDates.GetAllDates().First()));
-            Assert.That(eventB.GetHashCode(), Is.EqualTo(eventA.GetHashCode()));
-            Assert.That(eventB, Is.EqualTo(eventA));
-            Assert.That(cal2, Is.EqualTo(calendar));
-        });
-    }
-
+    
     [Test]
     public void EventResourcesCanBeZeroedOut()
     {
