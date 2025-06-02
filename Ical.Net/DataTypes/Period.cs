@@ -4,6 +4,7 @@
 //
 
 using System;
+using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes;
@@ -260,7 +261,7 @@ public class Period : EncodableDataType, IComparable<Period>
             return 1;
         }
 
-        if (StartTime.AsUtc.Equals(other.StartTime.AsUtc))
+        if (StartTime.AsUtc().Equals(other.StartTime.AsUtc()))
         {
             return 0;
         }

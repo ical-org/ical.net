@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes;
@@ -180,7 +181,7 @@ public struct Duration
     /// use <see cref="ToTimeSpan"/>.
     /// </remarks>
     public TimeSpan ToTimeSpan(CalDateTime start)
-        => start.Add(this).SubtractExact(start);
+        => start.AsZoned().Add(this).SubtractExact(start.AsZoned());
 
     /// <summary>
     /// Gets a value indicating whether the duration is zero, that is, all fields are null or 0.

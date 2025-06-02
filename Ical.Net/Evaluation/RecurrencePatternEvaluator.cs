@@ -135,7 +135,7 @@ public class RecurrencePatternEvaluator : Evaluator
         if (pattern.Count is null)
         {
             var incremented = seedCopy;
-            while (incremented < periodStartDt)
+            while (incremented.LessThan(periodStartDt))
             {
                 seedCopy = incremented;
                 IncrementDate(ref incremented, pattern, pattern.Interval);
@@ -163,12 +163,12 @@ public class RecurrencePatternEvaluator : Evaluator
         var dateCount = 0;
         while (true)
         {
-            if (searchEndDate < GetIntervalLowerLimit(intervalRefTime, pattern))
+            if (searchEndDate?.LessThan(GetIntervalLowerLimit(intervalRefTime, pattern)) == true)
                 break;
 
             var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior);
 
-            foreach (var t in candidates.Where(t => t >= originalDate))
+            foreach (var t in candidates.Where(t => t.GreaterThanOrEqual(originalDate)))
             {
                 noCandidateIncrementCount = 0;
                 var candidate = t;
@@ -773,7 +773,7 @@ public class RecurrencePatternEvaluator : Evaluator
             .Select(dt => CreatePeriod(dt, referenceDate));
 
         if (pattern.Until is not null)
-            periodQuery = periodQuery.TakeWhile(p => p.StartTime <= pattern.Until);
+            periodQuery = periodQuery.TakeWhile(p => p.StartTime.LessThanOrEqual(pattern.Until));
 
         return periodQuery;
     }

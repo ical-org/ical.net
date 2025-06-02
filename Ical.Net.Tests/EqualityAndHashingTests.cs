@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
 using NUnit.Framework;
@@ -203,9 +204,9 @@ public class EqualityAndHashingTests
     {
         TestComparison((dt1, dt2) => dt1 == dt2, (i1, i2) => i1 == i2);
         TestComparison((dt1, dt2) => dt1 != dt2, (i1, i2) => i1 != i2);
-        TestComparison((dt1, dt2) => dt1 > dt2, (i1, i2) => i1 > i2);
-        TestComparison((dt1, dt2) => dt1 >= dt2, (i1, i2) => i1 >= i2);
-        TestComparison((dt1, dt2) => dt1 < dt2, (i1, i2) => i1 < i2);
-        TestComparison((dt1, dt2) => dt1 <= dt2, (i1, i2) => i1 <= i2);
+        TestComparison((dt1, dt2) => dt1?.GreaterThan(dt2) == true, (i1, i2) => i1 > i2);
+        TestComparison((dt1, dt2) => dt1?.GreaterThanOrEqual(dt2) == true, (i1, i2) => i1 >= i2);
+        TestComparison((dt1, dt2) => dt1?.LessThan(dt2) == true, (i1, i2) => i1 < i2);
+        TestComparison((dt1, dt2) => dt1?.LessThanOrEqual(dt2) == true, (i1, i2) => i1 <= i2);
     }
 }

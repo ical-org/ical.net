@@ -6,6 +6,7 @@
 using BenchmarkDotNet.Attributes;
 using Ical.Net.DataTypes;
 using System;
+using Ical.Net.Evaluation;
 
 namespace Ical.Net.Benchmarks;
 

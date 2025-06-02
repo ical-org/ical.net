@@ -5,6 +5,7 @@
 
 using Ical.Net.Serialization.DataTypes;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using Ical.Net.Evaluation;
@@ -23,8 +24,7 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
 {
-    // private const string ComparisonObsoleteMessage = "Comparison operators and methods are depreciated. Use CalDateTime.AsZoned() and the methods from CalDateTimeEvaluator.";
-    // private const string ArithmeticObsoleteMessage = "Arithmetic methods are depreciated. Use CalDateTime.AsZoned() and the methods from CalDateTimeEvaluator.";
+    private const string ComparisonObsoleteMessage = "Comparison operators are depreciated. Use the timezone-aware extensions 'LessThan', 'LessThanOrEqual', `GreaterThan', 'GreaterThanOrEqual'";
 
     // The date part that is used to return the Value property.
     private DateOnly _dateOnly;
@@ -237,7 +237,8 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// <inheritdoc/>
     public override int GetHashCode() => HashCode.Combine(Value, HasTime, TzId);
 
-    // [Obsolete(ComparisonObsoleteMessage)]
+    [Obsolete(ComparisonObsoleteMessage, true)]
+    [ExcludeFromCodeCoverage]
     public static bool operator <(CalDateTime? left, CalDateTime? right)
     {
         return left != null
@@ -245,7 +246,8 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
                && left.LessThan(right);
     }
 
-    // [Obsolete(ComparisonObsoleteMessage)]
+    [Obsolete(ComparisonObsoleteMessage, true)]
+    [ExcludeFromCodeCoverage]
     public static bool operator >(CalDateTime? left, CalDateTime? right)
     {
         return left != null
@@ -253,7 +255,8 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
                && left.GreaterThan(right);
     }
 
-    // [Obsolete(ComparisonObsoleteMessage)]
+    [Obsolete(ComparisonObsoleteMessage, true)]
+    [ExcludeFromCodeCoverage]
     public static bool operator <=(CalDateTime? left, CalDateTime? right)
     {
         return left != null
@@ -261,7 +264,8 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
                && left.LessThanOrEqual(right);
     }
 
-    // [Obsolete(ComparisonObsoleteMessage)]
+    [Obsolete(ComparisonObsoleteMessage, true)]
+    [ExcludeFromCodeCoverage]
     public static bool operator >=(CalDateTime? left, CalDateTime? right)
     {
         return left != null
@@ -302,7 +306,9 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// it means that the <see cref="Value"/> is considered as local time for every timezone:
     /// The returned <see cref="Value"/> is unchanged, but with <see cref="DateTimeKind.Utc"/>.
     /// </summary>
-    public DateTime AsUtc => DateTime.SpecifyKind(ToTimeZone(UtcTzId).Value, DateTimeKind.Utc);
+    [Obsolete("Use the timezone-ware conversion AsUtc().", true)]
+    [ExcludeFromCodeCoverage]
+    public DateTime AsUtc => this.AsUtc();
 
     /// <summary>
     /// Gets the date and time value in the ISO calendar as a <see cref="DateTime"/> type with <see cref="DateTimeKind.Unspecified"/>.
@@ -432,114 +438,8 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         return new TimeOnly(time.Value.Hour, time.Value.Minute, time.Value.Second);
     }
 
-    /// <summary>
-    /// Converts the <see cref="Value"/> to a date/time
-    /// within the specified <see paramref="otherTzId"/> timezone.
-    /// <para/>
-    /// If <see cref="IsFloating"/>==<see langword="true"/>
-    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
-    /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
-    /// </summary>
-    // [Obsolete(ArithmeticObsoleteMessage)]
-    public CalDateTime ToTimeZone(string? otherTzId)
-        => this.AsZoned().ToTimeZone(otherTzId).CalDateTime;
-
-    /// <summary>
-    /// Add the specified <see cref="Duration"/> to this instance/>.
-    /// </summary>
-    /// <remarks>
-    /// In correspondence to RFC5545, the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
-    /// </remarks>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when attempting to add a time span to a date-only instance, 
-    /// and the time span is not a multiple of full days.
-    /// </exception>
-    // [Obsolete(ArithmeticObsoleteMessage)]
-    public CalDateTime Add(Duration d) => this.AsZoned().Add(d).CalDateTime;
-
-    /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.</summary>
-    /// <param name="dt"></param>
-    // [Obsolete(ArithmeticObsoleteMessage)]
-    public TimeSpan SubtractExact(CalDateTime dt) => AsUtc - dt.AsUtc;
-
-    /// <summary>
-    /// Returns a new <see cref="Duration"/> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.
-    /// </summary>
-    /// <param name="dt"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    // [Obsolete(ArithmeticObsoleteMessage)]
-    public Duration Subtract(CalDateTime dt)
-        => this.AsZoned().Subtract(dt.AsZoned());
-
     internal CalDateTime Copy()
         => new(_dateOnly, _timeOnly, _tzId);
-
-    /// <inheritdoc cref="DateTime.AddYears"/>
-    // [Obsolete(ArithmeticObsoleteMessage)]
-    public CalDateTime AddYears(int years)
-        => this.AsZoned().AddYears(years).CalDateTime;
-
-    /// <inheritdoc cref="DateTime.AddMonths"/>
-    // [Obsolete(ArithmeticObsoleteMessage)]
-    public CalDateTime AddMonths(int months)
-        => this.AsZoned().AddMonths(months).CalDateTime;
-
-    /// <inheritdoc cref="DateTime.AddDays"/>
-    // [Obsolete(ArithmeticObsoleteMessage)]
-    public CalDateTime AddDays(int days)
-        => this.AsZoned().AddDays(days).CalDateTime;
-
-    /// <inheritdoc cref="DateTime.AddHours"/>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when attempting to add a time span to a date-only instance, 
-    /// and the time span is not a multiple of full days.
-    /// </exception>
-    // [Obsolete(ArithmeticObsoleteMessage)]
-    public CalDateTime AddHours(int hours)
-        => this.AsZoned().AddHours(hours).CalDateTime;
-
-    /// <inheritdoc cref="DateTime.AddMinutes"/>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when attempting to add a time span to a date-only instance, 
-    /// and the time span is not a multiple of full days.
-    /// </exception>
-    // [Obsolete(ArithmeticObsoleteMessage)]
-    public CalDateTime AddMinutes(int minutes)
-        => this.AsZoned().AddMinutes(minutes).CalDateTime;
-
-    /// <inheritdoc cref="DateTime.AddSeconds"/>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when attempting to add a time span to a date-only instance, 
-    /// and the time span is not a multiple of full days.
-    /// </exception>
-    // [Obsolete(ArithmeticObsoleteMessage)]
-    public CalDateTime AddSeconds(int seconds)
-        => this.AsZoned().AddSeconds(seconds).CalDateTime;
-
-    /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is less than <paramref name="dt"/>.
-    /// </summary>
-    // [Obsolete(ComparisonObsoleteMessage)]
-    public bool LessThan(CalDateTime dt) => this.AsZoned().LessThan(dt.AsZoned());
-
-    /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than <paramref name="dt"/>.
-    /// </summary>
-    // [Obsolete(ComparisonObsoleteMessage)]
-    public bool GreaterThan(CalDateTime dt) => this.AsZoned().GreaterThan(dt.AsZoned());
-
-    /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is less than or equal to <paramref name="dt"/>.
-    /// </summary>
-    // [Obsolete(ComparisonObsoleteMessage)]
-    public bool LessThanOrEqual(CalDateTime dt) => this.AsZoned().LessThanOrEqual(dt.AsZoned());
-
-    /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than or equal to <paramref name="dt"/>.
-    /// </summary>
-    // [Obsolete(ComparisonObsoleteMessage)]
-    public bool GreaterThanOrEqual(CalDateTime dt) => this.AsZoned().GreaterThanOrEqual(dt.AsZoned());
 
     /// <summary>
     /// Compares the current instance with another <see cref="CalDateTime"/> object and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other CalDateTime.
@@ -550,26 +450,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// Zero: This instance is equal to <paramref name="dt"/>.
     /// Greater than zero: This instance is greater than <paramref name="dt"/>.
     /// </returns>
-    public int CompareTo(CalDateTime? dt)
-    {
-        if (dt == null)
-        {
-            return 1;
-        }
-
-        if (Equals(dt))
-        {
-            return 0;
-        }
-
-        if (this < dt)
-        {
-            return -1;
-        }
-
-        // Meaning "this > dt"
-        return 1;
-    }
+    public int CompareTo(CalDateTime? dt) => Value.CompareTo(dt?.Value);
 
     /// <inheritdoc />
     public override string ToString() => ToString(null, null);

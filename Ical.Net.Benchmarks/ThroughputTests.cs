@@ -6,6 +6,7 @@
 using BenchmarkDotNet.Attributes;
 using System.Linq;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 
 namespace Ical.Net.Benchmarks;
 
@@ -70,7 +71,7 @@ END:VCALENDAR";
         var calendarEvent = calendar.Events.First();
         var searchStart = new CalDateTime(2009, 06, 20);
         var searchEnd = new CalDateTime(2011, 06, 23);
-        var occurrences = calendarEvent.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd);
+        _ = calendarEvent.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime.LessThan(searchEnd));
     }
 
     [Benchmark]
@@ -132,6 +133,6 @@ END:VCALENDAR";
         var calendarEvent = calendar.Events.First();
         var searchStart = new CalDateTime(2009, 06, 20);
         var searchEnd = new CalDateTime(2011, 06, 23);
-        var occurrences = calendarEvent.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd);
+        _ = calendarEvent.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime.LessThan(searchEnd));
     }
 }

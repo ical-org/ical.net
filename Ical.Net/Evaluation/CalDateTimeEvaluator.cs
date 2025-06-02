@@ -122,7 +122,7 @@ internal static class CalDateTimeEvaluator
         var newZoned = zoned;
         if (dt.nominalPart is not null)
             newDateTime = new CalDateTime(newDateTime.Value.Add(dt.nominalPart.Value), zoned.TzId, zoned.HasTime);
-
+        
         if (dt.exactPart is not null)
         {
             var utcZoned = new CalDateTimeZoned(newDateTime, ResolveZonedDateTime(newDateTime)).ToUtc();
@@ -142,7 +142,9 @@ internal static class CalDateTimeEvaluator
         return new CalDateTimeZoned(newDateTime, newZoned.ZonedDateTime);
     }
 
-    /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.</summary>
+    /// <summary>
+    /// Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="CalDateTime"/> from
+    /// the value of this instance.</summary>
     public static TimeSpan SubtractExact(this CalDateTimeZoned zoned, CalDateTimeZoned other)
         => zoned.ToTimeZone(CalDateTime.UtcTzId).Utc!.Value - other.ToTimeZone(CalDateTime.UtcTzId).Utc!.Value;
 
@@ -199,7 +201,7 @@ internal static class CalDateTimeEvaluator
     /// of minutes to the value of this instance.
     /// </summary>
     /// <exception cref="InvalidOperationException">
-    /// Thrown when attempting to add a time span to a date-only instance, 
+    /// Throws when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
     public static CalDateTimeZoned AddMinutes(this CalDateTimeZoned zoned, int minutes)
