@@ -4031,4 +4031,37 @@ END:VCALENDAR";
             Assert.That(() => serializer.CheckRange("a", (int?) 0, 1, 2, false), Throws.TypeOf<ArgumentOutOfRangeException>());
         });
     }
+
+    [Test]
+    public void AmbiguousLocalTime_WithShortDurationOfRecurrence()
+    {
+        // Short recurrence falls into an ambiguous local time
+        // for the end time of the second occurrence because
+        // of DST transition on 2025-10-25 03:00
+        // See also: https://github.com/ical-org/ical.net/issues/737
+        var ics = """
+                  BEGIN:VCALENDAR
+                  BEGIN:VEVENT
+                  DTSTART;TZID=Europe/Vienna:20201024T023000
+                  DURATION:PT45M
+                  RRULE:FREQ=DAILY;UNTIL=20201025T013000Z
+                  END:VEVENT
+                  END:VCALENDAR
+                  """;
+        var cal = Calendar.Load(ics)!;
+        var occ = cal.GetOccurrences().ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(occ.Count, Is.EqualTo(2));
+
+            Assert.That(occ[0].Period.StartTime, Is.EqualTo(new CalDateTime(2020, 10, 24, 2, 30, 0, "Europe/Vienna")));
+            Assert.That(occ[0].Period.EndTime, Is.EqualTo(new CalDateTime(2020, 10, 24, 3, 15, 0, "Europe/Vienna")));
+            Assert.That(occ[0].Period.EffectiveDuration, Is.EqualTo(new Duration(0, 0, 0, 45, 0)));
+
+            Assert.That(occ[1].Period.StartTime, Is.EqualTo(new CalDateTime(2020, 10, 25, 2, 30, 0, "Europe/Vienna")));
+            Assert.That(occ[1].Period.EndTime, Is.EqualTo(new CalDateTime(2020, 10, 25, 2, 15, 0, "Europe/Vienna")));
+            Assert.That(occ[1].Period.EffectiveDuration, Is.EqualTo(new Duration(0, 0, 0, 45, 0)));
+        });
+    }
 }

@@ -162,7 +162,7 @@ internal static class CalDateTimeEvaluator
         if (zoned.HasTime != other.HasTime)
             throw new InvalidOperationException($"Trying to calculate the difference between dates of different types. An instance of type DATE cannot be subtracted from a DATE-TIME and vice versa: {zoned.ToString()} - {other.ToString()}");
 
-        return (zoned.Value - other.Value).ToDuration();
+        return DateUtil.ToDuration((zoned.Value - other.Value));
     }
 
     /// <summary>
@@ -225,9 +225,8 @@ internal static class CalDateTimeEvaluator
     public static string ToString(this CalDateTimeZoned zoned, string? format, IFormatProvider? formatProvider)
     {
         formatProvider ??= CultureInfo.InvariantCulture;
-        var dateTimeOffset =
-            ResolveZonedDateTime(zoned.CalDateTime)?.ToDateTimeOffset()
-            ?? DateUtil.ToZonedDateTimeLeniently(zoned.Value, zoned.TzId ?? string.Empty).ToDateTimeOffset();
+        var dateTimeOffset = zoned.ZonedDateTime?.ToDateTimeOffset()
+            ?? new DateTimeOffset(zoned.CalDateTime.Value);
 
         // Use the .NET format options to format the DateTimeOffset
         var tzIdString = zoned.TzId is not null ? $" {zoned.TzId}" : string.Empty;

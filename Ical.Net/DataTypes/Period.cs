@@ -19,8 +19,8 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class Period : EncodableDataType, IComparable<Period>
 {
-    private CalDateTime _startTime = null!;
-    private CalDateTime? _endTime;
+    private CalDateTimeZoned _start;
+    private CalDateTimeZoned? _end;
     private Duration? _duration;
 
     /// <summary>
@@ -54,8 +54,41 @@ public class Period : EncodableDataType, IComparable<Period>
         return new Period(start) { AssociatedObject = associatedObject };
     }
 
-    // Needed for the serialization factory
-    internal Period() { }
+    internal Period()
+    {
+        // Needed for the serialization factory
+    }
+
+    internal Period(CalDateTimeZoned start, CalDateTimeZoned? end = null)
+    {
+        // Ensure consistent arguments
+        if (end != null && start.TzId != end.Value.TzId)
+            throw new ArgumentException($"Start time ({start}) and end time ({end}) must have the same timezone.");
+
+        if (end != null && start.HasTime != end.Value.HasTime)
+            throw new ArgumentException(
+                $"Start time ({start}) and end time ({end}) must both have a time or both be date-only.");
+
+        if (end != null && end.Value.ToTimeZone(CalDateTime.UtcTzId)
+                .LessThan(start.ToTimeZone(CalDateTime.UtcTzId)))
+            throw new ArgumentException($"End time ({end}) must be greater than start time ({start}).", nameof(end));
+
+        _start = start;
+        _end = end;
+    }
+
+    internal Period(CalDateTimeZoned start, Duration duration)
+    {
+        if (duration.Sign < 0)
+            throw new ArgumentException($"Duration ({duration}) must be greater than or equal to zero.", nameof(duration));
+
+        _start = start;
+        _duration = duration;
+    }
+
+    internal CalDateTimeZoned Start => _start;
+
+    internal CalDateTimeZoned? End => _end;
 
     /// <summary>
     /// Creates a new <see cref="Period"/> instance starting at the given time
@@ -70,6 +103,9 @@ public class Period : EncodableDataType, IComparable<Period>
     /// <exception cref="ArgumentNullException"></exception>
     public Period(CalDateTime start, CalDateTime? end = null)
     {
+        _start = start.AsZoned();
+        _end = end?.AsZoned();
+
         // Ensure consistent arguments
         if (end != null && start.TzId != end.TzId)
             throw new ArgumentException($"Start time ({start}) and end time ({end}) must have the same timezone.");
@@ -78,11 +114,9 @@ public class Period : EncodableDataType, IComparable<Period>
             throw new ArgumentException(
                 $"Start time ({start}) and end time ({end}) must both have a time or both be date-only.");
 
-        if (end != null && end.LessThan(start))
-            throw new ArgumentException($"End time ({end}) must be greater than start time ({start}).", nameof(end));
-
-        _startTime = start;
-        _endTime = end;
+        if (end != null && end.AsZoned().ToTimeZone(CalDateTime.UtcTzId)
+                .LessThan(start.AsZoned().ToTimeZone(CalDateTime.UtcTzId)))
+            throw new ArgumentException($"End time ({end}) as UTC must be greater than start time as UTC ({start}).", nameof(end));
     }
 
     /// <summary>
@@ -100,7 +134,7 @@ public class Period : EncodableDataType, IComparable<Period>
         if (duration.Sign < 0)
             throw new ArgumentException($"Duration ({duration}) must be greater than or equal to zero.", nameof(duration));
 
-        _startTime = start;
+        _start = start.AsZoned();
         _duration = duration;
     }
 
@@ -111,12 +145,12 @@ public class Period : EncodableDataType, IComparable<Period>
 
         if (obj is not Period p) return;
 
-        _startTime = p._startTime.Copy();
-        _endTime = p._endTime?.Copy();
+        _start = p._start;
+        _end = p._end;
         _duration = p._duration;
     }
 
-    protected bool Equals(Period other) => Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Equals(Duration, other.Duration);
+    protected bool Equals(Period other) => Equals(Start, other.Start) && Equals(End, other.End) && Equals(Duration, other.Duration);
 
     /// <inheritdoc/>
     public override bool Equals(object? obj)
@@ -148,12 +182,12 @@ public class Period : EncodableDataType, IComparable<Period>
     /// <summary>
     /// Gets the start time of the period.
     /// </summary>
-    public virtual CalDateTime StartTime => _startTime;
+    public virtual CalDateTime StartTime => _start.CalDateTime;
 
     /// <summary>
     /// Gets the original end time that was set,
     /// </summary>
-    public virtual CalDateTime? EndTime => _endTime;
+    public virtual CalDateTime? EndTime => _end?.CalDateTime;
 
     /// <summary>
     /// Gets the end time of the period that was set, or - if this is <see langword="null"/> -
@@ -161,17 +195,20 @@ public class Period : EncodableDataType, IComparable<Period>
     /// If <see cref="Duration"/> and <see cref="EndTime"/> are both <see langword="null"/>, the method returns <see langword="null"/>.
     /// </summary>
     public virtual CalDateTime? EffectiveEndTime
+        => EffectiveEnd?.CalDateTime;
+
+    internal CalDateTimeZoned? EffectiveEnd
     {
         get
         {
             var effectiveDuration = EffectiveDuration;
-            return _endTime switch
+
+            return _end switch
             {
                 null when _duration is null => null,
                 { } endTime => endTime,
-                _ => effectiveDuration is not null
-                    ? _startTime.Add(effectiveDuration.Value)
-                    : null
+                // When _duration is not null, effectiveDuration is guaranteed to be not null 
+                _ => _start.Add(effectiveDuration!.Value)
             };
         }
     }
@@ -189,20 +226,17 @@ public class Period : EncodableDataType, IComparable<Period>
     /// </summary>
     public virtual Duration? EffectiveDuration
     {
-        get
-        {
-            return _duration switch
+        get =>
+            _duration switch
             {
-                null when _endTime is null => null,
+                null when _end is null => null,
                 { } d => d,
-                _ => _endTime is { } endTime
-                    ? endTime.Subtract(_startTime)
-                    : null
+                // _end and _start are not null
+                _ => _end.Value.Subtract(_start)
             };
-        }
     }
 
-    internal string? TzId => _startTime.TzId; // same timezone for start and end
+    internal string? TzId => _start.TzId; // same timezone for start and end
 
     internal PeriodKind PeriodKind
     {
@@ -224,19 +258,22 @@ public class Period : EncodableDataType, IComparable<Period>
     /// The method is timezone-aware.
     /// </remarks>
     /// <param name="dt"></param>
-    public virtual bool Contains(CalDateTime? dt)
+    public virtual bool Contains(CalDateTime dt)
+        => Contains(dt.AsZoned());
+
+    internal bool Contains(CalDateTimeZoned? dt)
     {
         // Start time is inclusive
-        if (dt == null || !_startTime.LessThanOrEqual(dt))
+        if (dt == null || !_start.LessThanOrEqual(dt))
         {
             return false;
         }
 
-        var endTime = EffectiveEndTime;
+        var end = EffectiveEnd;
         // End time is exclusive
-        return endTime?.GreaterThan(dt) != false;
+        return end?.GreaterThan(dt) != false;
     }
-
+    
     /// <summary>
     /// Checks if the start time of the given period is contained within the current period
     /// or if the end time of the given period is contained within the current period.
@@ -248,10 +285,10 @@ public class Period : EncodableDataType, IComparable<Period>
     /// <param name="period"></param>
     /// <returns></returns>
     public virtual bool CollidesWith(Period period)
-            => Contains(period.StartTime)
-            || period.Contains(StartTime)
-            || Contains(period.EffectiveEndTime)
-            || period.Contains(EffectiveEndTime);
+            => Contains(period.Start)
+            || period.Contains(Start)
+            || Contains(period.EffectiveEnd)
+            || period.Contains(EffectiveEnd);
 
     /// <inheritdoc/>
     public int CompareTo(Period? other)
@@ -261,16 +298,16 @@ public class Period : EncodableDataType, IComparable<Period>
             return 1;
         }
 
-        if (StartTime.AsUtc().Equals(other.StartTime.AsUtc()))
+        if (Start.ToTimeZone(CalDateTime.UtcTzId).Equals(other.Start.ToTimeZone(CalDateTime.UtcTzId)))
         {
             return 0;
         }
-        if (StartTime.LessThanOrEqual(other.StartTime))
+        if (Start.LessThanOrEqual(other.Start))
         {
             return -1;
         }
 
-        // StartTime is greater than other.StartTime
+        // Start is greater than other.Start
         return 1;
     }
 }
