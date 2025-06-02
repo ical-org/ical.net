@@ -258,8 +258,8 @@ public class Period : EncodableDataType, IComparable<Period>
     /// The method is timezone-aware.
     /// </remarks>
     /// <param name="dt"></param>
-    public virtual bool Contains(CalDateTime dt)
-        => Contains(dt.AsZoned());
+    public virtual bool Contains(CalDateTime? dt)
+        => Contains(dt?.AsZoned());
 
     internal bool Contains(CalDateTimeZoned? dt)
     {
