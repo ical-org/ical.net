@@ -7,6 +7,7 @@
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using NUnit.Framework;
 

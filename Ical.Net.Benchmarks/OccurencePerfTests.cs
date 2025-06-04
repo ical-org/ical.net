@@ -9,6 +9,7 @@ using Ical.Net.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.Evaluation;
 
 namespace Ical.Net.Benchmarks;
 
@@ -35,7 +36,7 @@ public class OccurencePerfTests
     {
         var searchStart = _calendarFourEvents.Events.First().DtStart!.AddYears(-1);
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!.AddYears(1);
-        _ = _calendarFourEvents.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd);
+        _ = _calendarFourEvents.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime.LessThan(searchEnd));
     }
 
     [Benchmark]
@@ -44,7 +45,7 @@ public class OccurencePerfTests
         var searchStart = _calendarFourEvents.Events.First().DtStart!.AddYears(-1);
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!.AddYears(1);
         _ = _calendarFourEvents.Events
-            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
+            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime.LessThan(searchEnd)))
             .ToList();
     }
 
@@ -55,7 +56,7 @@ public class OccurencePerfTests
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!.AddYears(1).AddDays(10);
         _ = _calendarFourEvents.Events
             .AsParallel()
-            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
+            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime.LessThan(searchEnd)))
             .ToList();
     }
 
@@ -113,7 +114,7 @@ public class OccurencePerfTests
         var calendar = GetFourCalendarEventsWithCountRule();
         var searchStart = calendar.Events.First().DtStart!.AddYears(-1);
         var searchEnd = calendar.Events.Last().DtStart!.AddYears(1);
-        _ = calendar.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd);
+        _ = calendar.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime.LessThan(searchEnd));
     }
 
     [Benchmark]
@@ -123,7 +124,7 @@ public class OccurencePerfTests
         var searchStart = calendar.Events.First().DtStart!.AddYears(-1);
         var searchEnd = calendar.Events.Last().DtStart!.AddYears(1);
         _ = calendar.Events
-            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
+            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime.LessThan(searchEnd)))
             .ToList();
     }
 
@@ -135,7 +136,7 @@ public class OccurencePerfTests
         var searchEnd = calendar.Events.Last().DtStart!.AddYears(1).AddDays(10);
         _ = calendar.Events
             .AsParallel()
-            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
+            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime.LessThan(searchEnd)))
             .ToList();
     }
 

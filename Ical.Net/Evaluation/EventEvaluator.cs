@@ -68,16 +68,17 @@ public class EventEvaluator : RecurringEvaluator
              */
             var tsToAdd = CalendarEvent.EffectiveDuration;
 
-            CalDateTime endTime;
+            CalDateTimeZoned endTime;
             if (tsToAdd.IsZero)
             {
                 // For a zero-duration event, the end time is the same as the start time.
-                endTime = period.StartTime;
+                endTime = period.Start;
             }
             else
             {
-                // Calculate the end time of the event as a DateTime
-                var endDt = period.StartTime.Add(tsToAdd);
+                // Calculate the end time of the event
+                // Note: endDt could be in a different DST than period.StartTime
+                var endDt = period.Start.Add(tsToAdd);
                 if ((CalendarEvent.End is { } end) && (end.TzId != period.StartTime.TzId) && (end.TzId is { } tzid))
                 {
                     // Ensure the end time has the same timezone as the event end time.
@@ -94,10 +95,10 @@ public class EventEvaluator : RecurringEvaluator
             // and has priority over the calculated end time.
 
             return new Period(
-                start: period.StartTime,
-                end: period.Duration == null
+                start: period.Start,
+                end: period.Duration is null
                     ? endTime
-                    : period.EffectiveEndTime);
+                    : period.EffectiveEndTime!.AsZoned());
         }
         catch (ArgumentOutOfRangeException)
         {

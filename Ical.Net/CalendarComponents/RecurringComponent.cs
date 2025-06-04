@@ -195,5 +195,5 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
     public virtual IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 
     public virtual IList<AlarmOccurrence> PollAlarms(CalDateTime? startTime, CalDateTime? endTime)
-        => Alarms.SelectMany(a => a.Poll(startTime).TakeWhile(p => (endTime == null) || (p.Period?.StartTime < endTime))).ToList();
+        => Alarms.SelectMany(a => a.Poll(startTime).TakeWhile(p => (endTime == null) || (p.Period?.StartTime.AsZoned().LessThan(endTime.AsZoned()) == true))).ToList();
 }
