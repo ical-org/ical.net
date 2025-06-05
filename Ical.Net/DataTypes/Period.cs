@@ -100,7 +100,7 @@ public class Period : EncodableDataType, IComparable<Period>
             throw new ArgumentException($"Duration ({duration}) must be greater than or equal to zero.", nameof(duration));
 
         if (!start.HasTime && duration.HasTime)
-            throw new ArgumentException($"Exact Duration '{duration}' cannot be added to date-only value '{start}'");
+            throw new ArgumentException($"Exact Duration '{duration}' cannot be added to date-only value '{start}'", nameof(start));
 
         _startTime = start;
         _duration = duration;
