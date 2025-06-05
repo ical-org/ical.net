@@ -395,6 +395,6 @@ public class RecurrenceWithRDateTests
         };
         calendarEvent.RecurrenceDates.AddRange(recurrenceDates);
 
-        Assert.That(() => { _ = calendarEvent.GetOccurrences().ToList(); }, Throws.InvalidOperationException);
+        Assert.That(() => { _ = calendarEvent.GetOccurrences().ToList(); }, Throws.ArgumentException);
     }
 }

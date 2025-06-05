@@ -64,7 +64,7 @@ public class RecurrenceWithExDateTests
         {
             if (useExDateWithTime)
             {
-                Assert.That(occurrences.Single().Period, Is.EqualTo(new Period(start, end)));
+                Assert.That(occurrences.Single().Period, Is.EqualTo(new Period(start, end.Subtract(start))));
                 Assert.That(ics, Does.Contain("EXDATE;TZID=Europe/London:20241019T210000"));
             }
             else

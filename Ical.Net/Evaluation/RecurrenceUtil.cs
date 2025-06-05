@@ -36,7 +36,7 @@ internal static class RecurrenceUtil
         {
             periods =
                 from p in periods
-                let endTime = p.EndTime ?? p.StartTime
+                let endTime = p.EffectiveEndTime
                 where
                     p.StartTime.GreaterThanOrEqual(periodStart)
                     || endTime.GreaterThan(periodStart)

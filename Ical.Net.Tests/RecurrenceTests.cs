@@ -55,7 +55,7 @@ public class RecurrenceTests
 
             for (var i = 0; i < expectedPeriods.Length; i++)
             {
-                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveEndTime);
+                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveDuration!.Value);
 
                 Assert.That(occurrences[i].Period, Is.EqualTo(period), "Event should occur on " + period);
                 if (timeZones != null)
@@ -2539,14 +2539,14 @@ public class RecurrenceTests
     // specified via DTEND: exact
     [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DTEND;TZID=Europe/Vienna:20241021T040000", "20241020T010000/PT27H", "20241027T010000/PT27H", "20241103T010000/PT27H")]
     // First days are applied nominal, then time exact
-    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:P1DT3H",                          "20241020T010000/PT27H", "20241027T010000/PT28H", "20241103T010000/PT27H")]
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:P1DT3H",                          "20241020T010000/P1DT3H", "20241027T010000/P1DT3H", "20241103T010000/P1DT3H")]
     // Exact, because duration is time-only
     [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:PT27H",                           "20241020T010000/PT27H", "20241027T010000/PT27H", "20241103T010000/PT27H")]
 
     // specified via DTEND: exact
     [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DTEND;TZID=Europe/Vienna:20241027T040000", "20241020T010000/PT172H", "20241027T010000/PT172H", "20241103T010000/PT172H")]
     // First days are applied nominal, then time exact
-    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:P7DT3H",                          "20241020T010000/PT171H", "20241027T010000/PT172H", "20241103T010000/PT171H")]
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:P7DT3H",                          "20241020T010000/P7DT3H", "20241027T010000/P7DT3H", "20241103T010000/P7DT3H")]
     // Exact, because duration is time-only
     [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:PT171H",                          "20241020T010000/PT171H", "20241027T010000/PT171H", "20241103T010000/PT171H")]
 
@@ -2575,8 +2575,8 @@ public class RecurrenceTests
     //
     // see https://github.com/ical-org/ical.net/issues/681
     [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DTEND;TZID=Europe/Vienna:20250323T023000", "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
-    [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DURATION:P1W",                             "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
-    [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DURATION:P7D",                             "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
+    [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DURATION:P1W",                             "20250316T023000/P1W",    "20250323T023000/P1W",    "20250330T033000/P1W")]
+    [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DURATION:P7D",                             "20250316T023000/P7D",    "20250323T023000/P7D",    "20250330T033000/P7D")]
 
     public void DurationOfRecurrencesOverDst(string dtStart, string dtEnd, string? d1, string? d2, string? d3)
     {
@@ -2603,7 +2603,7 @@ public class RecurrenceTests
         {
             var p = expectedPeriods[index];
             var newStart = p.StartTime.ToTimeZone(start!.TzId);
-            expectedPeriods[index] = Period.Create(newStart, end: newStart.Add(p.Duration!.Value));
+            expectedPeriods[index] = Period.Create(newStart, duration: p.EffectiveDuration);
         }
 
         // date only cannot have a time zone
@@ -3327,7 +3327,7 @@ END:VCALENDAR";
         Assert.Multiple(() =>
         {
             Assert.That(orderedOccurrences[3].StartTime, Is.EqualTo(expectedSept1Start));
-            Assert.That(orderedOccurrences[3].EndTime, Is.EqualTo(expectedSept1End));
+            Assert.That(orderedOccurrences[3].EffectiveEndTime, Is.EqualTo(expectedSept1End));
         });
 
         var expectedSept3Start = new CalDateTime(DateTime.Parse("2016-09-03T07:00:00", CultureInfo.InvariantCulture), "Europe/Bucharest");
@@ -3335,7 +3335,7 @@ END:VCALENDAR";
         Assert.Multiple(() =>
         {
             Assert.That(orderedOccurrences[5].StartTime, Is.EqualTo(expectedSept3Start));
-            Assert.That(orderedOccurrences[5].EndTime, Is.EqualTo(expectedSept3End));
+            Assert.That(orderedOccurrences[5].EffectiveEndTime, Is.EqualTo(expectedSept3End));
         });
     }
 
@@ -4029,6 +4029,39 @@ END:VCALENDAR";
             Assert.That(() => serializer.CheckMutuallyExclusive("a", "b", 1, CalDateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
             Assert.That(() => serializer.CheckRange("a", 0, 1, 2, false), Throws.TypeOf<ArgumentOutOfRangeException>());
             Assert.That(() => serializer.CheckRange("a", (int?) 0, 1, 2, false), Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+    }
+
+    [Test]
+    public void AmbiguousLocalTime_WithShortDurationOfRecurrence()
+    {
+        // Short recurrence falls into an ambiguous local time
+        // for the end time of the second occurrence because
+        // of DST transition on 2025-10-25 03:00
+        // See also: https://github.com/ical-org/ical.net/issues/737
+        var ics = """
+                  BEGIN:VCALENDAR
+                  BEGIN:VEVENT
+                  DTSTART;TZID=Europe/Vienna:20201024T023000
+                  DURATION:PT45M
+                  RRULE:FREQ=DAILY;UNTIL=20201025T013000Z
+                  END:VEVENT
+                  END:VCALENDAR
+                  """;
+        var cal = Calendar.Load(ics)!;
+        var occ = cal.GetOccurrences().ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(occ.Count, Is.EqualTo(2));
+
+            Assert.That(occ[0].Period.StartTime, Is.EqualTo(new CalDateTime(2020, 10, 24, 2, 30, 0, "Europe/Vienna")));
+            Assert.That(occ[0].Period.EffectiveEndTime, Is.EqualTo(new CalDateTime(2020, 10, 24, 3, 15, 0, "Europe/Vienna")));
+            Assert.That(occ[0].Period.EffectiveDuration, Is.EqualTo(new Duration(0, 0, 0, 45, 0)));
+
+            Assert.That(occ[1].Period.StartTime, Is.EqualTo(new CalDateTime(2020, 10, 25, 2, 30, 0, "Europe/Vienna")));
+            Assert.That(occ[1].Period.EffectiveEndTime, Is.EqualTo(new CalDateTime(2020, 10, 25, 2, 15, 0, "Europe/Vienna")));
+            Assert.That(occ[1].Period.EffectiveDuration, Is.EqualTo(new Duration(0, 0, 0, 45, 0)));
         });
     }
 }
