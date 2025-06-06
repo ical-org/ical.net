@@ -168,9 +168,8 @@ public class Period : EncodableDataType, IComparable<Period>
             {
                 null when _duration is null => null,
                 { } endTime => endTime,
-                _ => effectiveDuration is not null
-                    ? _startTime.Add(effectiveDuration.Value)
-                    : null
+                // If _duration is not null, effectiveDuration is not null
+                _ => _startTime.Add(effectiveDuration!.Value)
             };
         }
     }
@@ -231,9 +230,8 @@ public class Period : EncodableDataType, IComparable<Period>
             return false;
         }
 
-        var endTime = EffectiveEndTime;
         // End time is exclusive
-        return endTime?.GreaterThan(dt) != false;
+        return EffectiveEndTime?.GreaterThan(dt) != false;
     }
 
     /// <summary>
@@ -246,11 +244,30 @@ public class Period : EncodableDataType, IComparable<Period>
     /// </remarks>
     /// <param name="period"></param>
     /// <returns></returns>
-    public virtual bool CollidesWith(Period period)
-            => Contains(period.StartTime)
-            || period.Contains(StartTime)
-            || Contains(period.EffectiveEndTime)
-            || period.Contains(EffectiveEndTime);
+    public virtual bool CollidesWith(Period? period)
+    {
+        if (period is null) return false;
+
+        if (EffectiveDuration is null || period.EffectiveDuration is null)
+        {
+            throw new ArgumentException("Both periods must have a defined (non-null) duration to check for collisions. For collisions with date/time use Contains().", nameof(period));
+        }
+
+        var thisStart = StartTime;
+        var thisEnd = EffectiveEndTime;
+        var otherStart = period.StartTime;
+        var otherEnd = period.EffectiveEndTime;
+
+        // Periods without a duration are not colliding
+        if (EffectiveDuration.Value.IsZero || period.EffectiveDuration.Value.IsZero)
+        {
+            return false;
+        }
+
+        // Periods overlap if their start and end times are overlapping.
+        // End time is exclusive.
+        return thisStart.LessThan(otherEnd) && otherStart.LessThan(thisEnd);
+    }
 
     /// <inheritdoc/>
     public int CompareTo(Period? other)
