@@ -43,7 +43,7 @@ internal class GetOccurrenceTests
         Assert.Multiple(() =>
         {
             Assert.That(firstOccurrence.Period.StartTime, Is.EqualTo(firstStartCopy));
-            Assert.That(firstOccurrence.Period.EndTime, Is.EqualTo(firstEndCopy));
+            Assert.That(firstOccurrence.Period.EffectiveEndTime, Is.EqualTo(firstEndCopy));
         });
 
         var secondOccurrence = occurrences.Last();
@@ -52,7 +52,7 @@ internal class GetOccurrenceTests
         Assert.Multiple(() =>
         {
             Assert.That(secondOccurrence.Period.StartTime, Is.EqualTo(secondStartCopy));
-            Assert.That(secondOccurrence.Period.EndTime, Is.EqualTo(secondEndCopy));
+            Assert.That(secondOccurrence.Period.EffectiveEndTime, Is.EqualTo(secondEndCopy));
         });
     }
 

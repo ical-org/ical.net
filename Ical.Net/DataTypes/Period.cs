@@ -4,6 +4,7 @@
 //
 
 using System;
+using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes;
@@ -99,6 +100,9 @@ public class Period : EncodableDataType, IComparable<Period>
         if (duration.Sign < 0)
             throw new ArgumentException($"Duration ({duration}) must be greater than or equal to zero.", nameof(duration));
 
+        if (!start.HasTime && duration.HasTime)
+            throw new ArgumentException($"Exact Duration '{duration}' cannot be added to date-only value '{start}'", nameof(start));
+
         _startTime = start;
         _duration = duration;
     }
@@ -161,17 +165,27 @@ public class Period : EncodableDataType, IComparable<Period>
     /// </summary>
     public virtual CalDateTime? EffectiveEndTime
     {
-        get
-        {
-            var effectiveDuration = EffectiveDuration;
-            return _endTime switch
+        get =>
+            _endTime switch
             {
                 null when _duration is null => null,
                 { } endTime => endTime,
-                _ => effectiveDuration is not null
-                    ? _startTime.Add(effectiveDuration.Value)
-                    : null
+                _ => CalculateEndTime()
             };
+    }
+
+    private CalDateTime CalculateEndTime()
+    {
+        try
+        {
+            // When invoked, _duration is not null, so EffectiveDuration
+            // is guaranteed to be non-null
+            return _startTime.Add(EffectiveDuration!.Value);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            // intentionally don't include the outer exception
+            throw new EvaluationOutOfRangeException($"Calculating the end time of the period from start time '{_startTime}' and effective duration '{EffectiveDuration}' resulted in an out-of-range value.");
         }
     }
 
@@ -188,9 +202,8 @@ public class Period : EncodableDataType, IComparable<Period>
     /// </summary>
     public virtual Duration? EffectiveDuration
     {
-        get
-        {
-            return _duration switch
+        get =>
+            _duration switch
             {
                 null when _endTime is null => null,
                 { } d => d,
@@ -198,7 +211,6 @@ public class Period : EncodableDataType, IComparable<Period>
                     ? endTime.Subtract(_startTime)
                     : null
             };
-        }
     }
 
     internal string? TzId => _startTime.TzId; // same timezone for start and end

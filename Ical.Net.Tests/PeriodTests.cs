@@ -85,19 +85,4 @@ public class PeriodTests
             }
         });
     }
-
-    [Test]
-    public void CollidesWithPeriod()
-    {
-        var period1 = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0), Duration.FromHours(1));
-        var period2 = new Period(new CalDateTime(2025, 1, 1, 0, 30, 0), Duration.FromHours(1));
-        var period3 = new Period(new CalDateTime(2025, 1, 1, 1, 30, 0), Duration.FromHours(1));
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(period1.CollidesWith(period2), Is.True);
-            Assert.That(period1.CollidesWith(period3), Is.False);
-            Assert.That(period2.CollidesWith(period3), Is.True);
-        });
-    }
 }

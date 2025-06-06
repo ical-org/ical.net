@@ -123,8 +123,8 @@ public class SimpleDeserializationTests
         var evt = iCal.Events.First();
         Assert.Multiple(() =>
         {
-            Assert.That(evt.Start.HasTime, Is.EqualTo(true));
-            Assert.That(evt.End.HasTime, Is.EqualTo(true));
+            Assert.That(evt.Start.HasTime, Is.True);
+            Assert.That(evt.End.HasTime, Is.True);
         });
 
         foreach (var o in evt.GetOccurrences(new CalDateTime(2010, 1, 17, 0, 0, 0)).TakeWhileBefore(new CalDateTime(2010, 2, 1, 0, 0, 0)))
@@ -132,7 +132,8 @@ public class SimpleDeserializationTests
             Assert.Multiple(() =>
             {
                 Assert.That(o.Period.StartTime.HasTime, Is.EqualTo(true));
-                Assert.That(o.Period.EndTime.HasTime, Is.EqualTo(true));
+                Assert.That(o.Period.EndTime, Is.Null);
+                Assert.That(o.Period.EffectiveEndTime, Is.Not.Null);
             });
         }
     }

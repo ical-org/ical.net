@@ -128,7 +128,8 @@ public class DeserializationTests
             Assert.Multiple(() =>
             {
                 Assert.That(o.Period.StartTime.HasTime, Is.EqualTo(true));
-                Assert.That(o.Period.EndTime.HasTime, Is.EqualTo(true));
+                Assert.That(o.Period.EndTime, Is.Null);
+                Assert.That(o.Period.EffectiveEndTime, Is.Not.Null);
             });
         }
     }
