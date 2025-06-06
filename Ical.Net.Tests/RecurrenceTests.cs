@@ -3097,7 +3097,7 @@ public class RecurrenceTests
             RDATE;TZID=America/Chicago:99991231T221000
             END:VEVENT
             END:VCALENDAR
-            """)]
+            """, true)]
 
     // y10k exceeded due to the event duration
     [TestCase("""
@@ -3108,7 +3108,7 @@ public class RecurrenceTests
             RRULE:FREQ=DAILY;BYHOUR=22,23;COUNT=2
             END:VEVENT
             END:VCALENDAR
-            """)]
+            """, false)]
 
     // Events are merged in different places than individual RRULES of a single event
     [TestCase("""
@@ -3120,11 +3120,11 @@ public class RecurrenceTests
             DTSTART;TZID=America/Chicago:99991231T221000
             END:VEVENT
             END:VCALENDAR
-            """)]
-    public void Recurrence_WithOutOfBoundsUtc_ShouldFailWithCorrectException(string ical)
+            """, true)]
+    public void Recurrence_WithOutOfBoundsUtc_ShouldFailWithCorrectException(string ical, bool shouldThrow)
     {
         var cal = Calendar.Load(ical)!;
-        Assert.That(() => cal.GetOccurrences().ToList(), Throws.InstanceOf<EvaluationOutOfRangeException>());
+        Assert.That(() => cal.GetOccurrences().ToList(), shouldThrow ? Throws.InstanceOf<EvaluationOutOfRangeException>() : Throws.Nothing);
     }
 
     [Test, Category("Recurrence")]
@@ -3790,7 +3790,7 @@ END:VCALENDAR";
 
         if (testCase.ExceptionStep == RecurrenceTestExceptionStep.Enumeration)
         {
-            Assert.That(() => EnumerateOccurrences(), throwsConstraint);
+            Assert.That(() => EnumerateOccurrences().Last().Period.EffectiveEndTime, throwsConstraint);
             return;
         }
 

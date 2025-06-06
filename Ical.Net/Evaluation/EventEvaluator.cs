@@ -79,10 +79,6 @@ public class EventEvaluator : RecurringEvaluator
                 start: period.StartTime,
                 duration: duration.Value);
 
-            // Ensure that adding the duration to the start time
-            // results in a representable date/time
-            _ = newPeriod.EffectiveEndTime;
-
             return newPeriod;
         }
         catch (ArgumentOutOfRangeException)
