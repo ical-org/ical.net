@@ -1,10 +1,21 @@
-﻿## Release notes
+﻿# Release notes
 
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
-### v5
+## v5
 
-#### 5.0.0-pre.43 - (2025-05-21)
+### 5.0.0 GA - (2025-06-17)
+
+* **Breaking:** Remove redundant `Equals` and `GetHashCode` implementations in https://github.com/ical-org/ical.net/pull/810
+* **Breaking:** `Occurrence.Period` is determined by `StartTime` and `Duration` only in https://github.com/ical-org/ical.net/pull/808
+* Update package versions in https://github.com/ical-org/ical.net/pull/813 which includes `NodaTime` version 3.2.2
+* Fix: `Period.CollidesWith` calculation in https://github.com/ical-org/ical.net/pull/812
+* Added a **[Migration Guide for v4 to v5](https://github.com/ical-org/ical.net/wiki/Migrating-Guides)** to the wiki
+* Update the list of **[API Changes from v4 to v5](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5)** in the wiki
+* Publish v5.0.0 GA
+
+
+### 5.0.0-pre.43 - (2025-05-21)
 
 * **Breaking:** Enable NRT project wide in https://github.com/ical-org/ical.net/pull/769, https://github.com/ical-org/ical.net/pull/771, https://github.com/ical-org/ical.net/pull/772, https://github.com/ical-org/ical.net/pull/778, https://github.com/ical-org/ical.net/pull/786. NuGet Packages are now published with NRT enabled.
 * Update license.md in https://github.com/ical-org/ical.net/pull/773
@@ -20,7 +31,7 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 * Fix for serialization of property parameters: `CalendarComponent.AddProperty` adds the `CalendarProperty` in https://github.com/ical-org/ical.net/pull/801
 * **Breaking:** Feature: Serialize multiple categories and resources to one line in https://github.com/ical-org/ical.net/pull/803 and https://github.com/ical-org/ical.net/pull/804
 
-#### 5.0.0-pre.42 - (2025-04-12)
+### 5.0.0-pre.42 - (2025-04-12)
 
 * Fix incorrect handling of UNTIL if falling into DST change and some related improvements in https://github.com/ical-org/ical.net/pull/738
 * Fix: Minor NRT warnings with Recurrence in https://github.com/ical-org/ical.net/pull/743
@@ -36,24 +47,24 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 * Enable NRT in https://github.com/ical-org/ical.net/pull/762, https://github.com/ical-org/ical.net/pull/763, https://github.com/ical-org/ical.net/pull/764, https://github.com/ical-org/ical.net/pull/765. Note: The current packages are created with `NRT` disabled, The v5 final release will be fully NRT compliant.
 * Fix positive/nagative args in `Duration` CTOR in https://github.com/ical-org/ical.net/pull/767
 
-#### 5.0.0-pre.41 - (2025-02-20)
+### 5.0.0-pre.41 - (2025-02-20)
 
   * Make the time zone resolver plugable
   * Make `CalendarEvent.EffectiveDuration` and some conversion functions public.
   * Fix: Incorrect expansion behaviour after `BYWEEKNO`
 
-#### 5.0.0-pre.40 - (2025-02-15)
+### 5.0.0-pre.40 - (2025-02-15)
 
   * Fix: Derive correct file and assembly version from package version in https://github.com/ical-org/ical.net/pull/726
   * Fix inverted limiting behavior of `BYMONTHDAY` by @minichma in https://github.com/ical-org/ical.net/pull/730
 
-#### 5.0.0-pre.39 - (2025-02-12)
+### 5.0.0-pre.39 - (2025-02-12)
   * This is the first public pre-release of the next major version of **Ical.Net**. It's an extensive rewrite of the library, with a focus on performance, correctness and usability. All issues reported in prior versions have been addressed, and the library has been thoroughly tested, also using the [libical](https://github.com/libical/libical) test suite.
   * We strongly recommend using the pre-release packages, as they are more stable and feature-complete than the v4.x versions.
   * Feedback is highly appreciated.
   * Breaking changes from v4 are currently listed [here](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5).
 
-### v4
+## v4
 * 4.3.1 - (2024-10-14)
   * Update Ical.Net.csproj to use NodaTime 3.2.0 instead of 3.1.12. NodaTime v3.2.0 which brings some welcome changes
   * Replace Ical.Net.nuspec with Directory.Build.props
