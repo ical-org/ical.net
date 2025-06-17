@@ -1,12 +1,10 @@
-﻿## History
+﻿## License History
 
-ical.net is a fork of Douglas Day's dday.ical library for .NET 2.0 as it appeared on SourceForge. This is why you may see references to dday throughout the code. I contacted Doug, and was able to get his permission to re-license it. Per his wishes, I chose the most permissive license I could: the MIT license, which you will find in license.md.
-
-The old license--recorded below for historical purposes--has been superceded by the MIT license.
+ical.net goes back to a fork of Douglas Day's dday.ical library for .NET 2.0 as it appeared on SourceForge. This is why you may see references to dday throughout the code. I contacted Doug, and was able to get his permission to re-license it. Per his wishes, Rian chose the most permissive license: the MIT license, which you will find in license.md.
 
 ### Relicensing permission
 
-This is a copy-and-paste of our email exchange.
+This is a copy-and-paste of the email exchange between Rian Stockbower and Douglas Day, the original author of dday.ical, granting permission to relicense the code under the MIT license.
 
 ```
 From: Rian Stockbower
@@ -39,8 +37,7 @@ doesn't seem to go anywhere anymore.
 Regards,
 -Rian
 
-
-
+-------------------
 
 From: Douglas Day
 To: rstockbower@gmail.com

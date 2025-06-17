@@ -1,9 +1,9 @@
 ﻿# <img src="assets/logo.png" style="width:300px;">
 
 
-| [![GitHub release](https://img.shields.io/github/release/ical-org/ical.net.svg?sort=semver)](https://github.com/ical-org/ical.net/releases/latest) | ![GitHub Pre-Release](https://img.shields.io/github/v/release/ical-org/ical.net?include_prereleases&sort=semver&display_name=tag&label=pre-release&color=green) | [![codecov](https://codecov.io/gh/ical-org/ical.net/branch/main/graph/badge.svg)](https://codecov.io/gh/ical-org/ical.net) | [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/ical-org/ical.net/blob/main/license.md) |  
+| [![GitHub release](https://img.shields.io/github/release/ical-org/ical.net.svg?sort=semver)](https://github.com/ical-org/ical.net/releases/latest) | [![codecov](https://codecov.io/gh/ical-org/ical.net/branch/main/graph/badge.svg)](https://codecov.io/gh/ical-org/ical.net) | [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/ical-org/ical.net/blob/main/license.md) |  
 |----------|----------|----------|----------|  
-| [![NuGet Version](https://img.shields.io/nuget/v/ical.net)](https://www.nuget.org/packages/Ical.Net)  | [![NuGet Pre-Version](https://img.shields.io/nuget/vpre/ical.net?color=green&label=pre-nuget)](https://www.nuget.org/packages/Ical.Net#versions-body-tab)  |   |   |  
+| [![NuGet Version](https://img.shields.io/nuget/v/ical.net)](https://www.nuget.org/packages/Ical.Net)  |   |   |  
 
 ## What is iCal.NET?
 iCal.NET is a robust and feature-rich iCalendar (RFC 5545) library for .NET, designed to simplify working with calendar data while ensuring full compliance with the iCalendar standard. Here are the main features and benefits:
@@ -11,7 +11,7 @@ iCal.NET is a robust and feature-rich iCalendar (RFC 5545) library for .NET, des
 ### Key Features
 
 * **RFC 5545 Compliance**: Guarantees compatibility with the iCalendar standard, ensuring seamless integration with popular calendaring applications.
-• **Event Management**: Easily create, modify, and manage calendar events programmatically.
+* **Event Management**: Easily create, modify, and manage calendar events programmatically.
 * **Recurrence Rules**: Supports complex recurrence patterns, making it ideal for scheduling recurring events.
 * **Serialization/Deserialization**: Effortlessly convert calendar data to and from iCalendar (.ics) files.
 * **Time Zone Support**: Handle events across different time zones with ease.
@@ -34,11 +34,9 @@ Our mission is to provide a robust and reliable iCalendar library for .NET, ensu
 
 ### iCal.NET v5
 
-Starting with 5.0.0-pre.39, iCal.Net v5 pre-releases are available as [NuGet Packages](https://www.nuget.org/packages/Ical.Net)
-
 v5 is a comprehensive rewrite of the library, incorporating over 100 merged pull requests and focusing on enhanced performance, correctness, and usability. All reported issues from previous versions have been resolved, and unit tests have been added or enhanced for greater reliability.
 
-See the **[API Changes Document](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5)** for more information.
+See the **[API Changes Document](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5)** and the **[Migration Guide for v4 to v5](https://github.com/ical-org/ical.net/wiki/Migrating-Guides)** in the wiki for detailed information.
 
 ### iCal.NET v4
 is still available up to v4.3.1. Is is out of support and will not receive any further updates. We recommend using the v5 packages instead.
@@ -56,8 +54,6 @@ Install the NuGet packing using the following command:
 
 ```sh
 dotnet add package iCal.NET
--- or --
-dotnet add package iCal.NET --prerelease
 ```
 
 ## Examples

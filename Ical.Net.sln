@@ -15,8 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		contributors.md = contributors.md
-		history.md = history.md
 		README.md = README.md
+		license-history.md = license-history.md
 		release-notes.md = release-notes.md
 	EndProjectSection
 EndProject
