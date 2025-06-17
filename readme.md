@@ -2,7 +2,7 @@
 
 
 | [![GitHub release](https://img.shields.io/github/release/ical-org/ical.net.svg?sort=semver)](https://github.com/ical-org/ical.net/releases/latest) | [![codecov](https://codecov.io/gh/ical-org/ical.net/branch/main/graph/badge.svg)](https://codecov.io/gh/ical-org/ical.net) | [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/ical-org/ical.net/blob/main/license.md) |  
-|----------|----------|----------|----------|  
+|----------|----------|----------|  
 | [![NuGet Version](https://img.shields.io/nuget/v/ical.net)](https://www.nuget.org/packages/Ical.Net)  |   |   |  
 
 ## What is iCal.NET?
