@@ -1,12 +1,14 @@
 ﻿name: Publish
 # This job builds and publishes the package to NuGet.
 # It depends on the included tests job to complete successfully.
-# The version number is determined by the tag provided when manually triggering the workflow.
+# The version number is determined by the existing tag provided 
+# when manually triggering the workflow. 
+# The tag is not limited to a certain branch.
 on:
   workflow_dispatch:
     inputs:
       version_tag:
-        description: 'Enter an existing version tag to publish (e.g., "v5.1.0" or "v5.2.0-pre.1")'
+        description: 'Enter an existing version tag to publish (e.g., "v5.1.0" or "v6.0.0-pre.1")'
         required: true
         type: string
 
@@ -17,20 +19,22 @@ jobs:
     outputs:
       VERSION: ${{ steps.set_version.outputs.VERSION }}
     steps:
-    - name: Checkout main
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Fetch all history for all tags and branches
-        ref: main
-
     - name: Verify tag exists
       run: |
+        git fetch --tags --quiet
         if ! git rev-parse "${{ inputs.version_tag }}" >/dev/null 2>&1; then
           echo "::error::Tag '${{ inputs.version_tag }}' does not exist."
           echo "Available tags:"
           git tag -l
           exit 1
         fi
+
+    - name: Checkout tag
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for all tags and branches
+        ref: ${{ inputs.version_tag }}
+
     - name: Set VERSION output
       id: set_version
       run: |
@@ -52,9 +56,6 @@ jobs:
           6.0.x
           3.1.x
 
-    - name: Reset branch to specified tag
-      run: git reset --hard ${{ inputs.version_tag }}
-
     - name: Restore dependencies
       run: dotnet restore
 
@@ -69,11 +70,11 @@ jobs:
     needs: tests
 
     steps:
-    - name: Checkout main
+    - name: Checkout tag
       uses: actions/checkout@v4
       with:
         fetch-depth: 0  # Fetch all history for all tags and branches
-        ref: main
+        ref: ${{ inputs.version_tag }}
 
     - name: Set Git config for line endings
       run: git config --global core.autocrlf true
@@ -98,9 +99,6 @@ jobs:
         echo "ASSEMBLY_VERSION=$AssemblyVersion" >> $GITHUB_ENV
         echo "File Version: $FileVersion"
         echo "Assembly Version: $AssemblyVersion"
-
-    - name: Reset branch to specified tag
-      run: git reset --hard ${{ inputs.version_tag }}
 
     - name: Restore dependencies
       run: dotnet restore
