@@ -50,8 +50,8 @@ public class EventEvaluator : RecurringEvaluator
     /// The <paramref name="period"/> to evaluate has the <see cref="Period.StartTime"/> set,
     /// but neither <see cref="Period.EndTime"/> nor <see cref="Period.Duration"/> are set.
     /// </summary>
-    /// <param name="period">The period where <see cref="Period.EndTime"/> will be set.</param>
-    /// <returns>Returns the <paramref name="period"/> with <see cref="Period.EndTime"/> and exact <see cref="Period.Duration"/> set.</returns>
+    /// <param name="period">The period where <see cref="Period.Duration"/> will be set.</param>
+    /// <returns>Returns the <paramref name="period"/> with <see cref="Period.Duration"/> and exact <see cref="Period.EffectiveEndTime"/> set.</returns>
     private Period WithFinalDuration(Period period)
     {
         try
