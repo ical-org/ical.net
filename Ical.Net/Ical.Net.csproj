@@ -5,7 +5,7 @@
         <AssemblyOriginatorKeyFile>..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
         <nullable>enable</nullable>
         <LangVersion>latest</LangVersion>
-        <FileVersion>2.0</FileVersion>
+        <AssemblyVersion>2.0</AssemblyVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="NodaTime" Version="3.2.2" />
