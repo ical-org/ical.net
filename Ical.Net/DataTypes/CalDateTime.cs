@@ -206,6 +206,10 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         _tzId = HasTime ? tzId : null;
     }
 
+    public static implicit operator CalDateTime(DateTime dt) => new(dt, true);
+
+    public static implicit operator CalDateTime(DateOnly dt) => new(dt);
+
     private void Initialize(DateOnly dateOnly, TimeOnly? timeOnly, string? tzId)
     {
         _dateOnly = dateOnly;
