@@ -5,6 +5,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Ical.Net;
 
@@ -254,21 +255,9 @@ public static class LibraryMetadata
 
     private static string GetAssemblyVersion()
     {
-        string? version;
         var assembly = typeof(LibraryMetadata).Assembly;
-
-        // Prefer the file version, but fall back to the assembly version if it's not available.
-        try
-        {
-            var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            version = fileVersionInfo.FileVersion;
-        }
-        catch (Exception)
-        {
-            version = assembly.GetName().Version?.ToString();
-        }
-
-        return version ?? "2.0";
+        var fileVersionAttribute = assembly.GetCustomAttribute<AssemblyFileVersionAttribute>();
+        return fileVersionAttribute?.Version ?? assembly.GetName().Version?.ToString() ?? "1.0.0.0";
     }
 }
 
