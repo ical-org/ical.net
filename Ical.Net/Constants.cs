@@ -254,12 +254,21 @@ public static class LibraryMetadata
 
     private static string GetAssemblyVersion()
     {
+        string? version;
         var assembly = typeof(LibraryMetadata).Assembly;
-        var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+
         // Prefer the file version, but fall back to the assembly version if it's not available.
-        return fileVersionInfo.FileVersion
-               ?? assembly.GetName().Version?.ToString() // will only change for major versions
-               ?? "1.0.0.0";
+        try
+        {
+            var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            version = fileVersionInfo.FileVersion;
+        }
+        catch (Exception)
+        {
+            version = assembly.GetName().Version?.ToString();
+        }
+
+        return version ?? "1.0.0.0";
     }
 }
 
