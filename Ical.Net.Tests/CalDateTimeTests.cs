@@ -361,12 +361,47 @@ public class CalDateTimeTests
         ];
 
     [Test, TestCaseSource(nameof(CalDateTime_FromDateTime_HandlesKindCorrectlyTestCases))]
-
-
     public void CalDateTime_FromDateTime_HandlesKindCorrectly(DateTimeKind kind, IResolveConstraint constraint)
     {
         var dt = new DateTime(2024, 12, 30, 10, 44, 50, kind);
 
         Assert.That(() => new CalDateTime(dt), constraint);
+    }
+
+    private static TestCaseData[] CalDateTimeImplicitFromDateTime_TestCastes => [
+        new TestCaseData(DateTimeKind.Unspecified, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50, null))),
+        new TestCaseData(DateTimeKind.Utc, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50, "UTC"))),
+        new TestCaseData(DateTimeKind.Local, Throws.ArgumentException),
+    ];
+
+    [Test, TestCaseSource(nameof(CalDateTimeImplicitFromDateTime_TestCastes))]
+    public void CalDateTimeImplicitFromDateTime(DateTimeKind kind, IResolveConstraint constraint)
+    {
+        var dt = new DateTime(2024, 12, 30, 10, 44, 50, kind);
+
+        Assert.That(() => (CalDateTime) dt, constraint);
+    }
+
+    public static IEnumerable CalDateTimeImplicitFromDateOnly_TestCases()
+    {
+        yield return new TestCaseData(new DateOnly(2025, 07, 10));
+        yield return new TestCaseData(new DateOnly());
+        yield return new TestCaseData(DateOnly.MinValue);
+        yield return new TestCaseData(DateOnly.MaxValue);
+    }
+
+    [Test, TestCaseSource(nameof(CalDateTimeImplicitFromDateOnly_TestCases))]
+    public void CalDateTimeImplicitFromDateOnly(DateOnly dt)
+    {
+        CalDateTime cdt = dt;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Year, Is.EqualTo(cdt.Year));
+            Assert.That(dt.Month, Is.EqualTo(cdt.Month));
+            Assert.That(dt.Day, Is.EqualTo(cdt.Day));
+
+            Assert.That(cdt.TzId, Is.Null);
+        });
     }
 }
