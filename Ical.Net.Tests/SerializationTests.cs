@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -611,4 +612,35 @@ public class SerializationTests
         }
     }
 
+    [Test]
+    public void CalendarSerialization_ShouldDefaultTo_Utf8NoBom()
+    {
+        var calendar = new Calendar();
+        calendar.Events.Add(new CalendarEvent
+        {
+            Summary = "Sample Event",
+            DtStart = new CalDateTime(2025, 6, 10, 9, 0, 0),
+            DtEnd = new CalDateTime(2025, 6, 10, 10, 0, 0)
+        });
+
+        // Serialize with default encoding (should be UTF-8 without BOM)
+        using var msNoBom = new MemoryStream();
+        new CalendarSerializer().Serialize(calendar, msNoBom);
+        var noBomBytes = msNoBom.ToArray();
+
+        // Serialize with explicit UTF-8 BOM
+        using var msWithBom = new MemoryStream();
+        new CalendarSerializer().Serialize(calendar, msWithBom, new UTF8Encoding(true));
+        var withBomBytes = msWithBom.ToArray();
+
+        // UTF-8 BOM is 0xEF,0xBB,0xBF
+        bool HasBom(byte[] bytes) =>
+            bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(HasBom(noBomBytes), Is.False, "Stream should not contain a UTF-8 BOM");
+            Assert.That(HasBom(withBomBytes), Is.True, "Stream should contain a UTF-8 BOM");
+        });
+    }
 }
