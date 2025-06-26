@@ -14,6 +14,6 @@ public interface ISerializer : IServiceProvider
     SerializationContext SerializationContext { get; set; }
 
     Type TargetType { get; }
-    void Serialize(object obj, Stream stream, Encoding encoding);
+    void Serialize(object obj, Stream stream, Encoding? encoding = null);
     object? Deserialize(Stream stream, Encoding encoding);
 }
