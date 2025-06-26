@@ -3,9 +3,11 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
 
@@ -217,5 +219,25 @@ public class TodoTest
         Assert.That(
             occurrences,
             Has.Count.EqualTo(items.Count));
+    }
+
+    [Test, Category("Todo")]
+    public void Todo_WithFutureStart_AndNoDuration_ShouldSucceed()
+    {
+        var today = CalDateTime.Today;
+
+        var todo = new Todo
+        {
+            Start = today,
+            RecurrenceRules = [new RecurrencePattern("FREQ=DAILY")]
+        };
+
+        // periodStart is in the future, so filtering the first occurrence will also require
+        // looking at the todo's duration, which is unset/null. It must therefore be ignored.
+        var firstOccurrence = todo.GetOccurrences(today.AddDays(2)).FirstOrDefault();
+
+        Assert.That(firstOccurrence, Is.Not.Null);
+        Assert.That(firstOccurrence.Period.StartTime, Is.Not.Null);
+        Assert.That(firstOccurrence.Period.Duration, Is.Null);
     }
 }

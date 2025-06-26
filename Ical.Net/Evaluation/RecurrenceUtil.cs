@@ -39,7 +39,7 @@ internal static class RecurrenceUtil
                 let effectiveEndTime = p.EffectiveEndTime
                 where
                     p.StartTime.GreaterThanOrEqual(periodStart)
-                    || effectiveEndTime.GreaterThan(periodStart)
+                    || ((effectiveEndTime != null) && effectiveEndTime.GreaterThan(periodStart))
                 select p;
         }
 
