@@ -87,9 +87,9 @@ public class RecurringEvaluator : Evaluator
     /// </summary>
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-    protected IEnumerable<Period> EvaluateExDate(CalDateTime referenceDate, CalDateTime? periodStart)
+    private IEnumerable<Period> EvaluateExDate(CalDateTime referenceDate, CalDateTime? periodStart, params PeriodKind[] periodKinds)
     {
-        var exDates = Recurrable.ExceptionDates.GetAllPeriodsByKind(PeriodKind.DateOnly, PeriodKind.DateTime)
+        var exDates = Recurrable.ExceptionDates.GetAllPeriodsByKind(periodKinds)
             .AsEnumerable();
 
         if (periodStart != null)
@@ -119,14 +119,16 @@ public class RecurringEvaluator : Evaluator
         // before `periodStart`. We therefore start 2 days earlier (2 for safety regarding the TZ).
         // DISCUSS: Should we support date-only EXDATEs being mixed with date-time DTSTARTs at all? What
         // if one has a time zone and the other doesn't? Many details are unclear.
-        var exDateExclusions = EvaluateExDate(referenceDate, periodStart?.AddDays(-2));
+        var exDateExclusionsDateOnly = EvaluateExDate(referenceDate, periodStart?.AddDays(-2), PeriodKind.DateOnly);
+        var exDateExclusionsDateTime = EvaluateExDate(referenceDate, periodStart, PeriodKind.DateTime);
 
         var periods =
             rruleOccurrences
             .OrderedMerge(rdateOccurrences)
             .OrderedDistinct()
             .OrderedExclude(exRuleExclusions)
-            .OrderedExclude(exDateExclusions, Comparer<Period>.Create(CompareExDateOverlap))
+            .OrderedExclude(exDateExclusionsDateTime)
+            .OrderedExclude(exDateExclusionsDateOnly, DateOnlyExDateComparer)
 
             // Convert overflow exceptions to expected ones.
             .HandleEvaluationExceptions();
@@ -135,18 +137,10 @@ public class RecurringEvaluator : Evaluator
     }
 
     /// <summary>
-    /// Compares whether the given period's date overlaps with the given EXDATE. The dates are
-    /// considered to overlap if they start at the same time, or the EXDATE is an all-day date
-    /// and the period's start date is the same as the EXDATE's date.
-    /// <para/>
-    /// Note: <see cref="Period.EffectiveDuration"/> for <paramref name="exDate"/> is always <see langword="null"/>.
+    /// Compares whether the given period's date or date-time overlaps with the given date-only EXDATE.
+    /// The dates are considered to overlap if the date component equals. The time zone and time component
+    /// are ignored.
     /// </summary>
-    private static int CompareExDateOverlap(Period period, Period exDate)
-    {
-        var cmp = period.CompareTo(exDate);
-        if ((cmp != 0) && !exDate.StartTime.HasTime && (period.StartTime.Value.Date == exDate.StartTime.Value))
-            cmp = 0;
-
-        return cmp;
-    }
+    private static readonly Comparer<Period> DateOnlyExDateComparer = Comparer<Period>.Create(
+        (p1, p2) => p1.StartTime.Date.CompareTo(p2.StartTime.Date));
 }
