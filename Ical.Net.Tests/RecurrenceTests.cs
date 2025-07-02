@@ -4093,4 +4093,38 @@ END:VCALENDAR";
 
         Assert.That(occurrences, Is.EqualTo(expectedDates));
     }
+
+    [Test]
+    public void GetOccurrences_WithMixedKindExDates_ShouldProperlyConsiderAll()
+    {
+        var cal = new CalendarEvent
+        {
+            Start = new CalDateTime("20250702T100000"),
+            End = new CalDateTime("20250702T200000"),
+            RecurrenceRules = [new RecurrencePattern("FREQ=DAILY")],
+        };
+
+
+        // Should be considered only at the exact time
+        cal.ExceptionDates.Add(new CalDateTime("20250703T000000"));
+
+        // Should be considered all-day
+        cal.ExceptionDates.Add(new CalDateTime("20250703"));
+
+        // Should be considered only at the exact time
+        cal.ExceptionDates.Add(new CalDateTime("20250703T150000"));
+
+        var occurrences = cal.GetOccurrences()
+            .Take(2)
+            .Select(o => o.Period.StartTime)
+            .ToList();
+
+        var expectedDates = new[]
+        {
+            new CalDateTime("20250702T100000"),
+            new CalDateTime("20250704T100000")
+        };
+
+        Assert.That(occurrences, Is.EqualTo(expectedDates));
+    }
 }
