@@ -4064,4 +4064,33 @@ END:VCALENDAR";
             Assert.That(occ[1].Period.EffectiveDuration, Is.EqualTo(new Duration(0, 0, 0, 45, 0)));
         });
     }
+
+    [Test]
+    [TestCase("20250101T120000", "20250101T100000", "20250103T100000")]
+    [TestCase("20250102T120000", "20250103T100000", "20250104T100000")]
+    // see https://github.com/ical-org/ical.net/issues/829
+    public void GetOccurrences_ShouldNotIgnoreExDatesForToday(string periodStart, string expected1, string expected2)
+    {
+        var cal = new CalendarEvent
+        {
+            Start = new CalDateTime("20250101T100000"),
+            End   = new CalDateTime("20250101T200000"),
+            RecurrenceRules = [new RecurrencePattern("FREQ=DAILY")],
+        };
+
+        cal.ExceptionDates.Add(new CalDateTime("20250102"));
+
+        var occurrences = cal.GetOccurrences(new CalDateTime(periodStart))
+            .Take(2)
+            .Select(o => o.Period.StartTime)
+            .ToList();
+
+        var expectedDates = new[]
+        {
+            new CalDateTime(expected1),
+            new CalDateTime(expected2)
+        };
+
+        Assert.That(occurrences, Is.EqualTo(expectedDates));
+    }
 }
