@@ -112,7 +112,14 @@ public class RecurringEvaluator : Evaluator
         var rdateOccurrences = EvaluateRDate(referenceDate, periodStart);
 
         var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, options);
-        var exDateExclusions = EvaluateExDate(referenceDate, periodStart);
+
+        // EXDATEs could contain date-only entries while DTSTART is date-time. Probably this isn't supported
+        // by the RFC, but it seems to be used in the wild (see https://github.com/ical-org/ical.net/issues/829).
+        // So we must make sure to return all-day EXDATEs that could overlap with recurrences, even if the day starts
+        // before `periodStart`. We therefore start 2 days earlier (2 for safety regarding the TZ).
+        // DISCUSS: Should we support date-only EXDATEs being mixed with date-time DTSTARTs at all? What
+        // if one has a time zone and the other doesn't? Many details are unclear.
+        var exDateExclusions = EvaluateExDate(referenceDate, periodStart?.AddDays(-2));
 
         var periods =
             rruleOccurrences
