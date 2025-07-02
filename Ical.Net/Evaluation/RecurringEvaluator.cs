@@ -46,7 +46,7 @@ public class RecurringEvaluator : Evaluator
     }
 
     /// <summary> Evaluates the RDate component. </summary>
-    protected IEnumerable<Period> EvaluateRDate(CalDateTime referenceDate, CalDateTime? periodStart)
+    protected IEnumerable<Period> EvaluateRDate(CalDateTime? periodStart)
     {
         var recurrences = Recurrable.RecurrenceDates
                 .GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime)
@@ -85,9 +85,9 @@ public class RecurringEvaluator : Evaluator
     /// <summary>
     /// Evaluates the ExDate component.
     /// </summary>
-    /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-    private IEnumerable<Period> EvaluateExDate(CalDateTime referenceDate, CalDateTime? periodStart, params PeriodKind[] periodKinds)
+    /// <param name="periodKinds">The period kinds to be returned. Used as a filter.</param>
+    private IEnumerable<Period> EvaluateExDate(CalDateTime? periodStart, params PeriodKind[] periodKinds)
     {
         var exDates = Recurrable.ExceptionDates.GetAllPeriodsByKind(periodKinds)
             .AsEnumerable();
@@ -109,7 +109,7 @@ public class RecurringEvaluator : Evaluator
             ? [new Period(referenceDate)]
             : EvaluateRRule(referenceDate, periodStart, options);
 
-        var rdateOccurrences = EvaluateRDate(referenceDate, periodStart);
+        var rdateOccurrences = EvaluateRDate(periodStart);
 
         var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, options);
 
@@ -119,8 +119,8 @@ public class RecurringEvaluator : Evaluator
         // before `periodStart`. We therefore start 2 days earlier (2 for safety regarding the TZ).
         // DISCUSS: Should we support date-only EXDATEs being mixed with date-time DTSTARTs at all? What
         // if one has a time zone and the other doesn't? Many details are unclear.
-        var exDateExclusionsDateOnly = EvaluateExDate(referenceDate, periodStart?.AddDays(-2), PeriodKind.DateOnly);
-        var exDateExclusionsDateTime = EvaluateExDate(referenceDate, periodStart, PeriodKind.DateTime);
+        var exDateExclusionsDateOnly = EvaluateExDate(periodStart?.AddDays(-2), PeriodKind.DateOnly);
+        var exDateExclusionsDateTime = EvaluateExDate(periodStart, PeriodKind.DateTime);
 
         var periods =
             rruleOccurrences
