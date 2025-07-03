@@ -117,9 +117,9 @@ public class RecurringEvaluator : Evaluator
         // by the RFC, but it seems to be used in the wild (see https://github.com/ical-org/ical.net/issues/829).
         // So we must make sure to return all-day EXDATEs that could overlap with recurrences, even if the day starts
         // before `periodStart`. We therefore start 2 days earlier (2 for safety regarding the TZ).
-        // DISCUSS: Should we support date-only EXDATEs being mixed with date-time DTSTARTs at all? What
-        // if one has a time zone and the other doesn't? Many details are unclear.
-        var exDateExclusionsDateOnly = EvaluateExDate(periodStart?.AddDays(-2), PeriodKind.DateOnly);
+        var exDateExclusionsDateOnly = new HashSet<DateOnly>(EvaluateExDate(periodStart?.AddDays(-2), PeriodKind.DateOnly)
+            .Select(x => x.StartTime.Date));
+
         var exDateExclusionsDateTime = EvaluateExDate(periodStart, PeriodKind.DateTime);
 
         var periods =
@@ -128,19 +128,19 @@ public class RecurringEvaluator : Evaluator
             .OrderedDistinct()
             .OrderedExclude(exRuleExclusions)
             .OrderedExclude(exDateExclusionsDateTime)
-            .OrderedExclude(exDateExclusionsDateOnly, DateOnlyExDateComparer)
+
+            // We accept date-only EXDATEs to be used with date-time DTSTARTs. In such cases we exclude those occurrences
+            // that, in their respective time zone, have a date component that matches an EXDATE.
+            // See https://github.com/ical-org/ical.net/pull/830 for more information.
+            //
+            // The order of dates in the EXDATEs doesn't necessarily match the order of dates returned by RDATEs
+            // due to RDATEs could have different time zones. We therefore use a regular `.Where()` to look up
+            // the EXDATEs in the HashSet rather than using `.OrderedExclude()`, which would require correct ordering.
+            .Where(dt => !exDateExclusionsDateOnly.Contains(dt.StartTime.Date))
 
             // Convert overflow exceptions to expected ones.
             .HandleEvaluationExceptions();
 
         return periods;
     }
-
-    /// <summary>
-    /// Compares whether the given period's date or date-time overlaps with the given date-only EXDATE.
-    /// The dates are considered to overlap if the date component equals. The time zone and time component
-    /// are ignored.
-    /// </summary>
-    private static readonly Comparer<Period> DateOnlyExDateComparer = Comparer<Period>.Create(
-        (p1, p2) => p1.StartTime.Date.CompareTo(p2.StartTime.Date));
 }
