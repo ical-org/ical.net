@@ -46,7 +46,7 @@ public class RecurringEvaluator : Evaluator
     }
 
     /// <summary> Evaluates the RDate component. </summary>
-    protected IEnumerable<Period> EvaluateRDate(CalDateTime referenceDate, CalDateTime? periodStart)
+    protected IEnumerable<Period> EvaluateRDate(CalDateTime? periodStart)
     {
         var recurrences = Recurrable.RecurrenceDates
                 .GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime)
@@ -85,11 +85,11 @@ public class RecurringEvaluator : Evaluator
     /// <summary>
     /// Evaluates the ExDate component.
     /// </summary>
-    /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-    protected IEnumerable<Period> EvaluateExDate(CalDateTime referenceDate, CalDateTime? periodStart)
+    /// <param name="periodKinds">The period kinds to be returned. Used as a filter.</param>
+    private IEnumerable<Period> EvaluateExDate(CalDateTime? periodStart, params PeriodKind[] periodKinds)
     {
-        var exDates = Recurrable.ExceptionDates.GetAllPeriodsByKind(PeriodKind.DateOnly, PeriodKind.DateTime)
+        var exDates = Recurrable.ExceptionDates.GetAllPeriodsByKind(periodKinds)
             .AsEnumerable();
 
         if (periodStart != null)
@@ -109,37 +109,38 @@ public class RecurringEvaluator : Evaluator
             ? [new Period(referenceDate)]
             : EvaluateRRule(referenceDate, periodStart, options);
 
-        var rdateOccurrences = EvaluateRDate(referenceDate, periodStart);
+        var rdateOccurrences = EvaluateRDate(periodStart);
 
         var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, options);
-        var exDateExclusions = EvaluateExDate(referenceDate, periodStart);
+
+        // EXDATEs could contain date-only entries while DTSTART is date-time. Probably this isn't supported
+        // by the RFC, but it seems to be used in the wild (see https://github.com/ical-org/ical.net/issues/829).
+        // So we must make sure to return all-day EXDATEs that could overlap with recurrences, even if the day starts
+        // before `periodStart`. We therefore start 2 days earlier (2 for safety regarding the TZ).
+        var exDateExclusionsDateOnly = new HashSet<DateOnly>(EvaluateExDate(periodStart?.AddDays(-2), PeriodKind.DateOnly)
+            .Select(x => x.StartTime.Date));
+
+        var exDateExclusionsDateTime = EvaluateExDate(periodStart, PeriodKind.DateTime);
 
         var periods =
             rruleOccurrences
             .OrderedMerge(rdateOccurrences)
             .OrderedDistinct()
             .OrderedExclude(exRuleExclusions)
-            .OrderedExclude(exDateExclusions, Comparer<Period>.Create(CompareExDateOverlap))
+            .OrderedExclude(exDateExclusionsDateTime)
+
+            // We accept date-only EXDATEs to be used with date-time DTSTARTs. In such cases we exclude those occurrences
+            // that, in their respective time zone, have a date component that matches an EXDATE.
+            // See https://github.com/ical-org/ical.net/pull/830 for more information.
+            //
+            // The order of dates in the EXDATEs doesn't necessarily match the order of dates returned by RDATEs
+            // due to RDATEs could have different time zones. We therefore use a regular `.Where()` to look up
+            // the EXDATEs in the HashSet rather than using `.OrderedExclude()`, which would require correct ordering.
+            .Where(dt => !exDateExclusionsDateOnly.Contains(dt.StartTime.Date))
 
             // Convert overflow exceptions to expected ones.
             .HandleEvaluationExceptions();
 
         return periods;
-    }
-
-    /// <summary>
-    /// Compares whether the given period's date overlaps with the given EXDATE. The dates are
-    /// considered to overlap if they start at the same time, or the EXDATE is an all-day date
-    /// and the period's start date is the same as the EXDATE's date.
-    /// <para/>
-    /// Note: <see cref="Period.EffectiveDuration"/> for <paramref name="exDate"/> is always <see langword="null"/>.
-    /// </summary>
-    private static int CompareExDateOverlap(Period period, Period exDate)
-    {
-        var cmp = period.CompareTo(exDate);
-        if ((cmp != 0) && !exDate.StartTime.HasTime && (period.StartTime.Value.Date == exDate.StartTime.Value))
-            cmp = 0;
-
-        return cmp;
     }
 }

@@ -4064,4 +4064,110 @@ END:VCALENDAR";
             Assert.That(occ[1].Period.EffectiveDuration, Is.EqualTo(new Duration(0, 0, 0, 45, 0)));
         });
     }
+
+    [Test]
+    [TestCase("20250101T120000", "20250101T100000", "20250103T100000")]
+    [TestCase("20250102T120000", "20250103T100000", "20250104T100000")]
+    // see https://github.com/ical-org/ical.net/issues/829
+    public void GetOccurrences_ShouldNotIgnoreExDatesForToday(string periodStart, string expected1, string expected2)
+    {
+        var cal = new CalendarEvent
+        {
+            Start = new CalDateTime("20250101T100000"),
+            End   = new CalDateTime("20250101T200000"),
+            RecurrenceRules = [new RecurrencePattern("FREQ=DAILY")],
+        };
+
+        cal.ExceptionDates.Add(new CalDateTime("20250102"));
+
+        var occurrences = cal.GetOccurrences(new CalDateTime(periodStart))
+            .Take(2)
+            .Select(o => o.Period.StartTime)
+            .ToList();
+
+        var expectedDates = new[]
+        {
+            new CalDateTime(expected1),
+            new CalDateTime(expected2)
+        };
+
+        Assert.That(occurrences, Is.EqualTo(expectedDates));
+    }
+
+    [Test]
+    public void GetOccurrences_WithMixedKindExDates_ShouldProperlyConsiderAll()
+    {
+        var cal = new CalendarEvent
+        {
+            Start = new CalDateTime("20250702T100000"),
+            End = new CalDateTime("20250702T200000"),
+            RecurrenceRules = [new RecurrencePattern("FREQ=DAILY")],
+        };
+
+
+        // Should be considered only at the exact time
+        cal.ExceptionDates.Add(new CalDateTime("20250703T000000"));
+
+        // Should be considered all-day
+        cal.ExceptionDates.Add(new CalDateTime("20250703"));
+
+        // Should be considered only at the exact time
+        cal.ExceptionDates.Add(new CalDateTime("20250703T150000"));
+
+        var occurrences = cal.GetOccurrences()
+            .Take(2)
+            .Select(o => o.Period.StartTime)
+            .ToList();
+
+        var expectedDates = new[]
+        {
+            new CalDateTime("20250702T100000"),
+            new CalDateTime("20250704T100000")
+        };
+
+        Assert.That(occurrences, Is.EqualTo(expectedDates));
+    }
+
+    [Test]
+    public void GetOccurrences_WithMixedKindExDatesAndTz_ShouldProperlyConsiderAll()
+    {
+        var cal = Calendar.Load("""
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            DTSTART:20250701T000000Z
+            DURATION:PT1H
+            RDATE;TZID=Etc/GMT+12:20250702T234500
+            RDATE;TZID=Etc/GMT-13:20250704T001500
+            RDATE:20250703T113000Z
+            EXDATE;VALUE=DATE:20250703
+            END:VEVENT
+            END:VCALENDAR
+            """)!;
+
+        var evt = cal.Events.Single();
+
+        var occurrences = cal.GetOccurrences()
+            .Select(o => o.Period.StartTime)
+            .ToList();
+
+        var expectedDates = new[]
+        {
+            new CalDateTime("20250701T000000", "UTC"),
+
+            // All-day EXDATEs are matched against the date in the RDATE's time zone,
+            // so 20250704 isn't excluded even though on Jul 3 in DTSTART's TZ.
+            new CalDateTime("20250704T001500", "Etc/GMT-13"),
+
+            // 20250703T113000 is on 20250703, so it should be removed according
+            // to our implementation that considers DATE-only EXDATEs as all-day.
+            // See https://github.com/ical-org/ical.net/pull/830 for more information.
+            // excluded: new CalDateTime("20250703T113000", "UTC"),
+
+            // same as above. All-day EXDATEs are matched against the date in the RDATE's time zone,
+            // so 20250702 isn't excluded even though on Jul 3 in DTSTART's TZ.
+            new CalDateTime("20250702T234500", "Etc/GMT+12"),
+        };
+
+        Assert.That(occurrences, Is.EqualTo(expectedDates));
+    }
 }
