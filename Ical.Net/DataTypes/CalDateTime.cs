@@ -7,6 +7,7 @@ using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using NodaTime;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 
@@ -55,6 +56,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// <summary>
     /// This constructor is required for the SerializerFactory to work.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     private CalDateTime()
     {
         // required for the SerializerFactory to work
@@ -201,9 +203,15 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     {
         var serializer = new DateTimeSerializer();
         CopyFrom(serializer.Deserialize(new StringReader(value)) as CalDateTime
-                 ?? throw new InvalidOperationException($"$Failure for deserializing value '{value}'"));
+                 ?? throw new InvalidOperationException($"$Failure when deserializing value '{value}'"));
+
         // The string may contain a date only, meaning that the tzId should be ignored.
-        _tzId = HasTime ? tzId : null;
+        _tzId ??= HasTime ? tzId : null;
+
+        if (IsUtc && tzId != null && !string.Equals(tzId, UtcTzId, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException($"The value '{value}' is a UTC date/time, but the specified timezone '{tzId}' is not '{UtcTzId}'.", nameof(tzId));
+        }
     }
 
     private void Initialize(DateOnly dateOnly, TimeOnly? timeOnly, string? tzId)
@@ -218,7 +226,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         };
     }
 
-    /// <inheritdoc/>
     private void CopyFrom(CalDateTime calDt)
     {
         // Maintain the private date/time backing fields
@@ -435,12 +442,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
 
         return new TimeOnly(time.Value.Hour, time.Value.Minute, time.Value.Second);
     }
-
-    /// <summary>
-    /// Any <see cref="Time"/> values are truncated to seconds, because
-    /// RFC 5545, Section 3.3.5 does not allow for fractional seconds.
-    /// </summary>
-    private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime) => new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
 
     /// <summary>
     /// Converts the <see cref="Value"/> to a date/time

@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
@@ -55,7 +56,7 @@ public class CalDateTimeTests
     [Test, TestCaseSource(nameof(ToTimeZoneTestCases))]
     public void ToTimeZoneTests(CalendarEvent calendarEvent, string targetTimeZone)
     {
-        var startAsUtc = calendarEvent.Start.AsUtc;
+        var startAsUtc = calendarEvent.Start!.AsUtc;
 
         var convertedStart = calendarEvent.Start.ToTimeZone(targetTimeZone);
         var convertedAsUtc = convertedStart.AsUtc;
@@ -369,4 +370,23 @@ public class CalDateTimeTests
 
         Assert.That(() => new CalDateTime(dt), constraint);
     }
+
+    [TestCase("20250703T060000Z", null)]
+    [TestCase("20250703T060000Z", CalDateTime.UtcTzId)]
+    public void ConstructorWithIso8601UtcString_ShouldResultInUtc(string value, string? tzId)
+    {
+        var dt = new CalDateTime(value, tzId);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Value, Is.EqualTo(new DateTime(2025, 7, 3, 6, 0, 0, DateTimeKind.Utc)));
+#pragma warning disable CA1305
+            Assert.That(dt.ToString("yyyy-MM-dd HH:mm:ss"), Is.EqualTo("2025-07-03 06:00:00 UTC"));
+#pragma warning restore CA1305
+            Assert.That(dt.IsUtc, Is.True);
+        });
+    }
+
+    [Test]
+    public void ConstructorWithIso8601UtcString_ButDifferentTzId_ShouldThrow()
+        => Assert.That(() => _ = new CalDateTime("20250703T060000Z", "CEST"), Throws.ArgumentException);
 }
