@@ -43,13 +43,28 @@ public abstract class SerializerBase : IStringSerializer
         return obj;
     }
 
-    public void Serialize(object obj, Stream stream, Encoding encoding)
+    /// <summary>
+    /// Serializes the specified object to the provided stream using the specified encoding.
+    /// </summary>
+    /// <remarks>This method writes the serialized representation of the object to the stream without closing
+    /// the stream, allowing the caller to continue using it.
+    /// bytes.</remarks>
+    /// <param name="obj">The object to serialize. Must not be null.</param>
+    /// <param name="stream">The stream to which the serialized data will be written. Must be writable.</param>
+    /// <param name="encoding">
+    /// The character encoding to use for serialization.
+    /// If <see langword="null"/> or missing, UTF-8 encoding
+    /// without a byte order mark (BOM) is used.
+    /// A BOM is incompatible with many iCalendar apps.
+    /// </param>
+    public void Serialize(object obj, Stream stream, Encoding? encoding = null)
     {
-        // NOTE: we don't use a 'using' statement here because
-        // we don't want the stream to be closed by this serialization.
-        // Fixes bug #3177278 - Serialize closes stream
+        // Ensure that no BOM is written to the stream
+        encoding ??= new UTF8Encoding(false);
 
-        const int defaultBuffer = 1024;     //This is StreamWriter's built-in default buffer size
+        //This is StreamWriter's built-in default buffer size
+        const int defaultBuffer = 1024;
+        // Important: leave the stream open so that the caller can continue to use it
         using var sw = new StreamWriter(stream, encoding, defaultBuffer, leaveOpen: true);
 
         // Push the current object onto the serialization stack
