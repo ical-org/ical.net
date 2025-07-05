@@ -202,15 +202,16 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     public CalDateTime(string value, string? tzId = null)
     {
         var serializer = new DateTimeSerializer();
-        CopyFrom(serializer.Deserialize(new StringReader(value)) as CalDateTime
-                 ?? throw new InvalidOperationException($"$Failure when deserializing value '{value}'"));
+        var dt = serializer.Deserialize(new StringReader(value)) as CalDateTime
+                 ?? throw new InvalidOperationException($"Failure when deserializing value '{value}'");
 
-        // The string may contain a date only, meaning that the tzId should be ignored.
-        _tzId ??= HasTime ? tzId : null;
+        Initialize(dt._dateOnly, dt._timeOnly, dt.IsUtc ? UtcTzId : tzId);
 
-        if (IsUtc && tzId != null && !string.Equals(tzId, UtcTzId, StringComparison.OrdinalIgnoreCase))
+        if (dt.IsUtc && tzId != null && !string.Equals(tzId, UtcTzId, StringComparison.OrdinalIgnoreCase))
         {
-            throw new ArgumentException($"The value '{value}' is a UTC date/time, but the specified timezone '{tzId}' is not '{UtcTzId}'.", nameof(tzId));
+            throw new ArgumentException(
+                $"The value '{value}' represents UTC date/time, but the specified timezone '{tzId}' is not '{UtcTzId}'.",
+                nameof(tzId));
         }
     }
 
@@ -224,14 +225,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
             _ when !timeOnly.HasValue => null,
             _ => tzId // can also be UtcTzId
         };
-    }
-
-    private void CopyFrom(CalDateTime calDt)
-    {
-        // Maintain the private date/time backing fields
-        _dateOnly = calDt._dateOnly;
-        _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
-        _tzId = calDt._tzId;
     }
 
     public bool Equals(CalDateTime? other) => this == other;
