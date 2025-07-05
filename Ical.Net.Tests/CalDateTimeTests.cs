@@ -98,48 +98,99 @@ public class CalDateTimeTests
         var someDt = new CalDateTime(someTime.DateTime, "America/New_York");
         var firstUtc = someDt.AsUtc;
         Assert.That(firstUtc, Is.EqualTo(someTime.UtcDateTime));
+        Assert.That(firstUtc.Kind, Is.EqualTo(DateTimeKind.Utc));
 
         someDt = new CalDateTime(someTime.DateTime, "Europe/Berlin");
         var berlinUtc = someDt.AsUtc;
         Assert.That(berlinUtc, Is.Not.EqualTo(firstUtc));
     }
 
-    [Test, TestCaseSource(nameof(DateTimeKindOverrideTestCases)), Description("DateTimeKind of values is always DateTimeKind.Unspecified")]
-    public DateTimeKind DateTimeKindOverrideTests(DateTime dateTime, string tzId)
-        => new CalDateTime(dateTime, tzId).Value.Kind;
+    /// <summary>
+    ///     DateTimeKind.Utc should be returned when the provided
+    ///     time zone is UTC and hasTime is true.
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <param name="tzId"></param>
+    /// <param name="hasTime"></param>
+    /// <returns></returns>
+    [Test, TestCaseSource(nameof(DateTimeKindWithTzIdTestCases))]
+    public DateTimeKind DateTimeKindWithTzIdTests(DateTime dateTime, string? tzId, bool hasTime)
+        => new CalDateTime(dateTime, tzId, hasTime).Value.Kind;
 
-    public static IEnumerable DateTimeKindOverrideTestCases()
+    private static IEnumerable DateTimeKindWithTzIdTestCases()
     {
         const string localTz = "America/New_York";
-        var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33", CultureInfo.InvariantCulture), DateTimeKind.Unspecified);
+        var dt = new DateTime(2018, 5, 21, 11, 35, 33, DateTimeKind.Unspecified);
+        var localDt = DateTime.SpecifyKind(dt, DateTimeKind.Local);
+        var unspecifiedDt = DateTime.SpecifyKind(dt, DateTimeKind.Unspecified);
+        var utcDt = DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 
-        yield return new TestCaseData(localDt, "UTC")
-            .Returns(DateTimeKind.Unspecified)
-            .SetName("Explicit tzid = UTC time zone returns DateTimeKind.Unspecified");
+        yield return new TestCaseData(localDt, "UTC", true)
+            .Returns(DateTimeKind.Utc);
+        yield return new TestCaseData(localDt, localTz, true)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(localDt, null, true)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(localDt, "UTC", false)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(localDt, localTz, false)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(localDt, null, false)
+            .Returns(DateTimeKind.Unspecified);
 
-        yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Utc), null)
-            .Returns(DateTimeKind.Unspecified)
-            .SetName("DateTime with Kind = Utc and no tzid returns DateTimeKind.Unspecified");
+        yield return new TestCaseData(utcDt, "UTC", true)
+            .Returns(DateTimeKind.Utc);
+        yield return new TestCaseData(utcDt, localTz, true)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(utcDt, null, true)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(utcDt, "UTC", false)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(utcDt, localTz, false)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(utcDt, null, false)
+            .Returns(DateTimeKind.Unspecified);
 
-        yield return new TestCaseData(localDt, localTz)
-            .Returns(DateTimeKind.Unspecified)
-            .SetName("Datetime with kind Local and local tzid returns DateTimeKind.Unspecified");
+        yield return new TestCaseData(unspecifiedDt, "UTC", true)
+            .Returns(DateTimeKind.Utc);
+        yield return new TestCaseData(unspecifiedDt, localTz, true)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(unspecifiedDt, null, true)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(unspecifiedDt, "UTC", false)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(unspecifiedDt, localTz, false)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(unspecifiedDt, null, false)
+            .Returns(DateTimeKind.Unspecified);
+    }
 
-        yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Utc), localTz)
-            .Returns(DateTimeKind.Unspecified)
-            .SetName("DateTime with Kind = Utc with explicit local tzid returns DateTimeKind.Unspecified");
+    /// <summary>
+    ///     DateTimeKind.Utc should be returned when the provided
+    ///     DateTime.Kind is UTC and hasTime is true.
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <param name="hasTime"></param>
+    /// <returns></returns>
+    [Test, TestCaseSource(nameof(DateTimeKindTestCases))]
+    public DateTimeKind DateTimeKindTests(DateTime dateTime, bool hasTime)
+        => new CalDateTime(dateTime, hasTime).Value.Kind;
 
-        yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Unspecified), localTz)
-            .Returns(DateTimeKind.Unspecified)
-            .SetName("DateTime with Kind = Unspecified with explicit local tzid returns DateTimeKind.Unspecified");
+    private static IEnumerable DateTimeKindTestCases()
+    {
+        var dt = new DateTime(2018, 5, 21, 11, 35, 33, DateTimeKind.Unspecified);
+        var unspecifiedDt = DateTime.SpecifyKind(dt, DateTimeKind.Unspecified);
+        var utcDt = DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 
-        yield return new TestCaseData(localDt, null)
-            .Returns(DateTimeKind.Unspecified)
-            .SetName("DateTime with Kind = Local with null tzid returns DateTimeKind.Unspecified");
+        yield return new TestCaseData(utcDt, true)
+            .Returns(DateTimeKind.Utc);
+        yield return new TestCaseData(utcDt, false)
+            .Returns(DateTimeKind.Unspecified);
 
-        yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Local), null)
-            .Returns(DateTimeKind.Unspecified)
-            .SetName("DateTime with Kind = Local and null tzid returns DateTimeKind.Unspecified");
+        yield return new TestCaseData(unspecifiedDt, true)
+            .Returns(DateTimeKind.Unspecified);
+        yield return new TestCaseData(unspecifiedDt, false)
+            .Returns(DateTimeKind.Unspecified);
     }
 
     [Test, TestCaseSource(nameof(ToStringTestCases))]
@@ -312,7 +363,7 @@ public class CalDateTimeTests
         {
             Assert.That(c2.Value, Is.EqualTo(c3.Value));
             Assert.That(c2.TzId, Is.EqualTo(c3.TzId));
-            Assert.That(CalDateTime.UtcNow.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
+            Assert.That(CalDateTime.UtcNow.Value.Kind, Is.EqualTo(DateTimeKind.Utc));
             Assert.That(CalDateTime.Today.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
             Assert.That(c.Time?.ToTimeSpan(), Is.EqualTo(dt.TimeOfDay));
