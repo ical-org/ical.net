@@ -306,7 +306,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// it means that the <see cref="Value"/> is considered as local time for every timezone:
     /// The returned <see cref="Value"/> is unchanged, but with <see cref="DateTimeKind.Utc"/>.
     /// </summary>
-    public DateTime AsUtc => DateTime.SpecifyKind(ToTimeZone(UtcTzId).Value, DateTimeKind.Utc);
+    public DateTime AsUtc => ToTimeZone(UtcTzId).Value;
 
     /// <summary>
     /// Gets the date and time value in the ISO calendar as a <see cref="DateTime"/> type with <see cref="DateTimeKind.Unspecified"/>.
@@ -322,15 +322,19 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         {
             if (_timeOnly.HasValue)
             {
-                return new DateTime(_dateOnly.Year, _dateOnly.Month,
-                    _dateOnly.Day, _timeOnly.Value.Hour, _timeOnly.Value.Minute, _timeOnly.Value.Second,
-                    DateTimeKind.Unspecified);
+                return new DateTime(
+                    _dateOnly.Year, _dateOnly.Month, _dateOnly.Day,
+                    _timeOnly.Value.Hour, _timeOnly.Value.Minute, _timeOnly.Value.Second,
+                    TzId == UtcTzId ? DateTimeKind.Utc : DateTimeKind.Unspecified
+                );
             }
 
             // No time part
-            return new DateTime(_dateOnly.Year, _dateOnly.Month, _dateOnly.Day,
+            return new DateTime(
+                _dateOnly.Year, _dateOnly.Month, _dateOnly.Day,
                 0, 0, 0,
-                DateTimeKind.Unspecified);
+                DateTimeKind.Unspecified
+            );
         }
     }
 
