@@ -12,11 +12,11 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation;
 
-public class RecurringEvaluator : Evaluator
+public abstract class RecurringEvaluator : Evaluator
 {
     protected IRecurrable Recurrable { get; set; }
 
-    public RecurringEvaluator(IRecurrable obj)
+    protected RecurringEvaluator(IRecurrable obj)
     {
         Recurrable = obj;
     }

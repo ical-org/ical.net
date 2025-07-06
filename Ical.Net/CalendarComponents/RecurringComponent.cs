@@ -22,7 +22,7 @@ namespace Ical.Net.CalendarComponents;
 /// RRULEs, RDATE, EXRULEs, and EXDATEs, as well as the DTSTART
 /// for the recurring item (all recurring items must have a DTSTART).
 /// </remarks>
-public class RecurringComponent : UniqueComponent, IRecurringComponent
+public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
 {
     public static IEnumerable<IRecurringComponent> SortByDate(IEnumerable<IRecurringComponent> list) => SortByDate<IRecurringComponent>(list);
 
@@ -151,17 +151,15 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
     /// </summary>
     public virtual ICalendarObjectList<Alarm> Alarms => new CalendarObjectListProxy<Alarm>(Children);
 
-    private RecurringEvaluator? _evaluator;
+    public abstract IEvaluator? Evaluator { get; }
 
-    public virtual IEvaluator? Evaluator => _evaluator;
-
-    public RecurringComponent()
+    protected RecurringComponent()
     {
         Initialize();
         EnsureProperties();
     }
 
-    public RecurringComponent(string name) : base(name)
+    protected RecurringComponent(string name) : base(name)
     {
         Initialize();
         EnsureProperties();
@@ -169,7 +167,6 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
 
     private void Initialize()
     {
-        _evaluator = new RecurringEvaluator(this);
         ExceptionDates = new ExceptionDates(ExceptionDatesPeriodLists);
         RecurrenceDates = new RecurrenceDates(RecurrenceDatesPeriodLists);
     }
