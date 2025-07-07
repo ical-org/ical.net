@@ -7,9 +7,15 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - '**/*.md'
   push:
     branches:
       - main
+      - 'pr/**/*'
+      - 'wip/**/*'
+    paths-ignore:
+      - '**/*.md'
 
 jobs:
   coverage:
