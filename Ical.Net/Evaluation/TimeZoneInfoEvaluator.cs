@@ -18,5 +18,7 @@ public class TimeZoneInfoEvaluator : RecurringEvaluator
         set => Recurrable = value;
     }
 
+    protected override Duration? DefaultDuration => null;
+
     public TimeZoneInfoEvaluator(IRecurrable tzi) : base(tzi) { }
 }

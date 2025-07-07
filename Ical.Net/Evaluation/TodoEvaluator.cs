@@ -15,6 +15,8 @@ public class TodoEvaluator : RecurringEvaluator
 {
     protected Todo Todo => Recurrable as Todo ?? throw new InvalidOperationException();
 
+    protected override Duration? DefaultDuration => Todo.EffectiveDuration;
+
     public TodoEvaluator(Todo todo) : base(todo) { }
 
     internal IEnumerable<Period> EvaluateToPreviousOccurrence(CalDateTime completedDate, CalDateTime currDt, EvaluationOptions? options)

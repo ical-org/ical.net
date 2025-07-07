@@ -18,6 +18,8 @@ public class EventEvaluator : RecurringEvaluator
 {
     protected CalendarEvent CalendarEvent => (CalendarEvent) Recurrable;
 
+    protected override Duration? DefaultDuration => CalendarEvent.EffectiveDuration;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="EventEvaluator"/> class.
     /// </summary>

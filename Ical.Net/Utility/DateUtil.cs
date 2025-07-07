@@ -132,4 +132,12 @@ internal static class DateUtil
     /// </remarks>
     internal static DataTypes.Duration ToDuration(this TimeSpan timeSpan)
         => DataTypes.Duration.FromTimeSpan(timeSpan);
+
+    internal static CalDateTime AddLeniently(this CalDateTime dt, DataTypes.Duration d)
+    {
+        if (d.HasTime && !dt.HasTime)
+            dt = new CalDateTime(dt.Date, TimeOnly.MinValue);
+
+        return dt.Add(d);
+    }
 }
