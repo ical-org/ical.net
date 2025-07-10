@@ -1,14 +1,19 @@
 ﻿name: Tests
 
 on:
-  # Trigger the workflow on push or pull request,
-  # but only for the main branch
+  # workflow_dispatch: {}  # temporarily enable the workflow for manual runs
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - '**/*.md'
   push:
     branches:
       - main
+      - 'pr/**/*'
+      - 'wip/**/*'
+    paths-ignore:
+      - '**/*.md'
 
 jobs:
   tests:

@@ -7,9 +7,15 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - '**/*.md'
   push:
     branches:
       - main
+      - 'pr/**/*'
+      - 'wip/**/*'
+    paths-ignore:
+      - '**/*.md'
 
 jobs:
   coverage:
@@ -49,5 +55,4 @@ jobs:
         # files: automatically finds all in ./Ical.Net.Tests/
         name: coverage
         token: ${{ secrets.CODECOV_TOKEN }}
-        # ical-org global settings do not require an upload token from forks
         fail_ci_if_error: false
