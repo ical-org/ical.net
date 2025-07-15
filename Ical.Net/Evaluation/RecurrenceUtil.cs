@@ -22,14 +22,7 @@ internal static class RecurrenceUtil
             return [];
         }
 
-        // Ensure the start time is associated with the object being queried
         var start = recurrable.Start;
-
-        // Change the time zone of periodStart as needed
-        // so they can be used during the evaluation process.
-
-        if (periodStart != null)
-            periodStart = new CalDateTime(periodStart.Date, periodStart.Time, start.TzId);
 
         var periods = evaluator.Evaluate(start, periodStart, options);
         if (periodStart != null)
