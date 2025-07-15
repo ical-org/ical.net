@@ -117,7 +117,6 @@ public class RecurrencePatternEvaluator : Evaluator
     private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, RecurrencePattern pattern,
          EvaluationOptions? options)
     {
-        // In the first step, we work with DateTime values, so we need to convert the CalDateTime to DateTime
         var originalDate = seed;
         var seedCopy = seed;
         var periodStartDt = periodStart?.ToTimeZone(seed.TzId);
