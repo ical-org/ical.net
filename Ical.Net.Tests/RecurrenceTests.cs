@@ -4208,4 +4208,43 @@ END:VCALENDAR";
 
         Assert.That(occurrences, Is.EqualTo(expectedDates));
     }
+
+    [Test]
+    [TestCase("20250715T120000", "UTC", "20260715T120000", "UTC")]
+    [TestCase("20250715T120000", "UTC", "20260715T140000", "Etc/GMT-2")]
+    [TestCase("20250715T120000", "UTC", "20260715T100000", "Etc/GMT+2")]
+    [TestCase("20250715T120000", "UTC", "20260715T120000", null)]
+    [TestCase("20250715T120000", null, "20260715T120000", "Etc/GMT-2")]
+    [TestCase("20250715T120000", null, "20260715T120000", "Etc/GMT+2")]
+    [TestCase("20250715T120000", null, "20260715T120000", "UTC")]
+    [TestCase("20250715T120000", null, "20260715T120000", null)]
+
+    [TestCase("20250715T120000", "Etc/GMT-2", "20260715", null)]
+    [TestCase("20250715T120000", "Etc/GMT+2", "20260715", null)]
+    [TestCase("20250715T120000", null, "20260715", null)]
+
+    [TestCase("20250715", null, "20260715T235959", "UTC")]
+    [TestCase("20250715", null, "20260715T235959", "Etc/GMT-2")]
+    [TestCase("20250715", null, "20260715T235959", "Etc/GMT+2")]
+    [TestCase("20250715", null, "20260715T235959", null)]
+
+    [TestCase("20250715", null, "20260715", null)]
+
+    public void GetOccurrences_WithPeriodStart_ShouldConsiderTzCorrectly(string dtStartStr, string? dtStartTzId, string periodStartStr, string? periodStartTzId)
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new RecurrencePattern(FrequencyType.Yearly, 1) { Count = 3 });
+        evt.Start = new CalDateTime(dtStartStr, dtStartTzId);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var firstFewOccurrences = cal.GetOccurrences().Take(3).ToList();
+
+        var periodStart = new CalDateTime(periodStartStr, periodStartTzId);
+        Assert.That(cal.GetOccurrences(periodStart).First(), Is.EqualTo(firstFewOccurrences[1]));
+
+        var nextPeriodStart = periodStart.HasTime ? periodStart.AddSeconds(1) : periodStart.AddDays(1);
+        Assert.That(cal.GetOccurrences(nextPeriodStart).First(), Is.EqualTo(firstFewOccurrences[2]));
+    }
 }
