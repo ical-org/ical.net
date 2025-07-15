@@ -4170,4 +4170,42 @@ END:VCALENDAR";
 
         Assert.That(occurrences, Is.EqualTo(expectedDates));
     }
+
+    [Test]
+    public void GetOccurrences_WithPeriodStart_ShouldConsiderDurationCorrectly()
+    {
+        var cal = Calendar.Load("""
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            DTSTART:20250701T000000
+            DURATION:P3D
+            RRULE:FREQ=WEEKLY
+            RDATE;VALUE=PERIOD:20250707T000000/P4D,20250709T000000/P1D
+            RDATE;VALUE=DATE:20250706T000000,20250710T000000
+            END:VEVENT
+            END:VCALENDAR
+            """)!;
+
+        var occurrences = cal.GetOccurrences(new CalDateTime("20250710T120000"))
+            .Select(o => o.Period.StartTime)
+            .Take(5)
+            .ToList();
+
+        var expectedDates = new string[]
+        {
+            // RDATE
+            "20250707T000000",
+            // RRULE
+            "20250708T000000",
+            // RDATE
+            "20250710T000000",
+            // RRULE
+            "20250715T000000",
+            // RRULE
+            "20250722T000000",
+        }.Select(x => new CalDateTime(x))
+        .ToList();
+
+        Assert.That(occurrences, Is.EqualTo(expectedDates));
+    }
 }
