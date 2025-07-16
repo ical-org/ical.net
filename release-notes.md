@@ -4,6 +4,16 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v5
 
+### 5.1.0 - (2025-07-16)
+
+* Fix: Exception for Blazor WebAssembly and Self-Contained Assemblies using `FileVersionInfo` 
+* Fix: GetOccurrences() NPE when returning a ToDo's occurrences that don't have a duration
+* Fix: Evaluation of `EXDATE` when date-only while `DTSTART` is date-time
+* Feat: Use UTF-8 Encoding without BOM by default in all serializers when writing to a stream. This is expected by most iCalendar consumers, including Outlook and Google Calendar.
+* Fix: `CalDateTime` CTOR using ISO 8601 UTC string resolves to UTC
+* Fix: `GetOccurrences(periodStart)` to also include ongoing occurrences (beginning before `periodStart`)
+* Fix: `GetOccurrences()` not properly dealing with `periodStart`'s timezone ID
+
 ### 5.0.0 GA - (2025-06-17)
 
 * **Breaking:** Remove redundant `Equals` and `GetHashCode` implementations in https://github.com/ical-org/ical.net/pull/810
