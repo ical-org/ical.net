@@ -17,6 +17,7 @@ public static class CollectionExtensions
     /// <summary>
     /// Returns the elements of the sequence of occurrences to only include those that start before the specified period end.
     /// Important: The input sequence <b>must be ordered</b> according to the type's default equality comparer.
+    /// Note: The specified period end is meant in an exclusive manner.
     /// <para/>
     /// A perfect fit is the sequence returned by <see cref="RecurringComponent.GetOccurrences(CalDateTime, EvaluationOptions)"/>,
     /// like the frequently used <see cref="CalendarEvent.GetOccurrences(CalDateTime, EvaluationOptions)"/>
@@ -36,6 +37,7 @@ public static class CollectionExtensions
     /// <summary>
     /// Returns the elements of the sequence of periods to only include those that start before the specified period end.
     /// Important: The input sequence <b>must be ordered</b> according to the type's default equality comparer.
+    /// Note: The specified period end is meant in an exclusive manner.
     /// <para/>
     /// A perfect fit is the sequence returned by the <see cref="Evaluator.Evaluate"/> implementations
     /// like <see cref="RecurrencePatternEvaluator.Evaluate"/>.
