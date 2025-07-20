@@ -14,7 +14,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using NUnit.Framework;
 
-namespace Ical.Net.Tests;
+namespace Ical.Net.Tests.WikiSamples;
 
 public static class RecurrenceWikiTestsUtilsExtensions
 {
@@ -23,9 +23,7 @@ public static class RecurrenceWikiTestsUtilsExtensions
         var calendar = new Calendar();
         calendar.Events.Add(eve);
         if (func is not null)
-        {
             func(calendar);
-        }
 
         return calendar;
     }
@@ -35,9 +33,7 @@ public static class RecurrenceWikiTestsUtilsExtensions
         var calendar = new Calendar();
         calendar.Events.AddRange(eves);
         if (func is not null)
-        {
             func(calendar);
-        }
 
         return calendar;
     }
@@ -65,9 +61,39 @@ public static class RecurrenceWikiTestsUtilsExtensions
 public class RecurrenceWikiTests
 {
     [Test]
+    public void Introduction()
+    {
+        var recurrence = new RecurrencePattern()
+        {
+            Frequency = FrequencyType.Daily,
+            Interval = 2,
+            Count = 30
+            // Add other parameters like ByDay, ByMonth, etc.
+        };
+
+        var calendarEvent = new CalendarEvent()
+        {
+            DtStart = new CalDateTime(2025, 07, 10),
+            DtEnd = new CalDateTime(2025, 07, 11),
+            // Add the rule to the event.
+            RecurrenceRules = [recurrence]
+        };
+
+        // Get all occurrences of the series.
+        IEnumerable<Occurrence> allOccurrences = calendarEvent.GetOccurrences();
+        Assert.That(allOccurrences.Count(), Is.EqualTo(30));
+
+        // Get the occurrences in July.
+        IEnumerable<Occurrence> julyOccurrences = calendarEvent
+            .GetOccurrences(new CalDateTime(2025, 07, 01))
+            .TakeWhileBefore(new CalDateTime(2025, 08, 01));
+        Assert.That(julyOccurrences.Count(), Is.EqualTo(11));
+    }
+
+    [Test]
     public void WikiExample()
     {
-        // Setup CalendarEvent
+        // Create the CalendarEvent
         var start = new CalDateTime(2025, 07, 10, 09, 00, 00, "Europe/Zurich");
         var recurrence = new RecurrencePattern()
         {
@@ -90,23 +116,36 @@ public class RecurrenceWikiTests
         // Serialize Calendar to string
         var calendarSerializer = new CalendarSerializer();
         var calendarAsIcs = calendarSerializer.SerializeToString(calendar);
-        Assert.That(calendarAsIcs, Is.Not.Null);
 
         // Calculate all occurrences
-        var occurrences = calendar.GetOccurrences();
-        Assert.That(occurrences.Count(), Is.EqualTo(2));
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
 
-        // Test first occurrence
-        var first = occurrences.First().Period;
-        Assert.That(first.StartTime?.Value.ToString("s"), Is.Not.Null.And.EqualTo("2025-07-10T09:00:00"));
-        Assert.That(first.Duration, Is.Not.Null.And.EqualTo(new Duration(hours: 1)));
-        Assert.That(first.EffectiveEndTime?.Value.ToString("s"), Is.Not.Null.And.EqualTo("2025-07-10T10:00:00"));
+        // Calendar output
+        var expectedIcsCalendar = """
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            DTEND;TZID=Europe/Zurich:20250710T100000
+            DTSTART;TZID=Europe/Zurich:20250710T090000
+            RRULE:FREQ=DAILY;INTERVAL=2;COUNT=2
+            END:VEVENT
+            END:VCALENDAR
+            """;
+        // Occurring dates
+        var expectedOccurrenceDates = """
+            DTEND;TZID=Europe/Zurich:20250710T100000
+            DTSTART;TZID=Europe/Zurich:20250710T090000
+            
+            DTEND;TZID=Europe/Zurich:20250712T100000
+            DTSTART;TZID=Europe/Zurich:20250712T090000
+            """;
 
-        // Test second occurrence
-        var second = occurrences.Last().Period;
-        Assert.That(second.StartTime?.Value.ToString("s"), Is.Not.Null.And.EqualTo("2025-07-12T09:00:00"));
-        Assert.That(second.Duration, Is.Not.Null.And.EqualTo(new Duration(hours: 1)));
-        Assert.That(second.EffectiveEndTime?.Value.ToString("s"), Is.Not.Null.And.EqualTo("2025-07-12T10:00:00"));
+        // Asserts
+        Assert.That(calendarAsIcs, Is.Not.Null);
+        var calendarTestString = ToTestableCalendarString(calendarAsIcs);
+        Assert.That(calendarTestString, Is.EqualTo(expectedIcsCalendar));
+
+        var occurrenceTestString = ToTestablePeriodString(occurrences);
+        Assert.That(occurrenceTestString, Is.EqualTo(expectedOccurrenceDates));
     }
 
     [Test]
@@ -203,7 +242,7 @@ public class RecurrenceWikiTests
                 {
                     Frequency = FrequencyType.Daily,
                     ByDay = [new(DayOfWeek.Thursday), new(DayOfWeek.Monday)],
-                    // 2025-07-17 09:00:00 @Europe/Zurich
+                    // 2025-07-17 09:00:00 Europe/Zurich
                     Until = new CalDateTime(2025, 07, 17, 07, 00, 00, CalDateTime.UtcTzId),
                 }
             )
