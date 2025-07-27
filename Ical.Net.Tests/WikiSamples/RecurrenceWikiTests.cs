@@ -15,47 +15,6 @@ using NUnit.Framework;
 
 namespace Ical.Net.Tests.WikiSamples;
 
-public static class RecurrenceWikiTestsUtilsExtensions
-{
-    public static Calendar ToCalendar(this CalendarEvent eve, Action<Calendar>? func = null)
-    {
-        var calendar = new Calendar();
-        calendar.Events.Add(eve);
-        if (func is not null)
-            func(calendar);
-
-        return calendar;
-    }
-
-    public static Calendar ToCalendar(this IEnumerable<CalendarEvent> eves, Action<Calendar>? func = null)
-    {
-        var calendar = new Calendar();
-        calendar.Events.AddRange(eves);
-        if (func is not null)
-            func(calendar);
-
-        return calendar;
-    }
-
-    public static CalendarEvent With(this CalendarEvent eve, Action<CalendarEvent> func)
-    {
-        func(eve);
-        return eve;
-    }
-
-    public static CalendarEvent WithRecurrenceRule(this CalendarEvent eve, params RecurrencePattern[] rules)
-    {
-        eve.RecurrenceRules = rules;
-        return eve;
-    }
-
-    public static RecurrencePattern With(this RecurrencePattern pattern, Action<RecurrencePattern> func)
-    {
-        func(pattern);
-        return pattern;
-    }
-}
-
 [TestFixture, Category("Recurrence")]
 public class RecurrenceWikiTests
 {
