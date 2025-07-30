@@ -34,6 +34,8 @@ jobs:
       with:
         dotnet-version: |
           8.0.x
+          6.0.x
+          3.1.x
     - name: Restore dependencies --verbosity quiet
       run: dotnet restore
     - name: Add AltCover package to test project
