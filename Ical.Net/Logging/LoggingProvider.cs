@@ -53,11 +53,11 @@ internal static class LoggingProvider // Make public when logging is used in lib
         => (_loggerFactory.Value ?? NullLoggerFactory.Instance).CreateLogger(categoryName);
 
     /// <summary>
-    /// Gets an <see cref="ILogger{T}"/> instance for the specified type.
+    /// Gets an <see cref="ILogger"/> instance for the specified type.
     /// The category name will be the full name of the type T.
     /// </summary>
     /// <typeparam name="T">The type for which to create the logger.</typeparam>
-    /// <returns>An <see cref="ILogger{T}"/> instance.</returns>
+    /// <returns>An <see cref="ILogger"/> instance.</returns>
     internal static ILogger CreateLogger<T>()
         => new Logger<T>(_loggerFactory.Value ?? NullLoggerFactory.Instance);
 

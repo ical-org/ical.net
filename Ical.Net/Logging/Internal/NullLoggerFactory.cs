@@ -3,14 +3,18 @@
 // Licensed under the MIT license.
 //
 
+using System;
+
 namespace Ical.Net.Logging.Internal;
 
 /// <summary>
 /// Provides a no-operation implementation of <see cref="ILoggerFactory"/> that produces <see cref="NullLogger"/>
 /// instances. This factory is intended for scenarios where logging is not required or should be disabled.
 /// </summary>
-internal class NullLoggerFactory : ILoggerFactory
+internal sealed class NullLoggerFactory : ILoggerFactory
 {
+    private bool _disposed;
+
     /// <summary>
     /// Provides a singleton instance of a <see cref="NullLoggerFactory"/> that produces no-op loggers.
     /// </summary>
@@ -25,9 +29,22 @@ internal class NullLoggerFactory : ILoggerFactory
     /// <returns>A <see cref="NullLogger.Instance"/></returns>
     public ILogger CreateLogger(string categoryName) => NullLogger.Instance;
 
+    private void Dispose(bool _) //NOSONAR
+    {
+        if (_disposed) return;
+        // No resources to release, implement IDisposable pattern for consistency
+        _disposed = true;
+    }
+
     /// <inheritdoc/>
     public void Dispose()
     {
-        // no-op
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~NullLoggerFactory()
+    {
+        Dispose(false);
     }
 }
