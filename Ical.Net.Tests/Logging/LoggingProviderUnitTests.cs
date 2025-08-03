@@ -6,16 +6,49 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Ical.Net.DataTypes;
 using Ical.Net.Logging;
-using Microsoft.Extensions.Logging;
+using Ical.Net.Logging.Internal;
 using NUnit.Framework;
-
 
 namespace Ical.Net.Tests.Logging;
 
+// LoggingProvider.SetLoggerFactory is static and gets set in each test,
+// so we need to ensure that the tests are not run in parallel.
+[Parallelizable(ParallelScope.None)]
 internal class LoggingProviderUnitTests
 {
+    [Test]
+    public void InitializingLoggerFactoryTwice_ShouldThrow()
+    {
+        using var logging1 = new TestLoggingProvider(new Options { DebugModeOnly = false });
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(LoggingProvider.FactoryIsSet, Is.True);
+            Assert.That(() =>
+            {
+                using var logging2 = new TestLoggingProvider(new Options { DebugModeOnly = false });
+            }, Throws.InvalidOperationException);
+        }
+    }
+
+    [Test]
+    public void LoggerFactoryNotSet_ShouldFallBackToNullLoggerFactory()
+    {
+        using var logging1 = new TestLoggingProvider(new Options { DebugModeOnly = false });
+        LoggingProvider.SetLoggerFactory(null, true);
+        var logger = LoggingProvider.CreateLogger<LoggingProviderUnitTests>();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(LoggingProvider.LoggerFactory, Is.InstanceOf<NullLoggerFactory>());
+            Assert.That(logger, Is.InstanceOf<Logger<LoggingProviderUnitTests>>());
+            Assert.That(logger.IsEnabled(LogLevel.Information), Is.False);
+            Assert.That(() => LoggingProvider.LoggerFactory.Dispose(), Throws.Nothing);
+        }
+    }
+
     [TestCase(true)]
     [TestCase(false)]
     public void SubmittedLogMessages_ShouldBeInTheLogs(bool useFileTarget)
@@ -35,7 +68,7 @@ internal class LoggingProviderUnitTests
         var catLogger = LoggingProvider.CreateLogger(typeof(LoggingProviderUnitTests).FullName!);
 
         catLogger.LogInformation("This is an info message.");
-        genLogger.LogError(new ArgumentException(), "This is an error message.");
+        genLogger.LogError(new ArgumentException(),"This is an error message.");
         genLogger.LogWarning("This is a warning message with structured data. {Data}", new { Key1 = "Value1", Key2 = "Value2" });
         var logs = logging.Logs.ToList();
 
@@ -89,6 +122,34 @@ internal class LoggingProviderUnitTests
         }
     }
 
+    [TestCase(true)]
+    [TestCase(false)]
+    public void DebugModeOnly_IsTrue_ShouldOnlyLogWhenDebugging(bool useFileTarget)
+    {
+        var logFile = useFileTarget
+            ? Path.ChangeExtension(Path.GetTempFileName(), ".log")
+            : null;
+
+        using var logging = logFile is not null
+            ? new TestLoggingProvider(logFile) // Use file target for logging
+            : new TestLoggingProvider(); // Use in-memory target for logging
+
+        var logger = LoggingProvider.CreateLogger<LoggingProviderUnitTests>();
+        logger.LogInformation("##{Counter}##", 123);
+
+        var logs = logging.Logs.ToList();
+
+        if (System.Diagnostics.Debugger.IsAttached)
+        {
+            Assert.That(logs, Has.Count.EqualTo(1));
+        }
+        else
+        {
+            // If not in debug mode, no logs should be present
+            Assert.That(logs, Is.Empty);
+        }
+    }
+
     [Test]
     public void MissingFileTargetToReadFrom_ShouldThrow()
     {
@@ -126,8 +187,8 @@ internal class LoggingProviderUnitTests
             DebugModeOnly = false,
             Filters = allLevels.Select(l => new Filter
             {
-                MinLogLevel = l,
-                MaxLogLevel = l,
+                MinLogLevel = (Microsoft.Extensions.Logging.LogLevel) l,
+                MaxLogLevel = (Microsoft.Extensions.Logging.LogLevel) l,
                 LoggerNamePattern = pattern
             }).ToList()
         };
@@ -138,31 +199,38 @@ internal class LoggingProviderUnitTests
         var logger = LoggingProvider.CreateLogger<LoggingProviderUnitTests>();
 
         // Act: log one message for each level
+        var exception = new InvalidOperationException("Test exception");
         foreach (var level in allLevels)
             switch (level)
             {
                 case LogLevel.Trace:
                     logger.LogTrace("Trace message");
+                    logger.LogTrace(exception, string.Empty);
                     break;
                 case LogLevel.Debug:
                     logger.LogDebug("Debug message");
+                    logger.LogDebug(exception, string.Empty);
                     break;
                 case LogLevel.Information:
                     logger.LogInformation("Info message");
+                    logger.LogInformation(exception, string.Empty);
                     break;
                 case LogLevel.Warning:
                     logger.LogWarning("Warning message");
+                    logger.LogWarning(exception, string.Empty);
                     break;
                 case LogLevel.Error:
                     logger.LogError("Error message");
+                    logger.LogError(exception, string.Empty);
                     break;
                 case LogLevel.Critical:
                     logger.LogCritical("Critical message");
+                    logger.LogCritical(exception, string.Empty);
                     break;
             }
 
         var logs = logging.Logs.ToList();
-        Assert.That(logs, unrecognizedPattern ? Has.Count.EqualTo(6) : Has.Count.EqualTo(0));
+        Assert.That(logs, unrecognizedPattern ? Has.Count.EqualTo(12) : Has.Count.EqualTo(0));
     }
 
     [Test]
@@ -175,8 +243,8 @@ internal class LoggingProviderUnitTests
             [
                 new Filter
                 {
-                    MinLogLevel = LogLevel.Error,
-                    MaxLogLevel = LogLevel.Error,
+                    MinLogLevel = (Microsoft.Extensions.Logging.LogLevel) LogLevel.Error,
+                    MaxLogLevel = (Microsoft.Extensions.Logging.LogLevel) LogLevel.Error,
                     LoggerNamePattern = $"{typeof(LoggingProviderUnitTests).FullName}"
                 }
             ]
@@ -215,6 +283,74 @@ internal class LoggingProviderUnitTests
         Assert.That(logs, System.Diagnostics.Debugger.IsAttached
             ? Has.Count.EqualTo(1)
             : Has.Count.EqualTo(0));
+    }
+
+    [Test]
+    public void ConcurrentLogging_ShouldLogAllMessagesCorrectly()
+    {
+        // Set up in-memory logging with (using 1 ILoggerFactory)
+        using var logging = new TestLoggingProvider(new Options { DebugModeOnly = false });
+
+        const int threadCount = 10;
+        const int logsPerThread = 20;
+        var runningThreads = 0;
+        var maxParallelThreads = 0;
+
+        // Create and start multiple threads to log messages concurrently
+
+        var threads = Enumerable.Range(0, threadCount)
+            .Select(t => new Thread(() => LogThread(t)))
+            .ToArray();
+
+        foreach (var thread in threads)
+            thread.Start();
+        foreach (var thread in threads)
+            thread.Join();
+
+        var logs = logging.Logs.ToList();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(logs, Has.Count.EqualTo(threadCount * logsPerThread));
+            Assert.That(maxParallelThreads, Is.GreaterThan(1), "Threads did not run in parallel");
+            for (var t = 0; t < threadCount; t++)
+            {
+                for (var i = 0; i < logsPerThread; i++)
+                {
+                    var expected = $"Log {i:D3} - Thread {t:D2}";
+                    Assert.That(logs.Any(log => log.Contains(expected)), Is.True, $"Expected log message '{expected}' not found");
+                }
+            }
+        }
+
+        return;
+
+        // Local functions
+
+        void LogThread(int threadNo)
+        {
+            var current = Interlocked.Increment(ref runningThreads);
+            UpdateMaxParallelThreads(current);
+
+            var logger = LoggingProvider.CreateLogger<LoggingProviderUnitTests>();
+            for (var i = 0; i < logsPerThread; i++)
+            {
+                logger.LogInformation("Log {Log:D3} - Thread {Thread:D2}", i, threadNo);
+            }
+            Interlocked.Decrement(ref runningThreads);
+        }
+
+        void UpdateMaxParallelThreads(int current)
+        {
+            do
+            {
+                var prevMax = maxParallelThreads;
+                if (current > prevMax)
+                {
+                    Interlocked.CompareExchange(ref maxParallelThreads, current, prevMax);
+                }
+            } while (current > maxParallelThreads);
+        }
     }
 
     [Test]
