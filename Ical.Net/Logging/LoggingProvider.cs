@@ -3,8 +3,9 @@
 // Licensed under the MIT license.
 //
 
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using System;
+using System.Threading;
+using Ical.Net.Logging.Internal;
 
 namespace Ical.Net.Logging;
 
@@ -15,34 +16,54 @@ namespace Ical.Net.Logging;
 /// </summary>
 internal static class LoggingProvider // Make public when logging is used in library classes
 {
+    private static readonly AsyncLocal<ILoggerFactory?> _loggerFactory =
+        new() { Value = null };
+
+    /// <summary>
+    /// Returns <see langword="true"/> if a <see cref="ILoggerFactory"/> implementation
+    /// has been set (using <see cref="LoggingProvider.SetLoggerFactory"/>).
+    /// </summary>
+    public static bool FactoryIsSet => _loggerFactory.Value is not null;
+
     /// <summary>
     /// Sets the global <see cref="ILoggerFactory"/> used by Ical.Net for creating <see cref="ILogger"/> instances.
-    /// This should be called once at application startup by the consuming application.
-    /// If <see langword="null"/>, <see cref="NullLoggerFactory.Instance"/> will be used, resulting in no-op logging.
+    /// This should be called once at application startup by the consuming application or thread that initializes logging.
+    /// <para/>
+    /// Before calling this method, or setting <see langword="null"/> a no-op logger factory will be used.
+    /// <para/>
+    /// Check <see cref="FactoryIsSet"/> to determine if a logger factory has already been set.
     /// </summary>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> instance from the consuming application's DI container or direct creation.</param>
-    public static void SetLoggerFactory(ILoggerFactory? loggerFactory)
-        => LoggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
+    /// <param name="force">If <see langword="true"/>, an existing <see cref="ILoggerFactory"/> will be overwritten; else the method will throw.</param>
+    public static void SetLoggerFactory(ILoggerFactory? loggerFactory, bool force = false)
+    {
+        if (!force && _loggerFactory.Value != null)
+            throw new InvalidOperationException(
+                "LoggerFactory has already been set. To override, set force to true.");
 
+        _loggerFactory.Value = loggerFactory;
+    }
+    
     /// <summary>
     /// Gets an <see cref="ILogger"/> instance for the specified category name.
     /// </summary>
     /// <param name="categoryName">The category name for the logger (typically the full type name).</param>
     /// <returns>An <see cref="ILogger"/> instance.</returns>
     internal static ILogger CreateLogger(string categoryName)
-        => LoggerFactory.CreateLogger(categoryName);
+        => (_loggerFactory.Value ?? NullLoggerFactory.Instance).CreateLogger(categoryName);
 
     /// <summary>
     /// Gets an <see cref="ILogger{T}"/> instance for the specified type.
     /// The category name will be the full name of the type T.
     /// </summary>
     /// <typeparam name="T">The type for which to create the logger.</typeparam>
-    /// <returns>An <see cref="ILogger"/> instance.</returns>
-    internal static ILogger<T> CreateLogger<T>()
-        => new Logger<T>(LoggerFactory);
+    /// <returns>An <see cref="ILogger{T}"/> instance.</returns>
+    internal static ILogger CreateLogger<T>()
+        => new Logger<T>(_loggerFactory.Value ?? NullLoggerFactory.Instance);
 
     /// <summary>
     /// Gets the current instance of the logger factory for Ical.Net loggers.
     /// </summary>
-    internal static ILoggerFactory LoggerFactory { get; private set; } = NullLoggerFactory.Instance;
+    internal static ILoggerFactory LoggerFactory
+        => _loggerFactory.Value ?? NullLoggerFactory.Instance;
 }

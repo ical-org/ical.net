@@ -10,6 +10,7 @@ using System.Text;
 using Ical.Net.DataTypes;
 
 namespace Ical.Net.Tests.Logging;
+
 internal static class ToLogExtensions
 {
     public static string ToLog(this Exception? exception)

@@ -4,8 +4,8 @@
 #nullable enable
 using System;
 using Ical.Net.Logging;
+using Ical.Net.Tests.Logging.Adapters;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using NLog.Config;
 using NLog.Extensions.Logging;
 using NLog.Targets;
@@ -13,7 +13,7 @@ using NLog.Targets;
 namespace Ical.Net.Tests.Logging;
 
 /// <summary>
-/// Provides logging operations by configuring and providing a <see cref="ILoggerFactory"/>
+/// Provides logging operations by configuring and providing a <see cref="Microsoft.Testing.Platform.Logging.ILoggerFactory"/>
 /// and a <see cref="NLog.Targets.Target"/> for log storage.
 /// </summary>
 /// <remarks>
@@ -40,18 +40,16 @@ internal abstract class TestLoggingProviderBase : IDisposable
     {
         Options = options ?? new Options();
 
+        Target = target;
         if (Options.DebugModeOnly && !System.Diagnostics.Debugger.IsAttached)
         {
-            Target = new NullTarget();
-            LoggerFactory = NullLoggerFactory.Instance;
-            return;
+            Target = new NullTarget("null");
         }
-
-        Target = target; 
-        var config = Configure(target, Options);
+        var config = Configure(Target, Options);
         LoggerFactory = CreateFactory(config);
 
         // Set the iCal.NET logging configuration
+        // Don't force the logger factory to be set if it already exists!
         LoggingProvider.SetLoggerFactory(LoggerFactory);
     }
 
@@ -61,20 +59,21 @@ internal abstract class TestLoggingProviderBase : IDisposable
     protected internal Target Target { get; }
 
     /// <summary>
-    /// Gets the <see cref="ILoggerFactory"/> instance used for creating logger instances.
+    /// Gets the <see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> instance used for creating logger instances.
     /// </summary>
-    public ILoggerFactory LoggerFactory { get; protected set; }
+    public Ical.Net.Logging.ILoggerFactory LoggerFactory { get; protected set; }
 
-    private static ILoggerFactory CreateFactory(LoggingConfiguration config)
+    private static Ical.Net.Logging.ILoggerFactory CreateFactory(LoggingConfiguration config)
     {
         // Create a LoggerFactory with NLog as the provider
-        var factory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
+        var msLoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
         {
             builder.ClearProviders();
             builder.AddNLog(config);
         });
 
-        return factory;
+        // Wrap the Microsoft logger factory with the Ical adapter
+        return new MicrosoftLoggerFactoryAdapter(msLoggerFactory);
     }
 
     private static LoggingConfiguration Configure(Target target, Options options)
@@ -109,7 +108,7 @@ internal abstract class TestLoggingProviderBase : IDisposable
             Target.Dispose();
             LoggerFactory.Dispose();
             NLog.LogManager.Configuration = null;
-            LoggingProvider.SetLoggerFactory(null);
+            LoggingProvider.SetLoggerFactory(null, true);
         }
 
         _isDisposed = true;
@@ -125,17 +124,17 @@ internal abstract class TestLoggingProviderBase : IDisposable
     /// <inheritdoc/>
     ~TestLoggingProviderBase() => Dispose(disposing: false);
     
-    private static NLog.LogLevel MapLogLevel(LogLevel logLevel)
+    private static NLog.LogLevel MapLogLevel(Microsoft.Extensions.Logging.LogLevel logLevel)
     {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
         return logLevel switch
         {
-            LogLevel.Trace => NLog.LogLevel.Trace,
-            LogLevel.Debug => NLog.LogLevel.Debug,
-            LogLevel.Information => NLog.LogLevel.Info,
-            LogLevel.Warning => NLog.LogLevel.Warn,
-            LogLevel.Error => NLog.LogLevel.Error,
-            LogLevel.Critical => NLog.LogLevel.Fatal,
+            Microsoft.Extensions.Logging.LogLevel.Trace => NLog.LogLevel.Trace,
+            Microsoft.Extensions.Logging.LogLevel.Debug => NLog.LogLevel.Debug,
+            Microsoft.Extensions.Logging.LogLevel.Information => NLog.LogLevel.Info,
+            Microsoft.Extensions.Logging.LogLevel.Warning => NLog.LogLevel.Warn,
+            Microsoft.Extensions.Logging.LogLevel.Error => NLog.LogLevel.Error,
+            Microsoft.Extensions.Logging.LogLevel.Critical => NLog.LogLevel.Fatal,
         };
 #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
     }
