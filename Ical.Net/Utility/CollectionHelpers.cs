@@ -14,34 +14,19 @@ internal static class CollectionHelpers
     /// <summary> Commutative, stable, order-independent hashing for collections of collections. </summary>
     public static int GetHashCode<T>(IEnumerable<T>? collection)
     {
-        unchecked
+        if (collection == null)
         {
-            if (collection == null)
-            {
-                return 0;
-            }
-
-            return collection
-                .Where(e => e != null)
-                .Aggregate(0, (current, element) => current + element?.GetHashCode() ?? 0);
+            return 0;
         }
-    }
 
-    /// <summary> Commutative, stable, order-independent hashing for collections of collections. </summary>
-    public static int GetHashCodeForNestedCollection<T>(IEnumerable<IEnumerable<T>>? nestedCollection)
-    {
-        unchecked
+        var hashCode = new HashCode();
+
+        foreach (var item in collection)
         {
-            if (nestedCollection == null)
-            {
-                return 0;
-            }
-
-            return nestedCollection
-                .SelectMany(c => c)
-                .Where(e => e != null)
-                .Aggregate(0, (current, element) => current + element?.GetHashCode() ?? 0);
+            hashCode.Add(item);
         }
+
+        return hashCode.ToHashCode();
     }
 
     public static bool Equals<T>(IEnumerable<T>? left, IEnumerable<T>? right, bool orderSignificant = false)

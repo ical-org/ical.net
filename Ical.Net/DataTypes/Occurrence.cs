@@ -36,13 +36,7 @@ public class Occurrence : IComparable<Occurrence>
         return obj is Occurrence occurrence && Equals(occurrence);
     }
 
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return ((Period.GetHashCode()) * 397) ^ (Source.GetHashCode());
-        }
-    }
+    public override int GetHashCode() => HashCode.Combine(Period, Source);
 
     public override string ToString() => $"Occurrence {Source.GetType().Name} ({Period.StartTime})";
 
