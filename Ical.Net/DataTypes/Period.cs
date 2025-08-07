@@ -130,16 +130,7 @@ public class Period : EncodableDataType, IComparable<Period>
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = StartTime.GetHashCode();
-            hashCode = (hashCode * 397) ^ (EndTime?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ Duration.GetHashCode();
-            return hashCode;
-        }
-    }
+    public override int GetHashCode() => HashCode.Combine(StartTime, EndTime, Duration);
 
     /// <inheritdoc/>
     public override string? ToString()

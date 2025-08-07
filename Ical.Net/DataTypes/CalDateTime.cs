@@ -234,16 +234,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         => obj is CalDateTime other && this == other;
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Value.GetHashCode();
-            hashCode = (hashCode * 397) ^ HasTime.GetHashCode();
-            hashCode = (hashCode * 397) ^ (TzId != null ? TzId.GetHashCode() : 0);
-            return hashCode;
-        }
-    }
+    public override int GetHashCode() => HashCode.Combine(Value, HasTime, TzId);
 
     public static bool operator <(CalDateTime? left, CalDateTime? right)
     {

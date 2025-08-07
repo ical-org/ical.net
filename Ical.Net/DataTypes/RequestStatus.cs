@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
 
@@ -86,14 +87,5 @@ public class RequestStatus : EncodableDataType
         return Equals((RequestStatus) obj);
     }
 
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = _mDescription?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ (_mExtraData?.GetHashCode() ?? 0);
-            hashCode = (hashCode * 397) ^ (_mStatusCode?.GetHashCode() ?? 0);
-            return hashCode;
-        }
-    }
+    public override int GetHashCode() => HashCode.Combine(_mDescription, _mExtraData, _mStatusCode);
 }
