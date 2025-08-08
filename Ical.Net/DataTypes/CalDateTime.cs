@@ -169,6 +169,14 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         Initialize(date, null, null);
     }
 
+    internal CalDateTime(LocalDateTime value)
+    {
+        Initialize(
+            new DateOnly(value.Date.Year, value.Date.Month, value.Date.Day),
+            new TimeOnly(value.TimeOfDay.Hour, value.TimeOfDay.Minute, value.TimeOfDay.Second),
+            null);
+    }
+
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
     /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value.
@@ -426,6 +434,23 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
 
         return new TimeOnly(time.Value.Hour, time.Value.Minute, time.Value.Second);
     }
+
+    internal LocalDateTime ToLocalDateTime()
+    {
+        var localDate = new LocalDate(_dateOnly.Year, _dateOnly.Month, _dateOnly.Day);
+
+        if (_timeOnly is null)
+        {
+            return localDate.AtMidnight();
+        }
+        else
+        {
+            var time = _timeOnly.Value;
+            return localDate.At(new LocalTime(time.Hour, time.Minute, time.Second));
+        }
+    }
+
+    internal Instant ToInstant() => Instant.FromDateTimeUtc(AsUtc);
 
     /// <summary>
     /// Converts the <see cref="Value"/> to a date/time
