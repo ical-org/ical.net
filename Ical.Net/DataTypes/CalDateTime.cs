@@ -3,13 +3,13 @@
 // Licensed under the MIT license.
 //
 
-using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
-using NodaTime;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Utility;
+using NodaTime;
 
 namespace Ical.Net.DataTypes;
 
@@ -169,12 +169,30 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         Initialize(date, null, null);
     }
 
-    internal CalDateTime(LocalDateTime value)
+    internal CalDateTime(LocalDate value, string? tzId = null)
+    {
+        Initialize(
+            new DateOnly(value.Year, value.Month, value.Day),
+            null,
+            tzId);
+    }
+
+    internal CalDateTime(LocalDateTime value, string? tzId = null)
     {
         Initialize(
             new DateOnly(value.Date.Year, value.Date.Month, value.Date.Day),
             new TimeOnly(value.TimeOfDay.Hour, value.TimeOfDay.Minute, value.TimeOfDay.Second),
-            null);
+            tzId);
+    }
+
+    internal CalDateTime(Instant instant)
+    {
+        var value = instant.InUtc();
+
+        Initialize(
+            new DateOnly(value.Date.Year, value.Date.Month, value.Date.Day),
+            new TimeOnly(value.TimeOfDay.Hour, value.TimeOfDay.Minute, value.TimeOfDay.Second),
+            "UTC");
     }
 
     /// <summary>
@@ -451,6 +469,49 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     }
 
     internal Instant ToInstant() => Instant.FromDateTimeUtc(AsUtc);
+
+    internal ZonedDateTime ToZonedDateTime()
+    {
+        if (_tzId is null)
+        {
+            return ToLocalDateTime().InUtc();
+        }
+        else
+        {
+            return DateUtil.GetZone(_tzId).AtLeniently(ToLocalDateTime());
+        }
+    }
+
+    internal ZonedDateTime ToZonedDateTime(DateTimeZone timeZone)
+    {
+        if (_tzId is null)
+        {
+            return ToLocalDateTime().InZoneLeniently(timeZone);
+        }
+        else
+        {
+            return DateUtil.GetZone(_tzId)
+                .AtLeniently(ToLocalDateTime())
+                .WithZone(timeZone);
+        }
+    }
+
+    internal ZonedDateTime ToZonedDateTime(string zoneId)
+    {
+        return ToZonedDateTime(DateUtil.GetZone(zoneId));
+    }
+
+    internal ZonedDateTime AsZonedOrDefault(DateTimeZone timeZone)
+    {
+        if (_tzId is null)
+        {
+            return ToLocalDateTime().InZoneLeniently(timeZone);
+        }
+        else
+        {
+            return DateUtil.GetZone(_tzId).AtLeniently(ToLocalDateTime());
+        }
+    }
 
     /// <summary>
     /// Converts the <see cref="Value"/> to a date/time

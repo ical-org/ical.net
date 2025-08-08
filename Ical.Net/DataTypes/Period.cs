@@ -6,6 +6,7 @@
 using System;
 using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
+using NodaTime;
 
 namespace Ical.Net.DataTypes;
 
@@ -56,6 +57,9 @@ public class Period : EncodableDataType, IComparable<Period>
 
     // Needed for the serialization factory
     internal Period() { }
+
+    internal Period(Instant start, Instant end)
+        : this(new CalDateTime(start), new CalDateTime(end)) { }
 
     /// <summary>
     /// Creates a new <see cref="Period"/> instance starting at the given time
