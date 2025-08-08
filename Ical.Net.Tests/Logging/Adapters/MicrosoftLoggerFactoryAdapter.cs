@@ -16,7 +16,7 @@ namespace Ical.Net.Tests.Logging.Adapters;
 /// <see cref="Ical.Net.Logging.ILoggerFactory"/> instances using the underlying
 /// <see cref="Microsoft.Extensions.Logging.ILoggerFactory"/>.
 /// </remarks>
-internal class MicrosoftLoggerFactoryAdapter : Ical.Net.Logging.ILoggerFactory
+internal sealed class MicrosoftLoggerFactoryAdapter : Ical.Net.Logging.ILoggerFactory
 {
     private readonly Microsoft.Extensions.Logging.ILoggerFactory _msLoggerFactory;
     private bool _disposed;
@@ -44,7 +44,7 @@ internal class MicrosoftLoggerFactoryAdapter : Ical.Net.Logging.ILoggerFactory
         return new MicrosoftLoggerAdapter(msLogger);
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (_disposed) return;
 
@@ -54,14 +54,5 @@ internal class MicrosoftLoggerFactoryAdapter : Ical.Net.Logging.ILoggerFactory
     }
 
     /// <inheritdoc/>
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    ~MicrosoftLoggerFactoryAdapter()
-    {
-        Dispose(false);
-    }
+    public void Dispose() => Dispose(true);
 }

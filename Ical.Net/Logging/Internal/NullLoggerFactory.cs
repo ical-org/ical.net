@@ -3,8 +3,6 @@
 // Licensed under the MIT license.
 //
 
-using System;
-
 namespace Ical.Net.Logging.Internal;
 
 /// <summary>
@@ -37,14 +35,5 @@ internal sealed class NullLoggerFactory : ILoggerFactory
     }
 
     /// <inheritdoc/>
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    ~NullLoggerFactory()
-    {
-        Dispose(false);
-    }
+    public void Dispose() => Dispose(true);
 }
