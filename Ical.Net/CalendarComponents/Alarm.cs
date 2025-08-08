@@ -3,10 +3,10 @@
 // Licensed under the MIT license.
 //
 
-using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
+using NodaTime;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -40,9 +40,9 @@ public class Alarm : CalendarComponent
         set => Properties.Set("DESCRIPTION", value);
     }
 
-    public virtual Duration? Duration
+    public virtual DataTypes.Duration? Duration
     {
-        get => Properties.Get<Duration>("DURATION");
+        get => Properties.Get<DataTypes.Duration>("DURATION");
         set => Properties.Set("DURATION", value);
     }
 
@@ -73,7 +73,7 @@ public class Alarm : CalendarComponent
     /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
     /// that occur at or after <paramref name="fromDate"/>.
     /// </summary>
-    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, CalDateTime? fromDate, EvaluationOptions? options)
+    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, DateTimeZone timeZone, Instant? fromDate, EvaluationOptions? options)
     {
         if (Trigger == null)
         {
@@ -90,44 +90,32 @@ public class Alarm : CalendarComponent
             // Ensure that "FromDate" has already been set
             if (fromDate == null)
             {
-                fromDate = rc.Start?.Copy();
+                fromDate = rc.Start?.ToZonedDateTime(timeZone).ToInstant();
             }
 
-            Duration? duration = null;
-            foreach (var o in rc.GetOccurrences(fromDate, options))
+            var triggerDuration = Trigger.Duration!.Value.ToPeriod();
+
+            foreach (var o in rc.GetOccurrences(timeZone, fromDate, options))
             {
-                var dt = o.Period.StartTime;
+                var dt = o.Start;
                 if (string.Equals(Trigger.Related, TriggerRelation.End, TriggerRelation.Comparison))
                 {
-                    if (o.Period.EndTime != null)
-                    {
-                        dt = o.Period.EndTime;
-                        if (duration == null)
-                        {
-                            duration = o.Period.EffectiveDuration;
-                        }
-                    }
-                    // Use the "last-found" duration as a reference point
-                    else if (duration != null)
-                    {
-                        dt = o.Period.StartTime.Add(duration.Value);
-                    }
-                    else
-                    {
-                        throw new ArgumentException(
-                            "Alarm trigger is relative to the START of the occurrence; however, the occurence has no discernible end.");
-                    }
+                    dt = o.End;
                 }
 
-                occurrences.Add(new AlarmOccurrence(this, dt.Add(Trigger.Duration!.Value), rc));
+                var triggerStart = dt.LocalDateTime
+                    .Plus(triggerDuration)
+                    .InZoneLeniently(dt.Zone);
+
+                occurrences.Add(new AlarmOccurrence(this, triggerStart, rc));
             }
         }
         else
         {
-            var dt = Trigger?.DateTime?.Copy();
+            var dt = Trigger?.DateTime?.Copy().ToZonedDateTime();
             if (dt != null)
             {
-                occurrences.Add(new AlarmOccurrence(this, dt, rc));
+                occurrences.Add(new AlarmOccurrence(this, dt.Value, rc));
             }
         }
 
@@ -146,7 +134,7 @@ public class Alarm : CalendarComponent
     /// <param name="start">The earliest date/time to poll triggered alarms for.</param>
     /// <param name="options"></param>
     /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-    public virtual IList<AlarmOccurrence> Poll(CalDateTime? start, EvaluationOptions? options = null)
+    public virtual IList<AlarmOccurrence> Poll(DateTimeZone timeZone, Instant? start, EvaluationOptions? options = null)
     {
         var results = new List<AlarmOccurrence>();
 
@@ -156,7 +144,7 @@ public class Alarm : CalendarComponent
             return results;
         }
 
-        results.AddRange(GetOccurrences(rc, start, options));
+        results.AddRange(GetOccurrences(rc, timeZone, start, options));
         return results;
     }
 
@@ -171,22 +159,24 @@ public class Alarm : CalendarComponent
         for (var i = 0; i < len; i++)
         {
             var ao = occurrences[i];
-            if (ao.DateTime == null || ao.Component == null)
+            if (ao.Component == null)
             {
                 continue;
             }
 
-            var alarmTime = ao.DateTime.Copy();
+            var alarmTime = ao.Start;
+            var duration = Duration?.ToPeriod();
 
             for (var j = 0; j < Repeat; j++)
             {
-                if (Duration != null)
-                    alarmTime = alarmTime?.Add(Duration.Value);
-
-                if (alarmTime != null)
+                if (duration != null)
                 {
-                    occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy(), ao.Component));
+                    alarmTime = alarmTime.LocalDateTime
+                        .Plus(duration)
+                        .InZoneLeniently(alarmTime.Zone);
                 }
+
+                occurrences.Add(new AlarmOccurrence(this, alarmTime, ao.Component));
             }
         }
     }

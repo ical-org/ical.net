@@ -45,6 +45,43 @@ public struct Duration
         Seconds = seconds;
     }
 
+    public NodaTime.Period ToPeriod()
+    {
+        var b = new NodaTime.PeriodBuilder
+        {
+            Weeks = Weeks ?? 0,
+            Days = Days ?? 0,
+            Hours = Hours ?? 0,
+            Minutes = Minutes ?? 0,
+            Seconds = Seconds ?? 0
+        };
+
+        return b.Build();
+    }
+
+    public NodaTime.Period GetNominalPart()
+    {
+        var b = new NodaTime.PeriodBuilder
+        {
+            Weeks = Weeks ?? 0,
+            Days = Days ?? 0,
+        };
+
+        return b.Build();
+    }
+
+    public NodaTime.Duration GetTimePart()
+    {
+        var b = new NodaTime.PeriodBuilder
+        {
+            Hours = Hours ?? 0,
+            Minutes = Minutes ?? 0,
+            Seconds = Seconds ?? 0,
+        };
+
+        return b.Build().ToDuration();
+    }
+
     /// <summary>
     /// Gets the number of weeks.
     /// </summary>

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
+using NodaTime;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -55,9 +56,9 @@ public class Todo : RecurringComponent, IAlarmContainer
     //
     // Therefore, Duration is not serialized, as Due
     // should always be extrapolated from the duration.
-    public virtual Duration? Duration
+    public virtual DataTypes.Duration? Duration
     {
-        get => Properties.Get<Duration?>("DURATION");
+        get => Properties.Get<DataTypes.Duration?>("DURATION");
         set
         {
             Properties.Set("DURATION", value);
@@ -75,7 +76,7 @@ public class Todo : RecurringComponent, IAlarmContainer
     /// of the given <see cref="RecurringComponent.DtStart"/> and <see cref="Due"/> timezones.
     /// </remarks>
     /// <returns>The duration that gets added to the period start time to get the period end time.</returns>
-    public Duration? EffectiveDuration
+    public DataTypes.Duration? EffectiveDuration
     {
         get
         {
@@ -184,19 +185,26 @@ public class Todo : RecurringComponent, IAlarmContainer
     /// </note>
     /// </summary>
     /// <returns>True if the item has been completed</returns>
-    public virtual bool IsCompleted(CalDateTime currDt)
+    public virtual bool IsCompleted(ZonedDateTime currDt)
     {
         if (Status == TodoStatus.Completed)
         {
-            if (Completed == null || Completed.GreaterThan(currDt))
+            if (Completed == null)
+            {
+                return true;
+            }
+
+            var completed = Completed.ToZonedDateTime(currDt.Zone);
+
+            if (completed.ToInstant() > currDt.ToInstant())
             {
                 return true;
             }
 
             // Evaluate to the previous occurrence.
-            var periods = _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt, options: null);
+            var periods = _mEvaluator.EvaluateToPreviousOccurrence(completed, currDt, options: null);
 
-            return periods.All(p => !p.StartTime.GreaterThan(Completed) || !currDt.GreaterThanOrEqual(p.StartTime));
+            return periods.All(p => !(p.Start.ToInstant() > completed.ToInstant()) || !(currDt.ToInstant() >= p.Start.ToInstant()));
         }
         return false;
     }
@@ -207,9 +215,9 @@ public class Todo : RecurringComponent, IAlarmContainer
     /// </summary>
     /// <param name="currDt">The date and time to test.</param>
     /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
-    public virtual bool IsActive(CalDateTime currDt)
-        => (DtStart == null || currDt.GreaterThanOrEqual(DtStart))
-           && (!IsCompleted(currDt) && !IsCancelled);
+    public virtual bool IsActive(ZonedDateTime value)
+        => (DtStart == null || value.ToInstant() >= DtStart.ToZonedDateTime(value.Zone).ToInstant())
+           && (!IsCompleted(value) && !IsCancelled);
 
     /// <summary>
     /// Returns True if the item was cancelled.
