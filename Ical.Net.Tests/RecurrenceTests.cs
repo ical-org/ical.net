@@ -2930,11 +2930,9 @@ public class RecurrenceTests
         // However, this does make a good test to ensure they behave as they should.
         var pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
 
-        var us = new CultureInfo("en-US");
-
-        var startDate = new CalDateTime(DateTime.Parse("3/30/08 11:59:40 PM", us));
-        var fromDate = new CalDateTime(DateTime.Parse("3/30/08 11:59:40 PM", us));
-        var toDate = new CalDateTime(DateTime.Parse("3/31/08 12:00:11 AM", us));
+        var startDate = new CalDateTime(2008, 3, 30, 23, 59, 40);
+        var fromDate = new CalDateTime(startDate);
+        var toDate = new CalDateTime(2008, 3, 31, 0, 0, 11);
 
         var evaluator = new RecurrencePatternEvaluator(pattern);
         var occurrences = evaluator.Evaluate(
@@ -2946,14 +2944,10 @@ public class RecurrenceTests
         Assert.That(occurrences, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
         {
-            Assert.That(occurrences[0].StartTime,
-                Is.EqualTo(new CalDateTime(DateTime.Parse("03/30/08 11:59:40 PM", us))));
-            Assert.That(occurrences[1].StartTime,
-                Is.EqualTo(new CalDateTime(DateTime.Parse("03/30/08 11:59:50 PM", us))));
-            Assert.That(occurrences[2].StartTime,
-                Is.EqualTo(new CalDateTime(DateTime.Parse("03/31/08 12:00:00 AM", us))));
-            Assert.That(occurrences[3].StartTime,
-                Is.EqualTo(new CalDateTime(DateTime.Parse("03/31/08 12:00:10 AM", us))));
+            Assert.That(occurrences[0].StartTime, Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 40)));
+            Assert.That(occurrences[1].StartTime, Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 50)));
+            Assert.That(occurrences[2].StartTime, Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 00)));
+            Assert.That(occurrences[3].StartTime, Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 10)));
         });
     }
 
