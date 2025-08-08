@@ -4,7 +4,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 
@@ -19,6 +18,10 @@ public class TimeZoneInfoEvaluator : RecurringEvaluator
     }
 
     protected override Duration? DefaultDuration => null;
+
+    protected override NodaTime.ZonedDateTime GetEnd(NodaTime.ZonedDateTime start) => start;
+    protected override EvaluationPeriod EvaluateRDate(Period rdate, NodaTime.DateTimeZone referenceTimeZone)
+        => throw new NotImplementedException();
 
     public TimeZoneInfoEvaluator(IRecurrable tzi) : base(tzi) { }
 }

@@ -9,20 +9,21 @@ using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Utility;
+using NodaTime;
 
 namespace Ical.Net.CalendarComponents;
 
 public class FreeBusy : UniqueComponent, IMergeable
 {
-    public static FreeBusy? Create(ICalendarObject obj, FreeBusy freeBusyRequest, EvaluationOptions? options = null)
+    public static FreeBusy? Create(ICalendarObject obj, DateTimeZone timeZone, FreeBusy freeBusyRequest, EvaluationOptions? options = null)
     {
         if ((obj is not IGetOccurrencesTyped occ))
         {
             return null;
         }
 
-        var occurrences = occ.GetOccurrences<CalendarEvent>(freeBusyRequest.Start, options)
-            .TakeWhile(p => (freeBusyRequest.End == null) || (p.Period.StartTime < freeBusyRequest.End));
+        var occurrences = occ.GetOccurrences<CalendarEvent>(timeZone, freeBusyRequest.Start?.ToZonedDateTime(timeZone).ToInstant(), options)
+            .TakeWhile(p => (freeBusyRequest.End == null) || (p.Start.ToInstant() < freeBusyRequest.End.ToInstant()));
 
         var contacts = new List<string>();
         var isFilteredByAttendees = false;
@@ -89,7 +90,11 @@ public class FreeBusy : UniqueComponent, IMergeable
             if (accepted)
             {
                 // If the entry was accepted, add it to our list!
-                fb.Entries.Add(new FreeBusyEntry(o.Period, type));
+
+                // Values MUST always be in UTC on FREEBUSY
+                var period = new DataTypes.Period(o.Start.ToInstant(), o.End.ToInstant());
+
+                fb.Entries.Add(new FreeBusyEntry(period, type));
             }
         }
 
@@ -156,7 +161,7 @@ public class FreeBusy : UniqueComponent, IMergeable
         set => Properties.Set("DTEND", value);
     }
 
-    public virtual FreeBusyStatus GetFreeBusyStatus(Period? period)
+    public virtual FreeBusyStatus GetFreeBusyStatus(DataTypes.Period? period)
     {
         var status = FreeBusyStatus.Free;
         if (period == null)

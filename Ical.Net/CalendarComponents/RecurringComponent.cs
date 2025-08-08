@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Proxies;
+using NodaTime;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -207,11 +208,16 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
         Initialize();
     }
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, EvaluationOptions? options = null)
-        => RecurrenceUtil.GetOccurrences(this, startTime, options);
+    public virtual IEnumerable<Occurrence> GetOccurrences(ZonedDateTime startTime, EvaluationOptions? options = null)
+        => RecurrenceUtil.GetOccurrences(this, startTime.Zone, startTime.ToInstant(), options);
 
-    public virtual IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTimeZone timeZone, Instant? startTime = null, EvaluationOptions? options = null)
+    {
+        return RecurrenceUtil.GetOccurrences(this, timeZone, startTime, options);
+    }
 
-    public virtual IList<AlarmOccurrence> PollAlarms(CalDateTime? startTime, CalDateTime? endTime)
-        => Alarms.SelectMany(a => a.Poll(startTime).TakeWhile(p => (endTime == null) || (p.Period?.StartTime < endTime))).ToList();
+    public virtual IList<AlarmOccurrence> PollAlarms(DateTimeZone timeZone) => PollAlarms(timeZone, null, null);
+
+    public virtual IList<AlarmOccurrence> PollAlarms(DateTimeZone timeZone, Instant? startTime, Instant? endTime)
+        => Alarms.SelectMany(a => a.Poll(timeZone, startTime).TakeWhile(p => (endTime == null) || (p.Start.ToInstant() < endTime))).ToList();
 }
