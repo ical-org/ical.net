@@ -13,7 +13,6 @@ using NUnit.Framework;
 
 namespace Ical.Net.Tests.Logging.Tests;
 
-/// LoggingProvider.SetLoggerFactory is static and gets
 /// <summary>
 /// LoggingProvider.SetLoggerFactory is static and gets
 /// <list type="bullet">

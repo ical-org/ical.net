@@ -14,7 +14,7 @@ namespace Ical.Net.Tests.Logging;
 /// </summary>
 /// <remarks>
 /// The <see cref="TestLoggingManagerBase"/> class initializes a logging configuration using
-/// NLog and provides a logger factory that can be used to create loggers.
+/// an underlying logging library and provides a logger factory that can be used to create loggers.
 /// It supports custom logging rules and stores logs in memory for retrieval.
 /// </remarks>
 internal abstract class TestLoggingManagerBase : IDisposable

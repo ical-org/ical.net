@@ -23,29 +23,6 @@ internal sealed class TestLoggingManager : TestLoggingManagerBase
     {}
 
     /// <summary>
-    /// Creates a new instance of the <see cref="TestLoggingManager"/> class with a specified log file.
-    /// </summary>
-    public TestLoggingManager(string logFile) : this(logFile, options: null)
-    { }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="TestLoggingManager"/> class with a specified log file.
-    /// </summary>
-    /// <param name="logFile">
-    /// The relative or absolute path of the file to store the logs.
-    /// An existing file will be deleted before logging starts.
-    /// </param>
-    /// <param name="options">
-    /// The options for configuring the logging behavior.
-    /// May be <see langword="null"/> to use default options.
-    /// </param>
-    public TestLoggingManager(string logFile, Options? options)
-        : base(options)
-    {
-        (options ?? new Options()).LogToFileLogPath = logFile;
-    }
-
-    /// <summary>
     /// Creates a new instance of the <see cref="TestLoggingManager"/> class with an in-memory log target.
     /// </summary>
     /// <param name="options">
