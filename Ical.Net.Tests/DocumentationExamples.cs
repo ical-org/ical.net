@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using NodaTime.Extensions;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -39,8 +40,8 @@ public class DocumentationExamples
 
         // Count the occurrences between July 20, and Aug 5 -- there should be 12:
         // July 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
-        var searchStart = new CalDateTime(2016, 07, 20);
-        var searchEnd = new CalDateTime(2016, 08, 05);
+        var searchStart = new CalDateTime(2016, 07, 20).ToZonedDateTime("America/New_York");
+        var searchEnd = new CalDateTime(2016, 08, 05).ToZonedDateTime("America/New_York").ToInstant();
         var occurrences = calendar.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(12));
     }
@@ -64,8 +65,8 @@ public class DocumentationExamples
 
         // Count every other Tuesday between July 1 and Dec 31.
         // The first Tuesday is July 5. There should be 13 in total
-        var searchStart = new CalDateTime(2010, 01, 01);
-        var searchEnd = new CalDateTime(2016, 12, 31);
+        var searchStart = new CalDateTime(2010, 01, 01).ToZonedDateTime("America/New_York");
+        var searchEnd = new CalDateTime(2016, 12, 31).ToZonedDateTime("America/New_York").ToInstant();
         var tuesdays = vEvent.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
 
         Assert.That(tuesdays, Has.Count.EqualTo(13));
@@ -92,14 +93,14 @@ public class DocumentationExamples
         };
         vEvent.RecurrenceRules = new List<RecurrencePattern> { rrule };
 
-        var searchStart = new CalDateTime(2000, 01, 01);
-        var searchEnd = new CalDateTime(2017, 01, 01);
+        var searchStart = new CalDateTime(2000, 01, 01).ToZonedDateTime("America/New_York");
+        var searchEnd = new CalDateTime(2017, 01, 01).ToZonedDateTime("America/New_York").ToInstant();
         var usThanksgivings = vEvent.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
 
         Assert.That(usThanksgivings, Has.Count.EqualTo(17));
         foreach (var thanksgiving in usThanksgivings)
         {
-            Assert.That(thanksgiving.Period.StartTime.DayOfWeek == DayOfWeek.Thursday, Is.True);
+            Assert.That(thanksgiving.Start.DayOfWeek == DayOfWeek.Thursday.ToIsoDayOfWeek(), Is.True);
         }
     }
 
@@ -125,8 +126,8 @@ public class DocumentationExamples
         calendar.Events.Add(vEvent);
 
         // We are essentially counting all the days that aren't Sunday in 2016, so there should be 314
-        var searchStart = new CalDateTime(2015, 12, 31);
-        var searchEnd = new CalDateTime(2017, 01, 01);
+        var searchStart = new CalDateTime(2015, 12, 31).ToZonedDateTime("America/New_York");
+        var searchEnd = new CalDateTime(2017, 01, 01).ToZonedDateTime("America/New_York").ToInstant();
         var occurrences = calendar.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(314));
     }
