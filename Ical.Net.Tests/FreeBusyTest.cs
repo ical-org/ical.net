@@ -6,6 +6,7 @@
 #nullable enable
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -27,18 +28,19 @@ public class FreeBusyTest
         evt.End = new CalDateTime(2025, 10, 1, 9, 0, 0);
 
         var freeBusy = cal.GetFreeBusy(
+            DateUtil.GetZone("America/New_York"),
             new CalDateTime(2025, 10, 1, 0, 0, 0),
             new CalDateTime(2025, 10, 7, 11, 59, 59))!;
 
         Assert.Multiple(() =>
         {
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 7, 59, 59)),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 7, 59, 59).ToTimeZone("America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Free));
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 0, 0)),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 0, 0).ToTimeZone("America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Busy));
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 59, 59)),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 59, 59).ToTimeZone("America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Busy));
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 9, 0, 0)),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 9, 0, 0).ToTimeZone("America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Free));
         });
     }
@@ -54,6 +56,7 @@ public class FreeBusyTest
         evt.End = new CalDateTime(2025, 6, 1, 10, 0, 0);
 
         var freeBusy = cal.GetFreeBusy(
+            DateUtil.GetZone("America/New_York"),
             new CalDateTime(2025, 6, 1, 0, 0, 0),
             new CalDateTime(2025, 6, 7, 0, 0, 0))!;
 
