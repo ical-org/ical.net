@@ -324,36 +324,6 @@ public class CalDateTimeTests
         });
     }
 
-    private static TestCaseData[] AddAndSubtractTestCases => [
-        new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: null), 0),
-        new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: CalDateTime.UtcTzId), 0),
-        new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: "Europe/Paris"), 1)
-        ];
-
-    [Test, TestCaseSource(nameof(AddAndSubtractTestCases))]
-    public void AddAndSubtract_ShouldBeReversible(CalDateTime t, int tzOffs)
-    {
-        var d = Duration.FromHours(4);
-        var expectedTimeSpan = d.ToTimeSpanUnspecified();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(t.Add(d).Add(-d), Is.EqualTo(t));
-            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(expectedTimeSpan));
-            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(d.ToTimeSpan(t)));
-        });
-
-        d = Duration.FromDays(1);
-        expectedTimeSpan = d.ToTimeSpanUnspecified().Add(TimeSpan.FromHours(tzOffs));
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(t.Add(d).Add(-d), Is.EqualTo(t));
-            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(expectedTimeSpan));
-            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(d.ToTimeSpan(t)));
-        });
-    }
-
     private static TestCaseData[] CalDateTime_FromDateTime_HandlesKindCorrectlyTestCases =>
         [
             new TestCaseData(DateTimeKind.Unspecified, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50, null))),

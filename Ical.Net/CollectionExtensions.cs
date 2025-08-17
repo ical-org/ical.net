@@ -59,9 +59,6 @@ public static class CollectionExtensions
     /// <returns>
     /// The elements of the sequence of periods to only include those that start before the specified period end.
     /// </returns>
-    public static IEnumerable<DataTypes.Period> TakeWhileBefore(this IEnumerable<DataTypes.Period> sequence, CalDateTime periodEnd)
-        => sequence.TakeWhile(p => p.StartTime < periodEnd);
-
     public static IEnumerable<EvaluationPeriod> TakeWhileBefore(this IEnumerable<EvaluationPeriod> sequence, Instant periodEnd)
         => sequence.TakeWhile(p => p.Start.ToInstant() < periodEnd);
 }
