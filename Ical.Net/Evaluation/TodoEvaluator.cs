@@ -9,15 +9,12 @@ using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NodaTime;
-using NodaTime.TimeZones;
 
 namespace Ical.Net.Evaluation;
 
 public class TodoEvaluator : RecurringEvaluator
 {
     protected Todo Todo => Recurrable as Todo ?? throw new InvalidOperationException();
-
-    protected override DataTypes.Duration? DefaultDuration => Todo.EffectiveDuration;
 
     public TodoEvaluator(Todo todo) : base(todo) { }
 

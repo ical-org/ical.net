@@ -65,7 +65,7 @@ public class RecurrenceIdentifier : IComparable<RecurrenceIdentifier>
             return 1;
         }
 
-        var startComparison = StartTime.CompareTo(other.StartTime);
+        var startComparison = StartTime.ToInstant().CompareTo(other.StartTime.ToInstant());
         if (startComparison != 0)
         {
             return startComparison;
