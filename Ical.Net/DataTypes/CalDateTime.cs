@@ -26,9 +26,12 @@ namespace Ical.Net.DataTypes;
 public sealed class CalDateTime : IFormattable
 {
     // The date part that is used to return the Value property.
-    private DateOnly _dateOnly;
+    private readonly DateOnly _dateOnly;
     // The time part that is used to return the Value property.
-    private TimeOnly? _timeOnly;
+    private readonly TimeOnly? _timeOnly;
+
+    private readonly string? _tzId;
+
 
     /// <summary>
     /// The timezone ID for Universal Coordinated Time (UTC).
@@ -60,20 +63,6 @@ public sealed class CalDateTime : IFormattable
     private CalDateTime()
     {
         // required for the SerializerFactory to work
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class.
-    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see cref="CalDateTime.HasTime"/> is <see langword="true"/>.
-    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see cref="CalDateTime.HasTime"/> is <see langword="false"/>.
-    /// </summary>
-    /// <param name="value"></param>
-    public CalDateTime(CalDateTime value)
-    {
-        if (value.HasTime)
-            Initialize(DateOnly.FromDateTime(value.Value), TimeOnly.FromDateTime(value.Value), value.TzId);
-        else
-            Initialize(DateOnly.FromDateTime(value.Value), null, value.TzId);
     }
 
     /// <summary>
@@ -118,13 +107,11 @@ public sealed class CalDateTime : IFormattable
     /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
     /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
     /// </param>
-    public CalDateTime(DateTime value, string? tzId, bool hasTime = true)
-    {
-        if (hasTime)
-            Initialize(DateOnly.FromDateTime(value), TimeOnly.FromDateTime(value), tzId);
-        else
-            Initialize(DateOnly.FromDateTime(value), null, tzId);
-    }
+    public CalDateTime(DateTime value, string? tzId, bool hasTime = true) : this(
+        DateOnly.FromDateTime(value),
+        hasTime ? TimeOnly.FromDateTime(value) : null,
+        tzId)
+    { }
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
@@ -141,9 +128,8 @@ public sealed class CalDateTime : IFormattable
     /// <param name="minute"></param>
     /// <param name="second"></param>
     public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId = null) //NOSONAR - must keep this signature
-    {
-        Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), tzId);
-    }
+        : this(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), tzId)
+    { }
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class with <see cref="TzId"/> set to <see langword="null"/>.
@@ -154,9 +140,8 @@ public sealed class CalDateTime : IFormattable
     /// <param name="month"></param>
     /// <param name="day"></param>
     public CalDateTime(int year, int month, int day)
-    {
-        Initialize(new DateOnly(year, month, day), null, null);
-    }
+        : this(new DateOnly(year, month, day), null, null)
+    { }
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class with <see cref="TzId"/> set to <see langword="null"/>.
@@ -164,39 +149,25 @@ public sealed class CalDateTime : IFormattable
     /// and thus it cannot have a timezone.
     /// </summary>
     /// <param name="date"></param>
-    public CalDateTime(DateOnly date)
-    {
-        Initialize(date, null, null);
-    }
+    public CalDateTime(DateOnly date) : this(date, null, null)
+    { }
 
     internal CalDateTime(LocalDate value, string? tzId = null)
-    {
-        Initialize(
-            new DateOnly(value.Year, value.Month, value.Day),
-            null,
-            tzId);
-    }
+        : this(new DateOnly(value.Year, value.Month, value.Day), null, tzId)
+    { }
 
-    internal CalDateTime(LocalDateTime value, string? tzId = null)
-    {
-        Initialize(
-            new DateOnly(value.Date.Year, value.Date.Month, value.Date.Day),
-            new TimeOnly(value.TimeOfDay.Hour, value.TimeOfDay.Minute, value.TimeOfDay.Second),
-            tzId);
-    }
+    internal CalDateTime(LocalDateTime value, string? tzId = null) : this(
+        new DateOnly(value.Date.Year, value.Date.Month, value.Date.Day),
+        new TimeOnly(value.TimeOfDay.Hour, value.TimeOfDay.Minute, value.TimeOfDay.Second),
+        tzId)
+    { }
 
     internal CalDateTime(ZonedDateTime value)
-        : this(value.LocalDateTime, value.Zone.Id) { }
+        : this(value.LocalDateTime, value.Zone.Id)
+    { }
 
-    internal CalDateTime(Instant instant)
-    {
-        var value = instant.InUtc();
-
-        Initialize(
-            new DateOnly(value.Date.Year, value.Date.Month, value.Date.Day),
-            new TimeOnly(value.TimeOfDay.Hour, value.TimeOfDay.Minute, value.TimeOfDay.Second),
-            UtcTzId);
-    }
+    internal CalDateTime(Instant instant) : this (instant.InUtc())
+    { }
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
@@ -210,7 +181,14 @@ public sealed class CalDateTime : IFormattable
     /// <param name="time"></param>
     public CalDateTime(DateOnly date, TimeOnly? time, string? tzId = null)
     {
-        Initialize(date, time, tzId);
+        _dateOnly = date;
+        _timeOnly = TruncateTimeToSeconds(time);
+
+        _tzId = tzId switch
+        {
+            _ when !time.HasValue => null,
+            _ => tzId // can also be UtcTzId
+        };
     }
 
     /// <summary>
@@ -234,7 +212,9 @@ public sealed class CalDateTime : IFormattable
         var dt = serializer.Deserialize(new StringReader(value)) as CalDateTime
                  ?? throw new InvalidOperationException($"Failure when deserializing value '{value}'");
 
-        Initialize(dt._dateOnly, dt._timeOnly, dt.IsUtc ? UtcTzId : tzId);
+        _dateOnly = dt._dateOnly;
+        _timeOnly = dt._timeOnly;
+        _tzId = dt.IsUtc ? UtcTzId : tzId;
 
         if (dt.IsUtc && tzId != null && !string.Equals(tzId, UtcTzId, StringComparison.OrdinalIgnoreCase))
         {
@@ -242,18 +222,6 @@ public sealed class CalDateTime : IFormattable
                 $"The value '{value}' represents UTC date/time, but the specified timezone '{tzId}' is not '{UtcTzId}'.",
                 nameof(tzId));
         }
-    }
-
-    private void Initialize(DateOnly dateOnly, TimeOnly? timeOnly, string? tzId)
-    {
-        _dateOnly = dateOnly;
-        _timeOnly = TruncateTimeToSeconds(timeOnly);
-
-        _tzId = tzId switch
-        {
-            _ when !timeOnly.HasValue => null,
-            _ => tzId // can also be UtcTzId
-        };
     }
 
     public bool Equals(CalDateTime? other) => this == other;
@@ -348,8 +316,6 @@ public sealed class CalDateTime : IFormattable
     /// <see langword="true"/> if the underlying <see cref="DateTime"/> <see cref="Value"/> has a 'time' part (hour, minute, second).
     /// </summary>
     public bool HasTime => _timeOnly.HasValue;
-
-    private string? _tzId;
 
     /// <summary>
     /// Gets the timezone ID of this <see cref="CalDateTime"/> instance.
@@ -574,31 +540,22 @@ public sealed class CalDateTime : IFormattable
         return newDateTime;
     }
 
-    internal CalDateTime Copy()
-        => new CalDateTime(_dateOnly, _timeOnly, _tzId);
-
     /// <inheritdoc cref="DateTime.AddYears"/>
     public CalDateTime AddYears(int years)
     {
-        var dt = Copy();
-        dt._dateOnly = dt._dateOnly.AddYears(years);
-        return dt;
+        return new(_dateOnly.AddYears(years), _timeOnly, _tzId);
     }
 
     /// <inheritdoc cref="DateTime.AddMonths"/>
     public CalDateTime AddMonths(int months)
     {
-        var dt = Copy();
-        dt._dateOnly = dt._dateOnly.AddMonths(months);
-        return dt;
+        return new(_dateOnly.AddMonths(months), _timeOnly, _tzId);
     }
 
     /// <inheritdoc cref="DateTime.AddDays"/>
     public CalDateTime AddDays(int days)
     {
-        var dt = Copy();
-        dt._dateOnly = dt._dateOnly.AddDays(days);
-        return dt;
+        return new(_dateOnly.AddDays(days), _timeOnly, _tzId);
     }
 
     /// <inheritdoc cref="DateTime.AddHours"/>
