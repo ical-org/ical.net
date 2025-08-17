@@ -10,15 +10,12 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
 using NodaTime;
-using NodaTime.TimeZones;
 
 namespace Ical.Net.Evaluation;
 
 public abstract class RecurringEvaluator : Evaluator
 {
     protected IRecurrable Recurrable { get; set; }
-
-    protected abstract DataTypes.Duration? DefaultDuration { get; }
 
     protected RecurringEvaluator(IRecurrable obj)
     {
@@ -36,27 +33,10 @@ public abstract class RecurringEvaluator : Evaluator
         if (!Recurrable.RecurrenceRules.Any())
             return [];
 
-        var d = this.DefaultDuration;
-        Instant? effPeriodStart;
-
-        if (d != null && periodStart != null)
-        {
-            effPeriodStart = periodStart.Value
-                .InZone(timeZone)
-                .LocalDateTime
-                .Minus(d.Value.ToPeriod())
-                .InZoneLeniently(timeZone)
-                .ToInstant();
-        }
-        else
-        {
-            effPeriodStart = periodStart;
-        }
-
         var periodsQueries = Recurrable.RecurrenceRules.Select(rule =>
         {
             var ruleEvaluator = new RecurrencePatternEvaluator(rule);
-            return ruleEvaluator.Evaluate(referenceDate, timeZone, effPeriodStart, options);
+            return ruleEvaluator.Evaluate(referenceDate, timeZone, periodStart, options);
         })
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -111,7 +91,7 @@ public abstract class RecurringEvaluator : Evaluator
     /// </summary>
     /// <param name="periodKinds">The period kinds to be returned. Used as a filter.</param>
     private IEnumerable<DataTypes.Period> EvaluateExDate(params PeriodKind[] periodKinds)
-        => new SortedSet<DataTypes.Period>(Recurrable.ExceptionDates.GetAllPeriodsByKind(periodKinds));
+        => Recurrable.ExceptionDates.GetAllPeriodsByKind(periodKinds);
 
     /// <summary>
     /// Determines the end of an occurrence given the start.
@@ -163,8 +143,8 @@ public abstract class RecurringEvaluator : Evaluator
         var exDateExclusionsDateOnly = new HashSet<LocalDate>(EvaluateExDate(PeriodKind.DateOnly)
             .Select(x => x.StartTime.ToLocalDateTime().Date));
 
-        var exDateExclusionsDateTime = EvaluateExDate(PeriodKind.DateTime)
-            .Select(x => new EvaluationPeriod(x.StartTime.ToZonedDateTime(zonedReference.Zone)));
+        var exDateExclusionsDateTime = new SortedSet<EvaluationPeriod>(EvaluateExDate(PeriodKind.DateTime)
+            .Select(x => new EvaluationPeriod(x.StartTime.ToZonedDateTime(zonedReference.Zone))));
 
         // Exclude occurrences according to EXRULEs and EXDATEs.
         periods = periods

@@ -23,7 +23,7 @@ namespace Ical.Net.DataTypes;
 /// This is because RFC 5545, Section 3.3.5, does not allow for fractional seconds.
 /// </remarks>
 /// </summary>
-public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
+public sealed class CalDateTime : IFormattable
 {
     // The date part that is used to return the Value property.
     private DateOnly _dateOnly;
@@ -185,6 +185,9 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
             tzId);
     }
 
+    internal CalDateTime(ZonedDateTime value)
+        : this(value.LocalDateTime, value.Zone.Id) { }
+
     internal CalDateTime(Instant instant)
     {
         var value = instant.InUtc();
@@ -192,7 +195,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         Initialize(
             new DateOnly(value.Date.Year, value.Date.Month, value.Date.Day),
             new TimeOnly(value.TimeOfDay.Hour, value.TimeOfDay.Minute, value.TimeOfDay.Second),
-            "UTC");
+            UtcTzId);
     }
 
     /// <summary>
@@ -261,34 +264,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
 
     /// <inheritdoc/>
     public override int GetHashCode() => HashCode.Combine(Value, HasTime, TzId);
-
-    public static bool operator <(CalDateTime? left, CalDateTime? right)
-    {
-        return left != null
-               && right != null
-               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value < right.Value : left.AsUtc < right.AsUtc);
-    }
-
-    public static bool operator >(CalDateTime? left, CalDateTime? right)
-    {
-        return left != null
-               && right != null
-               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value > right.Value : left.AsUtc > right.AsUtc);
-    }
-
-    public static bool operator <=(CalDateTime? left, CalDateTime? right)
-    {
-        return left != null
-               && right != null
-               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
-    }
-
-    public static bool operator >=(CalDateTime? left, CalDateTime? right)
-    {
-        return left != null
-               && right != null
-               && ((left.IsFloating || right.IsFloating || left.TzId == right.TzId) ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
-    }
 
     public static bool operator ==(CalDateTime? left, CalDateTime? right)
     {
@@ -599,27 +574,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
         return newDateTime;
     }
 
-    /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.</summary>
-    /// <param name="dt"></param>
-    public TimeSpan SubtractExact(CalDateTime dt) => AsUtc - dt.AsUtc;
-
-    /// <summary>
-    /// Returns a new <see cref="Duration"/> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.
-    /// </summary>
-    /// <param name="dt"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public Duration Subtract(CalDateTime dt)
-    {
-        if (this.TzId is not null)
-            return SubtractExact(dt).ToDurationExact();
-
-        if (dt.HasTime != HasTime)
-            throw new InvalidOperationException($"Trying to calculate the difference between dates of different types. An instance of type DATE cannot be subtracted from a DATE-TIME and vice versa: {ToString()} - {dt.ToString()}");
-
-        return (Value - dt.Value).ToDuration();
-    }
-
     internal CalDateTime Copy()
         => new CalDateTime(_dateOnly, _timeOnly, _tzId);
 
@@ -667,56 +621,6 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// and the time span is not a multiple of full days.
     /// </exception>
     public CalDateTime AddSeconds(int seconds) => Add(Duration.FromSeconds(seconds));
-
-    /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is less than <paramref name="dt"/>.
-    /// </summary>
-    public bool LessThan(CalDateTime? dt) => this < dt;
-
-    /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than <paramref name="dt"/>.
-    /// </summary>
-    public bool GreaterThan(CalDateTime? dt) => this > dt;
-
-    /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is less than or equal to <paramref name="dt"/>.
-    /// </summary>
-    public bool LessThanOrEqual(CalDateTime? dt) => this <= dt;
-
-    /// <summary>
-    /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than or equal to <paramref name="dt"/>.
-    /// </summary>
-    public bool GreaterThanOrEqual(CalDateTime? dt) => this >= dt;
-
-    /// <summary>
-    /// Compares the current instance with another <see cref="CalDateTime"/> object and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other CalDateTime.
-    /// </summary>
-    /// <param name="dt">The <see cref="CalDateTime"/> object to compare with this instance.</param>
-    /// <returns>A value that indicates the relative order of the objects being compared. The return value has these meanings:
-    /// Less than zero: This instance is less than <paramref name="dt"/>.
-    /// Zero: This instance is equal to <paramref name="dt"/>.
-    /// Greater than zero: This instance is greater than <paramref name="dt"/>.
-    /// </returns>
-    public int CompareTo(CalDateTime? dt)
-    {
-        if (dt == null)
-        {
-            return 1;
-        }
-
-        if (Equals(dt))
-        {
-            return 0;
-        }
-
-        if (this < dt)
-        {
-            return -1;
-        }
-
-        // Meaning "this > dt"
-        return 1;
-    }
 
     /// <inheritdoc />
     public override string ToString() => ToString(null, null);

@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
@@ -161,12 +162,27 @@ public class FreeBusy : UniqueComponent, IMergeable
         set => Properties.Set("DTEND", value);
     }
 
+    /// <summary>
+    /// All DATE-TIME values must be in the UTC time zone.
+    /// </summary>
+    /// <param name="period"></param>
+    /// <returns></returns>
     public virtual FreeBusyStatus GetFreeBusyStatus(DataTypes.Period? period)
     {
         var status = FreeBusyStatus.Free;
         if (period == null)
         {
             return status;
+        }
+
+        if (period.StartTime.IsFloating)
+        {
+            throw new ArgumentException("Period start time must be in UTC");
+        }
+
+        if (period.EndTime is { } endTime && endTime.IsFloating)
+        {
+            throw new ArgumentException("Period end time must be in UTC");
         }
 
         foreach (var fbe in Entries.Where(fbe => fbe.CollidesWith(period) && status < fbe.Status))
@@ -176,7 +192,17 @@ public class FreeBusy : UniqueComponent, IMergeable
         return status;
     }
 
+    /// <summary>
+    /// Value must be in the UTC time zone.
+    /// </summary>
+    /// <param name="dt"></param>
+    /// <returns></returns>
     public virtual FreeBusyStatus GetFreeBusyStatus(CalDateTime? dt)
+    {
+        return GetFreeBusyStatus(dt?.ToInstant());
+    }
+
+    public virtual FreeBusyStatus GetFreeBusyStatus(Instant? dt)
     {
         var status = FreeBusyStatus.Free;
         if (dt == null)
@@ -184,7 +210,10 @@ public class FreeBusy : UniqueComponent, IMergeable
             return status;
         }
 
-        foreach (var fbe in Entries.Where(fbe => fbe.Contains(dt) && status < fbe.Status))
+        // FREEBUSY entries MUST always be UTC time, so compare as instant
+        var matches = Entries.Where(fbe => status < fbe.Status && fbe.Contains(dt.Value));
+
+        foreach (var fbe in matches)
         {
             status = fbe.Status;
         }

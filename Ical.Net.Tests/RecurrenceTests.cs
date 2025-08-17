@@ -1574,16 +1574,20 @@ public class RecurrenceTests
     {
         var iCal = Calendar.Load(IcsFiles.Secondly1)!;
 
-        var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
-        var end = new CalDateTime(2007, 6, 21, 8, 1, 0, _tzid); // End period is exclusive, not inclusive.
+        var tz = DateUtil.GetZone(_tzid);
+        var start = new LocalDateTime(2007, 6, 21, 8, 0).InZoneStrictly(tz);
+        var end = new LocalDateTime(2007, 6, 21, 8, 1).InZoneStrictly(tz);
 
         var periods = new List<Period>();
-        for (var dt = start; dt.LessThan(end); dt = (CalDateTime) dt.AddSeconds(1))
+        for (var dt = start; dt.ToInstant() < end.ToInstant(); dt = dt.PlusSeconds(1))
         {
             periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
         }
 
-        EventOccurrenceTest(iCal, start, end, periods.ToArray());
+        var calStart = new CalDateTime(start);
+        var calEnd = new CalDateTime(end); // End period is exclusive, not inclusive.
+
+        EventOccurrenceTest(iCal, calStart, calEnd, periods.ToArray());
     }
 
     [Test, Category("Recurrence")]
@@ -1591,16 +1595,20 @@ public class RecurrenceTests
     {
         var iCal = Calendar.Load(IcsFiles.Minutely1)!;
 
-        var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
-        var end = new CalDateTime(2007, 6, 21, 12, 0, 1, _tzid); // End period is exclusive, not inclusive.
+        var tz = DateUtil.GetZone(_tzid);
+        var start = new LocalDateTime(2007, 6, 21, 8, 0, 0).InZoneStrictly(tz);
+        var end = new LocalDateTime(2007, 6, 21, 12, 0, 1).InZoneStrictly(tz); // End period is exclusive, not inclusive.
 
         var periods = new List<Period>();
-        for (var dt = start; dt.LessThan(end); dt = (CalDateTime) dt.AddMinutes(1))
+        for (var dt = start; dt.ToInstant() < end.ToInstant(); dt = dt.PlusMinutes(1))
         {
             periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
         }
 
-        EventOccurrenceTest(iCal, start, end, periods.ToArray());
+        var calStart = new CalDateTime(start);
+        var calEnd = new CalDateTime(end);
+
+        EventOccurrenceTest(iCal, calStart, calEnd, periods.ToArray());
     }
 
     [Test, Category("Recurrence")]
@@ -1608,16 +1616,20 @@ public class RecurrenceTests
     {
         var iCal = Calendar.Load(IcsFiles.Hourly1)!;
 
-        var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
-        var end = new CalDateTime(2007, 6, 25, 8, 0, 1, _tzid); // End period is exclusive, not inclusive.
+        var tz = DateUtil.GetZone(_tzid);
+        var start = new LocalDateTime(2007, 6, 21, 8, 0, 0).InZoneStrictly(tz);
+        var end = new LocalDateTime(2007, 6, 25, 8, 0, 1).InZoneStrictly(tz); // End period is exclusive, not inclusive.
 
         var periods = new List<Period>();
-        for (var dt = start; dt.LessThan(end); dt = (CalDateTime) dt.AddHours(1))
+        for (var dt = start; dt.ToInstant() < end.ToInstant(); dt = dt.PlusHours(1))
         {
             periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
         }
 
-        EventOccurrenceTest(iCal, start, end, periods.ToArray());
+        var calStart = new CalDateTime(start);
+        var calEnd = new CalDateTime(end);
+
+        EventOccurrenceTest(iCal, calStart, calEnd, periods.ToArray());
     }
 
     /// <summary>
@@ -2250,7 +2262,15 @@ public class RecurrenceTests
         {
             var p = expectedPeriods[index];
             var newStart = p.StartTime.ToTimeZone(start!.TzId);
-            expectedPeriods[index] = Period.Create(newStart, duration: p.EffectiveDuration);
+
+            if (p.EndTime is not null)
+            {
+                expectedPeriods[index] = new Period(newStart, p.EndTime.ToTimeZone(start!.TzId));
+            }
+            else
+            {
+                expectedPeriods[index] = new Period(newStart, p.Duration!.Value);
+            }
         }
 
         // date only cannot have a time zone

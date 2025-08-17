@@ -6,7 +6,6 @@
 using System;
 using Ical.Net.CalendarComponents;
 using NodaTime;
-using NodaTime.TimeZones;
 
 namespace Ical.Net.Evaluation;
 
@@ -16,8 +15,6 @@ namespace Ical.Net.Evaluation;
 public class EventEvaluator : RecurringEvaluator
 {
     protected CalendarEvent CalendarEvent => (CalendarEvent) Recurrable;
-
-    protected override DataTypes.Duration? DefaultDuration => CalendarEvent.EffectiveDuration;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EventEvaluator"/> class.

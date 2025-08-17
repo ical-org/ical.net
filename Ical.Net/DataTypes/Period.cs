@@ -18,7 +18,7 @@ namespace Ical.Net.DataTypes;
 /// 2. by a start time and a duration,<br/>
 /// 3. by a start date/time or date-only, with the duration unspecified.
 /// </summary>
-public class Period : EncodableDataType, IComparable<Period>
+public class Period : EncodableDataType
 {
     private CalDateTime _startTime = null!;
     private CalDateTime? _endTime;
@@ -82,8 +82,23 @@ public class Period : EncodableDataType, IComparable<Period>
             throw new ArgumentException(
                 $"Start time ({start}) and end time ({end}) must both have a time or both be date-only.");
 
-        if (end != null && end.LessThan(start))
-            throw new ArgumentException($"End time ({end}) must be greater than start time ({start}).", nameof(end));
+        if (end != null)
+        {
+            bool isEndBeforeStart;
+            if (end.IsFloating)
+            {
+                // Both are floating, compare local times
+                isEndBeforeStart = end.ToLocalDateTime() < start.ToLocalDateTime();
+            }
+            else
+            {
+                // Both are zoned, so compare instants
+                isEndBeforeStart = end.ToInstant() < start.ToInstant();
+            }
+
+            if (isEndBeforeStart)
+                throw new ArgumentException($"End time ({end}) must be greater than or equal to start time ({start}).", nameof(end));
+        }
 
         _startTime = start;
         _endTime = end;
@@ -154,61 +169,11 @@ public class Period : EncodableDataType, IComparable<Period>
     public virtual CalDateTime? EndTime => _endTime;
 
     /// <summary>
-    /// Gets the end time of the period that was set, or - if this is <see langword="null"/> -
-    /// calculates the end time based by adding <see cref="EffectiveDuration"/> to the <see cref="StartTime"/>.
-    /// If <see cref="Duration"/> and <see cref="EndTime"/> are both <see langword="null"/>, the method returns <see langword="null"/>.
-    /// </summary>
-    public virtual CalDateTime? EffectiveEndTime
-    {
-        get =>
-            _endTime switch
-            {
-                null when _duration is null => null,
-                { } endTime => endTime,
-
-                // If _duration is not null, EffectiveDuration is not null
-                _ => CalculateEndTime()
-            };
-    }
-
-    private CalDateTime CalculateEndTime()
-    {
-        try
-        {
-            // When invoked, _duration is not null, so EffectiveDuration
-            // is guaranteed to be non-null
-            return _startTime.Add(EffectiveDuration!.Value);
-        }
-        catch (ArgumentOutOfRangeException)
-        {
-            // intentionally don't include the outer exception
-            throw new EvaluationOutOfRangeException($"Calculating the end time of the period from start time '{_startTime}' and effective duration '{EffectiveDuration}' resulted in an out-of-range value.");
-        }
-    }
-
-    /// <summary>
     /// Gets the original duration of the period as it was set.<br/>
-    /// See also <seealso cref="EffectiveDuration"/>.
     /// </summary>
     public virtual Duration? Duration => _duration;
 
-    /// <summary>
-    /// Gets the duration of the period that was set, or - if this is <see langword="null"/> -
-    /// calculates the exact duration by subtracting <see cref="StartTime"/> from <see cref="EndTime"/>.
-    /// If <see cref="Duration"/> and <see cref="EndTime"/> are both <see langword="null"/>, the method returns <see langword="null"/>.
-    /// </summary>
-    public virtual Duration? EffectiveDuration
-    {
-        get =>
-            _duration switch
-            {
-                null when _endTime is null => null,
-                { } d => d,
-                _ => _endTime is { } endTime
-                    ? endTime.Subtract(_startTime)
-                    : null
-            };
-    }
+    public bool HasEndOrDuration => _duration is not null || _endTime is not null;
 
     internal string? TzId => _startTime.TzId; // same timezone for start and end
 
@@ -216,87 +181,12 @@ public class Period : EncodableDataType, IComparable<Period>
     {
         get
         {
-            if (EffectiveDuration != null)
+            if (HasEndOrDuration)
             {
                 return PeriodKind.Period;
             }
 
-            return StartTime.HasTime ? PeriodKind.DateTime : PeriodKind.DateOnly;
+            return _startTime.HasTime ? PeriodKind.DateTime : PeriodKind.DateOnly;
         }
-    }
-
-    /// <summary>
-    /// Checks if the given date time is contained within the period.
-    /// </summary>
-    /// <remarks>
-    /// The method is timezone-aware.
-    /// </remarks>
-    /// <param name="dt"></param>
-    public virtual bool Contains(CalDateTime? dt)
-    {
-        // Start time is inclusive
-        if (dt == null || !_startTime.LessThanOrEqual(dt))
-        {
-            return false;
-        }
-
-        // End time is exclusive
-        return EffectiveEndTime?.GreaterThan(dt) != false;
-    }
-
-    /// <summary>
-    /// Checks if the start time of the given period is contained within the current period
-    /// or if the end time of the given period is contained within the current period.
-    /// It also checks the case where the given period completely overlaps the current period.
-    /// </summary>
-    /// <remarks>
-    /// The method is timezone-aware.
-    /// </remarks>
-    /// <param name="period"></param>
-    /// <returns></returns>
-    public virtual bool CollidesWith(Period? period)
-    {
-        if (period is null) return false;
-
-        if (EffectiveDuration is null || period.EffectiveDuration is null)
-        {
-            throw new ArgumentException("Both periods must have a defined (non-null) duration to check for collisions. For collisions with date/time use Contains().", nameof(period));
-        }
-
-        var thisStart = StartTime;
-        var thisEnd = EffectiveEndTime;
-        var otherStart = period.StartTime;
-        var otherEnd = period.EffectiveEndTime;
-
-        // Periods without a duration are not colliding
-        if (EffectiveDuration.Value.IsZero || period.EffectiveDuration.Value.IsZero)
-        {
-            return false;
-        }
-
-        // Periods overlap if their start and end times are overlapping.
-        // End time is exclusive.
-        return thisStart.LessThan(otherEnd) && otherStart.LessThan(thisEnd);
-    }
-
-    /// <inheritdoc/>
-    public int CompareTo(Period? other)
-    {
-        if (other == null)
-        {
-            return 1;
-        }
-
-        if (StartTime.AsUtc.Equals(other.StartTime.AsUtc))
-        {
-            return 0;
-        }
-        if (StartTime.LessThanOrEqual(other.StartTime))
-        {
-            return -1;
-        }
-
-        // StartTime is greater than other.StartTime
-        return 1;
     }
 }
