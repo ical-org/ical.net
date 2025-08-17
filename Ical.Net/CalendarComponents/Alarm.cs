@@ -112,7 +112,7 @@ public class Alarm : CalendarComponent
         }
         else
         {
-            var dt = Trigger?.DateTime?.Copy().ToZonedDateTime();
+            var dt = Trigger?.DateTime?.ToZonedDateTime();
             if (dt != null)
             {
                 occurrences.Add(new AlarmOccurrence(this, dt.Value, rc));

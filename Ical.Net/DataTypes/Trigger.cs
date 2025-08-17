@@ -88,7 +88,7 @@ public class Trigger : EncodableDataType
             return;
         }
 
-        DateTime = t.DateTime?.Copy();
+        DateTime = t.DateTime;
         Duration = t.Duration;
         Related = t.Related;
     }
