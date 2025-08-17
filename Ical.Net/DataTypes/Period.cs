@@ -133,8 +133,8 @@ public class Period : EncodableDataType
 
         if (obj is not Period p) return;
 
-        _startTime = p._startTime.Copy();
-        _endTime = p._endTime?.Copy();
+        _startTime = p._startTime;
+        _endTime = p._endTime;
         _duration = p._duration;
     }
 

@@ -936,8 +936,8 @@ public class RecurrenceTests
         var rpe2 = new RecurrencePatternEvaluator(new RecurrencePattern(
             "FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=53,51,49,47,45,43,41,39,37,35,33,31,29,27,25,23,21,19,17,15,13,11,9,7,5,3,1"));
 
-        var recurringPeriods1 = rpe1.Evaluate(new CalDateTime(start), start, null).TakeWhileBefore(end).ToList();
-        var recurringPeriods2 = rpe2.Evaluate(new CalDateTime(start), start, null).TakeWhileBefore(end).ToList();
+        var recurringPeriods1 = rpe1.Evaluate(start, start, null).TakeWhileBefore(end).ToList();
+        var recurringPeriods2 = rpe2.Evaluate(start, start, null).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods2, Has.Count.EqualTo(recurringPeriods1.Count));
     }
@@ -3057,8 +3057,8 @@ END:VCALENDAR";
 
         var calendarEvent = new CalendarEvent
         {
-            Start = new CalDateTime(_now),
-            End = new CalDateTime(_later),
+            Start = _now,
+            End = _later,
             RecurrenceRules = new List<RecurrencePattern> { dailyForFiveDays },
             Resources = new List<string>(new[] { "Foo", "Bar", "Baz" }),
         };
@@ -3070,20 +3070,20 @@ END:VCALENDAR";
     {
         var start = _now.AddYears(-1);
         var end = start.AddHours(1);
-        var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = new CalDateTime(start.AddYears(2)) };
+        var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = start.AddYears(2) };
         var e = new CalendarEvent
         {
-            DtStart = new CalDateTime(start),
-            DtEnd = new CalDateTime(end),
+            DtStart = start,
+            DtEnd = end,
             RecurrenceRules = new List<RecurrencePattern> { rrule }
         };
 
-        var firstExclusion = new CalDateTime(start.AddDays(4));
+        var firstExclusion = start.AddDays(4);
         e.ExceptionDates.Add(firstExclusion);
         var serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
 
-        var secondExclusion = new CalDateTime(start.AddDays(5));
+        var secondExclusion = start.AddDays(5);
         e.ExceptionDates.Add(secondExclusion);
         serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
