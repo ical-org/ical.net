@@ -423,7 +423,7 @@ public sealed class CalDateTime : IFormattable
         }
     }
 
-    internal ZonedDateTime ToZonedDateTime(DateTimeZone timeZone)
+    public ZonedDateTime ToZonedDateTime(DateTimeZone timeZone)
     {
         if (_tzId is null)
         {
@@ -442,7 +442,7 @@ public sealed class CalDateTime : IFormattable
         return ToZonedDateTime(DateUtil.GetZone(zoneId));
     }
 
-    internal ZonedDateTime AsZonedOrDefault(DateTimeZone timeZone)
+    public ZonedDateTime AsZonedOrDefault(DateTimeZone timeZone)
     {
         if (_tzId is null)
         {
