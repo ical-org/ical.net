@@ -4460,4 +4460,112 @@ END:VCALENDAR";
 
         Assert.That(occurrences.Select(o => o.Start).ToArray(), Is.EqualTo(expected));
     }
+
+    [TestCase("20251102T040000", "UTC", "FREQ=HOURLY")]
+    [TestCase("20251102", "America/New_York", "FREQ=HOURLY")]
+    [TestCase("20251102", null, "FREQ=HOURLY")]
+    public void GetOccurrences_BackwardsDaylightSaving_25Hours(string start, string? tzId, string rrule)
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new(rrule));
+        evt.Start = new(start, tzId);
+        evt.Duration = Duration.FromHours(1);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var result = cal.GetOccurrences(tz.AtStartOfDay(new LocalDate(2025, 11, 2)))
+            .TakeWhileBefore(tz.AtStartOfDay(new LocalDate(2025, 11, 3)).ToInstant())
+            .Select(x => x.Start)
+            .ToList();
+
+        var expectedStart = tz.AtStartOfDay(new LocalDate(2025, 11, 2));
+        var expected = new List<ZonedDateTime>();
+        do { expected.Add(expectedStart); }
+        while ((expectedStart = expectedStart.PlusHours(1)).Day == 2);
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [TestCase("20251102T041500", "UTC")]
+    [TestCase("20251102T001500", "America/New_York")]
+    [TestCase("20251102T001500", null)]
+    public void GetOccurrences_BackwardsDaylightSaving_25Hours_Shifted(string start, string? tzId)
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=MINUTELY;INTERVAL=10"));
+        evt.Start = new(start, tzId);
+        evt.Duration = Duration.FromMinutes(10);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var result = cal.GetOccurrences(tz.AtStrictly(new LocalDateTime(2025, 11, 2, 0, 15)))
+            .TakeWhileBefore(tz.AtStartOfDay(new LocalDate(2025, 11, 3)).ToInstant())
+            .Select(x => x.Period)
+            .ToList();
+
+        var expectedStart = tz.AtStrictly(new LocalDateTime(2025, 11, 2, 0, 15));
+        var expected = new List<(ZonedDateTime, ZonedDateTime)>();
+        do { expected.Add((expectedStart, expectedStart.PlusMinutes(10))); }
+        while ((expectedStart = expectedStart.PlusMinutes(10)).Day == 2);
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [TestCase("20251102T041500", "UTC")]
+    [TestCase("20251102T001500", "America/New_York")]
+    [TestCase("20251102T001500", null)]
+    public void GetOccurrences_BackwardsDaylightSaving_25Hours_NoDuration(string start, string? tzId)
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=MINUTELY;INTERVAL=10"));
+        evt.Start = new(start, tzId);
+        evt.End = evt.Start;
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var result = cal.GetOccurrences(tz.AtStrictly(new LocalDateTime(2025, 11, 2, 0, 15)))
+            .TakeWhileBefore(tz.AtStartOfDay(new LocalDate(2025, 11, 3)).ToInstant())
+            .Select(x => x.Period)
+            .ToList();
+
+        var expectedStart = tz.AtStrictly(new LocalDateTime(2025, 11, 2, 0, 15));
+        var expected = new List<(ZonedDateTime, ZonedDateTime)>();
+        do { expected.Add((expectedStart, expectedStart)); }
+        while ((expectedStart = expectedStart.PlusMinutes(10)).Day == 2);
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [TestCase("20251102T041500", "UTC")]
+    [TestCase("20251102T001500", "America/New_York")]
+    [TestCase("20251102T001500", null)]
+    public void GetOccurrences_BackwardsDaylightSaving_SpanFirstHour(string start, string? tzId)
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=MINUTELY;INTERVAL=10"));
+        evt.Start = new(start, tzId);
+        evt.Duration = Duration.FromMinutes(90);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var result = cal.GetOccurrences(tz.AtStrictly(new LocalDateTime(2025, 11, 2, 0, 15)))
+            .TakeWhileBefore(tz.AtStartOfDay(new LocalDate(2025, 11, 3)).ToInstant())
+            .Select(x => x.Period)
+            .ToList();
+
+        var expectedStart = tz.AtStrictly(new LocalDateTime(2025, 11, 2, 0, 15));
+        var expected = new List<(ZonedDateTime, ZonedDateTime)>();
+        do { expected.Add((expectedStart, expectedStart.PlusMinutes(90))); }
+        while ((expectedStart = expectedStart.PlusMinutes(10)).Day == 2);
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
 }
