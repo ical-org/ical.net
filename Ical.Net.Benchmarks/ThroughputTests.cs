@@ -6,11 +6,14 @@
 using BenchmarkDotNet.Attributes;
 using System.Linq;
 using Ical.Net.DataTypes;
+using NodaTime;
 
 namespace Ical.Net.Benchmarks;
 
 public class ThroughputTests
 {
+    private static DateTimeZone tz = DateTimeZoneProviders.Tzdb["America/New_York"];
+
     [Benchmark]
     public void DeserializeAndComputeUntilOccurrences()
     {
@@ -68,9 +71,9 @@ END:VCALENDAR";
 
         var calendar = Calendar.Load(e)!;
         var calendarEvent = calendar.Events.First();
-        var searchStart = new CalDateTime(2009, 06, 20);
-        var searchEnd = new CalDateTime(2011, 06, 23);
-        var occurrences = calendarEvent.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd);
+        var searchStart = tz.AtStartOfDay(new(2009, 06, 20));
+        var searchEnd = tz.AtStartOfDay(new(2011, 06, 23)).ToInstant();
+        var occurrences = calendarEvent.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd);
     }
 
     [Benchmark]
@@ -130,8 +133,8 @@ END:VCALENDAR";
 
         var calendar = Calendar.Load(e)!;
         var calendarEvent = calendar.Events.First();
-        var searchStart = new CalDateTime(2009, 06, 20);
-        var searchEnd = new CalDateTime(2011, 06, 23);
-        var occurrences = calendarEvent.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd);
+        var searchStart = tz.AtStartOfDay(new(2009, 06, 20));
+        var searchEnd = tz.AtStartOfDay(new(2011, 06, 23)).ToInstant();
+        var occurrences = calendarEvent.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd);
     }
 }
