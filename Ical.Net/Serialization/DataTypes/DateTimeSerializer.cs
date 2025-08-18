@@ -3,13 +3,14 @@
 // Licensed under the MIT license.
 //
 
-using Ical.Net.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Ical.Net.DataTypes;
+using NodaTime;
 
 namespace Ical.Net.Serialization.DataTypes;
 
@@ -86,18 +87,18 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
             return null;
         }
 
-        var datePart = new DateOnly(); // Initialize. At this point, we know that the date part is present
-        TimeOnly? timePart = null;
+        var datePart = new LocalDate(); // Initialize. At this point, we know that the date part is present
+        LocalTime? timePart = null;
 
         if (match.Groups[1].Success)
         {
-            datePart = new DateOnly(Convert.ToInt32(match.Groups[2].Value, CultureInfo.InvariantCulture),
+            datePart = new LocalDate(Convert.ToInt32(match.Groups[2].Value, CultureInfo.InvariantCulture),
                 Convert.ToInt32(match.Groups[3].Value, CultureInfo.InvariantCulture),
                 Convert.ToInt32(match.Groups[4].Value, CultureInfo.InvariantCulture));
         }
         if (match.Groups.Count >= 6 && match.Groups[5].Success)
         {
-            timePart = new TimeOnly(Convert.ToInt32(match.Groups[6].Value, CultureInfo.InvariantCulture),
+            timePart = new LocalTime(Convert.ToInt32(match.Groups[6].Value, CultureInfo.InvariantCulture),
                 Convert.ToInt32(match.Groups[7].Value, CultureInfo.InvariantCulture),
                 Convert.ToInt32(match.Groups[8].Value, CultureInfo.InvariantCulture));
         }
