@@ -940,7 +940,7 @@ public class RecurrencePatternEvaluator : Evaluator
         {
             // This case is not defined by RFC 5545. We handle it by evaluating the rule
             // as if referenceDate had a time (i.e. set to midnight).
-            referenceDate = new CalDateTime(referenceDate.Date, new TimeOnly(), referenceDate.TzId);
+            referenceDate = new CalDateTime(referenceDate.Date, new LocalTime(), referenceDate.TzId);
         }
 
         // Create a recurrence pattern suitable for use during evaluation.

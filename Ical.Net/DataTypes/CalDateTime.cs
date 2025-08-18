@@ -10,6 +10,7 @@ using System.IO;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using NodaTime;
+using NodaTime.Extensions;
 
 namespace Ical.Net.DataTypes;
 
@@ -26,9 +27,9 @@ namespace Ical.Net.DataTypes;
 public sealed class CalDateTime : IFormattable
 {
     // The date part that is used to return the Value property.
-    private readonly DateOnly _dateOnly;
+    private readonly LocalDate _localDate;
     // The time part that is used to return the Value property.
-    private readonly TimeOnly? _timeOnly;
+    private readonly LocalTime? _localTime;
 
     private readonly string? _tzId;
 
@@ -108,8 +109,8 @@ public sealed class CalDateTime : IFormattable
     /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
     /// </param>
     public CalDateTime(DateTime value, string? tzId, bool hasTime = true) : this(
-        DateOnly.FromDateTime(value),
-        hasTime ? TimeOnly.FromDateTime(value) : null,
+        LocalDate.FromDateTime(value),
+        hasTime ? LocalDateTime.FromDateTime(value).TimeOfDay : null,
         tzId)
     { }
 
@@ -128,7 +129,7 @@ public sealed class CalDateTime : IFormattable
     /// <param name="minute"></param>
     /// <param name="second"></param>
     public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId = null) //NOSONAR - must keep this signature
-        : this(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), tzId)
+        : this(new LocalDate(year, month, day), new LocalTime(hour, minute, second), tzId)
     { }
 
     /// <summary>
@@ -140,7 +141,7 @@ public sealed class CalDateTime : IFormattable
     /// <param name="month"></param>
     /// <param name="day"></param>
     public CalDateTime(int year, int month, int day)
-        : this(new DateOnly(year, month, day), null, null)
+        : this(new LocalDate(year, month, day), null, null)
     { }
 
     /// <summary>
@@ -149,24 +150,28 @@ public sealed class CalDateTime : IFormattable
     /// and thus it cannot have a timezone.
     /// </summary>
     /// <param name="date"></param>
-    public CalDateTime(DateOnly date) : this(date, null, null)
+    public CalDateTime(LocalDate date) : this(date, null, null)
     { }
 
-    internal CalDateTime(LocalDate value, string? tzId = null)
-        : this(new DateOnly(value.Year, value.Month, value.Day), null, tzId)
+    public CalDateTime(LocalDate value, string? tzId = null)
+        : this(value, null, tzId)
     { }
 
-    internal CalDateTime(LocalDateTime value, string? tzId = null) : this(
-        new DateOnly(value.Date.Year, value.Date.Month, value.Date.Day),
-        new TimeOnly(value.TimeOfDay.Hour, value.TimeOfDay.Minute, value.TimeOfDay.Second),
-        tzId)
+    public CalDateTime(LocalDateTime value, string? tzId = null)
+        : this(value.Date, value.TimeOfDay, tzId)
     { }
 
+    /// <summary>
+    /// Note that this drops the time zone offset,
+    /// so the value is not always exactly the same
+    /// when converting back to ZonedDateTime.
+    /// </summary>
+    /// <param name="value"></param>
     internal CalDateTime(ZonedDateTime value)
         : this(value.LocalDateTime, value.Zone.Id)
     { }
 
-    internal CalDateTime(Instant instant) : this (instant.InUtc())
+    public CalDateTime(Instant instant) : this(instant.InUtc())
     { }
 
     /// <summary>
@@ -179,10 +184,10 @@ public sealed class CalDateTime : IFormattable
     /// </param>
     /// <param name="date"></param>
     /// <param name="time"></param>
-    public CalDateTime(DateOnly date, TimeOnly? time, string? tzId = null)
+    public CalDateTime(LocalDate date, LocalTime? time, string? tzId = null)
     {
-        _dateOnly = date;
-        _timeOnly = TruncateTimeToSeconds(time);
+        _localDate = date;
+        _localTime = TruncateTimeToSeconds(time);
 
         _tzId = tzId switch
         {
@@ -212,8 +217,8 @@ public sealed class CalDateTime : IFormattable
         var dt = serializer.Deserialize(new StringReader(value)) as CalDateTime
                  ?? throw new InvalidOperationException($"Failure when deserializing value '{value}'");
 
-        _dateOnly = dt._dateOnly;
-        _timeOnly = dt._timeOnly;
+        _localDate = dt._localDate;
+        _localTime = dt._localTime;
         _tzId = dt.IsUtc ? UtcTzId : tzId;
 
         if (dt.IsUtc && tzId != null && !string.Equals(tzId, UtcTzId, StringComparison.OrdinalIgnoreCase))
@@ -231,7 +236,7 @@ public sealed class CalDateTime : IFormattable
         => obj is CalDateTime other && this == other;
 
     /// <inheritdoc/>
-    public override int GetHashCode() => HashCode.Combine(Value, HasTime, TzId);
+    public override int GetHashCode() => HashCode.Combine(_localDate, _localTime, _tzId);
 
     public static bool operator ==(CalDateTime? left, CalDateTime? right)
     {
@@ -245,14 +250,9 @@ public sealed class CalDateTime : IFormattable
             return false;
         }
 
-        if (left.IsFloating != right.IsFloating)
-        {
-            return false;
-        }
-
-        return left.Value.Equals(right.Value)
-               && left.HasTime == right.HasTime
-               && string.Equals(left.TzId, right.TzId, StringComparison.OrdinalIgnoreCase);
+        return left._localDate == right._localDate
+            && left._localTime == right._localTime
+            && string.Equals(left.TzId, right.TzId, StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool operator !=(CalDateTime? left, CalDateTime? right)
@@ -263,10 +263,11 @@ public sealed class CalDateTime : IFormattable
     /// <summary>
     /// Converts the date/time to UTC (Coordinated Universal Time)
     /// If <see cref="IsFloating"/>==<see langword="true"/>
-    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
-    /// The returned <see cref="Value"/> is unchanged, but with <see cref="DateTimeKind.Utc"/>.
+    /// it means that the value is considered as local time for every timezone:
+    /// The returned value is unchanged, but with <see cref="DateTimeKind.Utc"/>.
     /// </summary>
-    public DateTime AsUtc => DateTime.SpecifyKind(ToTimeZone(UtcTzId).Value, DateTimeKind.Utc);
+    ///
+    public DateTime AsUtc => ToInstant().ToDateTimeUtc();
 
     /// <summary>
     /// Gets the date and time value in the ISO calendar as a <see cref="DateTime"/> type with <see cref="DateTimeKind.Unspecified"/>.
@@ -276,23 +277,7 @@ public sealed class CalDateTime : IFormattable
     /// Use <see cref="IsUtc"/> along with <see cref="TzId"/> and <see cref="IsFloating"/>
     /// to control how this date/time is handled.
     /// </summary>
-    public DateTime Value
-    {
-        get
-        {
-            if (_timeOnly.HasValue)
-            {
-                return new DateTime(_dateOnly.Year, _dateOnly.Month,
-                    _dateOnly.Day, _timeOnly.Value.Hour, _timeOnly.Value.Minute, _timeOnly.Value.Second,
-                    DateTimeKind.Unspecified);
-            }
-
-            // No time part
-            return new DateTime(_dateOnly.Year, _dateOnly.Month, _dateOnly.Day,
-                0, 0, 0,
-                DateTimeKind.Unspecified);
-        }
-    }
+    public DateTime Value => ToLocalDateTime().ToDateTimeUnspecified();
 
     /// <summary>
     /// Returns <see langword="true"/>, if the date/time value is floating.
@@ -315,7 +300,7 @@ public sealed class CalDateTime : IFormattable
     /// <summary>
     /// <see langword="true"/> if the underlying <see cref="DateTime"/> <see cref="Value"/> has a 'time' part (hour, minute, second).
     /// </summary>
-    public bool HasTime => _timeOnly.HasValue;
+    public bool HasTime => _localTime.HasValue;
 
     /// <summary>
     /// Gets the timezone ID of this <see cref="CalDateTime"/> instance.
@@ -331,87 +316,104 @@ public sealed class CalDateTime : IFormattable
     public string? TimeZoneName => TzId;
 
     /// <summary>
-    /// Gets the year that applies to the <see cref="Value"/>.
+    /// Gets the year.
     /// </summary>
-    public int Year => Value.Year;
+    public int Year => _localDate.Year;
 
     /// <summary>
-    /// Gets the month that applies to the <see cref="Value"/>.
+    /// Gets the month.
     /// </summary>
-    public int Month => Value.Month;
+    public int Month => _localDate.Month;
 
     /// <summary>
-    /// Gets the day that applies to the <see cref="Value"/>.
+    /// Gets the day.
     /// </summary>
-    public int Day => Value.Day;
+    public int Day => _localDate.Day;
 
     /// <summary>
-    /// Gets the hour that applies to the <see cref="Value"/>.
+    /// Gets the hour.
     /// </summary>
-    public int Hour => Value.Hour;
+    public int Hour => _localTime?.Hour ?? 0;
 
     /// <summary>
-    /// Gets the minute that applies to the <see cref="Value"/>.
+    /// Gets the minute.
     /// </summary>
-    public int Minute => Value.Minute;
+    public int Minute => _localTime?.Minute ?? 0;
 
     /// <summary>
-    /// Gets the second that applies to the <see cref="Value"/>.
+    /// Gets the second.
     /// </summary>
-    public int Second => Value.Second;
+    public int Second => _localTime?.Second ?? 0;
 
     /// <summary>
-    /// Gets the DayOfWeek that applies to the <see cref="Value"/>.
+    /// Gets the DayOfWeek.
     /// </summary>
-    public DayOfWeek DayOfWeek => Value.DayOfWeek;
+    public DayOfWeek DayOfWeek => _localDate.DayOfWeek.ToDayOfWeek();
 
     /// <summary>
-    /// Gets the DayOfYear that applies to the <see cref="Value"/>.
+    /// Gets the DayOfYear.
     /// </summary>
-    public int DayOfYear => Value.DayOfYear;
+    public int DayOfYear => _localDate.DayOfYear;
 
     /// <summary>
-    /// Gets the date portion of the <see cref="Value"/>.
+    /// Gets the date.
     /// </summary>
-    public DateOnly Date => _dateOnly;
+    public LocalDate Date => _localDate;
 
     /// <summary>
-    /// Gets the time portion of the <see cref="Value"/>, or <see langword="null"/> if the <see cref="Value"/> is a pure date.
+    /// Gets the time, or <see langword="null"/> if there is no time.
     /// </summary>
-    public TimeOnly? Time => _timeOnly;
+    public LocalTime? Time => _localTime;
+
+#if NET6_0_OR_GREATER
+    public CalDateTime(DateOnly date) : this(date, null, null) { }
+
+    public CalDateTime(DateOnly date, TimeOnly? time, string? tzId = null)
+        : this(date.ToLocalDate(), time?.ToLocalTime(), tzId) { }
+
+    /// <summary>
+    /// Gets the date..
+    /// </summary>
+    public DateOnly DateOnly => _localDate.ToDateOnly();
+
+    /// <summary>
+    /// Gets the time, or <see langword="null"/> if there is no time.
+    /// </summary>
+    public TimeOnly? TimeOnly => _localTime?.ToTimeOnly();
+#endif
 
     /// <summary>
     /// Any <see cref="Time"/> values are truncated to seconds, because
     /// RFC 5545, Section 3.3.5 does not allow for fractional seconds.
     /// </summary>
-    private static TimeOnly? TruncateTimeToSeconds(TimeOnly? time)
+    private static LocalTime? TruncateTimeToSeconds(LocalTime? time)
     {
         if (time is null)
         {
             return null;
         }
 
-        return new TimeOnly(time.Value.Hour, time.Value.Minute, time.Value.Second);
+        return TimeAdjusters.TruncateToSecond(time.Value);
     }
 
-    internal LocalDateTime ToLocalDateTime()
+    public LocalDateTime ToLocalDateTime()
     {
-        var localDate = new LocalDate(_dateOnly.Year, _dateOnly.Month, _dateOnly.Day);
+        var localDate = new LocalDate(_localDate.Year, _localDate.Month, _localDate.Day);
 
-        if (_timeOnly is null)
+        if (_localTime is null)
         {
             return localDate.AtMidnight();
         }
         else
         {
-            var time = _timeOnly.Value;
+            var time = _localTime.Value;
             return localDate.At(new LocalTime(time.Hour, time.Minute, time.Second));
         }
     }
 
-    internal Instant ToInstant() => Instant.FromDateTimeUtc(AsUtc);
+    public Instant ToInstant() => ToZonedDateTime().ToInstant();
 
-    internal ZonedDateTime ToZonedDateTime()
+    public ZonedDateTime ToZonedDateTime()
     {
         if (_tzId is null)
         {
@@ -437,7 +439,7 @@ public sealed class CalDateTime : IFormattable
         }
     }
 
-    internal ZonedDateTime ToZonedDateTime(string zoneId)
+    public ZonedDateTime ToZonedDateTime(string zoneId)
     {
         return ToZonedDateTime(DateUtil.GetZone(zoneId));
     }
@@ -465,23 +467,11 @@ public sealed class CalDateTime : IFormattable
     public CalDateTime ToTimeZone(string? otherTzId)
     {
         if (otherTzId is null)
-            return new CalDateTime(Value, null, HasTime);
-
-        ZonedDateTime converted;
-        if (IsFloating)
         {
-            // Make sure, we properly fix the time if it doesn't exist in the target tz.
-            converted = DateUtil.ToZonedDateTimeLeniently(Value, otherTzId);
-        }
-        else
-        {
-            var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId!);
-            converted = zonedOriginal.WithZone(DateUtil.GetZone(otherTzId));
+            return new(_localDate, _localTime);
         }
 
-        return converted.Zone == DateTimeZone.Utc
-            ? new CalDateTime(converted.ToDateTimeUtc(), UtcTzId)
-            : new CalDateTime(converted.ToDateTimeUnspecified(), otherTzId);
+        return new(ToZonedDateTime(otherTzId));
     }
 
     /// <summary>
@@ -520,42 +510,44 @@ public sealed class CalDateTime : IFormattable
         // greatest order time components MUST be added first, that is, the number of days MUST be
         // added first, followed by the number of hours, number of minutes, and number of seconds.
 
-        (TimeSpan? nominalPart, TimeSpan? exactPart) dt;
-        if (TzId is null)
-            dt = (d.ToTimeSpanUnspecified(), null);
+        if (_localTime is null)
+        {
+            // The value is date only and the duration has no time,
+            // so just add to the date.
+            var date = ToLocalDateTime().Date.Plus(d.GetNominalPart());
+            return new(date, _tzId);
+        }
         else
-            dt = (d.HasDate ? d.DateAsTimeSpan : null, d.HasTime ? d.TimeAsTimeSpan : null);
+        {
+            // Treat floating values as UTC, and add date and time
+            var zoned = ToZonedDateTime();
+            var result = zoned
+                .LocalDateTime
+                .Plus(d.GetNominalPart())
+                .InZoneLeniently(zoned.Zone)
+                .Plus(d.GetTimePart());
 
-        var newDateTime = this;
-        if (dt.nominalPart is not null)
-            newDateTime = new CalDateTime(newDateTime.Value.Add(dt.nominalPart.Value), TzId, HasTime);
-
-        if (dt.exactPart is not null)
-            newDateTime = new CalDateTime(newDateTime.AsUtc.Add(dt.exactPart.Value), UtcTzId, HasTime);
-        
-        if (TzId is not null)
-            // Convert to the original timezone even if already set to ensure we're not in a non-existing time.
-            newDateTime = newDateTime.ToTimeZone(TzId);
-
-        return newDateTime;
+            // Use the original time zone (which may be null)
+            return new(result.LocalDateTime, _tzId);
+        }
     }
 
     /// <inheritdoc cref="DateTime.AddYears"/>
     public CalDateTime AddYears(int years)
     {
-        return new(_dateOnly.AddYears(years), _timeOnly, _tzId);
+        return new(_localDate.PlusYears(years), _localTime, _tzId);
     }
 
     /// <inheritdoc cref="DateTime.AddMonths"/>
     public CalDateTime AddMonths(int months)
     {
-        return new(_dateOnly.AddMonths(months), _timeOnly, _tzId);
+        return new(_localDate.PlusMonths(months), _localTime, _tzId);
     }
 
     /// <inheritdoc cref="DateTime.AddDays"/>
     public CalDateTime AddDays(int days)
     {
-        return new(_dateOnly.AddDays(days), _timeOnly, _tzId);
+        return new(_localDate.PlusDays(days), _localTime, _tzId);
     }
 
     /// <inheritdoc cref="DateTime.AddHours"/>
@@ -588,18 +580,22 @@ public sealed class CalDateTime : IFormattable
     /// <inheritdoc cref="ToString()"/>
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
+        // Use the .NET format options to format
         formatProvider ??= CultureInfo.InvariantCulture;
-        var dateTimeOffset = DateUtil.ToZonedDateTimeLeniently(Value, _tzId ?? string.Empty).ToDateTimeOffset();
 
-        // Use the .NET format options to format the DateTimeOffset
+        // Print only the time zone ID, not the time zone offset.
+        // The spec does not allow including a time zone offset to
+        // specify a DATE-TIME value, so this should not include it.
         var tzIdString = _tzId is not null ? $" {_tzId}" : string.Empty;
 
         if (HasTime)
         {
-            return $"{dateTimeOffset.ToString(format, formatProvider)}{tzIdString}";
+            return ToLocalDateTime().ToString(format, formatProvider) + tzIdString;
         }
 
-        // No time part
-        return $"{DateOnly.FromDateTime(dateTimeOffset.Date).ToString(format ?? "d", formatProvider)}{tzIdString}";
+        // No time, and there is no need to convert to ZonedDateTime because
+        // there is no time zone that can change the local date, so just use
+        // the local date value.
+        return _localDate.ToString(format ?? "d", formatProvider) + tzIdString;
     }
 }
