@@ -328,6 +328,9 @@ public class DeserializationTests
         var iCal = Calendar.Load(IcsFiles.Google1);
         var evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
         Assert.That(evt, Is.Not.Null);
+        var dtStart2 = new CalDateTime(2006, 12, 18);
+        var dtStart3 = new CalDateTime(2006, 12, 18, 6,6,3);
+        var dtStart4 = new CalDateTime(2006, 12, 18, 6,6,3, "US-Eastern");
 
         var dtStart = new CalDateTime(2006, 12, 18).ToZonedDateTime(tzId);
         var dtEnd = new CalDateTime(2006, 12, 23).ToZonedDateTime(tzId);
