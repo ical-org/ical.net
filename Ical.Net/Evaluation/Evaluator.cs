@@ -14,41 +14,6 @@ namespace Ical.Net.Evaluation;
 
 public abstract class Evaluator : IEvaluator
 {
-    /// <summary>
-    /// Resolve time zone offset based on the associated start value.
-    /// </summary>
-    /// <param name="start"></param>
-    /// <returns></returns>
-    internal static ZoneLocalMappingResolver ResolveFrom(ZonedDateTime start)
-    {
-        return map =>
-        {
-            if (map.Count == 1)
-            {
-                return map.Single();
-            }
-            else if (map.Count == 2)
-            {
-                // Only map forward in time
-                var last = map.Last();
-                if (last.Offset == start.Offset)
-                {
-                    return last;
-                }
-                else
-                {
-                    return map.First();
-                }
-            }
-            else
-            {
-                // Invalid local time, shift forward
-                return Resolvers.ReturnForwardShifted
-                    .Invoke(map.LocalDateTime, map.Zone, map.EarlyInterval, map.LateInterval);
-            }
-        };
-    }
-
     protected static void IncrementDate(ref ZonedDateTime dt, RecurrencePattern pattern, int interval)
     {
         if (interval == 0)

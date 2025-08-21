@@ -17,6 +17,7 @@ using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Tests.TestHelpers;
 using Ical.Net.Utility;
+using NodaTime;
 using NodaTime.Extensions;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
