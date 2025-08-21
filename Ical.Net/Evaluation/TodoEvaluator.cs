@@ -95,7 +95,7 @@ public class TodoEvaluator : RecurringEvaluator
         {
             end = start.LocalDateTime
                 .Plus(duration.GetNominalPart())
-                .InZone(start.Zone, ResolveFrom(start))
+                .InZoneRelativeTo(start)
                 .Plus(duration.GetTimePart());
         }
         else if (rdate.EndTime is { } dtEnd)
@@ -133,7 +133,7 @@ public class TodoEvaluator : RecurringEvaluator
             // and then add accurate time to zoned time.
             return start.LocalDateTime
                 .Plus(duration.GetNominalPart())
-                .InZone(start.Zone, ResolveFrom(start))
+                .InZoneRelativeTo(start)
                 .Plus(duration.GetTimePart());
         }
 

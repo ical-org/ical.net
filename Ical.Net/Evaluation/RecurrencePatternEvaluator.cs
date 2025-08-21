@@ -11,7 +11,6 @@ using Ical.Net.DataTypes;
 using NodaTime;
 using NodaTime.Calendars;
 using NodaTime.Extensions;
-using NodaTime.TimeZones;
 
 namespace Ical.Net.Evaluation;
 
@@ -714,10 +713,7 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value)
         {
             // Expand behavior
-            return dates.SelectMany(date => pattern.ByHour.Select(hour => date
-                .LocalDateTime
-                .With(x => new LocalTime(hour, x.Minute, x.Second))
-                .InZone(date.Zone, ResolveFrom(date))));
+            return ExpandTime(dates, pattern.ByHour, SetHour);
         }
 
         // Limit behavior
@@ -743,10 +739,7 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value)
         {
             // Expand behavior
-            return dates.SelectMany(date => pattern.ByMinute.Select(minute => date
-                .LocalDateTime
-                .With(x => new LocalTime(x.Hour, minute, x.Second))
-                .InZone(date.Zone, ResolveFrom(date))));
+            return ExpandTime(dates, pattern.ByMinute, SetMinute);
         }
 
         // Limit behavior
@@ -769,14 +762,40 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value)
         {
             // Expand behavior
-            return dates.SelectMany(date => pattern.BySecond.Select(second => date
-                .LocalDateTime
-                .With(x => new LocalTime(x.Hour, x.Minute, second))
-                .InZone(date.Zone, ResolveFrom(date))));
+            return ExpandTime(dates, pattern.BySecond, SetSecond);
         }
 
         // Limit behavior
         return dates.Where(date => pattern.BySecond.Contains(date.Second));
+    }
+
+    private static LocalTime SetHour(LocalTime time, int hour) => new(hour, time.Minute, time.Second);
+    private static LocalTime SetMinute(LocalTime time, int minute) => new(time.Hour, minute, time.Second);
+    private static LocalTime SetSecond(LocalTime time, int second) => new(time.Hour, time.Minute, second);
+
+    /// <summary>
+    /// Expands dates into the listed times using the given time adjusting function.
+    /// </summary>
+    /// <param name="dates">Dates to expand</param>
+    /// <param name="byTimeUnit">The time values of a single unit (hour, minute, or second)</param>
+    /// <param name="timeAdjuster">Function to adjust the time with.</param>
+    /// <returns>Each date expanded by the time unit</returns>
+    private static IEnumerable<ZonedDateTime> ExpandTime(
+        IEnumerable<ZonedDateTime> dates,
+        List<int> byTimeUnit,
+        Func<LocalTime, int, LocalTime> timeAdjuster)
+    {
+        // This is run multiple times for each date, so avoid LINQ and use
+        // only static functions to avoid allocations.
+
+        foreach (var date in dates)
+        {
+            foreach (var timeUnit in byTimeUnit)
+            {
+                var localTime = date.Date + timeAdjuster(date.TimeOfDay, timeUnit);
+                yield return localTime.InZoneRelativeTo(date);
+            }
+        }
     }
 
     /// <summary>
