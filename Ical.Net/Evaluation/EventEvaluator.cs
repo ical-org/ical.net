@@ -36,7 +36,7 @@ public class EventEvaluator : RecurringEvaluator
 
 			end = start.LocalDateTime
 				.Plus(duration.GetNominalPart())
-				.InZone(start.Zone, ResolveFrom(start))
+				.InZoneRelativeTo(start)
 				.Plus(duration.GetTimePart());
 		}
 		else if (rdate.EndTime is { } dtEnd)
@@ -74,7 +74,7 @@ public class EventEvaluator : RecurringEvaluator
             // and then add accurate time to zoned time.
             return start.LocalDateTime
                 .Plus(duration.GetNominalPart())
-                .InZone(start.Zone, ResolveFrom(start))
+                .InZoneRelativeTo(start)
                 .Plus(duration.GetTimePart());
         }
 
@@ -108,7 +108,7 @@ public class EventEvaluator : RecurringEvaluator
 
                 return start.LocalDateTime
                     .Plus(nominalDuration)
-                    .InZone(start.Zone, ResolveFrom(start));
+                    .InZoneRelativeTo(start);
             }
 
             var exactDuration = dtEnd.ToInstant() - dtStart.ToInstant();
@@ -126,7 +126,7 @@ public class EventEvaluator : RecurringEvaluator
             // Spec says to assume duration is one day date only (nominal, not 24 hours) 
             return start.LocalDateTime
                 .Plus(Period.FromDays(1))
-                .InZone(start.Zone, ResolveFrom(start));
+                .InZoneRelativeTo(start);
         }
 
         // Event ends as it starts

@@ -71,7 +71,7 @@ public class RecurrenceTests
                 {
                     end = start.LocalDateTime
                         .Plus(d.GetNominalPart())
-                        .InZone(start.Zone, Evaluator.ResolveFrom(start))
+                        .InZoneRelativeTo(start)
                         .Plus(d.GetTimePart());
                 }
                 else if (expectedPeriods[i].EndTime is { } periodEnd)
