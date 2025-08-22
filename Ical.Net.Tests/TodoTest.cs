@@ -16,7 +16,7 @@ namespace Ical.Net.Tests;
 [TestFixture]
 public class TodoTest
 {
-    private const string _tzid = "US-Eastern";
+    private const string _tzid = "America/New_York";
 
     [Test, TestCaseSource(nameof(ActiveTodo_TestCases)), Category("Todo")]
     public void ActiveTodo_Tests(string calendarString, IList<KeyValuePair<CalDateTime, bool>> incoming)
@@ -27,7 +27,7 @@ public class TodoTest
 
         foreach (var calDateTime in incoming)
         {
-            var dt = new CalDateTime(calDateTime.Key.Date, calDateTime.Key.Time, _tzid);
+            var dt = new CalDateTime(calDateTime.Key.Date, calDateTime.Key.Time, _tzid).ToZonedDateTime(_tzid);
             Assert.That(todo[0].IsActive(dt), Is.EqualTo(calDateTime.Value));
         }
     }
@@ -176,7 +176,7 @@ public class TodoTest
 
         foreach (var calDateTime in incoming)
         {
-            var dt = new CalDateTime(calDateTime.Key.Date, calDateTime.Key.Time, _tzid);
+            var dt = new CalDateTime(calDateTime.Key.Date, calDateTime.Key.Time, _tzid).ToZonedDateTime(_tzid);
             Assert.That(todo[0].IsCompleted(dt), Is.EqualTo(calDateTime.Value));
         }
     }
@@ -210,11 +210,11 @@ public class TodoTest
             new CalDateTime(2007, 2, 2, 9, 0, 0, _tzid),
             new CalDateTime(2007, 3, 2, 9, 0, 0, _tzid),
             new CalDateTime(2007, 4, 6, 9, 0, 0, _tzid)
-        };
+        }.Select(x => x.ToZonedDateTime(_tzid)).ToList();
 
         var occurrences = todo[0].GetOccurrences(
-            new CalDateTime(2006, 7, 1, 9, 0, 0))
-            .TakeWhileBefore(new CalDateTime(2007, 7, 1, 9, 0, 0)).ToList();
+            new CalDateTime(2006, 7, 1, 9, 0, 0).ToZonedDateTime(_tzid))
+            .TakeWhileBefore(new CalDateTime(2007, 7, 1, 9, 0, 0).ToZonedDateTime(_tzid).ToInstant()).ToList();
 
         Assert.That(
             occurrences,
@@ -234,10 +234,9 @@ public class TodoTest
 
         // periodStart is in the future, so filtering the first occurrence will also require
         // looking at the todo's duration, which is unset/null. It must therefore be ignored.
-        var firstOccurrence = todo.GetOccurrences(today.AddDays(2)).FirstOrDefault();
+        var firstOccurrence = todo.GetOccurrences(today.AddDays(2).ToZonedDateTime("America/New_York")).FirstOrDefault();
 
         Assert.That(firstOccurrence, Is.Not.Null);
-        Assert.That(firstOccurrence.Period.StartTime, Is.Not.Null);
-        Assert.That(firstOccurrence.Period.Duration, Is.Null);
+        Assert.That(firstOccurrence.Start, Is.EqualTo(firstOccurrence.End));
     }
 }

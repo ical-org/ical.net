@@ -203,9 +203,5 @@ public class EqualityAndHashingTests
     {
         TestComparison((dt1, dt2) => dt1 == dt2, (i1, i2) => i1 == i2);
         TestComparison((dt1, dt2) => dt1 != dt2, (i1, i2) => i1 != i2);
-        TestComparison((dt1, dt2) => dt1 > dt2, (i1, i2) => i1 > i2);
-        TestComparison((dt1, dt2) => dt1 >= dt2, (i1, i2) => i1 >= i2);
-        TestComparison((dt1, dt2) => dt1 < dt2, (i1, i2) => i1 < i2);
-        TestComparison((dt1, dt2) => dt1 <= dt2, (i1, i2) => i1 <= i2);
     }
 }

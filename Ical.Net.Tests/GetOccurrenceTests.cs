@@ -10,6 +10,8 @@ using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
+using Ical.Net.Utility;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -33,26 +35,26 @@ internal class GetOccurrenceTests
         calendar.Events.Add(vEvent);
         calendar.Events.Add(vEvent2);
 
-        var searchStart = new CalDateTime(2015, 12, 29);
-        var searchEnd = new CalDateTime(2017, 02, 10);
+        var searchStart = new CalDateTime(2015, 12, 29).ToZonedDateTime("America/New_York");
+        var searchEnd = new CalDateTime(2017, 02, 10).ToZonedDateTime("America/New_York").ToInstant();
         var occurrences = calendar.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
 
         var firstOccurrence = occurrences.First();
-        var firstStartCopy = firstStart.Copy();
-        var firstEndCopy = firstEnd.Copy();
+        var firstStartCopy = firstStart.ToZonedDateTime("America/New_York");
+        var firstEndCopy = firstEnd.ToZonedDateTime("America/New_York");
         Assert.Multiple(() =>
         {
-            Assert.That(firstOccurrence.Period.StartTime, Is.EqualTo(firstStartCopy));
-            Assert.That(firstOccurrence.Period.EffectiveEndTime, Is.EqualTo(firstEndCopy));
+            Assert.That(firstOccurrence.Start, Is.EqualTo(firstStartCopy));
+            Assert.That(firstOccurrence.End, Is.EqualTo(firstEndCopy));
         });
 
         var secondOccurrence = occurrences.Last();
-        var secondStartCopy = secondStart.Copy();
-        var secondEndCopy = secondEnd.Copy();
+        var secondStartCopy = secondStart.ToZonedDateTime("America/New_York");
+        var secondEndCopy = secondEnd.ToZonedDateTime("America/New_York");
         Assert.Multiple(() =>
         {
-            Assert.That(secondOccurrence.Period.StartTime, Is.EqualTo(secondStartCopy));
-            Assert.That(secondOccurrence.Period.EffectiveEndTime, Is.EqualTo(secondEndCopy));
+            Assert.That(secondOccurrence.Start, Is.EqualTo(secondStartCopy));
+            Assert.That(secondOccurrence.End, Is.EqualTo(secondEndCopy));
         });
     }
 
@@ -77,20 +79,26 @@ internal class GetOccurrenceTests
         var calendar = new Calendar();
         calendar.Events.Add(vEvent);
 
-        var intervalStart = eventStart;
-        var intervalEnd = intervalStart.AddDays(7 * evaluationsCount);
+        var tzid = DateUtil.GetZone("UTC");
 
-        var occurrences = RecurrenceUtil.GetOccurrences(
-            recurrable: vEvent,
-            periodStart: intervalStart)
+        var intervalStart = eventStart.ToZonedDateTime(tzid);
+        var intervalEnd = intervalStart.LocalDateTime
+            .PlusDays(7 * evaluationsCount)
+            .InZoneLeniently(tzid)
+            .ToInstant();
+
+        var evaluationTimeZone = DateUtil.GetZone("America/New_York");
+
+        var occurrences = RecurrenceUtil.GetOccurrences(vEvent, evaluationTimeZone, intervalStart.ToInstant())
             .TakeWhileBefore(intervalEnd);
-        var occurrenceSet = new HashSet<CalDateTime>(occurrences.Select(o => o.Period.StartTime));
+
+        var occurrenceSet = new HashSet<ZonedDateTime>(occurrences.Select(o => o.Start));
 
         Assert.That(occurrenceSet, Has.Count.EqualTo(evaluationsCount));
 
-        for (var currentOccurrence = intervalStart; currentOccurrence.CompareTo(intervalEnd) < 0; currentOccurrence = (CalDateTime) currentOccurrence.AddDays(7))
+        for (var currentOccurrence = intervalStart; currentOccurrence.ToInstant().CompareTo(intervalEnd) < 0; currentOccurrence = currentOccurrence.LocalDateTime.PlusDays(7).InZoneLeniently(tzid))
         {
-            var contains = occurrenceSet.Contains(currentOccurrence);
+            var contains = occurrenceSet.Contains(currentOccurrence.WithZone(evaluationTimeZone));
             Assert.That(contains, Is.True, $"Collection does not contain {currentOccurrence}, but it is a {currentOccurrence.DayOfWeek}");
         }
     }
@@ -144,8 +152,8 @@ END:VEVENT
 END:VCALENDAR";
 
         var calendar = GetCalendars(ical);
-        var date = new CalDateTime(2016, 10, 11);
-        var occurrences = calendar.GetOccurrences(date).TakeWhileBefore(date.AddDays(1)).ToList();
+        var date = new CalDateTime(2016, 10, 11).ToZonedDateTime("America/New_York");
+        var occurrences = calendar.GetOccurrences(date).TakeWhileBefore(date.LocalDateTime.PlusDays(1).InZoneLeniently(date.Zone).ToInstant()).ToList();
 
         //We really want to make sure this doesn't explode
         Assert.That(occurrences, Has.Count.EqualTo(1));
@@ -208,32 +216,34 @@ END:VCALENDAR";
             """;
 
         var collection = Calendar.Load(ical);
-        var startCheck = new CalDateTime(2016, 11, 11);
-        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck).TakeWhileBefore(startCheck.AddMonths(1)).ToList();
+        var startCheck = new CalDateTime(2016, 11, 11).ToZonedDateTime("W. Europe Standard Time");
+        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck)
+            .TakeWhileBefore(startCheck.LocalDateTime.PlusMonths(1).InZoneLeniently(startCheck.Zone).ToInstant()).ToList();
 
-        CalDateTime[] expectedStartDates = [
-            new CalDateTime("20161114T000100", "W. Europe Standard Time"),
-            new CalDateTime("20161114T120100", "W. Europe Standard Time"),
-            new CalDateTime("20161121T000100", "W. Europe Standard Time"),
-            new CalDateTime("20161121T120100", "W. Europe Standard Time"),
-            new CalDateTime("20161128T043000", "W. Europe Standard Time"), // The replaced entry
-            new CalDateTime("20161128T120100", "W. Europe Standard Time"),
-            new CalDateTime("20161205T000100", "W. Europe Standard Time"),
-            new CalDateTime("20161205T120100", "W. Europe Standard Time")
+        ZonedDateTime[] expectedStartDates = [
+            new CalDateTime("20161114T000100", "W. Europe Standard Time").ToZonedDateTime(),
+            new CalDateTime("20161114T120100", "W. Europe Standard Time").ToZonedDateTime(),
+            new CalDateTime("20161121T000100", "W. Europe Standard Time").ToZonedDateTime(),
+            new CalDateTime("20161121T120100", "W. Europe Standard Time").ToZonedDateTime(),
+            new CalDateTime("20161128T043000", "W. Europe Standard Time").ToZonedDateTime(), // The replaced entry
+            new CalDateTime("20161128T120100", "W. Europe Standard Time").ToZonedDateTime(),
+            new CalDateTime("20161205T000100", "W. Europe Standard Time").ToZonedDateTime(),
+            new CalDateTime("20161205T120100", "W. Europe Standard Time").ToZonedDateTime()
         ];
 
         // Specify end time that is between the original occurrence at 20161128T0001 and the overridden one at 20161128T0030.
         // The overridden one shouldn't be returned, because it was replaced and the other one is in the future.
-        var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck)).TakeWhileBefore(new CalDateTime("20161128T002000", "W. Europe Standard Time"))
+        var occurrences2 = collection.GetOccurrences<CalendarEvent>(startCheck)
+            .TakeWhileBefore(new CalDateTime("20161128T002000").ToZonedDateTime(startCheck.Zone).ToInstant())
             .ToList();
 
         Assert.Multiple(() =>
         {
             // endTime = 20161211T000000
-            Assert.That(occurrences.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates));
+            Assert.That(occurrences.Select(x => x.Start), Is.EqualTo(expectedStartDates));
 
             // endTime = 20161128T002000
-            Assert.That(occurrences2.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates.Take(4)));
+            Assert.That(occurrences2.Select(x => x.Start), Is.EqualTo(expectedStartDates.Take(4)));
         });
     }
 
@@ -262,26 +272,28 @@ END:VCALENDAR";
             """;
 
         var collection = Calendar.Load(ical);
-        var startCheck = new CalDateTime(2023, 10, 1);
-        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck).TakeWhileBefore(startCheck.AddMonths(1))
+        var startCheck = new CalDateTime(2023, 10, 1).ToZonedDateTime("America/New_York");
+        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck)
+            .TakeWhileBefore(startCheck.LocalDateTime.PlusMonths(1).InZoneLeniently(startCheck.Zone).ToInstant())
             .ToList();
 
-        var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck)).TakeWhileBefore(new CalDateTime(2023, 12, 31))
+        var occurrences2 = collection.GetOccurrences<CalendarEvent>(startCheck)
+            .TakeWhileBefore(new CalDateTime(2023, 12, 31).ToZonedDateTime(startCheck.Zone).ToInstant())
             .ToList();
 
-        CalDateTime[] expectedStartDates = [
-            new CalDateTime(2023, 10, 1),
-            new CalDateTime(2023, 11, 15), // the replaced occurrence
-            new CalDateTime(2023, 12,1)
+        ZonedDateTime[] expectedStartDates = [
+            new CalDateTime(2023, 10, 1).ToZonedDateTime("America/New_York"),
+            new CalDateTime(2023, 11, 15).ToZonedDateTime("America/New_York"), // the replaced occurrence
+            new CalDateTime(2023, 12,1).ToZonedDateTime("America/New_York")
         ];
 
         Assert.Multiple(() =>
         {
             // For endTime=20231002
-            Assert.That(occurrences.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates.Take(1)));
+            Assert.That(occurrences.Select(x => x.Start), Is.EqualTo(expectedStartDates.Take(1)));
 
             // For endTime=20231231
-            Assert.That(occurrences2.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates.Take(3)));
+            Assert.That(occurrences2.Select(x => x.Start), Is.EqualTo(expectedStartDates.Take(3)));
         });
     }
 }

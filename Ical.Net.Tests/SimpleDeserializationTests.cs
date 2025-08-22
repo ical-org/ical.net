@@ -126,16 +126,6 @@ public class SimpleDeserializationTests
             Assert.That(evt.Start.HasTime, Is.True);
             Assert.That(evt.End.HasTime, Is.True);
         });
-
-        foreach (var o in evt.GetOccurrences(new CalDateTime(2010, 1, 17, 0, 0, 0)).TakeWhileBefore(new CalDateTime(2010, 2, 1, 0, 0, 0)))
-        {
-            Assert.Multiple(() =>
-            {
-                Assert.That(o.Period.StartTime.HasTime, Is.EqualTo(true));
-                Assert.That(o.Period.EndTime, Is.Null);
-                Assert.That(o.Period.EffectiveEndTime, Is.Not.Null);
-            });
-        }
     }
 
     /// <summary>
@@ -305,7 +295,9 @@ END:VCALENDAR
 
         CalDateTime dtStart = new CalDateTime(2006, 12, 18);
         CalDateTime dtEnd = new CalDateTime(2006, 12, 23);
-        var occurrences = iCal.GetOccurrences(dtStart).TakeWhileBefore(dtEnd).ToList();
+        var occurrences = iCal.GetOccurrences(dtStart.ToZonedDateTime("America/New_York"))
+            .TakeWhileBefore(dtEnd)
+            .ToList();
 
         var dateTimes = new[]
         {
@@ -314,10 +306,10 @@ END:VCALENDAR
             new CalDateTime(2006, 12, 20, 7, 0, 0, tzId),
             new CalDateTime(2006, 12, 21, 7, 0, 0, tzId),
             new CalDateTime(2006, 12, 22, 7, 0, 0, tzId)
-        };
+        }.Select(x => x.ToZonedDateTime("America/New_York")).ToArray();
 
         for (var i = 0; i < dateTimes.Length; i++)
-            Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dateTimes[i]), "Event should occur at " + dateTimes[i]);
+            Assert.That(occurrences[i].Start, Is.EqualTo(dateTimes[i]), "Event should occur at " + dateTimes[i]);
 
         Assert.That(occurrences, Has.Count.EqualTo(dateTimes.Length), "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
     }
@@ -450,7 +442,8 @@ END:VCALENDAR
     public void Outlook2007_LineFolds1()
     {
         var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.Outlook2007LineFolds)).Cast<Calendar>().Single();
-        var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20)).TakeWhileBefore(new CalDateTime(2009, 06, 22)).ToList();
+        var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20).ToZonedDateTime("US/Eastern"))
+            .TakeWhileBefore(new CalDateTime(2009, 06, 22)).ToList();
         Assert.That(events, Has.Count.EqualTo(1));
     }
 
@@ -459,7 +452,9 @@ END:VCALENDAR
     {
         var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
         var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.Outlook2007LineFolds)).Cast<Calendar>().Single();
-        var events = iCal.GetOccurrences<CalendarEvent>(new CalDateTime(2009, 06, 20)).TakeWhileBefore(new CalDateTime(2009, 06, 22)).ToList();
+        var events = iCal.GetOccurrences<CalendarEvent>(new CalDateTime(2009, 06, 20).ToZonedDateTime("America/New_York"))
+            .TakeWhileBefore(new CalDateTime(2009, 06, 22).ToZonedDateTime("America/New_York").ToInstant())
+            .ToList();
         Assert.That(((CalendarEvent)events[0].Source).Location, Is.EqualTo(longName));
     }
 

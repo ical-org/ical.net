@@ -15,6 +15,7 @@ using Ical.Net.Evaluation;
 using Ical.Net.Proxies;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
+using NodaTime;
 
 namespace Ical.Net;
 
@@ -179,12 +180,22 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         return tz;
     }
 
-    /// <inheritdoc/>
-    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, EvaluationOptions? options = null)
-        => GetOccurrences<IRecurringComponent>(startTime, options);
+    public virtual IEnumerable<Occurrence> GetOccurrences(ZonedDateTime startTime, EvaluationOptions? options = null)
+    {
+        return GetOccurrences<IRecurringComponent>(startTime, options);
+    }
 
-    /// <inheritdoc/>
-    public virtual IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTimeZone tz, Instant? startTime = null, EvaluationOptions? options = null)
+    {
+        return GetOccurrences<IRecurringComponent>(tz, startTime, options);
+    }
+
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(ZonedDateTime startTime, EvaluationOptions? options = null) where T : IRecurringComponent
+    {
+        return GetOccurrences<T>(startTime.Zone, startTime.ToInstant(), options);
+    }
+
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTimeZone tz, Instant? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
     {
         // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
         var recurrenceIdsAndUids = this.Children.OfType<IRecurrable>()
@@ -195,7 +206,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
 
         var occurrences = RecurringItems
             .OfType<T>()
-            .Select(recurrable => recurrable.GetOccurrences(startTime, options))
+            .Select(recurrable => recurrable.GetOccurrences(tz, startTime, options))
 
             // Enumerate the list of occurrences (not the occurrences themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -216,7 +227,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             .Where(r =>
                 (r.Source.RecurrenceId != null) ||
                 !(r.Source is IUniqueComponent) ||
-                !recurrenceIdsAndUids.ContainsKey(new { ((IUniqueComponent)r.Source).Uid, Dt = r.Period.StartTime.Value }));
+                !recurrenceIdsAndUids.ContainsKey(new { ((IUniqueComponent)r.Source).Uid, Dt = r.DtStart?.Value ?? default }));
 
         return occurrences;
     }
@@ -281,13 +292,13 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         }
     }
 
-    public virtual FreeBusy? GetFreeBusy(FreeBusy freeBusyRequest) => CalendarComponents.FreeBusy.Create(this, freeBusyRequest);
+    public virtual FreeBusy? GetFreeBusy(DateTimeZone timeZone, FreeBusy freeBusyRequest) => CalendarComponents.FreeBusy.Create(this, timeZone, freeBusyRequest);
 
-    public virtual FreeBusy? GetFreeBusy(CalDateTime fromInclusive, CalDateTime toExclusive)
-        => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
+    public virtual FreeBusy? GetFreeBusy(DateTimeZone timeZone, CalDateTime fromInclusive, CalDateTime toExclusive)
+        => CalendarComponents.FreeBusy.Create(this, timeZone, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
 
-    public virtual FreeBusy? GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, CalDateTime fromInclusive, CalDateTime toExclusive)
-        => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
+    public virtual FreeBusy? GetFreeBusy(DateTimeZone timeZone, Organizer organizer, IEnumerable<Attendee> contacts, CalDateTime fromInclusive, CalDateTime toExclusive)
+        => CalendarComponents.FreeBusy.Create(this, timeZone, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
 
     /// <summary>
     /// Adds a system time zone to the iCalendar. This time zone may

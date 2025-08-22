@@ -8,18 +8,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Ical.Net.DataTypes;
+using NodaTime;
+using NodaTime.Calendars;
+using NodaTime.Extensions;
 
 namespace Ical.Net.Evaluation;
 
 public class RecurrencePatternEvaluator : Evaluator
 {
-    /// <summary>
-    /// The system calendar to be used to calculate details like the week of the year, days in a month, etc.
-    /// We only support the gregorian calendar at this time. We take it from the InvariantCulture to avoid
-    /// any side effects from the local system's configuration.
-    /// </summary>
-    private static System.Globalization.Calendar Calendar { get; } = System.Globalization.CultureInfo.InvariantCulture.Calendar;
-
     protected RecurrencePattern Pattern { get; set; }
 
     public RecurrencePatternEvaluator(RecurrencePattern pattern)
@@ -114,32 +110,40 @@ public class RecurrencePatternEvaluator : Evaluator
     /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
-    private IEnumerable<CalDateTime> GetDates(CalDateTime seed, CalDateTime? periodStart, RecurrencePattern pattern,
+    private IEnumerable<ZonedDateTime> GetDates(CalDateTime seed, DateTimeZone timeZone, Instant? periodStart, RecurrencePattern pattern,
          EvaluationOptions? options)
     {
-        var originalDate = seed;
-        var seedCopy = seed;
-        var periodStartDt = periodStart?.ToTimeZone(seed.TzId);
+        // Floating values should be evaluated in the given time zone.
+        // Other values should be evaluated in their time zone and then
+        // converted to the given time zone.
+        var originalDate = seed.AsZonedOrDefault(timeZone);
+
+        var seedCopy = originalDate;
+
+        var periodStartDt = periodStart?.InZone(originalDate.Zone);
+
+        var weekYearRule = GetWeekYearRule(pattern);
 
         if ((pattern.Frequency == FrequencyType.Yearly) && (pattern.ByWeekNo.Count != 0))
         {
             // Dates in the first or last week of the year could belong weeks that belong to
             // the prev/next year, in which case we must adjust that year. This is necessary
             // to get the intervals right.
-            IncrementDate(ref seedCopy, pattern, Calendar.GetIso8601YearOfWeek(seedCopy, pattern.FirstDayOfWeek) - seedCopy.Year);
+            IncrementDate(ref seedCopy, pattern, weekYearRule.GetWeekYear(seedCopy.Date) - seedCopy.Year);
         }
 
         // optimize the start time for selecting candidates
         // (only applicable where a COUNT is not specified)
-        if (pattern.Count is null)
+        if (pattern.Count is null && periodStartDt is not null)
         {
             var incremented = seedCopy;
-            while (incremented < periodStartDt)
+            while (incremented.ToInstant() < periodStartDt.Value.ToInstant())
             {
                 seedCopy = incremented;
                 IncrementDate(ref incremented, pattern, pattern.Interval);
             }
-        } else
+        }
+        else
         {
             if (pattern.Count < 1)
                 throw new Exception("Count must be greater than 0");
@@ -148,40 +152,40 @@ public class RecurrencePatternEvaluator : Evaluator
         // Do the enumeration in a separate method, as it is a generator method that is
         // only executed after enumeration started. In order to do most validation upfront,
         // do as many steps outside the generator as possible.
-        return EnumerateDates(originalDate, seedCopy, pattern, options);
+        return EnumerateDates(originalDate, seedCopy, pattern, options)
+            .Select(x => x.WithZone(timeZone));
     }
 
-    private IEnumerable<CalDateTime> EnumerateDates(CalDateTime originalDate, CalDateTime intervalRefTime, RecurrencePattern pattern, EvaluationOptions? options)
+    private IEnumerable<ZonedDateTime> EnumerateDates(ZonedDateTime originalDate, ZonedDateTime intervalRefTime, RecurrencePattern pattern, EvaluationOptions? options)
     {
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
-        var searchEndDate = GetSearchEndDate(pattern);
+        var searchEndDate = GetSearchEndDate(pattern, originalDate.Zone);
 
         var noCandidateIncrementCount = 0;
 
         var dateCount = 0;
+
         while (true)
         {
-            if (searchEndDate < GetIntervalLowerLimit(intervalRefTime, pattern))
+
+            if (searchEndDate != null && searchEndDate.Value.ToInstant() < GetIntervalLowerLimit(intervalRefTime, pattern).ToInstant())
                 break;
 
-            var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior);
 
-            foreach (var t in candidates.Where(t => t >= originalDate))
+            var candidates = GetCandidates(originalDate.Zone, intervalRefTime, pattern, expandBehavior);
+
+            foreach (var candidate in candidates.Where(t => t.ToInstant() >= originalDate.ToInstant()))
             {
                 noCandidateIncrementCount = 0;
-                var candidate = t;
 
                 // candidates MAY occur before periodStart
                 // For example, FREQ=YEARLY;BYWEEKNO=1 could return dates
                 // from the previous year.
 
-                // UNTIL is applied outside of this method, after TZ conversion has been applied.
-
                 yield return candidate;
-                dateCount++;
 
-                if (dateCount >= pattern.Count)
+                if (++dateCount >= pattern.Count)
                     yield break;
             }
 
@@ -194,14 +198,17 @@ public class RecurrencePatternEvaluator : Evaluator
         }
     }
 
-    private static CalDateTime? GetSearchEndDate(RecurrencePattern pattern)
+    private static ZonedDateTime? GetSearchEndDate(RecurrencePattern pattern, DateTimeZone timeZone)
     {
         // This value is only used for performance reasons to stop incrementing after
         // until is passed, even if no recurrences are being found.
         // As a safe heuristic we add 1d to the UNTIL value to cover any time shift and DST changes.
         // It's just important that we don't miss any recurrences, not that we stop exactly at UNTIL.
         // Precise UNTIL handling is done outside this method after TZ conversion.
-        var coarseUntil = pattern.Until?.AddDays(1);
+        var coarseUntil = pattern.Until?.ToZonedDateTime(timeZone)
+            .LocalDateTime
+            .PlusDays(1)
+            .InZoneLeniently(timeZone);
 
         return coarseUntil;
     }
@@ -214,11 +221,12 @@ public class RecurrencePatternEvaluator : Evaluator
     /// However, for YEARLY recurrences with BYWEEKNO=1 there could be recurrences before
     /// Jan 1st, so we need to adjust the intervalRefTime to the start of the week.
     /// </remarks>
-    private static CalDateTime GetIntervalLowerLimit(CalDateTime intervalRefTime, RecurrencePattern pattern)
+    private static ZonedDateTime GetIntervalLowerLimit(ZonedDateTime intervalRefTime, RecurrencePattern pattern)
     {
         var intervalLowerLimit = intervalRefTime;
         if ((pattern.Frequency == FrequencyType.Yearly) && (pattern.ByWeekNo.Count != 0))
-            intervalLowerLimit = GetFirstDayOfWeekDate(intervalRefTime, pattern.FirstDayOfWeek);
+            intervalLowerLimit = GetFirstDayOfWeekDate(intervalRefTime.LocalDateTime, pattern.FirstDayOfWeek)
+                .InZoneLeniently(intervalRefTime.Zone);
         return intervalLowerLimit;
     }
 
@@ -241,16 +249,17 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expandBehaviors"></param>
     /// <returns>A list of possible dates.</returns>
-    private IEnumerable<CalDateTime> GetCandidates(CalDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
+    private IEnumerable<ZonedDateTime> GetCandidates(DateTimeZone timeZone, ZonedDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
     {
         var expandContext = new ExpandContext() { DatesFullyExpanded = false };
 
-        IEnumerable<CalDateTime> dates = [ date ];
+        IEnumerable<ZonedDateTime> dates = [ date ];
         dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
         dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1], ref expandContext);
         dates = GetYearDayVariants(dates, pattern, expandBehaviors[2], ref expandContext);
         dates = GetMonthDayVariants(dates, pattern, expandBehaviors[3], ref expandContext);
         dates = GetDayVariants(dates, pattern, expandBehaviors[4], ref expandContext);
+
         dates = GetHourVariants(dates, pattern, expandBehaviors[5]);
         dates = GetMinuteVariants(dates, pattern, expandBehaviors[6]);
         dates = GetSecondVariants(dates, pattern, expandBehaviors[7]);
@@ -265,23 +274,21 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYSETPOS rules will be applied.</param>
     /// <param name="pattern"></param>
-    private static IEnumerable<CalDateTime> ApplySetPosRules(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IEnumerable<T> ApplySetPosRules<T>(IEnumerable<T> dates, RecurrencePattern pattern)
     {
         // return if no SETPOS rules specified..
         if (pattern.BySetPosition.Count == 0)
             return dates;
 
-        ISet<int> bySetPos;
+        HashSet<int> bySetPos;
 
         if (pattern.BySetPosition.Any(p => p < 0)) {
             var tmp = dates.ToList();
             var count = tmp.Count;
             dates = tmp;
-            bySetPos = new HashSet<int>(
-                pattern.BySetPosition
-                .Select(p => (p < 0) ? count + p + 1 : p));
+            bySetPos = [.. pattern.BySetPosition.Select(p => (p < 0) ? count + p + 1 : p)];
         } else {
-            bySetPos = new HashSet<int>(pattern.BySetPosition);
+            bySetPos = [.. pattern.BySetPosition];
         }
 
         return dates.Where((d, i) => bySetPos.Contains(i + 1));
@@ -295,7 +302,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYMONTH rules.</returns>
-    private static IEnumerable<CalDateTime> GetMonthVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private static IEnumerable<ZonedDateTime> GetMonthVariants(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByMonth.Count == 0)
             return dates;
@@ -303,8 +310,8 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value)
         {
             // Expand behavior
-            return dates
-                .SelectMany(d => pattern.ByMonth.Select(month => d.AddMonths(month - d.Month)));
+            return dates.SelectMany(d => pattern.ByMonth
+                .Select(month => d.LocalDateTime.PlusMonths(month - d.Month).InZoneLeniently(d.Zone)));
         }
 
         // Limit behavior
@@ -317,7 +324,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYWEEKNO rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYWEEKNO rules.</returns>
-    private static IEnumerable<CalDateTime> GetWeekNoVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static IEnumerable<ZonedDateTime> GetWeekNoVariants(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByWeekNo.Count == 0)
             return dates;
@@ -335,47 +342,60 @@ public class RecurrencePatternEvaluator : Evaluator
         return GetMonthVariants(weekNoDates, pattern, expand: false);
     }
 
-    private static IEnumerable<CalDateTime> GetWeekNoVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IWeekYearRule GetWeekYearRule(RecurrencePattern pattern) =>
+        WeekYearRules.ForMinDaysInFirstWeek(4, pattern.FirstDayOfWeek.ToIsoDayOfWeek());
+
+    private static IEnumerable<ZonedDateTime> GetWeekNoVariantsExpanded(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern)
     {
+        var weekYearRule = GetWeekYearRule(pattern);
+
         foreach ((var t, var weekNo) in dates.SelectMany(t => GetByWeekNoForYearNormalized(pattern, t.Year), (t, weekNo) => (t, weekNo)))
         {
-            var date = t;
+            var date = t.LocalDateTime;
 
             // Make sure we start from a reference date that is in a week that belongs to the current year.
             // Its not important that the date lies in a certain week, but that the week belongs to the
             // current year and that the week day is preserved.
             if (date.Month == 1)
-                date = date.AddDays(7);
+                date = date.PlusDays(7);
             else if (date.Month >= 12)
-                date = date.AddDays(-7);
+                date = date.PlusDays(-7);
 
             // Determine our current week number
-            var currWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+            var currWeekNo = weekYearRule.GetWeekOfWeekYear(date.Date);
 
             // Move ahead to the correct week of the year
-            date = date.AddDays((weekNo - currWeekNo) * 7);
+            date = date.PlusDays((weekNo - currWeekNo) * 7);
 
             // Ignore the week if it doesn't belong to the current year.
-            if (Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek) != t.Year)
+            if (weekYearRule.GetWeekYear(date.Date) != t.Year)
                 continue;
 
             // Step backward single days until we're at the correct DayOfWeek
             date = GetFirstDayOfWeekDate(date, pattern.FirstDayOfWeek);
 
-            foreach (var d in Enumerable.Range(0, 7).Select(i => date.AddDays(i)))
-                yield return d;
+            foreach (var d in Enumerable.Range(0, 7).Select(i => date.PlusDays(i)))
+                yield return d.InZoneLeniently(t.Zone);
         }
     }
 
-    private static CalDateTime GetFirstDayOfWeekDate(CalDateTime date, DayOfWeek firstDayOfWeek)
-        => date.AddDays(-((int) date.DayOfWeek + 7 - (int) firstDayOfWeek) % 7);
+    private static LocalDateTime GetFirstDayOfWeekDate(LocalDateTime date, DayOfWeek firstDayOfWeek)
+    {
+        var first = firstDayOfWeek.ToIsoDayOfWeek();
+        if (date.DayOfWeek == first)
+        {
+            return date;
+        }
+
+        return date.Previous(first);
+    }
 
     /// <summary>
     /// Normalize the BYWEEKNO values to be positive integers.
     /// </summary>
     private static List<int> GetByWeekNoForYearNormalized(RecurrencePattern pattern, int year)
     {
-        var weeksInYear = new Lazy<int>(() => Calendar.GetIso8601WeeksInYear(year, pattern.FirstDayOfWeek));
+        var weeksInYear = new Lazy<int>(() => GetWeekYearRule(pattern).GetWeeksInWeekYear(year));
         return pattern.ByWeekNo
             .Select(weekNo => weekNo >= 0 ? weekNo : weeksInYear.Value + weekNo + 1)
             .OrderBy(x => x)
@@ -388,7 +408,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYYEARDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYYEARDAY rules.</returns>
-    private static IEnumerable<CalDateTime> GetYearDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static IEnumerable<ZonedDateTime> GetYearDayVariants(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand is null || pattern.ByYearDay.Count == 0)
             return dates;
@@ -403,36 +423,37 @@ public class RecurrencePatternEvaluator : Evaluator
         return GetYearDayVariantsLimited(dates, pattern);
     }
 
-    private static IEnumerable<CalDateTime> GetYearDayVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IEnumerable<ZonedDateTime> GetYearDayVariantsExpanded(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern)
     {
         foreach (var date in dates)
         {
-            var date1 = date;
-            var yearDayDates = new SortedSet<CalDateTime>(
+            var date1 = date.LocalDateTime;
+            var yearDayDates = new SortedSet<LocalDateTime>(
                 pattern.ByYearDay.Select(yearDay => yearDay > 0
-                ? date1.AddDays(-date1.DayOfYear + yearDay)
-                : date1.AddDays(-date1.DayOfYear + 1).AddYears(1).AddDays(yearDay))
+                ? date1.PlusDays(-date1.DayOfYear + yearDay)
+                : date1.PlusDays(-date1.DayOfYear + 1).PlusYears(1).PlusDays(yearDay))
                 // Ignore the BY values that don't fit into the current year (i.e. +-366 in non-leap-years).
                 .Where(d => d.Year == date1.Year));
 
             foreach (var d in yearDayDates)
-                yield return d;
+                yield return d.InZoneLeniently(date.Zone);
         }
     }
 
-    private static IEnumerable<CalDateTime> GetYearDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IEnumerable<ZonedDateTime> GetYearDayVariantsLimited(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern)
     {
-        foreach (var date in dates)
+        foreach (var zonedDate in dates)
         {
+            var date = zonedDate.LocalDateTime;
             var candidates =
                 from yearDay in pattern.ByYearDay
                 let newDate = yearDay > 0
-                    ? date.AddDays(-date.DayOfYear + yearDay)
-                    : date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay)
+                    ? date.PlusDays(-date.DayOfYear + yearDay)
+                    : date.PlusDays(-date.DayOfYear + 1).PlusYears(1).PlusDays(yearDay)
                 select newDate;
 
             if (candidates.Contains(date))
-                yield return date;
+                yield return date.InZoneLeniently(zonedDate.Zone);
         }
     }
 
@@ -442,7 +463,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which the BYMONTHDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYMONTHDAY rules.</returns>
-    private static IEnumerable<CalDateTime> GetMonthDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static IEnumerable<ZonedDateTime> GetMonthDayVariants(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByMonthDay.Count == 0)
             return dates;
@@ -457,11 +478,11 @@ public class RecurrencePatternEvaluator : Evaluator
         return GetMonthDayVariantsLimited(dates, pattern);
     }
 
-    private static IEnumerable<CalDateTime> GetMonthDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IEnumerable<ZonedDateTime> GetMonthDayVariantsLimited(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern)
     {
         foreach (var date in dates)
         {
-            var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+            var daysInMonth = CalendarSystem.Iso.GetDaysInMonth(date.Year, date.Month);
             foreach (var monthDay in pattern.ByMonthDay)
             {
                 var byMonthDay = (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1);
@@ -474,19 +495,20 @@ public class RecurrencePatternEvaluator : Evaluator
         }
     }
 
-    private static IEnumerable<CalDateTime> GetMonthDayVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IEnumerable<ZonedDateTime> GetMonthDayVariantsExpanded(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern)
     {
-        foreach (var date in dates)
+        foreach (var zonedDate in dates)
         {
-            var monthDayDates = new SortedSet<CalDateTime>(
+            var date = zonedDate.LocalDateTime;
+            var monthDayDates = new SortedSet<LocalDateTime>(
                 from monthDay in pattern.ByMonthDay
-                let daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month)
+                let daysInMonth = CalendarSystem.Iso.GetDaysInMonth(date.Year, date.Month)
                 let monthDayAbs = (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1)
                 where (monthDayAbs > 0) && (monthDayAbs <= daysInMonth)
-                select date.AddDays(-date.Day + monthDayAbs));
+                select date.PlusDays(-date.Day + monthDayAbs));
 
             foreach (var d in monthDayDates)
-                yield return d;
+                yield return d.InZoneLeniently(zonedDate.Zone);
         }
     }
 
@@ -496,7 +518,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list of dates to which BYDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying BYDAY rules, or the original list if no BYDAY rules are specified.</returns>
-    private static IEnumerable<CalDateTime> GetDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static IEnumerable<ZonedDateTime> GetDayVariants(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByDay.Count == 0)
             return dates;
@@ -512,23 +534,23 @@ public class RecurrencePatternEvaluator : Evaluator
         return GetDayVariantsLimited(dates, pattern);
     }
 
-    private static IEnumerable<CalDateTime> GetDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IEnumerable<ZonedDateTime> GetDayVariantsLimited(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern)
         =>
         // If no offset is specified, simply test the day of week!
         // FIXME: test with offset...
-        dates.Where(date => pattern.ByDay.Any(weekDay => weekDay.DayOfWeek.Equals(date.DayOfWeek)));
+        dates.Where(date => pattern.ByDay.Any(weekDay => weekDay.DayOfWeek.Equals(date.DayOfWeek.ToDayOfWeek())));
 
-    private static IEnumerable<CalDateTime> GetDayVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IEnumerable<ZonedDateTime> GetDayVariantsExpanded(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern)
     {
         foreach (var date in dates)
         {
-            var weekDayDates = new SortedSet<CalDateTime>();
+            var weekDayDates = new SortedSet<LocalDateTime>();
             foreach (var day in pattern.ByDay)
-                foreach (var d in GetAbsWeekDays(date, day, pattern))
+                foreach (var d in GetAbsWeekDays(date.LocalDateTime, day, pattern))
                     weekDayDates.Add(d);
 
             foreach (var d in weekDayDates)
-                yield return d;
+                yield return d.InZoneLeniently(date.Zone);
         }
     }
 
@@ -539,7 +561,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="date">The date to start the evaluation from.</param>
     /// <param name="weekDay">The week day to evaluate.</param>
     /// <returns>A list of applicable dates.</returns>
-    private static IEnumerable<CalDateTime> GetAbsWeekDays(CalDateTime date, WeekDay weekDay, RecurrencePattern pattern)
+    private static IEnumerable<LocalDateTime> GetAbsWeekDays(LocalDateTime date, WeekDay weekDay, RecurrencePattern pattern)
     {
         var dates = pattern switch
         {
@@ -553,68 +575,72 @@ public class RecurrencePatternEvaluator : Evaluator
         return GetOffsetDates(dates, weekDay.Offset);
     }
 
-    private static IEnumerable<CalDateTime> GetAbsWeekDaysDaily(CalDateTime date, WeekDay weekDay)
-        => (date.DayOfWeek == weekDay.DayOfWeek) ? [date] : [];
+    private static IEnumerable<LocalDateTime> GetAbsWeekDaysDaily(LocalDateTime date, WeekDay weekDay)
+        => (date.DayOfWeek.ToDayOfWeek() == weekDay.DayOfWeek) ? [date] : [];
 
-    private static IEnumerable<CalDateTime> GetAbsWeekDaysYearly(CalDateTime date, WeekDay weekDay)
+    private static IEnumerable<LocalDateTime> GetAbsWeekDaysYearly(LocalDateTime date, WeekDay weekDay)
     {
         var year = date.Year;
 
         // construct a list of possible year days..
-        date = date.AddDays(-date.DayOfYear + 1);
-        while (date.DayOfWeek != weekDay.DayOfWeek)
+        date = date.PlusDays(-date.DayOfYear + 1);
+        while (date.DayOfWeek.ToDayOfWeek() != weekDay.DayOfWeek)
         {
-            date = date.AddDays(1);
+            date = date.PlusDays(1);
         }
 
         while (date.Year == year)
         {
             yield return date;
-            date = date.AddDays(7);
+            date = date.PlusDays(7);
         }
     }
 
-    private static IEnumerable<CalDateTime> GetAbsWeekDaysMonthly(CalDateTime date, RecurrencePattern pattern, WeekDay weekDay)
+    private static IEnumerable<LocalDateTime> GetAbsWeekDaysMonthly(LocalDateTime date, RecurrencePattern pattern, WeekDay weekDay)
     {
         var month = date.Month;
 
         // construct a list of possible month days..
-        date = date.AddDays(-date.Day + 1);
-        while (date.DayOfWeek != weekDay.DayOfWeek)
+        date = date.PlusDays(-date.Day + 1);
+        while (date.DayOfWeek.ToDayOfWeek() != weekDay.DayOfWeek)
         {
-            date = date.AddDays(1);
+            date = date.PlusDays(1);
         }
 
-        var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
+        var weekYearRule = GetWeekYearRule(pattern);
+
+        var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, weekYearRule.GetWeekYear(date.Date));
         while (date.Month == month)
         {
-            var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+            var currentWeekNo = weekYearRule.GetWeekOfWeekYear(date.Date);
 
             if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
                 && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
             {
                 yield return date;
             }
-            date = date.AddDays(7);
+            date = date.PlusDays(7);
         }
     }
 
-    private static IEnumerable<CalDateTime> GetAbsWeekDaysWeekly(CalDateTime date, RecurrencePattern pattern, WeekDay weekDay)
+    private static IEnumerable<LocalDateTime> GetAbsWeekDaysWeekly(LocalDateTime date, RecurrencePattern pattern, WeekDay weekDay)
     {
-        var weekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+        var weekYearRule = GetWeekYearRule(pattern);
+
+        var weekNo = weekYearRule.GetWeekOfWeekYear(date.Date);
 
         // Go to the first day of the week
-        date = date.AddDays(-GetWeekDayOffset(date, pattern.FirstDayOfWeek));
+        date = date.PlusDays(-GetWeekDayOffset(date, pattern.FirstDayOfWeek));
 
         // construct a list of possible week days..
-        while (date.DayOfWeek != weekDay.DayOfWeek)
+        while (date.DayOfWeek.ToDayOfWeek() != weekDay.DayOfWeek)
         {
-            date = date.AddDays(1);
+            date = date.PlusDays(1);
         }
 
-        var nextWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
-        var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
-        var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
+        var nextWeekNo = weekYearRule.GetWeekOfWeekYear(date.Date);
+        var currentWeekNo = weekYearRule.GetWeekOfWeekYear(date.Date);
+        var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, weekYearRule.GetWeekYear(date.Date));
 
         //When we manage weekly recurring pattern and we have boundary case:
         //Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - It's the 53th week of the year, but all another are 1st week number.
@@ -627,16 +653,16 @@ public class RecurrencePatternEvaluator : Evaluator
                 yield return date;
             }
 
-            date = date.AddDays(7);
-            currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+            date = date.PlusDays(7);
+            currentWeekNo = weekYearRule.GetWeekOfWeekYear(date.Date);
         }
     }
 
     /// <summary>
     /// Returns the days since the start of the week, 0 if the date is on the first day of the week.
     /// </summary>
-    private static int GetWeekDayOffset(CalDateTime date, DayOfWeek startOfWeek)
-        => date.DayOfWeek + ((date.DayOfWeek < startOfWeek) ? 7 : 0) - startOfWeek;
+    private static int GetWeekDayOffset(LocalDateTime date, DayOfWeek startOfWeek)
+        => date.DayOfWeek.ToDayOfWeek() + ((date.DayOfWeek.ToDayOfWeek() < startOfWeek) ? 7 : 0) - startOfWeek;
 
     /// <summary>
     /// Returns a single-element sublist containing the element of <paramref name="dates"/> at <paramref name="offset"/>. 
@@ -645,7 +671,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list from which to extract the element.</param>
     /// <param name="offset">The position of the element to extract.</param>
-    private static IEnumerable<CalDateTime> GetOffsetDates(IEnumerable<CalDateTime> dates, int? offset)
+    private static IEnumerable<LocalDateTime> GetOffsetDates(IEnumerable<LocalDateTime> dates, int? offset)
     {
         if (offset is null)
             return dates;
@@ -669,7 +695,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYHOUR rules.</returns>
-    private static IEnumerable<CalDateTime> GetHourVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private static IEnumerable<ZonedDateTime> GetHourVariants(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.ByHour.Count == 0)
             return dates;
@@ -677,7 +703,7 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value)
         {
             // Expand behavior
-            return dates.SelectMany(date => pattern.ByHour.Select(hour => date.AddHours(-date.Hour + hour)));
+            return ExpandTime(dates, pattern.ByHour, SetHour);
         }
 
         // Limit behavior
@@ -692,7 +718,10 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYMINUTE rules.</returns>
-    private static IEnumerable<CalDateTime> GetMinuteVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private static IEnumerable<ZonedDateTime> GetMinuteVariants(
+        IEnumerable<ZonedDateTime> dates,
+        RecurrencePattern pattern,
+        bool? expand)
     {
         if (expand == null || pattern.ByMinute.Count == 0)
             return dates;
@@ -700,7 +729,7 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value)
         {
             // Expand behavior
-            return dates.SelectMany(date => pattern.ByMinute.Select(minute => date.AddMinutes(-date.Minute + minute)));
+            return ExpandTime(dates, pattern.ByMinute, SetMinute);
         }
 
         // Limit behavior
@@ -715,7 +744,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expand"></param>
     /// <returns>The modified list of dates after applying the BYSECOND rules.</returns>
-    private static IEnumerable<CalDateTime> GetSecondVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand)
+    private static IEnumerable<ZonedDateTime> GetSecondVariants(IEnumerable<ZonedDateTime> dates, RecurrencePattern pattern, bool? expand)
     {
         if (expand == null || pattern.BySecond.Count == 0)
             return dates;
@@ -723,30 +752,40 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand.Value)
         {
             // Expand behavior
-            return dates.SelectMany(date => pattern.BySecond.Select(second => date.AddSeconds(-date.Second + second)));
+            return ExpandTime(dates, pattern.BySecond, SetSecond);
         }
 
         // Limit behavior
         return dates.Where(date => pattern.BySecond.Contains(date.Second));
     }
 
-    /// <summary>
-    /// Creates a new period from the specified date/time,
-    /// where the <see cref="CalDateTime.HasTime"/> is taken into account.
-    /// when initializing the new period with a new <see cref="CalDateTime"/>.
-    /// </summary>
-    private static Period CreatePeriod(CalDateTime dateTime, CalDateTime referenceDate)
-    {
-        // Turn each resulting date/time into an CalDateTime and associate it
-        // with the reference date.
-        var newDt = new CalDateTime(dateTime.Value, null, referenceDate.HasTime);
-        if (referenceDate.TzId != null) {
-            // Adjust nonexistent recurrence instances according to RFC 5545 3.3.5
-            newDt = newDt.ToTimeZone(referenceDate.TzId);
-        }
+    private static LocalTime SetHour(LocalTime time, int hour) => new(hour, time.Minute, time.Second);
+    private static LocalTime SetMinute(LocalTime time, int minute) => new(time.Hour, minute, time.Second);
+    private static LocalTime SetSecond(LocalTime time, int second) => new(time.Hour, time.Minute, second);
 
-        // Create a period from the new date/time.
-        return new Period(newDt);
+    /// <summary>
+    /// Expands dates into the listed times using the given time adjusting function.
+    /// </summary>
+    /// <param name="dates">Dates to expand</param>
+    /// <param name="byTimeUnit">The time values of a single unit (hour, minute, or second)</param>
+    /// <param name="timeAdjuster">Function to adjust the time with.</param>
+    /// <returns>Each date expanded by the time unit</returns>
+    private static IEnumerable<ZonedDateTime> ExpandTime(
+        IEnumerable<ZonedDateTime> dates,
+        List<int> byTimeUnit,
+        Func<LocalTime, int, LocalTime> timeAdjuster)
+    {
+        // This is run multiple times for each date, so avoid LINQ and use
+        // only static functions to avoid allocations.
+
+        foreach (var date in dates)
+        {
+            foreach (var timeUnit in byTimeUnit)
+            {
+                var localTime = date.Date + timeAdjuster(date.TimeOfDay, timeUnit);
+                yield return localTime.InZoneRelativeTo(date);
+            }
+        }
     }
 
     /// <summary>
@@ -756,23 +795,27 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="periodStart">Start (incl.) of the period occurrences are generated for.</param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
+    public override IEnumerable<EvaluationPeriod> Evaluate(CalDateTime referenceDate, DateTimeZone timeZone, Instant? periodStart, EvaluationOptions? options)
     {
         if (Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
         {
             // This case is not defined by RFC 5545. We handle it by evaluating the rule
             // as if referenceDate had a time (i.e. set to midnight).
-            referenceDate = new CalDateTime(referenceDate.Date, new TimeOnly(), referenceDate.TzId);
+            referenceDate = new CalDateTime(referenceDate.Date, new LocalTime(), referenceDate.TzId);
         }
 
         // Create a recurrence pattern suitable for use during evaluation.
         var pattern = ProcessRecurrencePattern(referenceDate);
 
-        var periodQuery = GetDates(referenceDate, periodStart, pattern, options)
-            .Select(dt => CreatePeriod(dt, referenceDate));
+        var periodQuery = GetDates(referenceDate, timeZone, periodStart, pattern, options)
+            .Select(dt => new EvaluationPeriod(dt));
 
         if (pattern.Until is not null)
-            periodQuery = periodQuery.TakeWhile(p => p.StartTime <= pattern.Until);
+        {
+            var until = pattern.Until.ToZonedDateTime(timeZone).ToInstant();
+
+            periodQuery = periodQuery.TakeWhile(p => p.Start.ToInstant() <= until);
+        }
 
         return periodQuery;
     }
