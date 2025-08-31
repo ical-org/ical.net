@@ -437,6 +437,7 @@ public class RecurrenceWikiTests
     private static string ToTestablePeriodString(IEnumerable<Occurrence> occurrences)
         => occurrences
             .Select(e => GetPeriodString(e.Period))
+            .OfType<string>()
             .Aggregate(new StringBuilder(), (acc, e) => acc.AppendLine(e), e => e.ToString().TrimEnd());
 
     private static string GetPeriodString(Period p)
