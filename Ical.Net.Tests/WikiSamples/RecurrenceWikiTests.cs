@@ -437,7 +437,6 @@ public class RecurrenceWikiTests
     private static string ToTestablePeriodString(IEnumerable<Occurrence> occurrences)
         => occurrences
             .Select(e => GetPeriodString(e.Period))
-            .OfType<string>()
             .Aggregate(new StringBuilder(), (acc, e) => acc.AppendLine(e), e => e.ToString().TrimEnd());
 
     private static string GetPeriodString(Period p)
@@ -446,6 +445,9 @@ public class RecurrenceWikiTests
         var end = new CalendarProperty("DTEND", p.EffectiveEndTime ?? p.StartTime.Add(p.Duration!.Value));
         var serializer = new PropertySerializer();
 
-        return serializer.SerializeToString(end) + serializer.SerializeToString(start);
+        var endSerialized = serializer.SerializeToString(end)?.TrimEnd('\n').TrimEnd('\r');
+        var startSerialized = serializer.SerializeToString(start)?.TrimEnd('\n').TrimEnd('\r');
+
+        return $"{endSerialized}{Environment.NewLine}{startSerialized}{Environment.NewLine}";
     }
 }
