@@ -11,6 +11,7 @@ using System.Text;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using Ical.Net.Tests.Logging;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests.WikiSamples;
@@ -94,11 +95,10 @@ public class RecurrenceWikiTests
             """;
         // Occurring dates
         var expectedOccurrenceDates = """
-            DTEND;TZID=Europe/Zurich:20250710T100000
-            DTSTART;TZID=Europe/Zurich:20250710T090000
-            
-            DTEND;TZID=Europe/Zurich:20250712T100000
-            DTSTART;TZID=Europe/Zurich:20250712T090000
+            Occurrences:
+            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich Period: PT1H End: 07/10/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 07/12/2025 09:00:00 +02:00 Europe/Zurich Period: PT1H End: 07/12/2025 10:00:00 +02:00 Europe/Zurich
+
             """;
 
         // Asserts
@@ -157,20 +157,13 @@ public class RecurrenceWikiTests
             """;
         // Occurring dates
         var expectedOccurrenceDates = """
-            DTEND;TZID=Europe/Zurich:20250710T100000
-            DTSTART;TZID=Europe/Zurich:20250710T090000
+            Occurrences:
+            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich Period: PT1H End: 07/10/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 07/12/2025 09:00:00 +02:00 Europe/Zurich Period: PT1H End: 07/12/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 07/10/2026 09:00:00 +02:00 Europe/Zurich Period: PT1H End: 07/10/2026 10:00:00 +02:00 Europe/Zurich
+            Start: 07/12/2026 09:00:00 +02:00 Europe/Zurich Period: PT1H End: 07/12/2026 10:00:00 +02:00 Europe/Zurich
+            Start: 07/10/2027 09:00:00 +02:00 Europe/Zurich Period: PT1H End: 07/10/2027 10:00:00 +02:00 Europe/Zurich
             
-            DTEND;TZID=Europe/Zurich:20250712T100000
-            DTSTART;TZID=Europe/Zurich:20250712T090000
-
-            DTEND;TZID=Europe/Zurich:20260710T100000
-            DTSTART;TZID=Europe/Zurich:20260710T090000
-            
-            DTEND;TZID=Europe/Zurich:20260712T100000
-            DTSTART;TZID=Europe/Zurich:20260712T090000
-
-            DTEND;TZID=Europe/Zurich:20270710T100000
-            DTSTART;TZID=Europe/Zurich:20270710T090000
             """;
 
         // Asserts
@@ -234,17 +227,12 @@ public class RecurrenceWikiTests
             """;
         // Occurring dates
         var expectedOccurrenceDates = """
-            DTEND;TZID=Europe/Zurich:20250629T200000
-            DTSTART;TZID=Europe/Zurich:20250629T160000
+            Occurrences:
+            Start: 06/29/2025 16:00:00 +02:00 Europe/Zurich Period: PT4H End: 06/29/2025 20:00:00 +02:00 Europe/Zurich
+            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich Period: PT4H End: 07/10/2025 13:00:00 +02:00 Europe/Zurich
+            Start: 07/27/2025 16:00:00 +02:00 Europe/Zurich Period: PT4H End: 07/27/2025 20:00:00 +02:00 Europe/Zurich
+            Start: 08/31/2025 16:00:00 +02:00 Europe/Zurich Period: PT4H End: 08/31/2025 20:00:00 +02:00 Europe/Zurich
             
-            DTEND;TZID=Europe/Zurich:20250710T130000
-            DTSTART;TZID=Europe/Zurich:20250710T090000
-
-            DTEND;TZID=Europe/Zurich:20250727T200000
-            DTSTART;TZID=Europe/Zurich:20250727T160000
-            
-            DTEND;TZID=Europe/Zurich:20250831T200000
-            DTSTART;TZID=Europe/Zurich:20250831T160000
             """;
 
         // Asserts
@@ -307,17 +295,12 @@ public class RecurrenceWikiTests
             """;
         // Occurring dates
         var expectedOccurrenceDates = """
-            DTEND:20250710T201500Z
-            DTSTART:20250710T200000Z
-
-            DTEND:20250710T211500Z
-            DTSTART:20250710T210000Z
-
-            DTEND:20250710T231500Z
-            DTSTART:20250710T230000Z
+            Occurrences:
+            Start: 07/10/2025 20:00:00 +00:00 UTC Period: PT15M End: 07/10/2025 20:15:00 +00:00 UTC
+            Start: 07/10/2025 21:00:00 +00:00 UTC Period: PT15M End: 07/10/2025 21:15:00 +00:00 UTC
+            Start: 07/10/2025 23:00:00 +00:00 UTC Period: PT15M End: 07/10/2025 23:15:00 +00:00 UTC
+            Start: 07/11/2025 00:00:00 +00:00 UTC Period: PT15M End: 07/11/2025 00:15:00 +00:00 UTC
             
-            DTEND:20250711T001500Z
-            DTSTART:20250711T000000Z
             """;
 
         // Asserts
@@ -401,17 +384,12 @@ public class RecurrenceWikiTests
             """;
         // Occurring dates
         var expectedOccurrenceDates = """
-            DTEND;TZID=Europe/Zurich:20250710T100000
-            DTSTART;TZID=Europe/Zurich:20250710T090000
+            Occurrences:
+            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich Period: PT1H End: 07/10/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 07/12/2025 09:00:00 +02:00 Europe/Zurich Period: PT1H End: 07/12/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 07/13/2025 13:00:00 +02:00 Europe/Zurich Period: PT13M End: 07/13/2025 13:13:00 +02:00 Europe/Zurich
+            Start: 07/16/2025 09:00:00 +02:00 Europe/Zurich Period: PT1H End: 07/16/2025 10:00:00 +02:00 Europe/Zurich
             
-            DTEND;TZID=Europe/Zurich:20250712T100000
-            DTSTART;TZID=Europe/Zurich:20250712T090000
-
-            DTEND;TZID=Europe/Zurich:20250713T131300
-            DTSTART;TZID=Europe/Zurich:20250713T130000
-            
-            DTEND;TZID=Europe/Zurich:20250716T100000
-            DTSTART;TZID=Europe/Zurich:20250716T090000
             """;
 
         // Asserts
@@ -435,20 +413,5 @@ public class RecurrenceWikiTests
             .Aggregate(new StringBuilder(), (acc, e) => acc.AppendLine(e), e => e.ToString().TrimEnd());
 
     private static string ToTestablePeriodString(IEnumerable<Occurrence> occurrences)
-        => occurrences
-            .Select(e => GetPeriodString(e.Period))
-            .OfType<string>()
-            .Aggregate(new StringBuilder(), (acc, e) => acc.AppendLine(e), e => e.ToString().TrimEnd());
-
-    private static string GetPeriodString(Period p)
-    {
-        var start = new CalendarProperty("DTSTART", p.StartTime);
-        var end = new CalendarProperty("DTEND", p.EffectiveEndTime ?? p.StartTime.Add(p.Duration!.Value));
-        var serializer = new PropertySerializer();
-
-        var endSerialized = serializer.SerializeToString(end)?.TrimEnd('\n').TrimEnd('\r');
-        var startSerialized = serializer.SerializeToString(start)?.TrimEnd('\n').TrimEnd('\r');
-
-        return $"{endSerialized}{Environment.NewLine}{startSerialized}{Environment.NewLine}";
-    }
+        => occurrences.ToLog();
 }
