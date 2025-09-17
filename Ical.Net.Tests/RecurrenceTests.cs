@@ -4247,4 +4247,41 @@ END:VCALENDAR";
         var nextPeriodStart = periodStart.HasTime ? periodStart.AddSeconds(1) : periodStart.AddDays(1);
         Assert.That(cal.GetOccurrences(nextPeriodStart).First(), Is.EqualTo(firstFewOccurrences[2]));
     }
+
+    [Test]
+    public void EventWithRecurrenceId_Should_ReplaceOriginalEvent_Occurrence()
+    {
+        var cal = Calendar.Load("""
+                                BEGIN:VCALENDAR
+                                VERSION:2.0
+                                PRODID:-//Test//EN
+                                BEGIN:VEVENT
+                                DTSTART;VALUE=DATE:20251103
+                                DTEND;VALUE=DATE:20251124
+                                RRULE:FREQ=WEEKLY;WKST=MO;INTERVAL=48;BYDAY=MO;COUNT=4
+                                UID:test-uid@example.com
+                                SUMMARY:Master Event
+                                END:VEVENT
+                                BEGIN:VEVENT
+                                DTSTART;VALUE=DATE:20251111
+                                DTEND;VALUE=DATE:202511212
+                                RECURRENCE-ID;VALUE=DATE:20251103
+                                UID:test-uid@example.com
+                                SUMMARY:Override Event
+                                END:VEVENT
+                                END:VCALENDAR
+                                """)!;
+
+        var occurrences = cal
+            .GetOccurrences<CalendarEvent>().OrderBy(e => e.Period.StartTime).ToList();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(occurrences, Has.Count.EqualTo(4));
+            // The first occurrence should be the overridden one
+            Assert.That(occurrences[0].Period.StartTime, Is.EqualTo(new CalDateTime(2025, 11, 11)));
+            Assert.That(occurrences[0].Source.RecurrenceId, Is.EqualTo(new CalDateTime(2025, 11, 3)));
+            Assert.That(((CalendarEvent) occurrences[0].Source).Summary, Is.EqualTo("Override Event"));
+        }
+    }
 }

@@ -187,10 +187,12 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     public virtual IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
     {
         // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
-        var recurrenceIdsAndUids = this.Children.OfType<IRecurrable>()
+        var recurrenceIdsAndUids = Children.OfType<IRecurrable>()
             .Where(r => r.RecurrenceId != null)
-            .Select(r => new { (r as IUniqueComponent)?.Uid, Dt = r.RecurrenceId!.Value })
-            .Where(r => r.Uid != null)
+            // Create a value tuple instead of an anonymous type, because
+            // anonymous types don't work well as dictionary keys due to equality semantics.
+            .Select(r => ((r as IUniqueComponent)?.Uid, r.RecurrenceId!.Value))
+            .Where(x => x.Uid != null)
             .ToDictionary(x => x);
 
         var occurrences = RecurringItems
@@ -215,8 +217,8 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             // Remove the occurrence if it has been replaced by a different one.
             .Where(r =>
                 (r.Source.RecurrenceId != null) ||
-                !(r.Source is IUniqueComponent) ||
-                !recurrenceIdsAndUids.ContainsKey(new { ((IUniqueComponent)r.Source).Uid, Dt = r.Period.StartTime.Value }));
+                r.Source is not IUniqueComponent uniqueComp ||
+                !recurrenceIdsAndUids.ContainsKey((uniqueComp.Uid, r.Period.StartTime.Value)));
 
         return occurrences;
     }
