@@ -198,8 +198,11 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         var occurrences = RecurringItems
             .OfType<T>()
             .Select(recurrable => recurrable.GetOccurrences(startTime, options)
+                // Exclude occurrences that are overridden by other components with the same UID and RECURRENCE-ID.
+                // This must happen before .OrderedDistinct() because that method would remove duplicates
+                // based on the occurrence time, and we need to remove them based on UID + RECURRENCE-ID.
                 .Where(r =>
-                    (r.Source.RecurrenceId != null) ||
+                    r.Source.RecurrenceId != null ||
                     r.Source is not IUniqueComponent uniqueComp ||
                     !recurrenceIdsAndUids.ContainsKey((uniqueComp.Uid, r.Period.StartTime.Value)))
             )
@@ -213,7 +216,8 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             // being ordered to avoid full enumeration.
             .OrderedMergeMany()
 
-            // Remove duplicates and take advantage of being ordered to avoid full enumeration.
+            // Remove duplicates based on Period.StartTime and take advantage of
+            // being ordered to avoid full enumeration.
             .OrderedDistinct()
 
             // Convert overflow exceptions to expected ones.
