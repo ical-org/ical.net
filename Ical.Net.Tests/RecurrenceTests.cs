@@ -4248,10 +4248,14 @@ END:VCALENDAR";
         Assert.That(cal.GetOccurrences(nextPeriodStart).First(), Is.EqualTo(firstFewOccurrences[2]));
     }
 
-    [Test]
-    public void EventWithRecurrenceId_Should_ReplaceOriginalEvent_Occurrence()
+    [TestCase("20251103")] // Override with same DTSTART as original event
+    [TestCase("20251111")] // Override with different DTSTART as original event
+    [TestCase("20280806")] // Gets sorted correctly in the middle of occurrences
+    public void EventWithRecurrenceId_Should_ReplaceOriginalEvent_Occurrence(string overrideDtStart)
     {
-        var cal = Calendar.Load("""
+        var dtStart = DateTime.ParseExact(overrideDtStart, "yyyyMMdd", CultureInfo.InvariantCulture);
+
+        var cal = Calendar.Load($"""
                                 BEGIN:VCALENDAR
                                 VERSION:2.0
                                 PRODID:-//Test//EN
@@ -4263,8 +4267,8 @@ END:VCALENDAR";
                                 SUMMARY:Master Event
                                 END:VEVENT
                                 BEGIN:VEVENT
-                                DTSTART;VALUE=DATE:20251111
-                                DTEND;VALUE=DATE:202511212
+                                DTSTART;VALUE=DATE:{dtStart:yyyyMMdd}
+                                DTEND;VALUE=DATE:{dtStart.AddDays(23):yyyyMMdd}
                                 RECURRENCE-ID;VALUE=DATE:20251103
                                 UID:test-uid@example.com
                                 SUMMARY:Override Event
@@ -4273,15 +4277,17 @@ END:VCALENDAR";
                                 """)!;
 
         var occurrences = cal
-            .GetOccurrences<CalendarEvent>().OrderBy(e => e.Period.StartTime).ToList();
+            .GetOccurrences<CalendarEvent>().ToList();
+
+        var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceId == new CalDateTime(2025, 11, 3));
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(4));
-            // The first occurrence should be the overridden one
-            Assert.That(occurrences[0].Period.StartTime, Is.EqualTo(new CalDateTime(2025, 11, 11)));
-            Assert.That(occurrences[0].Source.RecurrenceId, Is.EqualTo(new CalDateTime(2025, 11, 3)));
-            Assert.That(((CalendarEvent) occurrences[0].Source).Summary, Is.EqualTo("Override Event"));
+            Assert.That(overrideOcc, Is.Not.Null);
+            Assert.That(overrideOcc!.Period.StartTime, Is.EqualTo(new CalDateTime(dtStart.Year, dtStart.Month, dtStart.Day)));
+            Assert.That(((CalendarEvent) overrideOcc.Source).Summary, Is.EqualTo("Override Event"));
+            if (overrideOcc.Period.StartTime.Year == 2028) Assert.That(occurrences.IndexOf(overrideOcc), Is.EqualTo(2));
         }
     }
 }

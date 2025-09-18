@@ -197,7 +197,12 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
 
         var occurrences = RecurringItems
             .OfType<T>()
-            .Select(recurrable => recurrable.GetOccurrences(startTime, options))
+            .Select(recurrable => recurrable.GetOccurrences(startTime, options)
+                .Where(r =>
+                    (r.Source.RecurrenceId != null) ||
+                    r.Source is not IUniqueComponent uniqueComp ||
+                    !recurrenceIdsAndUids.ContainsKey((uniqueComp.Uid, r.Period.StartTime.Value)))
+            )
 
             // Enumerate the list of occurrences (not the occurrences themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -212,13 +217,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             .OrderedDistinct()
 
             // Convert overflow exceptions to expected ones.
-            .HandleEvaluationExceptions()
-
-            // Remove the occurrence if it has been replaced by a different one.
-            .Where(r =>
-                (r.Source.RecurrenceId != null) ||
-                r.Source is not IUniqueComponent uniqueComp ||
-                !recurrenceIdsAndUids.ContainsKey((uniqueComp.Uid, r.Period.StartTime.Value)));
+            .HandleEvaluationExceptions();
 
         return occurrences;
     }
