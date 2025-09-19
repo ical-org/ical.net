@@ -3303,7 +3303,7 @@ END:VCALENDAR";
         Assert.That(occurrences.Last().StartTime.Equals(lastExpected), Is.True);
     }
 
-    [Test]
+    [Test, Category("RECURRENCE-ID")]
     public void EventWithZonedRecurrenceId_Should_ReplaceOriginalEvent_Occurrence()
     {
         // This test goes back to issue #120
@@ -4324,6 +4324,7 @@ END:VCALENDAR";
         Assert.That(cal.GetOccurrences(nextPeriodStart).First(), Is.EqualTo(firstFewOccurrences[2]));
     }
 
+    [Test, Category("RECURRENCE-ID")]
     [TestCase("20251103")] // Override with same DTSTART as original event
     [TestCase("20251111")] // Override with different DTSTART than original event
     [TestCase("20280806")] // Gets sorted correctly in the middle of occurrences
@@ -4331,6 +4332,7 @@ END:VCALENDAR";
     {
         var dtStart = DateTime.ParseExact(overrideDtStart, "yyyyMMdd", CultureInfo.InvariantCulture);
 
+        // Test case from https://github.com/ical-org/ical.net/issues/863 (shortened)
         var cal = Calendar.Load($"""
                                  BEGIN:VCALENDAR
                                  VERSION:2.0
@@ -4365,6 +4367,108 @@ END:VCALENDAR";
                 Is.EqualTo(new CalDateTime(dtStart.Year, dtStart.Month, dtStart.Day)));
             Assert.That(((CalendarEvent) overrideOcc.Source).Summary, Is.EqualTo("Override Event"));
             if (overrideOcc.Period.StartTime.Year == 2028) Assert.That(occurrences.IndexOf(overrideOcc), Is.EqualTo(2));
+        }
+    }
+
+    [Test, Category("RECURRENCE-ID")]
+    public void EventWithRecurrenceId_LatestInOrderOverride_ShouldBeTaken()
+    {
+        // The last override in sequence for the same RECURRENCE-ID
+        // within the calendar should be used as the effective occurrence.
+        // (No SEQUENCE property is set)
+        var cal = Calendar.Load("""
+                                BEGIN:VCALENDAR
+                                VERSION:2.0
+                                PRODID:-//Test//EN
+                                BEGIN:VEVENT
+                                DTSTART;VALUE=DATE:20251103
+                                DTEND;VALUE=DATE:20251124
+                                RRULE:FREQ=WEEKLY;WKST=MO;INTERVAL=48;BYDAY=MO;COUNT=4
+                                UID:test-uid@example.com
+                                SUMMARY:Master Event
+                                END:VEVENT
+                                BEGIN:VEVENT
+                                DTSTART;VALUE=DATE:20251104
+                                DTEND;VALUE=DATE:20251125
+                                RECURRENCE-ID;VALUE=DATE:20251103
+                                UID:test-uid@example.com
+                                SUMMARY:Override Event 1
+                                END:VEVENT
+                                BEGIN:VEVENT
+                                DTSTART;VALUE=DATE:20251105
+                                DTEND;VALUE=DATE:20251126
+                                RECURRENCE-ID;VALUE=DATE:20251103
+                                UID:test-uid@example.com
+                                SUMMARY:Override Event 2
+                                END:VEVENT
+                                END:VCALENDAR
+                                """)!;
+
+        var occurrences = cal
+            .GetOccurrences<CalendarEvent>().ToList();
+
+        var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceId == new CalDateTime(2025, 11, 3));
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(occurrences, Has.Count.EqualTo(4));
+            Assert.That(overrideOcc, Is.Not.Null);
+            Assert.That(overrideOcc!.Period.StartTime,
+                Is.EqualTo(new CalDateTime(2025, 11, 5)));
+            // The last override in the calendar is taken
+            Assert.That(((CalendarEvent) overrideOcc.Source).Summary, Is.EqualTo("Override Event 2"));
+        }
+    }
+
+    [Test, Category("RECURRENCE-ID")]
+    public void EventWithRecurrenceId_LatestSequence_ShouldBeTaken()
+    {
+        // The override with the highest SEQUENCE for the same RECURRENCE-ID
+        // within the calendar should be used as the effective occurrence.
+        // (SEQUENCE property is set)
+        var cal = Calendar.Load("""
+                                BEGIN:VCALENDAR
+                                VERSION:2.0
+                                PRODID:-//Test//EN
+                                BEGIN:VEVENT
+                                DTSTART;VALUE=DATE:20251103
+                                DTEND;VALUE=DATE:20251124
+                                RRULE:FREQ=WEEKLY;WKST=MO;INTERVAL=48;BYDAY=MO;COUNT=4
+                                UID:test-uid@example.com
+                                SUMMARY:Master Event
+                                END:VEVENT
+                                BEGIN:VEVENT
+                                DTSTART;VALUE=DATE:20251104
+                                DTEND;VALUE=DATE:20251125
+                                RECURRENCE-ID;VALUE=DATE:20251103
+                                UID:test-uid@example.com
+                                SUMMARY:Override Event 2
+                                SEQUENCE:2
+                                END:VEVENT
+                                BEGIN:VEVENT
+                                DTSTART;VALUE=DATE:20251105
+                                DTEND;VALUE=DATE:20251126
+                                RECURRENCE-ID;VALUE=DATE:20251103
+                                UID:test-uid@example.com
+                                SUMMARY:Override Event 1
+                                SEQUENCE:1
+                                END:VEVENT
+                                END:VCALENDAR
+                                """)!;
+
+        var occurrences = cal
+            .GetOccurrences<CalendarEvent>().ToList();
+
+        var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceId == new CalDateTime(2025, 11, 3));
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(occurrences, Has.Count.EqualTo(4));
+            Assert.That(overrideOcc, Is.Not.Null);
+            Assert.That(overrideOcc!.Period.StartTime,
+                Is.EqualTo(new CalDateTime(2025, 11, 4)));
+            // The override with the highest SEQUENCE is taken, even if it comes earlier in the calendar
+            Assert.That(((CalendarEvent) overrideOcc.Source).Summary, Is.EqualTo("Override Event 2"));
         }
     }
 
@@ -4452,57 +4556,57 @@ END:VCALENDAR";
     public void GetOccurrencesWithRecurrenceIdShouldEnumerate()
     {
         const string ical = """
-                                BEGIN:VCALENDAR
-                                PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
-                                VERSION:2.0
-                                BEGIN:VTIMEZONE
-                                TZID:W. Europe Standard Time
-                                BEGIN:STANDARD
-                                DTSTART:16010101T030000
-                                RRULE:FREQ=YEARLY;BYDAY=SU;BYMONTH=10;BYSETPOS=-1
-                                TZNAME:Mitteleuropäische Zeit
-                                TZOFFSETFROM:+0200
-                                TZOFFSETTO:+0100
-                                END:STANDARD
-                                BEGIN:DAYLIGHT
-                                DTSTART:00010101T020000
-                                RRULE:FREQ=YEARLY;BYDAY=SU;BYMONTH=3;BYSETPOS=-1
-                                TZNAME:Mitteleuropäische Sommerzeit
-                                TZOFFSETFROM:+0100
-                                TZOFFSETTO:+0200
-                                END:DAYLIGHT
-                                END:VTIMEZONE
-                                BEGIN:VEVENT
-                                BACKGROUND:BUSY
-                                DESCRIPTION:Backup Daten
-                                DTSTART;TZID=W. Europe Standard Time:20150305T000100
-                                DTEND;TZID=W. Europe Standard Time:20150305T043000
-                                DTSTAMP:20161122T120652Z
-                                RESOURCES:server
-                                RRULE:FREQ=WEEKLY;BYDAY=MO;BYHOUR=0,12
-                                SUMMARY:Server
-                                UID:a30ed847-8000-4c53-9e58-99c8f9cf7c4b
-                                X-LIGHTSOUT-ACTION:START=WakeUp\;END=Reboot\,Force
-                                X-LIGHTSOUT-MODE:TimeSpan
-                                X-MICROSOFT-CDO-BUSYSTATUS:BUSY
-                                END:VEVENT
-                                BEGIN:VEVENT
-                                BACKGROUND:BUSY
-                                DESCRIPTION:Backup Daten
-                                DTSTART;TZID=W. Europe Standard Time:20161128T043000
-                                DTEND;TZID=W. Europe Standard Time:20161128T150100
-                                DTSTAMP:20161122T120652Z
-                                RECURRENCE-ID:20161128T000100
-                                RESOURCES:server
-                                SEQUENCE:0
-                                SUMMARY:Server
-                                UID:a30ed847-8000-4c53-9e58-99c8f9cf7c4b
-                                X-LIGHTSOUT-ACTION:START=WakeUp\;END=Reboot\,Force
-                                X-LIGHTSOUT-MODE:TimeSpan
-                                X-MICROSOFT-CDO-BUSYSTATUS:BUSY
-                                END:VEVENT
-                                END:VCALENDAR
-                                """;
+                            BEGIN:VCALENDAR
+                            PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+                            VERSION:2.0
+                            BEGIN:VTIMEZONE
+                            TZID:W. Europe Standard Time
+                            BEGIN:STANDARD
+                            DTSTART:16010101T030000
+                            RRULE:FREQ=YEARLY;BYDAY=SU;BYMONTH=10;BYSETPOS=-1
+                            TZNAME:Mitteleuropäische Zeit
+                            TZOFFSETFROM:+0200
+                            TZOFFSETTO:+0100
+                            END:STANDARD
+                            BEGIN:DAYLIGHT
+                            DTSTART:00010101T020000
+                            RRULE:FREQ=YEARLY;BYDAY=SU;BYMONTH=3;BYSETPOS=-1
+                            TZNAME:Mitteleuropäische Sommerzeit
+                            TZOFFSETFROM:+0100
+                            TZOFFSETTO:+0200
+                            END:DAYLIGHT
+                            END:VTIMEZONE
+                            BEGIN:VEVENT
+                            BACKGROUND:BUSY
+                            DESCRIPTION:Backup Daten
+                            DTSTART;TZID=W. Europe Standard Time:20150305T000100
+                            DTEND;TZID=W. Europe Standard Time:20150305T043000
+                            DTSTAMP:20161122T120652Z
+                            RESOURCES:server
+                            RRULE:FREQ=WEEKLY;BYDAY=MO;BYHOUR=0,12
+                            SUMMARY:Server
+                            UID:a30ed847-8000-4c53-9e58-99c8f9cf7c4b
+                            X-LIGHTSOUT-ACTION:START=WakeUp\;END=Reboot\,Force
+                            X-LIGHTSOUT-MODE:TimeSpan
+                            X-MICROSOFT-CDO-BUSYSTATUS:BUSY
+                            END:VEVENT
+                            BEGIN:VEVENT
+                            BACKGROUND:BUSY
+                            DESCRIPTION:Backup Daten
+                            DTSTART;TZID=W. Europe Standard Time:20161128T043000
+                            DTEND;TZID=W. Europe Standard Time:20161128T150100
+                            DTSTAMP:20161122T120652Z
+                            RECURRENCE-ID:20161128T000100
+                            RESOURCES:server
+                            SEQUENCE:0
+                            SUMMARY:Server
+                            UID:a30ed847-8000-4c53-9e58-99c8f9cf7c4b
+                            X-LIGHTSOUT-ACTION:START=WakeUp\;END=Reboot\,Force
+                            X-LIGHTSOUT-MODE:TimeSpan
+                            X-MICROSOFT-CDO-BUSYSTATUS:BUSY
+                            END:VEVENT
+                            END:VCALENDAR
+                            """;
 
         var collection = Calendar.Load(ical)!;
         var startCheck = new CalDateTime(2016, 11, 11);
@@ -4512,13 +4616,13 @@ END:VCALENDAR";
         CalDateTime[] expectedStartDates =
         [
             new CalDateTime("20161114T000100", "W. Europe Standard Time"),
-                new CalDateTime("20161114T120100", "W. Europe Standard Time"),
-                new CalDateTime("20161121T000100", "W. Europe Standard Time"),
-                new CalDateTime("20161121T120100", "W. Europe Standard Time"),
-                new CalDateTime("20161128T043000", "W. Europe Standard Time"), // The replaced entry
-                new CalDateTime("20161128T120100", "W. Europe Standard Time"),
-                new CalDateTime("20161205T000100", "W. Europe Standard Time"),
-                new CalDateTime("20161205T120100", "W. Europe Standard Time")
+            new CalDateTime("20161114T120100", "W. Europe Standard Time"),
+            new CalDateTime("20161121T000100", "W. Europe Standard Time"),
+            new CalDateTime("20161121T120100", "W. Europe Standard Time"),
+            new CalDateTime("20161128T043000", "W. Europe Standard Time"), // The replaced entry
+            new CalDateTime("20161128T120100", "W. Europe Standard Time"),
+            new CalDateTime("20161205T000100", "W. Europe Standard Time"),
+            new CalDateTime("20161205T120100", "W. Europe Standard Time")
         ];
 
         // Specify end time that is between the original occurrence at 20161128T0001 and the overridden one at 20161128T0030.
@@ -4541,25 +4645,25 @@ END:VCALENDAR";
     public void GetOccurrencesWithRecurrenceId_DateOnly_ShouldEnumerate()
     {
         const string ical = """
-                                BEGIN:VCALENDAR
-                                PRODID:-//github.com/ical-org/ical.net//NONSGML ical.net 5.0//EN
-                                VERSION:2.0
-                                BEGIN:VEVENT
-                                UID:789012
-                                DTSTART;VALUE=DATE:20231001
-                                DTEND;VALUE=DATE:20231002
-                                RRULE:FREQ=MONTHLY;BYMONTHDAY=1
-                                SUMMARY:Monthly Report Due
-                                END:VEVENT
-                                BEGIN:VEVENT
-                                UID:789012
-                                RECURRENCE-ID;VALUE=DATE:20231101
-                                DTSTART;VALUE=DATE:20231115
-                                DTEND;VALUE=DATE:20231116
-                                SUMMARY:Monthly Report Due (Rescheduled)
-                                END:VEVENT
-                                END:VCALENDAR
-                                """;
+                            BEGIN:VCALENDAR
+                            PRODID:-//github.com/ical-org/ical.net//NONSGML ical.net 5.0//EN
+                            VERSION:2.0
+                            BEGIN:VEVENT
+                            UID:789012
+                            DTSTART;VALUE=DATE:20231001
+                            DTEND;VALUE=DATE:20231002
+                            RRULE:FREQ=MONTHLY;BYMONTHDAY=1
+                            SUMMARY:Monthly Report Due
+                            END:VEVENT
+                            BEGIN:VEVENT
+                            UID:789012
+                            RECURRENCE-ID;VALUE=DATE:20231101
+                            DTSTART;VALUE=DATE:20231115
+                            DTEND;VALUE=DATE:20231116
+                            SUMMARY:Monthly Report Due (Rescheduled)
+                            END:VEVENT
+                            END:VCALENDAR
+                            """;
 
         var collection = Calendar.Load(ical)!;
         var startCheck = new CalDateTime(2023, 10, 1);
@@ -4592,19 +4696,112 @@ END:VCALENDAR";
     public void CalendarCollection_GetOccurrences_ShouldEnumerateAndMerge()
     {
         var cal1 = new Calendar();
-        cal1.Events.Add(new CalendarEvent { DtStart = new CalDateTime(2025, 1, 1), DtEnd = new CalDateTime(2025, 1, 2) });
+        cal1.Events.Add(
+            new CalendarEvent { DtStart = new CalDateTime(2025, 1, 1), DtEnd = new CalDateTime(2025, 1, 2) });
 
         var cal2 = new Calendar();
-        cal2.Events.Add(new CalendarEvent { DtStart = new CalDateTime(2025, 2, 1), DtEnd = new CalDateTime(2025, 2, 2) });
+        cal2.Events.Add(
+            new CalendarEvent { DtStart = new CalDateTime(2025, 2, 1), DtEnd = new CalDateTime(2025, 2, 2) });
 
         var collection = new CalendarCollection { cal1, cal2 };
 
-        // This will exercise Select, ToArray, OrderedMergeMany
+        // Runs OrderedMergeMany
         var occurrences = collection.GetOccurrences().ToList();
         Assert.That(occurrences.Count, Is.EqualTo(2));
 
-        // This will exercise the generic overload
+        // Generic overload
         var occurrencesTyped = collection.GetOccurrences<CalendarEvent>().ToList();
         Assert.That(occurrencesTyped.Count, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void GetOccurrences_ShouldPreserveDuplicatesAcrossComponents()
+    {
+        // Two distinct events (different UIDs) with identical start times.
+        // Duplicates are preserved across components because Occurrence equality
+        // includes the Source (component), not just the Period/StartTime.
+        var ical = """
+                   BEGIN:VCALENDAR
+                   VERSION:2.0
+                   BEGIN:VEVENT
+                   UID:a
+                   DTSTART:20250101T100000Z
+                   DURATION:PT1H
+                   RRULE:FREQ=DAILY;COUNT=3
+                   END:VEVENT
+                   BEGIN:VEVENT
+                   UID:b
+                   DTSTART:20250101T100000Z
+                   DURATION:PT1H
+                   RRULE:FREQ=DAILY;COUNT=3
+                   END:VEVENT
+                   END:VCALENDAR
+                   """;
+
+        var cal = Calendar.Load(ical)!;
+        var from = new CalDateTime(2025, 01, 01, 0, 0, 0, CalDateTime.UtcTzId);
+        var to = new CalDateTime(2025, 01, 04, 0, 0, 0, CalDateTime.UtcTzId);
+
+        var occurrences = cal.GetOccurrences(from).TakeWhileBefore(to).ToList();
+
+        // Merged order for equal StartTime is stable: A(day1), B(day1), A(day2), B(day2), A(day3), B(day3)
+        var expected = new[]
+        {
+            new CalDateTime(2025, 01, 01, 10, 0, 0, CalDateTime.UtcTzId),
+            new CalDateTime(2025, 01, 01, 10, 0, 0, CalDateTime.UtcTzId),
+            new CalDateTime(2025, 01, 02, 10, 0, 0, CalDateTime.UtcTzId),
+            new CalDateTime(2025, 01, 02, 10, 0, 0, CalDateTime.UtcTzId),
+            new CalDateTime(2025, 01, 03, 10, 0, 0, CalDateTime.UtcTzId),
+            new CalDateTime(2025, 01, 03, 10, 0, 0, CalDateTime.UtcTzId),
+        };
+
+        Assert.That(occurrences.Select(o => o.Period.StartTime).ToArray(), Is.EqualTo(expected));
+    }
+
+    [Test, Category("RECURRENCE-ID")]
+    public void GetOccurrences_WithMultipleOverridesForSameRecurrenceId_ShouldUseLatest_And_FilterOthers()
+    {
+        var ical = """
+                   BEGIN:VCALENDAR
+                   VERSION:2.0
+                   BEGIN:VEVENT
+                   UID:uid-1
+                   DTSTART:20250101T100000Z
+                   DURATION:PT1H
+                   RRULE:FREQ=DAILY;COUNT=3
+                   SUMMARY:Master
+                   END:VEVENT
+                   BEGIN:VEVENT
+                   UID:uid-1
+                   RECURRENCE-ID:20250102T100000Z
+                   DTSTART:20250102T110000Z
+                   DURATION:PT1H
+                   SUMMARY:Override older
+                   END:VEVENT
+                   BEGIN:VEVENT
+                   UID:uid-1
+                   RECURRENCE-ID:20250102T100000Z
+                   DTSTART:20250102T120000Z
+                   DURATION:PT1H
+                   SUMMARY:Override newer
+                   END:VEVENT
+                   END:VCALENDAR
+                   """;
+
+        var cal = Calendar.Load(ical)!;
+        var from = new CalDateTime(2025, 01, 01, 0, 0, 0, CalDateTime.UtcTzId);
+        var to = new CalDateTime(2025, 01, 04, 0, 0, 0, CalDateTime.UtcTzId);
+
+        var occurrences = cal.GetOccurrences(from).TakeWhileBefore(to).ToList();
+
+        // Expected: day 1 (base), day 2 (latest override at 12:00), day 3 (base)
+        var expected = new[]
+        {
+            new CalDateTime(2025, 01, 01, 10, 0, 0, CalDateTime.UtcTzId),
+            new CalDateTime(2025, 01, 02, 12, 0, 0, CalDateTime.UtcTzId),
+            new CalDateTime(2025, 01, 03, 10, 0, 0, CalDateTime.UtcTzId),
+        };
+
+        Assert.That(occurrences.Select(o => o.Period.StartTime).ToArray(), Is.EqualTo(expected));
     }
 }

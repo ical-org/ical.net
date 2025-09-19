@@ -186,14 +186,8 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <inheritdoc/>
     public virtual IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
     {
-        // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
-        var recurrenceIdsAndUids = Children.OfType<IRecurrable>()
-            .Where(r => r.RecurrenceId != null)
-            // Create a value tuple instead of an anonymous type, because
-            // anonymous types don't work well as dictionary keys due to equality semantics.
-            .Select(r => ((r as IUniqueComponent)?.Uid, r.RecurrenceId!.Value))
-            .Where(x => x.Uid != null)
-            .ToDictionary(x => x);
+        // Get UID/RECURRENCE-ID combinations that replace occurrences
+        var recurrenceIdsAndUids = GetRecurrenceIdsAndUids(Children);
 
         var occurrences = RecurringItems
             .OfType<T>()
@@ -201,11 +195,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
                 // Exclude occurrences that are overridden by other components with the same UID and RECURRENCE-ID.
                 // This must happen before .OrderedDistinct() because that method would remove duplicates
                 // based on the occurrence time, and we need to remove them based on UID + RECURRENCE-ID.
-                .Where(r =>
-                    r.Source.RecurrenceId != null ||
-                    r.Source is not IUniqueComponent uniqueComp ||
-                    !recurrenceIdsAndUids.ContainsKey((uniqueComp.Uid, r.Period.StartTime.Value)))
-            )
+                .Where(r => IsUnmodifiedOccurrence(r, recurrenceIdsAndUids)))
 
             // Enumerate the list of occurrences (not the occurrences themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -224,6 +214,59 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             .HandleEvaluationExceptions();
 
         return occurrences;
+    }
+
+    /// <summary>
+    /// Gets the UID/RECURRENCE-ID combinations that replace other occurrences:
+    /// Build a dictionary of overridden recurring components by their UID and RecurrenceId.
+    /// <para/>
+    /// This is used to identify the *latest* modification for each recurring instance.
+    /// </summary>
+    private static Dictionary<(string? Uid, DateTime RecurrenceId), IUniqueComponent> GetRecurrenceIdsAndUids(IEnumerable<ICalendarObject> children)
+    {
+        return children.OfType<IRecurrable>()
+            .Where(r => r.RecurrenceId != null)
+            .Select(r => (Component: r as IUniqueComponent, Uid: (r as IUniqueComponent)?.Uid, RecurrenceId: r.RecurrenceId!.Value))
+            .Where(x => x is { Uid: not null, Component: not null })
+            // Assure we have only one component per (UID, RECURRENCE-ID) pair
+            .GroupBy(x => (x.Uid, x.RecurrenceId))
+            // Get the last modified component for each (UID, RECURRENCE-ID) pair
+            .Select(g =>
+            {
+                // Try to get the maximum SEQUENCE if present, otherwise fallback to Last()
+                var maxSeqItem = g
+                    .Where(x => x.Component is CalendarEvent { Sequence: > 0 })
+                    .OrderByDescending(x => ((CalendarEvent) x.Component!).Sequence)
+                    .FirstOrDefault();
+
+                return maxSeqItem.Component != null ? maxSeqItem : g.Last();
+            })
+            .ToDictionary(x => (x.Uid, x.RecurrenceId), x => x.Component!);
+    }
+
+    /// <summary>
+    /// Checks if an occurrence has not been replaced/overridden by a more
+    /// recent modification (based on UID and RecurrenceId).
+    /// </summary>
+    private static bool IsUnmodifiedOccurrence(Occurrence r, Dictionary<(string? Uid, DateTime RecurrenceId), IUniqueComponent> recurrenceIdsAndUids)
+    {
+        return r.Source switch
+        {
+            // If the occurrence is a modified instance (has RecurrenceId and Uid)
+            // and the source is the last modified instance for this RecurrenceId/Uid,
+            IUniqueComponent { Uid: not null } uc when r.Source.RecurrenceId != null =>
+                recurrenceIdsAndUids.TryGetValue((uc.Uid, r.Source.RecurrenceId.Value),
+                    out var lastComponent) && ReferenceEquals(lastComponent, r.Source),
+
+            // If not a modified occurrence, keep if:
+            // - It is not a unique component, or
+            // - There is no replacement for this UID/StartTime in recurrenceIdsAndUids
+            IUniqueComponent uc =>
+                !recurrenceIdsAndUids.ContainsKey((uc.Uid, r.Period.StartTime.Value)),
+
+            // If not a unique component, always keep
+            _ => true
+        };
     }
 
     /// <summary>
