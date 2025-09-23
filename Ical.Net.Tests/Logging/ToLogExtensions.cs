@@ -31,24 +31,28 @@ internal static class ToLogExtensions
     public static string ToLog(this IEnumerable<Occurrence>? occurrences)
     {
         var sb = new StringBuilder();
-        if (occurrences == null || !occurrences.Any())
+        var occurrenceList = occurrences?.ToList();
+        if (occurrenceList == null || occurrenceList.Count == 0)
         {
             return "No occurrences found.";
         }
 
-        sb.AppendLine("Occurrences:");
+        sb.Append(occurrenceList.Count).AppendLine(" occurrences:");
 
-        foreach (var occurrence in occurrences)
+        foreach (var occurrence in occurrenceList)
         {
             sb.AppendLine(occurrence.ToLog());
         }
 
-        return sb.ToString();
+        return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
     }
 
     public static string ToLog(this Occurrence occurrence)
     {
-        var o = occurrence;
-        return $"Start: {o.Period.StartTime} Period: {o.Period.Duration?.ToString() ?? "null"} End: {o.Period.EffectiveEndTime ?? o.Period.StartTime.Add(o.Period.Duration!.Value)}";
+        return $"""
+                Start: {occurrence.Period.StartTime}
+                  Period: {occurrence.Period.Duration?.ToString() ?? "null"}
+                  End: {occurrence.Period.EffectiveEndTime ?? occurrence.Period.StartTime.Add(occurrence.Period.Duration!.Value)}
+                """;
     }
 }
