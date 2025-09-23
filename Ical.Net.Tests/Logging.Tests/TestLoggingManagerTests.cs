@@ -85,14 +85,7 @@ internal class TestLoggingManagerTests
         var logs = mgr.Logs.ToList();
         /*
            2025-07-31 11:00:53.7022|TRACE|Occurrences|Occurrences:
-           Start: 01/05/2025 08:30:00 -05:00 US-Eastern Period: PT1H End: 01/05/2025 09:30:00 -05:00 US-Eastern
-           Start: 01/05/2025 09:30:00 -05:00 US-Eastern Period: PT1H End: 01/05/2025 10:30:00 -05:00 US-Eastern
-           Start: 01/12/2025 08:30:00 -05:00 US-Eastern Period: PT1H End: 01/12/2025 09:30:00 -05:00 US-Eastern
-           Start: 01/12/2025 09:30:00 -05:00 US-Eastern Period: PT1H End: 01/12/2025 10:30:00 -05:00 US-Eastern
-           Start: 01/19/2025 08:30:00 -05:00 US-Eastern Period: PT1H End: 01/19/2025 09:30:00 -05:00 US-Eastern
-           Start: 01/19/2025 09:30:00 -05:00 US-Eastern Period: PT1H End: 01/19/2025 10:30:00 -05:00 US-Eastern
-           Start: 01/26/2025 08:30:00 -05:00 US-Eastern Period: PT1H End: 01/26/2025 09:30:00 -05:00 US-Eastern
-           Start: 01/26/2025 09:30:00 -05:00 US-Eastern Period: PT1H End: 01/26/2025 10:30:00 -05:00 US-Eastern
+           ...
          */
         Assert.That(logs, Has.Count.EqualTo(1));
         Assert.That(logs[0], Does.Contain("Occurrences"));
