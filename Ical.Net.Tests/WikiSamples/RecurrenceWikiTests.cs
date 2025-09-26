@@ -594,6 +594,58 @@ internal class RecurrenceWikiTests
     }
 
     [Test]
+    public void GetFirstOccurrenceOfAllCalendarEvents()
+    {
+        // Wiki code start
+
+        var calendar = new Calendar();
+        var start = new CalDateTime(2025, 9, 1, 10, 0, 0, CalDateTime.UtcTzId);
+
+        // Event that recurs daily
+        calendar.Events.Add(new CalendarEvent
+        {
+            Summary = "Daily event",
+            Start = start,
+            End = start.AddHours(1),
+            RecurrenceRules = [new RecurrencePattern(FrequencyType.Daily, interval: 1)]
+        });
+
+        // Simple event in far future
+        calendar.Events.Add(new CalendarEvent
+        {
+            Summary = "Far future event",
+            Start = start.AddYears(10),
+            End = start.AddYears(10).AddHours(1)
+        });
+        
+        var occurrences =
+            calendar.Events
+                .SelectMany(ev => ev.GetOccurrences().Take(1))
+                .ToArray();
+
+        // Wiki code end
+
+        // Occurrences
+        const string expectedOccurrences =
+            """
+            2 occurrences:
+            Start: 09/01/2025 10:00:00 +00:00 UTC
+              Period: PT1H
+              End: 09/01/2025 11:00:00 +00:00 UTC
+            Start: 09/01/2035 10:00:00 +00:00 UTC
+              Period: PT1H
+              End: 09/01/2035 11:00:00 +00:00 UTC
+            """;
+
+        // Non-Wiki Asserts
+
+        var generatedOccurrences = ToWikiPeriodString(occurrences);
+        Assert.That(generatedOccurrences, Is.EqualTo(expectedOccurrences));
+
+        _logger.LogDebug(expectedOccurrences);
+    }
+
+    [Test]
     public void MoreRecurrenceRuleExamples()
     {
         // Every other Tuesday until the end of the year
