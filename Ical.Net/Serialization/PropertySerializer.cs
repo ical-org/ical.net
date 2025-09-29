@@ -89,7 +89,7 @@ public class PropertySerializer : SerializerBase
 
         // Get the list of parameters we'll be serializing
         var parameterList =
-            (IList<CalendarParameter>?)(value as ICalendarDataType)?.Parameters
+            (IList<CalendarParameter>?)(value as ICalendarParameterCollectionContainer)?.Parameters
             ?? (valueSerializer as IParameterProvider)?.GetParameters(value).ToList()
             ?? (IList<CalendarParameter>)prop.Parameters;
 

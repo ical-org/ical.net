@@ -47,7 +47,7 @@ internal class DataTypeMapper
         AddPropertyMapping("PERCENT-COMPLETE", typeof(int), false);
         AddPropertyMapping("PRIORITY", typeof(int), false);
         AddPropertyMapping("RDATE", typeof(PeriodList), false);
-        AddPropertyMapping("RECURRENCE-ID", typeof(CalDateTime), false);
+        AddPropertyMapping("RECURRENCE-ID", typeof(RecurrenceId), false);
         AddPropertyMapping("RELATED-TO", typeof(string), false);
         AddPropertyMapping("REQUEST-STATUS", typeof(RequestStatus), false);
         AddPropertyMapping("REPEAT", typeof(int), false);

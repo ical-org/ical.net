@@ -23,9 +23,6 @@ public class SerializerFactory : ISerializerFactory
     /// <summary>
     /// Returns a serializer that can be used to serialize and object
     /// of type <paramref name="objectType"/>.
-    /// <note>
-    ///     TODO: Add support for caching.
-    /// </note>
     /// </summary>
     /// <param name="objectType">The type of object to be serialized.</param>
     /// <param name="ctx">The serialization context.</param>
@@ -35,61 +32,59 @@ public class SerializerFactory : ISerializerFactory
         {
             return null;
         }
-        ISerializer s;
-
         if (typeof(Calendar).IsAssignableFrom(objectType))
         {
-            s = new CalendarSerializer(ctx);
+            return new CalendarSerializer(ctx);
         }
-        else if (typeof(ICalendarComponent).IsAssignableFrom(objectType))
+        if (typeof(ICalendarComponent).IsAssignableFrom(objectType))
         {
-            s = typeof(CalendarEvent).IsAssignableFrom(objectType)
+            return typeof(CalendarEvent).IsAssignableFrom(objectType)
                 ? new EventSerializer(ctx)
                 : new ComponentSerializer(ctx);
         }
-        else if (typeof(ICalendarProperty).IsAssignableFrom(objectType))
+        if (typeof(ICalendarProperty).IsAssignableFrom(objectType))
         {
-            s = new PropertySerializer(ctx);
+            return new PropertySerializer(ctx);
         }
-        else if (typeof(CalendarParameter).IsAssignableFrom(objectType))
+        if (typeof(CalendarParameter).IsAssignableFrom(objectType))
         {
-            s = new ParameterSerializer(ctx);
+            return new ParameterSerializer(ctx);
         }
-        else if (typeof(string).IsAssignableFrom(objectType))
+        if (typeof(string).IsAssignableFrom(objectType))
         {
-            s = new StringSerializer(ctx);
+            return new StringSerializer(ctx);
         }
-        else if (objectType.GetTypeInfo().IsEnum)
+        if (objectType.GetTypeInfo().IsEnum)
         {
-            s = new EnumSerializer(objectType, ctx);
+            return new EnumSerializer(objectType, ctx);
         }
-        else if (typeof(Duration).IsAssignableFrom(objectType))
+        if (typeof(Duration).IsAssignableFrom(objectType))
         {
-            s = new DurationSerializer(ctx);
+            return new DurationSerializer(ctx);
         }
-        else if (typeof(CalDateTime).IsAssignableFrom(objectType))
+        if (typeof(CalDateTime).IsAssignableFrom(objectType))
         {
-            s = new DateTimeSerializer(ctx);
+            return new DateTimeSerializer(ctx);
         }
-        else if (typeof(int).IsAssignableFrom(objectType))
+        if (typeof(int).IsAssignableFrom(objectType))
         {
-            s = new IntegerSerializer(ctx);
+            return new IntegerSerializer(ctx);
         }
-        else if (typeof(Uri).IsAssignableFrom(objectType))
+        if (typeof(Uri).IsAssignableFrom(objectType))
         {
-            s = new UriSerializer(ctx);
+            return new UriSerializer(ctx);
         }
-        else if (typeof(ICalendarDataType).IsAssignableFrom(objectType))
+        if (typeof(RecurrenceId).IsAssignableFrom(objectType))
         {
-            s = _mDataTypeSerializerFactory.Build(objectType, ctx)!;
+            return new RecurrenceIdSerializer(ctx);
         }
-        // Default to a string serializer, which simply calls
-        // ToString() on the value to serialize it.
-        else
+        if (typeof(ICalendarDataType).IsAssignableFrom(objectType))
         {
-            s = new StringSerializer(ctx);
+            return _mDataTypeSerializerFactory.Build(objectType, ctx)!;
         }
 
-        return s;
+        // Default to a string serializer, which simply calls
+        // ToString() on the value to serialize it.
+        return new StringSerializer(ctx);
     }
 }

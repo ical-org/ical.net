@@ -10,7 +10,6 @@ using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Proxies;
-using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -113,9 +112,30 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("RRULE", value);
     }
 
+    /// <summary>
+    /// Gets or sets the recurrence identifier for a specific instance of a recurring event.
+    /// </summary>
+    /// <remarks>Use <see cref="RecurrenceInstance"/> instead, which
+    /// supports the RANGE parameter for recurring events.</remarks>
+    [Obsolete("Use RecurrenceInstance instead, which supports the RANGE parameter.")]
     public virtual CalDateTime? RecurrenceId
     {
-        get => Properties.Get<CalDateTime>("RECURRENCE-ID");
+        get => RecurrenceInstance?.Range == RecurrenceRange.ThisInstance ? RecurrenceInstance.StartTime : null;
+        set => RecurrenceInstance = value is null ? null : new RecurrenceId(value, RecurrenceRange.ThisInstance);
+    }
+
+    /// <summary>
+    /// Gets or sets the recurrence identifier for a specific instance of a recurring event.
+    /// <para/>
+    /// The <see cref="RecurrenceId.Range"/> sets the scope of the recurrence instance:
+    /// With <see cref="RecurrenceRange.ThisInstance"/>, the instance is limited to the specific
+    /// occurrence identified by the <see cref="RecurrenceId.StartTime"/>.<br/>
+    /// With <see cref="RecurrenceRange.ThisAndFuture"/>, the instance applies to the specified
+    /// <see cref="RecurrenceId.StartTime"/> and all future occurrences.
+    /// </summary>
+    public virtual RecurrenceId? RecurrenceInstance
+    {
+        get => Properties.Get<RecurrenceId>("RECURRENCE-ID");
         set => Properties.Set("RECURRENCE-ID", value);
     }
 
