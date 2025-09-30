@@ -4,6 +4,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Ical.Net.DataTypes;
 using Ical.Net.Logging;
@@ -12,49 +13,47 @@ using Ical.Net.Utility;
 namespace Ical.Net.Serialization.DataTypes;
 
 /// <summary>
-/// Provides serialization and deserialization functionality for <see cref="RecurrenceId"/> objects.
+/// Provides serialization and deserialization functionality for <see cref="RecurrenceIdentifier"/> objects.
 /// </summary>
-public class RecurrenceIdSerializer : SerializerBase
+public class RecurrenceIdentifierSerializer : SerializerBase, IParameterProvider
 {
-    private const string ThisAndFuture = "THISANDFUTURE";
     private readonly ILogger _logger;
 
     /// <summary>
     /// This constructor is required for the SerializerFactory to work.
     /// </summary>
-    public RecurrenceIdSerializer()
+    public RecurrenceIdentifierSerializer()
     {
-        _logger = LoggingProvider.CreateLogger<RecurrenceIdSerializer>();
+        _logger = LoggingProvider.CreateLogger<RecurrenceIdentifierSerializer>();
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="DateTimeSerializer"/> class.
     /// </summary>
     /// <param name="ctx"></param>
-    public RecurrenceIdSerializer(SerializationContext ctx) : base(ctx)
+    public RecurrenceIdentifierSerializer(SerializationContext ctx) : base(ctx)
     {
-        _logger = LoggingProvider.CreateLogger<RecurrenceIdSerializer>();
+        _logger = LoggingProvider.CreateLogger<RecurrenceIdentifierSerializer>();
     }
 
-    public override Type TargetType => typeof(RecurrenceId);
+    public override Type TargetType => typeof(RecurrenceIdentifier);
 
     public override string? SerializeToString(object? obj)
     {
-        if (obj is not RecurrenceId recurrenceId)
+        if (obj is not RecurrenceIdentifier rid)
         {
             return null;
         }
-        
-        var factory = GetService<ISerializerFactory>();
-        var dtSerializer = factory.Build(typeof(CalDateTime), SerializationContext) as DateTimeSerializer;
 
-        recurrenceId.Parameters.AddRange(dtSerializer!.GetParameters(recurrenceId.StartTime));
-        if (recurrenceId.Range == RecurrenceRange.ThisAndFuture)
+        if (!Enum.IsDefined(typeof(RecurrenceRange), rid.Range))
         {
-            recurrenceId.Parameters.Add(new CalendarParameter("RANGE", ThisAndFuture));
+            _logger.LogWarning("Ignored invalid RANGE parameter '{Range}' for RECURRENCE-ID", rid.Range);
         }
 
-        return dtSerializer.SerializeToString(recurrenceId.StartTime);
+        var factory = GetService<ISerializerFactory>();
+        var dtSerializer = factory.Build(typeof(CalDateTime), SerializationContext) as DateTimeSerializer;
+        
+        return dtSerializer!.SerializeToString(rid.StartTime);
     }
 
     public override object? Deserialize(TextReader tr)
@@ -74,7 +73,7 @@ public class RecurrenceIdSerializer : SerializerBase
             case "":
                 recurrenceRange = RecurrenceRange.ThisInstance;
                 break;
-            case ThisAndFuture:
+            case "THISANDFUTURE":
                 recurrenceRange = RecurrenceRange.ThisAndFuture;
                 break;
             default:
@@ -86,10 +85,12 @@ public class RecurrenceIdSerializer : SerializerBase
         var factory = GetService<ISerializerFactory>();
 
         var dtSerializer = factory.Build(typeof(CalDateTime), SerializationContext) as IStringSerializer;
-        var start = dtSerializer?.Deserialize(new StringReader(value)) as CalDateTime;
 
-        return start is null
+        return dtSerializer!.Deserialize(new StringReader(value)) is not CalDateTime start
             ? null
-            : new RecurrenceId(start, recurrenceRange);
+            : new RecurrenceIdentifier(start, recurrenceRange);
     }
+
+    public IReadOnlyList<CalendarParameter> GetParameters(object? value)
+        => ParameterProviderHelper.GetRecurrenceIdentifierParameters(value);
 }

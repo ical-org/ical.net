@@ -8,5 +8,5 @@ using System.Collections.Generic;
 namespace Ical.Net.Serialization;
 internal interface IParameterProvider
 {
-    IReadOnlyList<CalendarParameter> GetParameters(object value);
+    IReadOnlyList<CalendarParameter> GetParameters(object? value);
 }

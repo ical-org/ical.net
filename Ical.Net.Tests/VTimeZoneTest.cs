@@ -274,7 +274,7 @@ public class VTimeZoneTest
         var iCal = CreateTestCalendar("America/Detroit");
 
         var tzInfo1 = iCal.TimeZones.First().TimeZoneInfos.First();
-        tzInfo1.RecurrenceInstance = new RecurrenceId(dt);
+        tzInfo1.RecurrenceIdentifier = new RecurrenceIdentifier(dt);
 
         iCal = CreateTestCalendar("America/Detroit");
         var tzInfo2 = iCal.TimeZones.First().TimeZoneInfos.First();
@@ -282,22 +282,22 @@ public class VTimeZoneTest
 
         iCal = CreateTestCalendar("America/Detroit");
         var tzInfo3 = iCal.TimeZones.First().TimeZoneInfos.First();
-        tzInfo3.RecurrenceInstance = new RecurrenceId(dt, RecurrenceRange.ThisAndFuture);
+        tzInfo3.RecurrenceIdentifier = new RecurrenceIdentifier(dt, RecurrenceRange.ThisAndFuture);
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(tzInfo1.RecurrenceId, Is.EqualTo(tzInfo1.RecurrenceInstance.StartTime));
-            Assert.That(tzInfo1.RecurrenceInstance.Range, Is.EqualTo(tzInfo1.RecurrenceInstance!.Range));
+            Assert.That(tzInfo1.RecurrenceId, Is.EqualTo(tzInfo1.RecurrenceIdentifier.StartTime));
+            Assert.That(tzInfo1.RecurrenceIdentifier.Range, Is.EqualTo(RecurrenceRange.ThisInstance));
 
             Assert.That(tzInfo1.TzId, Is.EqualTo("America/Detroit"));
 
-            Assert.That(tzInfo2.RecurrenceInstance!.StartTime, Is.EqualTo(dt.AddDays(1)));
+            Assert.That(tzInfo2.RecurrenceIdentifier!.StartTime, Is.EqualTo(dt.AddDays(1)));
             Assert.That(tzInfo2.RecurrenceId, Is.EqualTo(dt.AddDays(1)));
-            Assert.That(tzInfo2.RecurrenceInstance.Range, Is.EqualTo(RecurrenceRange.ThisInstance));
+            Assert.That(tzInfo2.RecurrenceIdentifier.Range, Is.EqualTo(RecurrenceRange.ThisInstance));
 
             // RecurrenceId only supports ThisInstance implicitly,
             // so RecurrenceInstance with ThisAndFuture returns null
-            Assert.That(tzInfo3.RecurrenceInstance.Range, Is.EqualTo(RecurrenceRange.ThisAndFuture));
+            Assert.That(tzInfo3.RecurrenceIdentifier.Range, Is.EqualTo(RecurrenceRange.ThisAndFuture));
             Assert.That(tzInfo3.RecurrenceId, Is.Null);
         }
 #pragma warning restore CS0618 // Type or member is obsolete
