@@ -23,73 +23,44 @@ public class SerializerFactory : ISerializerFactory
     /// <summary>
     /// Returns a serializer that can be used to serialize and object
     /// of type <paramref name="objectType"/>.
-    /// <note>
-    ///     TODO: Add support for caching.
-    /// </note>
+    /// The fallback for unknown <see cref="Type"/>s is <see cref="StringSerializer"/>.
     /// </summary>
     /// <param name="objectType">The type of object to be serialized.</param>
     /// <param name="ctx">The serialization context.</param>
     public virtual ISerializer? Build(Type? objectType, SerializationContext ctx)
     {
-        if (objectType == null)
+        return objectType switch
         {
-            return null;
-        }
-        ISerializer s;
-
-        if (typeof(Calendar).IsAssignableFrom(objectType))
-        {
-            s = new CalendarSerializer(ctx);
-        }
-        else if (typeof(ICalendarComponent).IsAssignableFrom(objectType))
-        {
-            s = typeof(CalendarEvent).IsAssignableFrom(objectType)
-                ? new EventSerializer(ctx)
-                : new ComponentSerializer(ctx);
-        }
-        else if (typeof(ICalendarProperty).IsAssignableFrom(objectType))
-        {
-            s = new PropertySerializer(ctx);
-        }
-        else if (typeof(CalendarParameter).IsAssignableFrom(objectType))
-        {
-            s = new ParameterSerializer(ctx);
-        }
-        else if (typeof(string).IsAssignableFrom(objectType))
-        {
-            s = new StringSerializer(ctx);
-        }
-        else if (objectType.GetTypeInfo().IsEnum)
-        {
-            s = new EnumSerializer(objectType, ctx);
-        }
-        else if (typeof(Duration).IsAssignableFrom(objectType))
-        {
-            s = new DurationSerializer(ctx);
-        }
-        else if (typeof(CalDateTime).IsAssignableFrom(objectType))
-        {
-            s = new DateTimeSerializer(ctx);
-        }
-        else if (typeof(int).IsAssignableFrom(objectType))
-        {
-            s = new IntegerSerializer(ctx);
-        }
-        else if (typeof(Uri).IsAssignableFrom(objectType))
-        {
-            s = new UriSerializer(ctx);
-        }
-        else if (typeof(ICalendarDataType).IsAssignableFrom(objectType))
-        {
-            s = _mDataTypeSerializerFactory.Build(objectType, ctx)!;
-        }
-        // Default to a string serializer, which simply calls
-        // ToString() on the value to serialize it.
-        else
-        {
-            s = new StringSerializer(ctx);
-        }
-
-        return s;
+            null => null,
+            var t when typeof(Calendar).IsAssignableFrom(t)
+                => new CalendarSerializer(ctx),
+            var t when typeof(ICalendarComponent).IsAssignableFrom(t)
+                => typeof(CalendarEvent).IsAssignableFrom(t)
+                    ? new EventSerializer(ctx)
+                    : new ComponentSerializer(ctx),
+            var t when typeof(ICalendarProperty).IsAssignableFrom(t)
+                => new PropertySerializer(ctx),
+            var t when typeof(CalendarParameter).IsAssignableFrom(t)
+                => new ParameterSerializer(ctx),
+            var t when typeof(string).IsAssignableFrom(t)
+                => new StringSerializer(ctx),
+            var t when t.GetTypeInfo().IsEnum
+                => new EnumSerializer(t, ctx),
+            var t when typeof(Duration).IsAssignableFrom(t)
+                => new DurationSerializer(ctx),
+            var t when typeof(CalDateTime).IsAssignableFrom(t)
+                => new DateTimeSerializer(ctx),
+            var t when typeof(int).IsAssignableFrom(t)
+                => new IntegerSerializer(ctx),
+            var t when typeof(Uri).IsAssignableFrom(t)
+                => new UriSerializer(ctx),
+            var t when typeof(RecurrenceIdentifier).IsAssignableFrom(t)
+                => new RecurrenceIdentifierSerializer(ctx),
+            var t when typeof(ICalendarDataType).IsAssignableFrom(t)
+                => _mDataTypeSerializerFactory.Build(t, ctx)!,
+                // Default to a string serializer, which simply calls
+                // ToString() on the value to serialize it.
+            _ => new StringSerializer(ctx)
+        };
     }
 }

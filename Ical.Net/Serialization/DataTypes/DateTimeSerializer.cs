@@ -3,13 +3,14 @@
 // Licensed under the MIT license.
 //
 
-using Ical.Net.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.DataTypes;
 
@@ -112,18 +113,6 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
         return res;
     }
 
-    public IReadOnlyList<CalendarParameter> GetParameters(object value)
-    {
-        if (value is not CalDateTime dt)
-            return [];
-
-        var res = new List<CalendarParameter>(2);
-        if (!dt.IsFloating && !dt.IsUtc)
-            res.Add(new CalendarParameter("TZID", dt.TzId));
-
-        if (!dt.HasTime)
-            res.Add(new CalendarParameter("VALUE", "DATE"));
-
-        return res;
-    }
+    public IReadOnlyList<CalendarParameter> GetParameters(object? value)
+        => ParameterProviderHelper.GetCalDateTimeParameters(value);
 }

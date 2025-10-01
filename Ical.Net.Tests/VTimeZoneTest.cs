@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -108,14 +109,11 @@ public class VTimeZoneTest
         // Unwrap the lines to make it easier to search for specific values
         var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal));
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("TZID:Europe/Moscow"), "Time zone not found in serialization");
             Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
             Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
-        });
-        Assert.Multiple(() =>
-        {
             Assert.That(serialized, Does.Contain("TZNAME:MSD"), "MSD was not serialized");
             Assert.That(serialized, Does.Contain("TZNAME:MSK"), "MSK info was not serialized");
             Assert.That(serialized, Does.Contain("TZNAME:MSD"), "MSD was not serialized");
@@ -127,7 +125,7 @@ public class VTimeZoneTest
             Assert.That(serialized, Does.Contain("DTSTART:19171228T000000"), "DTSTART:19171228T000000 was not serialized");
             // RDATE may contain multiple dates, separated by a comma
             Assert.That(Regex.IsMatch(serialized, $@"RDATE:.*\b19991031T030000\b", RegexOptions.Compiled, RegexDefaults.Timeout), Is.True, "RDATE:19731028T020000 was not serialized");
-        });
+        }
     }
 
     [Test, Category("VTimeZone")]
@@ -137,7 +135,7 @@ public class VTimeZoneTest
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("TZID:America/Chicago"), "Time zone not found in serialization");
             Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
@@ -153,7 +151,7 @@ public class VTimeZoneTest
             Assert.That(serialized, Does.Contain("DTSTART:19360301T020000"), "DTSTART:19360301T020000 was not serialized");
             Assert.That(serialized, Does.Contain("DTSTART:20070311T020000"), "DTSTART:20070311T020000 was not serialized");
             Assert.That(serialized, Does.Contain("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
-        });
+        }
     }
 
     [Test, Category("VTimeZone")]
@@ -163,7 +161,7 @@ public class VTimeZoneTest
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("TZID:America/Los_Angeles"), "Time zone not found in serialization");
             Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
@@ -176,10 +174,7 @@ public class VTimeZoneTest
             Assert.That(serialized, Does.Contain("DTSTART:19180331T020000"), "DTSTART:19180331T020000 was not serialized");
             Assert.That(serialized, Does.Contain("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
             Assert.That(serialized, Does.Contain("DTSTART:20070311T020000"), "DTSTART:20070311T020000 was not serialized");
-        });
-
-        //Assert.IsTrue(serialized.Contains("TZURL:http://tzurl.org/zoneinfo/America/Los_Angeles"), "TZURL:http://tzurl.org/zoneinfo/America/Los_Angeles was not serialized");
-        //Assert.IsTrue(serialized.Contains("RDATE:19600424T010000"), "RDATE:19600424T010000 was not serialized");  // NodaTime doesn't match with what tzurl has
+        }
     }
 
     [Test, Category("VTimeZone")]
@@ -189,14 +184,14 @@ public class VTimeZoneTest
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("TZID:Europe/Oslo"), "Time zone not found in serialization");
             Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
             Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
             Assert.That(serialized, Does.Contain("BYDAY=-1SU;BYMONTH=3"), "BYDAY=-1SU;BYMONTH=3 was not serialized");
             Assert.That(serialized, Does.Contain("BYDAY=-1SU;BYMONTH=10"), "BYDAY=-1SU;BYMONTH=10 was not serialized");
-        });
+        }
 
     }
 
@@ -208,7 +203,7 @@ public class VTimeZoneTest
         // Unwrap the lines to make it easier to search for specific values
         var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal));
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("TZID:America/Anchorage"), "Time zone not found in serialization");
             Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
@@ -224,7 +219,7 @@ public class VTimeZoneTest
             Assert.That(Regex.IsMatch(serialized, $@"RDATE:.*\b19801026T020000\b", RegexOptions.Compiled, RegexDefaults.Timeout), Is.True, "RDATE:19731028T020000 was not serialized");
             Assert.That(serialized, Does.Not.Contain("RDATE:19670401/P1D"), "RDate was not properly serialized for vtimezone, should be RDATE:19670401T000000");
             Assert.That(serialized, Does.Contain("DTSTART:19420209T020000"), "DTSTART:19420209T020000 was not serialized");
-        });
+        }
     }
 
     [Test, Category("VTimeZone")]
@@ -234,7 +229,7 @@ public class VTimeZoneTest
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("TZID:America/Eirunepe"), "Time zone not found in serialization");
             Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
@@ -245,10 +240,9 @@ public class VTimeZoneTest
             Assert.That(serialized, Does.Contain("DTSTART:19320401T000000"), "DTSTART:19320401T000000 was not serialized");
             Assert.That(serialized, Does.Contain("DTSTART:20080624T000000"), "DTSTART:20080624T000000 was not serialized");
             Assert.That(serialized, Does.Contain("DTSTART:19501201T000000"), "DTSTART:19501201T000000 was not serialized");
-        });
-
-        // Should not contain the following
-        Assert.That(serialized, Does.Not.Contain("RDATE:19501201T000000/P1D"), "The RDATE was not serialized correctly, should be RDATE:19501201T000000");
+            // Should not contain the following
+            Assert.That(serialized, Does.Not.Contain("RDATE:19501201T000000/P1D"), "The RDATE was not serialized correctly, should be RDATE:19501201T000000");
+        }
     }
 
     [Test, Category("VTimeZone")]
@@ -258,7 +252,7 @@ public class VTimeZoneTest
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("TZID:America/Detroit"), "Time zone not found in serialization");
             Assert.That(serialized, Does.Contain("BEGIN:STANDARD"), "The standard timezone info was not serialized");
@@ -268,7 +262,45 @@ public class VTimeZoneTest
             Assert.That(serialized, Does.Contain("TZNAME:EST"), "EST was not serialized");
             Assert.That(serialized, Does.Contain("DTSTART:20070311T020000"), "DTSTART:20070311T020000 was not serialized");
             Assert.That(serialized, Does.Contain("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
-        });
+        }
+    }
+
+    [Test, Category("VTimeZone")]
+    public void RecurrenceId_IsCompatibleWith_RecurrenceInstance()
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        var dt = new CalDateTime("20250930");
+
+        var iCal = CreateTestCalendar("America/Detroit");
+
+        var tzInfo1 = iCal.TimeZones.First().TimeZoneInfos.First();
+        tzInfo1.RecurrenceIdentifier = new RecurrenceIdentifier(dt);
+
+        iCal = CreateTestCalendar("America/Detroit");
+        var tzInfo2 = iCal.TimeZones.First().TimeZoneInfos.First();
+        tzInfo2.RecurrenceId = dt.AddDays(1);
+
+        iCal = CreateTestCalendar("America/Detroit");
+        var tzInfo3 = iCal.TimeZones.First().TimeZoneInfos.First();
+        tzInfo3.RecurrenceIdentifier = new RecurrenceIdentifier(dt, RecurrenceRange.ThisAndFuture);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(tzInfo1.RecurrenceId, Is.EqualTo(tzInfo1.RecurrenceIdentifier.StartTime));
+            Assert.That(tzInfo1.RecurrenceIdentifier.Range, Is.EqualTo(RecurrenceRange.ThisInstance));
+
+            Assert.That(tzInfo1.TzId, Is.EqualTo("America/Detroit"));
+
+            Assert.That(tzInfo2.RecurrenceIdentifier!.StartTime, Is.EqualTo(dt.AddDays(1)));
+            Assert.That(tzInfo2.RecurrenceId, Is.EqualTo(dt.AddDays(1)));
+            Assert.That(tzInfo2.RecurrenceIdentifier.Range, Is.EqualTo(RecurrenceRange.ThisInstance));
+
+            // RecurrenceId only supports ThisInstance implicitly,
+            // so RecurrenceInstance with ThisAndFuture returns null
+            Assert.That(tzInfo3.RecurrenceIdentifier.Range, Is.EqualTo(RecurrenceRange.ThisAndFuture));
+            Assert.That(tzInfo3.RecurrenceId, Is.Null);
+        }
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     private static Calendar CreateTestCalendar(string tzId, DateTime? earliestTime = null, bool includeHistoricalData = true)
