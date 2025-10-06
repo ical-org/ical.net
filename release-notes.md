@@ -4,6 +4,12 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v5
 
+### 5.1.1 - (2025-10-06)
+
+* Fix: `CalendarEvent`s with `RecurrenceId` were not properly evaluated in some scenarios.
+* Feat: `RecurringComponent`s like `CalendarEvent` support `RECURRENCE-ID` with optional `RANGE` parameter for serialization and deserialization.
+* Wiki: Updated articles about recurrence evaluation
+
 ### 5.1.0 - (2025-07-16)
 
 * Fix: Exception for Blazor WebAssembly and Self-Contained Assemblies using `FileVersionInfo` 
