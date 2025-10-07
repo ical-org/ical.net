@@ -60,6 +60,7 @@ public abstract class RecurringEvaluator : Evaluator
     /// </summary>
     /// <param name="referenceDate"></param>
     /// <param name="options"></param>
+    [Obsolete("EXRULE is marked as deprecated in RFC 5545 and will be removed in a future version")]
     private IEnumerable<Period> EvaluateExRule(CalDateTime referenceDate, EvaluationOptions? options)
     {
         if (!Recurrable.ExceptionRules.Any())

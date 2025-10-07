@@ -80,6 +80,7 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
 
     public virtual ExceptionDates ExceptionDates { get; internal set; } = null!;
 
+    [Obsolete("EXRULE is marked as deprecated in RFC 5545 and will be removed in a future version")]
     public virtual IList<RecurrencePattern> ExceptionRules
     {
         get => Properties.GetMany<RecurrencePattern>("EXRULE");
