@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
@@ -17,7 +18,10 @@ public interface IRecurrable : IGetOccurrences
     CalDateTime? Start { get; set; }
 
     ExceptionDates ExceptionDates { get; }
+
+    [Obsolete("EXRULE is marked as deprecated in RFC 5545 and will be removed in a future version")]
     IList<RecurrencePattern> ExceptionRules { get; set; }
+
     RecurrenceDates RecurrenceDates { get; }
     IList<RecurrencePattern> RecurrenceRules { get; set; }
     CalDateTime? RecurrenceId { get; set; }

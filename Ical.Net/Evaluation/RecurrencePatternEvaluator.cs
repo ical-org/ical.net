@@ -618,7 +618,6 @@ public class RecurrencePatternEvaluator : Evaluator
 
         //When we manage weekly recurring pattern and we have boundary case:
         //Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - It's the 53th week of the year, but all another are 1st week number.
-        //So we need an EXRULE for this situation, but only for weekly events
         while (currentWeekNo == weekNo || (nextWeekNo < weekNo && currentWeekNo == nextWeekNo && pattern.Frequency == FrequencyType.Weekly))
         {
             if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
