@@ -18,11 +18,6 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
 
     public VTimeZoneInfo()
     {
-        // FIXME: how do we ensure SEQUENCE doesn't get serialized?
-        //base.Sequence = null;
-        // iCalTimeZoneInfo does not allow sequence numbers
-        // Perhaps we should have a custom serializer that fixes this?
-
         Initialize();
     }
     public VTimeZoneInfo(string name) : this()
@@ -41,14 +36,14 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
     protected override void OnDeserializing(StreamingContext context)
     {
         base.OnDeserializing(context);
-
+        
         Initialize();
     }
 
     public virtual string? TzId
     {
         get =>
-            !(Parent is VTimeZone tz)
+            Parent is not VTimeZone tz
                 ? null
                 : tz.TzId;
     }
