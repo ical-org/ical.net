@@ -478,6 +478,9 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// </exception>
     public CalDateTime Add(Duration d)
     {
+        // If NOOP
+        if (d.IsEmpty) return this;
+
         if (!HasTime && d.HasTime)
         {
             throw new InvalidOperationException($"This instance represents a 'date-only' value '{ToString()}'. Only multiples of full days can be added to a 'date-only' instance, not '{d}'");
