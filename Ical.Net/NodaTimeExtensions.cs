@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using NodaTime;
 using NodaTime.TimeZones;
 
@@ -44,5 +45,44 @@ internal static class NodaTimeExtensions
             return Resolvers.ReturnForwardShifted
                 .Invoke(map.LocalDateTime, map.Zone, map.EarlyInterval, map.LateInterval);
         }
+    }
+
+    /// <summary>
+    /// Sets the day of the month to the target day
+    /// or the nearest day of the month.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="targetDay"></param>
+    /// <returns></returns>
+    internal static LocalDate AtNearestDayOfMonth(this LocalDate value, int targetDay)
+    {
+        if (value.Day == targetDay)
+        {
+            return value;
+        }
+
+        var year = value.Year;
+        var month = value.Month;
+        var daysInMonth = value.Calendar.GetDaysInMonth(year, month);
+
+        return new LocalDate(year, month, Math.Min(targetDay, daysInMonth));
+    }
+
+    /// <summary>
+    /// Returns the same date if the day of week is already
+    /// the target day of week, else the next date matching
+    /// the target day of week.
+    /// </summary>
+    /// <param name="value">Start date</param>
+    /// <param name="targetDayOfWeek">Target day of week</param>
+    /// <returns></returns>
+    internal static LocalDate CurrentOrNext(this LocalDate value, IsoDayOfWeek targetDayOfWeek)
+    {
+        if (value.DayOfWeek == targetDayOfWeek)
+        {
+            return value;
+        }
+
+        return value.Next(targetDayOfWeek);
     }
 }

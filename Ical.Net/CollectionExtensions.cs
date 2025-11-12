@@ -43,9 +43,6 @@ public static class CollectionExtensions
     /// Returns the elements of the sequence of periods to only include those that start before the specified period end.
     /// Important: The input sequence <b>must be ordered</b> according to the type's default equality comparer.
     /// <para/>
-    /// A perfect fit is the sequence returned by the <see cref="Evaluator.Evaluate"/> implementations
-    /// like <see cref="RecurrencePatternEvaluator.Evaluate"/>.
-    /// <para/>
     /// This is a convenience method for <see cref="Enumerable.TakeWhile{TSource}(IEnumerable{TSource}, Func{TSource, bool})"/>
     /// <param name="sequence">The ordered sequence to be filtered.</param>
     /// <param name="periodEnd">The exclusive end of the period to be used as a filter.</param>

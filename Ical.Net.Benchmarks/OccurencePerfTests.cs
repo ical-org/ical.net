@@ -17,6 +17,8 @@ public class OccurencePerfTests
 {
     private Calendar _calendarFourEvents = null!;
     private Calendar _calendarWithRecurrences = null!;
+    private Calendar _calendarWithBySetPos = null!;
+    private Calendar _calendarWithPositiveBySetPos = null!;
 
     private static DateTimeZone tz = DateTimeZoneProviders.Tzdb["America/New_York"];
 
@@ -25,6 +27,8 @@ public class OccurencePerfTests
     {
         _calendarFourEvents = GetFourCalendarEventsWithUntilRule();
         _calendarWithRecurrences = GenerateCalendarWithRecurrences();
+        _calendarWithBySetPos = GenerateCalendarWithBySetPosRecurrence();
+        _calendarWithPositiveBySetPos = GenerateCalendarWithPositiveBySetPosRecurrence();
     }
 
     [Benchmark]
@@ -94,6 +98,61 @@ public class OccurencePerfTests
             .AsParallel()
             .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd))
             .ToList();
+    }
+
+    [Benchmark]
+    public void EventWithBySetPosRecurrence()
+    {
+        _ = _calendarWithBySetPos.GetOccurrences(tz).ToList();
+    }
+
+    private static Calendar GenerateCalendarWithBySetPosRecurrence()
+    {
+        var calendar = new Calendar();
+        var dailyEvent = new CalendarEvent
+        {
+            Start = new CalDateTime(2025, 1, 1),
+            End = null,
+            RecurrenceRules =
+            [
+                new RecurrencePattern(FrequencyType.Yearly, 1)
+                {
+                    Count = 100,
+                    ByDay = [new(DayOfWeek.Monday), new(DayOfWeek.Wednesday)],
+                    BySetPosition = [1, -1, -2]
+                }
+            ]
+        };
+        calendar.Events.Add(dailyEvent);
+        return calendar;
+    }
+
+
+    [Benchmark]
+    public void EventWithPositiveBySetPosRecurrence()
+    {
+        _ = _calendarWithPositiveBySetPos.GetOccurrences(tz).ToList();
+    }
+
+    private static Calendar GenerateCalendarWithPositiveBySetPosRecurrence()
+    {
+        var calendar = new Calendar();
+        var dailyEvent = new CalendarEvent
+        {
+            Start = new CalDateTime(2025, 1, 1),
+            End = null,
+            RecurrenceRules =
+            [
+                new RecurrencePattern(FrequencyType.Yearly, 1)
+                {
+                    Count = 100,
+                    ByDay = [new(DayOfWeek.Monday), new(DayOfWeek.Wednesday)],
+                    BySetPosition = [1, 2, 4]
+                }
+            ]
+        };
+        calendar.Events.Add(dailyEvent);
+        return calendar;
     }
 
     private static Calendar GenerateCalendarWithRecurrences()
