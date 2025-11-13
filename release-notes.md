@@ -4,6 +4,12 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v5
 
+### 5.1.2 - (2025-11-13)
+
+* Chore: Mark classes and interfaces using `EXRULE` as obsolete. Reasoning: `EXRULE` is marked as deprecated in RFC 5545. Neither Google Calendar nor Microsoft Outlook/Exchange support it.
+* Feat: `CalDateTime.Add(Duration)` for empty `Duration`s. The methods gets called frequently during recurrence evaluation. Here it brings a performance improvement of about 10%.
+* Fix: `FREQ=WEEKLY` rules that include `BYMONTH` were only including weeks that **start** inside the given months. This fix checks the end of the week also to see if **any part of the week** is inside the given months.
+
 ### 5.1.1 - (2025-10-06)
 
 * Fix: `CalendarEvent`s with `RecurrenceId` were not properly evaluated in some scenarios.
