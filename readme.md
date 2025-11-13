@@ -1,6 +1,4 @@
-<p margin="0" padding="0">
-  <img src="https://github.com/ical-org/ical.net/raw/main/assets/logo_300px.png" alt="iCal.NET" />
-</p>
+# ![iCal.NET](https://raw.githubusercontent.com/ical-org/ical.net/main/assets/logo_300px.png)
 
 | [![GitHub release](https://img.shields.io/github/release/ical-org/ical.net.svg?sort=semver)](https://github.com/ical-org/ical.net/releases/latest) | [![codecov](https://codecov.io/gh/ical-org/ical.net/branch/main/graph/badge.svg)](https://codecov.io/gh/ical-org/ical.net) | [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/ical-org/ical.net/blob/main/license.md) |  
 |----------|----------|----------|  
