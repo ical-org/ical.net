@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -512,5 +513,22 @@ public class RecurrenceTests_From_Issues
                 Assert.That(excludedDays, Does.Not.Contain(occurrence.Period.StartTime.DayOfWeek));
             }
         });
+    }
+
+    [Test]
+    public void Weekly_ByDay_ByMonth()
+    {
+        // Bug #879
+
+        var rp = new RecurrencePattern("FREQ=WEEKLY;BYDAY=SU,MO,TU,WE,TH,FR;BYMONTH=5,6,7,8,9");
+        var rpe = new RecurrencePatternEvaluator(rp);
+
+        var referenceDate = new CalDateTime(2025, 11, 07, 0, 0, 0, "Central Standard Time");
+        var recurringPeriods = rpe.Evaluate(referenceDate, null, null);
+
+        var result = recurringPeriods.FirstOrDefault()?.StartTime;
+
+        var expected = new CalDateTime(2026, 05, 01, 0, 0, 0, "Central Standard Time");
+        Assert.That(result, Is.EqualTo(expected));
     }
 }

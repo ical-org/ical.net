@@ -308,7 +308,18 @@ public class RecurrencePatternEvaluator : Evaluator
         }
 
         // Limit behavior
-        return dates.Where(date => pattern.ByMonth.Contains(date.Month));
+        if (pattern.Frequency == FrequencyType.Weekly)
+        {
+            // The dates here represent weeks, with each date being the
+            // start of a week except for the initial reference date.
+            // Return weeks that have any day within BYMONTH.
+            return dates.Where(date => pattern.ByMonth.Contains(date.Month)
+                || pattern.ByMonth.Contains(date.AddDays(6).Month));
+        }
+        else
+        {
+            return dates.Where(date => pattern.ByMonth.Contains(date.Month));
+        }
     }
 
     /// <summary>
