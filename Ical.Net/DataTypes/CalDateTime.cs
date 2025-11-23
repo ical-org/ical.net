@@ -11,6 +11,7 @@ using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.Extensions;
+using NodaTime.Text;
 
 namespace Ical.Net.DataTypes;
 
@@ -593,9 +594,14 @@ public sealed class CalDateTime : IFormattable
             return ToLocalDateTime().ToString(format, formatProvider) + tzIdString;
         }
 
-        // No time, and there is no need to convert to ZonedDateTime because
-        // there is no time zone that can change the local date, so just use
-        // the local date value.
+        // Handle special case for "O" format that NodaTime.LocalDate
+        // does not support. This is the ISO 8601 date format, so it
+        // always uses the invariant culture.
+        if (format == "O")
+        {
+            return LocalDatePattern.Iso.Format(_localDate) + tzIdString;
+        }
+
         return _localDate.ToString(format ?? "d", formatProvider) + tzIdString;
     }
 }
