@@ -187,6 +187,13 @@ public sealed class CalDateTime : IFormattable
     /// <param name="time"></param>
     public CalDateTime(LocalDate date, LocalTime? time, string? tzId = null)
     {
+        // NodaTime supports year values <1 (BCE). Make sure these
+        // years are considered invalid.
+        if (date.Year < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(date), "Year must be a positive value");
+        }
+
         _localDate = date;
         _localTime = TruncateTimeToSeconds(time);
 
