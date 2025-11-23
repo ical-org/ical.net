@@ -94,7 +94,6 @@ public class EventEvaluator : RecurringEvaluator
                 dtEnd = dtEnd.ToTimeZone(dtStart.TimeZoneName);
             }
 
-#warning Changed for tests, possibly against spec
             // The spec says specifying DTEND results in exact time,
             // but tests say that all day events should be treated
             // as a nominal duration.
