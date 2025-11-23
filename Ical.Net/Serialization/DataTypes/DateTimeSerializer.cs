@@ -96,6 +96,13 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
             datePart = new LocalDate(Convert.ToInt32(match.Groups[2].Value, CultureInfo.InvariantCulture),
                 Convert.ToInt32(match.Groups[3].Value, CultureInfo.InvariantCulture),
                 Convert.ToInt32(match.Groups[4].Value, CultureInfo.InvariantCulture));
+
+            // NodaTime supports year values <1 (BCE). Make sure these
+            // years are considered invalid.
+            if (datePart.Year < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(tr), "Year must be a positive value");
+            }
         }
         if (match.Groups.Count >= 6 && match.Groups[5].Success)
         {
