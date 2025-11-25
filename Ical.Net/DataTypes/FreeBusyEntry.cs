@@ -26,7 +26,7 @@ public class FreeBusyEntry : Period
 
         if (EndTime is null && Duration is null)
         {
-            throw new ArgumentException("Period must have a duration", nameof(period));
+            throw new ArgumentException("Period must have a Duration or EndTime", nameof(period));
         }
     }
 
