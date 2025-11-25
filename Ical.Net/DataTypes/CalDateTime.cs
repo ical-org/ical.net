@@ -382,12 +382,12 @@ public sealed class CalDateTime : IFormattable
     /// <summary>
     /// Gets the date..
     /// </summary>
-    public DateOnly DateOnly => _localDate.ToDateOnly();
+    public DateOnly ToDateOnly() => _localDate.ToDateOnly();
 
     /// <summary>
     /// Gets the time, or <see langword="null"/> if there is no time.
     /// </summary>
-    public TimeOnly? TimeOnly => _localTime?.ToTimeOnly();
+    public TimeOnly? ToTimeOnly() => _localTime?.ToTimeOnly();
 #endif
 
     /// <summary>
