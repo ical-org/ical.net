@@ -405,19 +405,7 @@ public sealed class CalDateTime : IFormattable
     }
 
     public LocalDateTime ToLocalDateTime()
-    {
-        var localDate = new LocalDate(_localDate.Year, _localDate.Month, _localDate.Day);
-
-        if (_localTime is null)
-        {
-            return localDate.AtMidnight();
-        }
-        else
-        {
-            var time = _localTime.Value;
-            return localDate.At(new LocalTime(time.Hour, time.Minute, time.Second));
-        }
-    }
+        => _localDate.At(_localTime ?? LocalTime.Midnight);
 
     public Instant ToInstant() => ToZonedDateTime().ToInstant();
 
