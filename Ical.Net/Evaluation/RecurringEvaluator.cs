@@ -53,7 +53,9 @@ public abstract class RecurringEvaluator : Evaluator
     {
         var result = Recurrable.RecurrenceDates
             .GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime)
-            .Select(x => EvaluateRDate(x, referenceTimeZone));
+            .Select(x => EvaluateRDate(x, referenceTimeZone))
+            // Convert overflow exceptions to expected ones.
+            .HandleEvaluationExceptions();
 
         return new SortedSet<EvaluationPeriod>(result);
     }

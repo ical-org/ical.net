@@ -14,6 +14,19 @@ public class EvaluationPeriod : IComparable<EvaluationPeriod>
 
     public EvaluationPeriod(ZonedDateTime start, ZonedDateTime? end = null)
     {
+        if (end != null)
+        {
+            if (start.Zone.Id != end.Value.Zone.Id)
+            {
+                throw new ArgumentException("End time zone must equal start time zone", nameof(end));
+            }
+
+            if (end.Value.ToInstant() < start.ToInstant())
+            {
+                throw new ArgumentException("End time must be greater or equal to start time", nameof(end));
+            }
+        }
+
         Start = start;
         End = end;
     }
