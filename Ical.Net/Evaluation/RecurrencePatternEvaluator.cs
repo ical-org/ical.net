@@ -540,38 +540,40 @@ public class RecurrencePatternEvaluator : Evaluator
 
     private static IEnumerable<CalDateTime> GetMonthDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, int anchorMonth)
     {
+        // Helper that checks whether the given date matches any BYMONTHDAY entry
+        // taking negative values into account (relative to the month's length).
+        static bool MatchesAnyMonthDay(CalDateTime date, IEnumerable<int> monthDays)
+        {
+            var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+            foreach (var monthDay in monthDays)
+            {
+                var byMonthDay = monthDay > 0 ? monthDay : (daysInMonth + monthDay + 1);
+                if (date.Day == byMonthDay)
+                    return true;
+            }
+            return false;
+        }
+
         foreach (var date in dates)
         {
-            // If BYMONTH is specified, limit according to it; otherwise limit to the anchor month.
             if (pattern.ByMonth.Count > 0)
             {
-                var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
-                foreach (var monthDay in pattern.ByMonthDay)
-                {
-                    var byMonthDay = (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1);
-                    if (date.Day == byMonthDay && pattern.ByMonth.Contains(date.Month))
-                    {
-                        yield return date;
-                        break;
-                    }
-                }
+                // If BYMONTH is specified, the date must be in one of those months
+                // and match a BYMONTHDAY value.
+                if (!pattern.ByMonth.Contains(date.Month))
+                    continue;
+
+                if (MatchesAnyMonthDay(date, pattern.ByMonthDay))
+                    yield return date;
             }
             else
             {
-                // Only consider dates that are in the anchor month and match the BYMONTHDAY.
+                // When BYMONTH is not specified, only consider dates in the anchor month.
                 if (date.Month != anchorMonth)
                     continue;
 
-                var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
-                foreach (var monthDay in pattern.ByMonthDay)
-                {
-                    var byMonthDay = (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1);
-                    if (date.Day == byMonthDay)
-                    {
-                        yield return date;
-                        break;
-                    }
-                }
+                if (MatchesAnyMonthDay(date, pattern.ByMonthDay))
+                    yield return date;
             }
         }
     }
