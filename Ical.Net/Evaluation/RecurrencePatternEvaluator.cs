@@ -162,10 +162,20 @@ public class RecurrencePatternEvaluator : Evaluator
         var dateCount = 0;
         while (true)
         {
-            if (searchEndDate < GetIntervalLowerLimit(intervalRefTime, pattern))
+            var lowerLimit = GetIntervalLowerLimit(intervalRefTime, pattern, originalDate);
+
+            if (searchEndDate < lowerLimit)
                 break;
 
-            var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior);
+            // Use the original DTSTART month as the anchor for YEARLY rules when BYMONTH is not specified.
+            // This ensures BYMONTHDAY expansion/limiting is performed relative to the DTSTART month
+            // (the expected behavior for yearly rules without an explicit BYMONTH), instead of the
+            // current interval reference month.
+            var anchorMonth = pattern is { Frequency: FrequencyType.Yearly, ByMonth.Count: 0 }
+                ? originalDate.Month
+                : intervalRefTime.Month;
+
+            var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior, anchorMonth);
 
             foreach (var t in candidates.Where(t => t >= originalDate))
             {
@@ -210,16 +220,77 @@ public class RecurrencePatternEvaluator : Evaluator
     /// Find the lowest possible date/time for a recurrence in the given interval.
     /// </summary>
     /// <remarks>
-    /// Usually intervalRefTime is either at DTSTART or later at the start of the interval.
-    /// However, for YEARLY recurrences with BYWEEKNO=1 there could be recurrences before
-    /// Jan 1st, so we need to adjust the intervalRefTime to the start of the week.
+    /// For most frequencies the interval's lower limit is simply the provided
+    /// <paramref name="intervalRefTime"/>. YEARLY rules require special handling:
+    /// - If BYMONTH is present and BYWEEKNO is not, an occurrence for the interval
+    ///   might fall earlier in the year than the intervalRefTime's month/day. In
+    ///   that case we compute the earliest possible date/time that could be
+    ///   generated for the interval (earliest month/day/hour/minute/second).
+    /// - If BYWEEKNO is present, the interval may contain days from the previous
+    ///   or next year (ISO week boundaries). In that case we adjust the interval
+    ///   start to the first day of the configured week so we don't miss candidates
+    ///   that belong to the week containing Jan 1st.
     /// </remarks>
-    private static CalDateTime GetIntervalLowerLimit(CalDateTime intervalRefTime, RecurrencePattern pattern)
+    private static CalDateTime GetIntervalLowerLimit(CalDateTime intervalRefTime, RecurrencePattern pattern, CalDateTime originalDate)
     {
-        var intervalLowerLimit = intervalRefTime;
-        if ((pattern.Frequency == FrequencyType.Yearly) && (pattern.ByWeekNo.Count != 0))
-            intervalLowerLimit = GetFirstDayOfWeekDate(intervalRefTime, pattern.FirstDayOfWeek);
-        return intervalLowerLimit;
+        switch (pattern)
+        {
+            case { Frequency: FrequencyType.Yearly, ByMonth.Count: > 0, ByWeekNo.Count: 0 }:
+            {
+                // When evaluating a YEARLY rule that restricts months (BYMONTH) but not
+                // week numbers, it's possible that the earliest candidate inside the
+                // interval is in an earlier month/day than `intervalRefTime` (for example
+                // BYMONTH=1 while intervalRefTime is anchored on a later month). To avoid
+                // terminating enumeration prematurely (with a coarse UNTIL cutoff), compute
+                // the earliest plausible date/time for this interval and use that as the
+                // lower limit.
+                //
+                // We pick:
+                //  - year = intervalRefTime.Year
+                //  - month = smallest BYMONTH or the original DTSTART month if BYMONTH absent
+                //  - day = smallest BYMONTHDAY (clamped to daysInMonth) or original DTSTART day
+                //  - time components = smallest BYHOUR/BYMINUTE/BYSECOND or original DTSTART time
+                //
+                // This is a conservative earliest-possible candidate; it must not exclude
+                // any valid occurrence for the interval.
+                var year = intervalRefTime.Year;
+
+                // Determine the earliest month we could possibly generate for this interval.
+                var month = pattern.ByMonth.Count > 0 ? pattern.ByMonth.Min() : originalDate.Month;
+
+                // Determine an appropriate day in the month.
+                var daysInMonth = Calendar.GetDaysInMonth(year, month);
+                int day;
+                if (pattern.ByMonthDay.Count > 0)
+                {
+                    var md = pattern.ByMonthDay.Min();
+                    day = md > 0 ? Math.Min(md, daysInMonth) : Math.Max(1, daysInMonth + md + 1);
+                }
+                else
+                {
+                    // default to original date's day, constrained to the target month length
+                    day = Math.Min(originalDate.Day, daysInMonth);
+                }
+
+                // Determine earliest time components
+                var hour = pattern.ByHour.Count > 0 ? pattern.ByHour.Min() : originalDate.Hour;
+                var minute = pattern.ByMinute.Count > 0 ? pattern.ByMinute.Min() : originalDate.Minute;
+                var second = pattern.BySecond.Count > 0 ? pattern.BySecond.Min() : originalDate.Second;
+
+                return new CalDateTime(year, month, day, hour, minute, second, intervalRefTime.TzId);
+            }
+            case { Frequency: FrequencyType.Yearly, ByWeekNo.Count: not 0 }:
+            {
+                // YEARLY with BYWEEKNO: weeks may span year boundaries. Move the
+                // interval lower limit to the first day of the week so expansion over
+                // the week (including days before Jan 1st) is handled correctly.
+                return GetFirstDayOfWeekDate(intervalRefTime, pattern.FirstDayOfWeek);
+            }
+            default:
+            {
+                return intervalRefTime;
+            }
+        }
     }
 
     private struct ExpandContext
@@ -241,15 +312,17 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expandBehaviors"></param>
     /// <returns>A list of possible dates.</returns>
-    private IEnumerable<CalDateTime> GetCandidates(CalDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
+    private IEnumerable<CalDateTime> GetCandidates(CalDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors, int anchorMonth)
     {
         var expandContext = new ExpandContext() { DatesFullyExpanded = false };
 
-        IEnumerable<CalDateTime> dates = [ date ];
+        IEnumerable<CalDateTime> dates = [date];
         dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
         dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1], ref expandContext);
         dates = GetYearDayVariants(dates, pattern, expandBehaviors[2], ref expandContext);
-        dates = GetMonthDayVariants(dates, pattern, expandBehaviors[3], ref expandContext);
+        // Use the provided anchorMonth (typically the original DTSTART month) so BYMONTHDAY expansion
+        // is performed relative to the intended month when BYMONTH is not specified.
+        dates = GetMonthDayVariants(dates, pattern, expandBehaviors[3], ref expandContext, anchorMonth: anchorMonth);
         dates = GetDayVariants(dates, pattern, expandBehaviors[4], ref expandContext);
         dates = GetHourVariants(dates, pattern, expandBehaviors[5]);
         dates = GetMinuteVariants(dates, pattern, expandBehaviors[6]);
@@ -316,10 +389,8 @@ public class RecurrencePatternEvaluator : Evaluator
             return dates.Where(date => pattern.ByMonth.Contains(date.Month)
                 || pattern.ByMonth.Contains(date.AddDays(6).Month));
         }
-        else
-        {
-            return dates.Where(date => pattern.ByMonth.Contains(date.Month));
-        }
+
+        return dates.Where(date => pattern.ByMonth.Contains(date.Month));
     }
 
     /// <summary>
@@ -348,12 +419,12 @@ public class RecurrencePatternEvaluator : Evaluator
 
     private static IEnumerable<CalDateTime> GetWeekNoVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
     {
-        foreach ((var t, var weekNo) in dates.SelectMany(t => GetByWeekNoForYearNormalized(pattern, t.Year), (t, weekNo) => (t, weekNo)))
+        foreach (var (t, weekNo) in dates.SelectMany(t => GetByWeekNoForYearNormalized(pattern, t.Year), (t, weekNo) => (t, weekNo)))
         {
             var date = t;
 
             // Make sure we start from a reference date that is in a week that belongs to the current year.
-            // Its not important that the date lies in a certain week, but that the week belongs to the
+            // It's not important that the date lies in a certain week, but that the week belongs to the
             // current year and that the week day is preserved.
             if (date.Month == 1)
                 date = date.AddDays(7);
@@ -448,12 +519,11 @@ public class RecurrencePatternEvaluator : Evaluator
     }
 
     /// <summary>
-    /// Applies BYMONTHDAY rules specified in this Recur instance to the specified date list. 
+    /// Applies BYMONTHDAY rules specified in this Recurrence instance to the specified date list. 
     /// If no BYMONTHDAY rules are specified, the date list is returned unmodified.
     /// </summary>
-    /// <param name="dates">The list of dates to which the BYMONTHDAY rules will be applied.</param>
     /// <returns>The modified list of dates after applying the BYMONTHDAY rules.</returns>
-    private static IEnumerable<CalDateTime> GetMonthDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
+    private static IEnumerable<CalDateTime> GetMonthDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext, int anchorMonth)
     {
         if (expand == null || pattern.ByMonthDay.Count == 0)
             return dates;
@@ -465,21 +535,42 @@ public class RecurrencePatternEvaluator : Evaluator
         }
 
         // limit behavior
-        return GetMonthDayVariantsLimited(dates, pattern);
+        return GetMonthDayVariantsLimited(dates, pattern, anchorMonth);
     }
 
-    private static IEnumerable<CalDateTime> GetMonthDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
+    private static IEnumerable<CalDateTime> GetMonthDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, int anchorMonth)
     {
         foreach (var date in dates)
         {
-            var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
-            foreach (var monthDay in pattern.ByMonthDay)
+            // If BYMONTH is specified, limit according to it; otherwise limit to the anchor month.
+            if (pattern.ByMonth.Count > 0)
             {
-                var byMonthDay = (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1);
-                if (date.Day == byMonthDay)
+                var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+                foreach (var monthDay in pattern.ByMonthDay)
                 {
-                    yield return date;
-                    break;
+                    var byMonthDay = (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1);
+                    if (date.Day == byMonthDay && pattern.ByMonth.Contains(date.Month))
+                    {
+                        yield return date;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // Only consider dates that are in the anchor month and match the BYMONTHDAY.
+                if (date.Month != anchorMonth)
+                    continue;
+
+                var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+                foreach (var monthDay in pattern.ByMonthDay)
+                {
+                    var byMonthDay = (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1);
+                    if (date.Day == byMonthDay)
+                    {
+                        yield return date;
+                        break;
+                    }
                 }
             }
         }
