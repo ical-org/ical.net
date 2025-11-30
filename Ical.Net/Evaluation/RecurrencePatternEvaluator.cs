@@ -256,7 +256,7 @@ public class RecurrencePatternEvaluator : Evaluator
                 var year = intervalRefTime.Year;
 
                 // Determine the earliest month we could possibly generate for this interval.
-                var month = pattern.ByMonth.Count > 0 ? pattern.ByMonth.Min() : originalDate.Month;
+                var month = pattern.ByMonth.Min();
 
                 // Determine an appropriate day in the month.
                 var daysInMonth = Calendar.GetDaysInMonth(year, month);
@@ -465,11 +465,30 @@ public class RecurrencePatternEvaluator : Evaluator
     }
 
     /// <summary>
-    /// Applies BYYEARDAY rules specified in this Recur instance to the specified date list. 
-    /// If no BYYEARDAY rules are specified, the date list is returned unmodified.
+    /// Applies <c>BYYEARDAY</c> rules from <paramref name="pattern"/> to a sequence of candidate dates.
     /// </summary>
-    /// <param name="dates">The list of dates to which the BYYEARDAY rules will be applied.</param>
-    /// <returns>The modified list of dates after applying the BYYEARDAY rules.</returns>
+    /// <param name="dates">Sequence of candidate dates (typically interval reference dates or previously-expanded dates).</param>
+    /// <param name="pattern">Recurrence pattern containing the <c>BYYEARDAY</c> values.</param>
+    /// <param name="expand">
+    /// Controls the operation mode:
+    /// - <c>true</c>  : perform an expand operation — each input date is expanded into the concrete dates
+    ///                  represented by the <c>BYYEARDAY</c> values for that date's year.
+    /// - <c>false</c> : perform a limit/filter operation — only return input dates that match any of the
+    ///                  <c>BYYEARDAY</c> values for the input date's year.
+    /// - <c>null</c>  : no operation, return <paramref name="dates"/> unchanged.
+    /// </param>
+    /// <param name="expandContext">
+    /// Context that indicates whether earlier parts have already fully expanded the candidate set.
+    /// If <see cref="ExpandContext.DatesFullyExpanded"/> is <c>true</c> then expansion must not be
+    /// performed again and the method should behave in limit mode.
+    /// When this method performs an expansion it will set <see cref="ExpandContext.DatesFullyExpanded"/>
+    /// to <c>true</c> to prevent later parts from expanding again.
+    /// </param>
+    /// <returns>
+    /// A sequence of dates after applying the <c>BYYEARDAY</c> rules.
+    /// Expanded dates produced for a given input are constrained to the same calendar year as the input date;
+    /// out-of-range <c>BYYEARDAY</c> values (e.g. +-366 in non-leap years) are ignored.
+    /// </returns>
     private static IEnumerable<CalDateTime> GetYearDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand is null || pattern.ByYearDay.Count == 0)
@@ -519,7 +538,7 @@ public class RecurrencePatternEvaluator : Evaluator
     }
 
     /// <summary>
-    /// Applies BYMONTHDAY rules specified in this Recurrence instance to the specified date list. 
+    /// Applies BYMONTHDAY rules specified in this RecurrencePattern instance to the specified date list. 
     /// If no BYMONTHDAY rules are specified, the date list is returned unmodified.
     /// </summary>
     /// <returns>The modified list of dates after applying the BYMONTHDAY rules.</returns>
@@ -540,15 +559,15 @@ public class RecurrencePatternEvaluator : Evaluator
 
     private static IEnumerable<CalDateTime> GetMonthDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, int anchorMonth)
     {
-        // Helper that checks whether the given date matches any BYMONTHDAY entry
+        // Helper that checks whether the given candidate matches any BYMONTHDAY entry
         // taking negative values into account (relative to the month's length).
-        static bool MatchesAnyMonthDay(CalDateTime date, IEnumerable<int> monthDays)
+        static bool MatchesAnyMonthDay(CalDateTime candidate, IEnumerable<int> monthDays)
         {
-            var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+            var daysInMonth = Calendar.GetDaysInMonth(candidate.Year, candidate.Month);
             foreach (var monthDay in monthDays)
             {
                 var byMonthDay = monthDay > 0 ? monthDay : (daysInMonth + monthDay + 1);
-                if (date.Day == byMonthDay)
+                if (candidate.Day == byMonthDay)
                     return true;
             }
             return false;
