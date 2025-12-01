@@ -310,27 +310,30 @@ public class RecurrencePatternEvaluator : Evaluator
     private struct ExpandContext
     {
         /// <summary>
-        /// Indicates whether the dates have been fully expanded. If true, subsequent parts should only limit, not expand.
+        /// True when the candidate set has already been expanded by an earlier BY-* part.
+        /// When true, subsequent BY-* parts must only limit/filter, not expand.
         /// </summary>
-        /// <remarks>
-        /// This makes a difference in case of BYWEEKNO, which might span months and years. After it was applied (BYWEEKNO would
-        /// always expand), the subsequent parts mustn't expand.
-        /// </remarks>
-        public bool DatesFullyExpanded { get; set; }
+        /// <example>
+        /// BYWEEKNO can expand the candidate set across month and year boundaries. When BYWEEKNO
+        /// performs expansion (i.e. the expand behavior is enabled for BYWEEKNO), the evaluator
+        /// marks the candidate set as expanded and subsequent BY‑parts must not expand again.
+        /// </example>
+        public bool IsCandidateSetFullyExpanded { get; set; }
     }
 
     /// <summary>
     /// Returns a list of possible dates generated from the applicable BY* rules, using the specified date as a seed.
     /// </summary>
-    /// <param name="date">The seed date.</param>
+    /// <param name="seedDate">The seed date. It is always returned in the list of possible dates.</param>
     /// <param name="pattern"></param>
     /// <param name="expandBehaviors"></param>
+    /// <param name="anchorMonth">The anchor month for BYMONTHDAY expansion when BYMONTH is not specified.</param>
     /// <returns>A list of possible dates.</returns>
     private IEnumerable<CalDateTime> GetCandidates(CalDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
     {
-        var expandContext = new ExpandContext() { DatesFullyExpanded = false };
+        var expandContext = new ExpandContext { IsCandidateSetFullyExpanded = false };
 
-        IEnumerable<CalDateTime> dates = [date];
+        IEnumerable<CalDateTime> dates = [seedDate];
         dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
         dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1], ref expandContext);
         dates = GetYearDayVariants(dates, pattern, expandBehaviors[2], ref expandContext);
@@ -422,7 +425,7 @@ public class RecurrencePatternEvaluator : Evaluator
         var weekNoDates = GetWeekNoVariantsExpanded(dates, pattern);
 
         // subsequent parts should only limit, not expand
-        expandContext.DatesFullyExpanded = true;
+        expandContext.IsCandidateSetFullyExpanded = true;
 
         // Apply BYMONTH limit behavior, as we might have expanded over month/year boundaries
         // in this method and BYMONTH has already been applied before, so wouldn't be again.
@@ -491,9 +494,9 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </param>
     /// <param name="expandContext">
     /// Context that indicates whether earlier parts have already fully expanded the candidate set.
-    /// If <see cref="ExpandContext.DatesFullyExpanded"/> is <c>true</c> then expansion must not be
+    /// If <see cref="ExpandContext.IsCandidateSetFullyExpanded"/> is <c>true</c> then expansion must not be
     /// performed again and the method should behave in limit mode.
-    /// When this method performs an expansion it will set <see cref="ExpandContext.DatesFullyExpanded"/>
+    /// When this method performs an expansion it will set <see cref="ExpandContext.IsCandidateSetFullyExpanded"/>
     /// to <c>true</c> to prevent later parts from expanding again.
     /// </param>
     /// <returns>
@@ -506,9 +509,9 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand is null || pattern.ByYearDay.Count == 0)
             return dates;
 
-        if ((expand == true) && !expandContext.DatesFullyExpanded)
+        if ((expand == true) && !expandContext.IsCandidateSetFullyExpanded)
         {
-            expandContext.DatesFullyExpanded = true;
+            expandContext.IsCandidateSetFullyExpanded = true;
             return GetYearDayVariantsExpanded(dates, pattern);
         }
 
@@ -559,9 +562,9 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand == null || pattern.ByMonthDay.Count == 0)
             return dates;
 
-        if (expand.Value && !expandContext.DatesFullyExpanded)
+        if (expand.Value && !expandContext.IsCandidateSetFullyExpanded)
         {
-            expandContext.DatesFullyExpanded = true;
+            expandContext.IsCandidateSetFullyExpanded = true;
             return GetMonthDayVariantsExpanded(dates, pattern);
         }
 
@@ -623,10 +626,10 @@ public class RecurrencePatternEvaluator : Evaluator
         if (expand == null || pattern.ByDay.Count == 0)
             return dates;
 
-        if (expand.Value && !expandContext.DatesFullyExpanded)
+        if (expand.Value && !expandContext.IsCandidateSetFullyExpanded)
         {
             // Expand behavior
-            expandContext.DatesFullyExpanded = true;
+            expandContext.IsCandidateSetFullyExpanded = true;
             return GetDayVariantsExpanded(dates, pattern);
         }
 
@@ -636,15 +639,25 @@ public class RecurrencePatternEvaluator : Evaluator
 
     private static IEnumerable<CalDateTime> GetDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
         =>
-        // If no offset is specified, simply test the day of week!
-        // FIXME: test with offset...
-        dates.Where(date => pattern.ByDay.Any(weekDay => weekDay.DayOfWeek.Equals(date.DayOfWeek)));
+            // If no offset is specified, simply test the day of week.
+            // When an offset is present, use GetAbsWeekDays to compute the concrete
+            // weekday dates according to the frequency and check containment.
+            dates.Where(date => pattern.ByDay.Any(weekDay =>
+            {
+                if (weekDay.Offset is null)
+                    return weekDay.DayOfWeek.Equals(date.DayOfWeek);
 
+                // When limiting with an offset (e.g. "22MO" or "1MO"), compute the
+                // absolute dates for that WeekDay in the appropriate scope and
+                // check if the candidate matches one of them.
+                return GetAbsWeekDays(date, weekDay, pattern).Any(d => d.Equals(date));
+            }));
+    
     private static IEnumerable<CalDateTime> GetDayVariantsExpanded(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
     {
         foreach (var date in dates)
         {
-            var weekDayDates = new SortedSet<CalDateTime>();
+            var weekDayDates = new SortedSet<CalDateTime>(); // SortedSet uses CalDateTime.CompareTo
             foreach (var day in pattern.ByDay)
                 foreach (var d in GetAbsWeekDays(date, day, pattern))
                     weekDayDates.Add(d);
@@ -738,8 +751,8 @@ public class RecurrencePatternEvaluator : Evaluator
         var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
         var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
 
-        //When we manage weekly recurring pattern and we have boundary case:
-        //Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - It's the 53th week of the year, but all another are 1st week number.
+        // When we manage weekly recurring pattern and we have boundary case:
+        // Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - It's the 53th week of the year, but all another are 1st week number.
         while (currentWeekNo == weekNo || (nextWeekNo < weekNo && currentWeekNo == nextWeekNo && pattern.Frequency == FrequencyType.Weekly))
         {
             if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
