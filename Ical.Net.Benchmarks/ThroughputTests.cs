@@ -73,7 +73,10 @@ END:VCALENDAR";
         var calendarEvent = calendar.Events.First();
         var searchStart = tz.AtStartOfDay(new(2009, 06, 20));
         var searchEnd = tz.AtStartOfDay(new(2011, 06, 23)).ToInstant();
-        var occurrences = calendarEvent.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd);
+        var _ = calendarEvent
+            .GetOccurrences(searchStart)
+            .TakeWhile(p => p.Start.ToInstant() < searchEnd)
+            .ToList();
     }
 
     [Benchmark]
@@ -135,6 +138,9 @@ END:VCALENDAR";
         var calendarEvent = calendar.Events.First();
         var searchStart = tz.AtStartOfDay(new(2009, 06, 20));
         var searchEnd = tz.AtStartOfDay(new(2011, 06, 23)).ToInstant();
-        var occurrences = calendarEvent.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd);
+        var _ = calendarEvent
+            .GetOccurrences(searchStart)
+            .TakeWhile(p => p.Start.ToInstant() < searchEnd)
+            .ToList();
     }
 }

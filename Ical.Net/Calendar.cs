@@ -185,9 +185,9 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         return GetOccurrences<IRecurringComponent>(startTime, options);
     }
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(DateTimeZone tz, Instant? startTime = null, EvaluationOptions? options = null)
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTimeZone timeZone, Instant? startTime = null, EvaluationOptions? options = null)
     {
-        return GetOccurrences<IRecurringComponent>(tz, startTime, options);
+        return GetOccurrences<IRecurringComponent>(timeZone, startTime, options);
     }
 
     public virtual IEnumerable<Occurrence> GetOccurrences<T>(ZonedDateTime startTime, EvaluationOptions? options = null) where T : IRecurringComponent
@@ -195,14 +195,14 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         return GetOccurrences<T>(startTime.Zone, startTime.ToInstant(), options);
     }
 
-    public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTimeZone tz, Instant? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTimeZone timeZone, Instant? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
     {
         // Get UID/RECURRENCE-ID combinations that replace occurrences
         var recurrenceIdsAndUids = GetRecurrenceIdsAndUids(Children);
 
         var occurrences = RecurringItems
             .OfType<T>()
-            .Select(recurrable => recurrable.GetOccurrences(tz, startTime, options)
+            .Select(recurrable => recurrable.GetOccurrences(timeZone, startTime, options)
                 // Exclude occurrences that are overridden by other components with the same UID and RECURRENCE-ID.
                 // This must happen before .OrderedDistinct() because that method would remove duplicates
                 // based on the occurrence time, and we need to remove them based on UID + RECURRENCE-ID.

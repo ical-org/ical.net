@@ -174,7 +174,7 @@ public class RecurrencePatternEvaluator : Evaluator
                 break;
 
             var seedDate = (lowerLimit.ToInstant() > intervalRefTime.ToInstant()) ? lowerLimit : intervalRefTime;
-            var candidates = GetCandidates(originalDate.Zone, seedDate, pattern, expandBehavior);
+            var candidates = GetCandidates(seedDate, pattern, expandBehavior);
 
             foreach (var candidate in candidates.Where(t => t.ToInstant() >= originalDate.ToInstant()))
             {
@@ -331,12 +331,11 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <summary>
     /// Returns a list of possible dates generated from the applicable BY* rules, using the specified date as a seed.
     /// </summary>
-    /// <param name="timeZone">Time zone to evaluate candidates for.</param>
     /// <param name="seedDate">The seed date. It is always returned in the list of possible dates.</param>
     /// <param name="pattern"></param>
     /// <param name="expandBehaviors"></param>
     /// <returns>A list of possible dates.</returns>
-    private IEnumerable<ZonedDateTime> GetCandidates(DateTimeZone timeZone, ZonedDateTime seedDate, RecurrencePattern pattern, bool?[] expandBehaviors)
+    private IEnumerable<ZonedDateTime> GetCandidates(ZonedDateTime seedDate, RecurrencePattern pattern, bool?[] expandBehaviors)
     {
         var expandContext = new ExpandContext { IsCandidateSetFullyExpanded = false };
 
