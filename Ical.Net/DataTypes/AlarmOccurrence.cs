@@ -3,8 +3,8 @@
 // Licensed under the MIT license.
 //
 
-using System;
 using Ical.Net.CalendarComponents;
+using NodaTime;
 
 namespace Ical.Net.DataTypes;
 
@@ -18,29 +18,23 @@ namespace Ical.Net.DataTypes;
 /// </remarks>
 public class AlarmOccurrence
 {
-    public Period? Period { get; set; }
+    public ZonedDateTime Start { get; private set; }
 
-    public IRecurringComponent? Component { get; set; }
+    public IRecurringComponent? Component { get; private set; }
 
-    public Alarm? Alarm { get; set; }
-
-    public CalDateTime? DateTime
-    {
-        get => Period?.StartTime;
-        set => Period = value != null ? new Period(value) : null;
-    }
+    public Alarm? Alarm { get; private set; }
 
     public AlarmOccurrence(AlarmOccurrence ao)
     {
-        Period = ao.Period;
+        Start = ao.Start;
         Component = ao.Component;
         Alarm = ao.Alarm;
     }
 
-    public AlarmOccurrence(Alarm a, CalDateTime dt, IRecurringComponent rc)
+    public AlarmOccurrence(Alarm a, ZonedDateTime start, IRecurringComponent rc)
     {
         Alarm = a;
-        Period = new Period(dt);
+        Start = start;
         Component = rc;
     }
 }

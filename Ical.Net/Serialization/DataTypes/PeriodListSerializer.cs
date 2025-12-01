@@ -56,7 +56,7 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
 
         foreach (var p in periodList)
         {
-            parts.Add(p.EffectiveDuration != null
+            parts.Add(p.HasEndOrDuration
                 ? periodSerializer.SerializeToString(p)
                 : dtSerializer.SerializeToString(p.StartTime));
         }

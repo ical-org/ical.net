@@ -13,6 +13,7 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -123,13 +124,14 @@ public class DeserializationTests
             Assert.That(evt.End.HasTime, Is.EqualTo(true));
         });
 
-        foreach (var o in evt.GetOccurrences(new CalDateTime(2010, 1, 17, 0, 0, 0)).TakeWhileBefore(new CalDateTime(2010, 2, 1, 0, 0, 0)))
+        var results = evt.GetOccurrences(new LocalDateTime(2010, 1, 17, 0, 0, 0).InZoneLeniently("Asia/Tokyo"))
+            .TakeWhileBefore(new LocalDateTime(2010, 2, 1, 0, 0, 0).InZoneLeniently("Asia/Tokyo").ToInstant());
+
+        foreach (var o in results)
         {
             Assert.Multiple(() =>
             {
-                Assert.That(o.Period.StartTime.HasTime, Is.EqualTo(true));
-                Assert.That(o.Period.EndTime, Is.Null);
-                Assert.That(o.Period.EffectiveEndTime, Is.Not.Null);
+                Assert.That(o.Start.ToInstant(), Is.LessThan(o.End.ToInstant()));
             });
         }
     }
@@ -326,22 +328,25 @@ public class DeserializationTests
         var iCal = Calendar.Load(IcsFiles.Google1);
         var evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
         Assert.That(evt, Is.Not.Null);
+        var dtStart2 = new CalDateTime(2006, 12, 18);
+        var dtStart3 = new CalDateTime(2006, 12, 18, 6,6,3);
+        var dtStart4 = new CalDateTime(2006, 12, 18, 6,6,3, "US-Eastern");
 
-        CalDateTime dtStart = new CalDateTime(2006, 12, 18);
-        CalDateTime dtEnd = new CalDateTime(2006, 12, 23);
-        var occurrences = iCal.GetOccurrences(dtStart).TakeWhileBefore(dtEnd).ToList();
+        var dtStart = new CalDateTime(2006, 12, 18).ToZonedDateTime(tzId);
+        var dtEnd = new CalDateTime(2006, 12, 23).ToZonedDateTime(tzId);
+        var occurrences = iCal.GetOccurrences(dtStart).TakeWhileBefore(dtEnd.ToInstant()).ToList();
 
         var dateTimes = new[]
         {
-            new CalDateTime(2006, 12, 18, 7, 0, 0, tzId),
-            new CalDateTime(2006, 12, 19, 7, 0, 0, tzId),
-            new CalDateTime(2006, 12, 20, 7, 0, 0, tzId),
-            new CalDateTime(2006, 12, 21, 7, 0, 0, tzId),
-            new CalDateTime(2006, 12, 22, 7, 0, 0, tzId)
+            new CalDateTime(2006, 12, 18, 7, 0, 0, tzId).ToZonedDateTime(tzId),
+            new CalDateTime(2006, 12, 19, 7, 0, 0, tzId).ToZonedDateTime(tzId),
+            new CalDateTime(2006, 12, 20, 7, 0, 0, tzId).ToZonedDateTime(tzId),
+            new CalDateTime(2006, 12, 21, 7, 0, 0, tzId).ToZonedDateTime(tzId),
+            new CalDateTime(2006, 12, 22, 7, 0, 0, tzId).ToZonedDateTime(tzId)
         };
 
         for (var i = 0; i < dateTimes.Length; i++)
-            Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dateTimes[i]), "Event should occur at " + dateTimes[i]);
+            Assert.That(occurrences[i].Start, Is.EqualTo(dateTimes[i]), "Event should occur at " + dateTimes[i]);
 
         Assert.That(occurrences, Has.Count.EqualTo(dateTimes.Length), "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
     }
@@ -392,7 +397,7 @@ public class DeserializationTests
                     Is.EqualTo(date), "Should contain " + date);
             }
 
-            Assert.That(iCal.Events[0].RecurrenceDates.Contains(new Period(expectedStartTimes[1], expectedEndTime)));
+            Assert.That(iCal.Events[0].RecurrenceDates.Contains(new DataTypes.Period(expectedStartTimes[1], expectedEndTime)));
         });
     }
 
@@ -496,7 +501,7 @@ public class DeserializationTests
     public void Outlook2007_LineFolds1()
     {
         var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds);
-        var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20)).TakeWhileBefore(new CalDateTime(2009, 06, 22)).ToList();
+        var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20).ToZonedDateTime("America/New_York")).TakeWhileBefore(new CalDateTime(2009, 06, 22).ToZonedDateTime("America/New_York").ToInstant()).ToList();
         Assert.That(events, Has.Count.EqualTo(1));
     }
 
@@ -505,7 +510,7 @@ public class DeserializationTests
     {
         var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
         var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds);
-        var events = iCal.GetOccurrences<CalendarEvent>(new CalDateTime(2009, 06, 20)).TakeWhileBefore(new CalDateTime(2009, 06, 22)).ToList();
+        var events = iCal.GetOccurrences<CalendarEvent>(new CalDateTime(2009, 06, 20).ToZonedDateTime("America/New_York")).TakeWhileBefore(new CalDateTime(2009, 06, 22).ToZonedDateTime("America/New_York").ToInstant()).ToList();
         Assert.That(((CalendarEvent)events[0].Source).Location, Is.EqualTo(longName));
     }
 
@@ -640,7 +645,7 @@ public class DeserializationTests
     public void DurationSerializer_ShouldReturn_ExpectedDuration(string text, int? weeks = null, int? days = null, int? hours = null, int? minutes = null, int? seconds = null)
     {
         var s = new DurationSerializer();
-        Assert.That((Duration?) s.Deserialize(new StringReader(text)), Is.EqualTo(new Duration(weeks, days, hours, minutes, seconds)));
+        Assert.That((DataTypes.Duration?) s.Deserialize(new StringReader(text)), Is.EqualTo(new DataTypes.Duration(weeks, days, hours, minutes, seconds)));
     }
 
     [Test, Category("DurationSerializer")]
@@ -651,7 +656,7 @@ public class DeserializationTests
         Assert.Multiple(() =>
         {
             Assert.That(new DurationSerializer().Deserialize(new StringReader(text)), Is.Null);
-            Assert.That(Duration.Parse(text), Is.Null);
+            Assert.That(DataTypes.Duration.Parse(text), Is.Null);
         });
     }
 }

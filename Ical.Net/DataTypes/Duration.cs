@@ -45,6 +45,43 @@ public struct Duration
         Seconds = seconds;
     }
 
+    public NodaTime.Period ToPeriod()
+    {
+        var b = new NodaTime.PeriodBuilder
+        {
+            Weeks = Weeks ?? 0,
+            Days = Days ?? 0,
+            Hours = Hours ?? 0,
+            Minutes = Minutes ?? 0,
+            Seconds = Seconds ?? 0
+        };
+
+        return b.Build();
+    }
+
+    public NodaTime.Period GetNominalPart()
+    {
+        var b = new NodaTime.PeriodBuilder
+        {
+            Weeks = Weeks ?? 0,
+            Days = Days ?? 0,
+        };
+
+        return b.Build();
+    }
+
+    public NodaTime.Duration GetTimePart()
+    {
+        var b = new NodaTime.PeriodBuilder
+        {
+            Hours = Hours ?? 0,
+            Minutes = Minutes ?? 0,
+            Seconds = Seconds ?? 0,
+        };
+
+        return b.Build().ToDuration();
+    }
+
     /// <summary>
     /// Gets the number of weeks.
     /// </summary>
@@ -169,18 +206,6 @@ public struct Duration
     /// </remarks>
     public TimeSpan ToTimeSpanUnspecified()
         => new TimeSpan((Weeks ?? 0) * 7 + (Days ?? 0), Hours ?? 0, Minutes ?? 0, Seconds ?? 0);
-
-    /// <summary>
-    /// Convert the instance to a <see cref="TimeSpan"/>, treating the days as nominal duration and
-    /// the time part as exact.
-    /// </summary>
-    /// <remarks>
-    /// A duration's days and weeks are considered nominal durations, while the time fields are considered exact values.
-    /// To convert a duration to a <see cref="TimeSpan"/> while considering the days and weeks as nominal durations,
-    /// use <see cref="ToTimeSpan"/>.
-    /// </remarks>
-    public TimeSpan ToTimeSpan(CalDateTime start)
-        => start.Add(this).SubtractExact(start);
 
     /// <summary>
     /// Gets a value indicating whether the duration is zero, that is, all fields are null or 0.
