@@ -48,7 +48,7 @@ public class FreeBusyEntry : Period
     /// <returns></returns>
     public bool Contains(CalDateTime? dt)
     {
-        return dt is null ? false : Contains(dt.ToInstant());
+        return dt is not null && Contains(dt.ToInstant());
     }
 
     /// <summary>

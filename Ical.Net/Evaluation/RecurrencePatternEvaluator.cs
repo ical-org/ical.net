@@ -173,7 +173,7 @@ public class RecurrencePatternEvaluator : Evaluator
                 break;
 
 
-            var candidates = GetCandidates(originalDate.Zone, intervalRefTime, pattern, expandBehavior);
+            var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior);
 
             foreach (var candidate in candidates.Where(t => t.ToInstant() >= originalDate.ToInstant()))
             {
@@ -249,7 +249,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expandBehaviors"></param>
     /// <returns>A list of possible dates.</returns>
-    private IEnumerable<ZonedDateTime> GetCandidates(DateTimeZone timeZone, ZonedDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
+    private IEnumerable<ZonedDateTime> GetCandidates(ZonedDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
     {
         var expandContext = new ExpandContext() { DatesFullyExpanded = false };
 

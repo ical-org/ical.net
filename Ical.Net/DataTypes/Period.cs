@@ -4,7 +4,6 @@
 //
 
 using System;
-using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 using NodaTime;
 
