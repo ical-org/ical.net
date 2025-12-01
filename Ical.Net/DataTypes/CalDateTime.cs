@@ -25,7 +25,7 @@ namespace Ical.Net.DataTypes;
 /// This is because RFC 5545, Section 3.3.5, does not allow for fractional seconds.
 /// </remarks>
 /// </summary>
-public sealed class CalDateTime : IFormattable
+public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
 {
     // The date part that is used to return the Value property.
     private readonly LocalDate _localDate;
@@ -145,15 +145,6 @@ public sealed class CalDateTime : IFormattable
         : this(new LocalDate(year, month, day), null, null)
     { }
 
-    /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class with <see cref="TzId"/> set to <see langword="null"/>.
-    /// The instance will represent an RFC 5545, Section 3.3.4, DATE value,
-    /// and thus it cannot have a timezone.
-    /// </summary>
-    /// <param name="date"></param>
-    public CalDateTime(LocalDate date) : this(date, null, null)
-    { }
-
     public CalDateTime(LocalDate value, string? tzId = null)
         : this(value, null, tzId)
     { }
@@ -236,6 +227,13 @@ public sealed class CalDateTime : IFormattable
                 nameof(tzId));
         }
     }
+
+#if NET6_0_OR_GREATER
+    public CalDateTime(DateOnly date) : this(date, null, null) { }
+
+    public CalDateTime(DateOnly date, TimeOnly? time, string? tzId = null)
+        : this(date.ToLocalDate(), time?.ToLocalTime(), tzId) { }
+#endif
 
     public bool Equals(CalDateTime? other) => this == other;
 
@@ -374,10 +372,6 @@ public sealed class CalDateTime : IFormattable
     public LocalTime? Time => _localTime;
 
 #if NET6_0_OR_GREATER
-    public CalDateTime(DateOnly date) : this(date, null, null) { }
-
-    public CalDateTime(DateOnly date, TimeOnly? time, string? tzId = null)
-        : this(date.ToLocalDate(), time?.ToLocalTime(), tzId) { }
 
     /// <summary>
     /// Gets the date..

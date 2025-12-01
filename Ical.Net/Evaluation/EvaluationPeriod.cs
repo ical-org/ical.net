@@ -7,7 +7,8 @@ using System;
 using NodaTime;
 
 namespace Ical.Net.Evaluation;
-public class EvaluationPeriod : IComparable<EvaluationPeriod>
+
+public sealed class EvaluationPeriod : IComparable<EvaluationPeriod>, IEquatable<EvaluationPeriod>
 {
     public ZonedDateTime Start { get; private set; }
     public ZonedDateTime? End { get; private set; }
@@ -36,9 +37,9 @@ public class EvaluationPeriod : IComparable<EvaluationPeriod>
         return new(Start.WithZone(zone), End?.WithZone(zone));
     }
 
-    public bool Equals(EvaluationPeriod other)
+    public bool Equals(EvaluationPeriod? other)
     {
-        return Start == other.Start && End == other.End;
+        return other is not null && Start == other.Start && End == other.End;
     }
 
     public override bool Equals(object? obj)
