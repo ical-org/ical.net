@@ -35,7 +35,6 @@ public class RecurrenceTests
     )
     {
         var evt = cal.Events.Skip(eventIndex).First();
-        var rule = evt.RecurrenceRules.FirstOrDefault();
 
         var occurrences = toDate == null
             ? evt.GetOccurrences(fromDate).ToList()
@@ -4806,5 +4805,133 @@ END:VCALENDAR";
         };
 
         Assert.That(occurrences.Select(o => o.Period.StartTime).ToArray(), Is.EqualTo(expected));
+    }
+
+    [Test, Category("Recurrence")]
+    public void ByMonthDay_With_ByDay_SimpleCase()
+    {
+        const string tzId = "Europe/Berlin";
+        var ics = """
+                   BEGIN:VCALENDAR
+                   VERSION:2.0
+                   BEGIN:VEVENT
+                   DTSTART;TZID=Europe/Berlin:20250913T090000
+                   DURATION:PT1H
+                   RRULE:FREQ=MONTHLY;BYMONTHDAY=13;BYDAY=MO
+                   END:VEVENT
+                   END:VCALENDAR
+                   """;
+
+        var cal = Calendar.Load(ics)!;
+        var from = new CalDateTime(2025, 1, 1);
+        var to = new CalDateTime(2028, 1, 1);
+
+        // Expected occurrences: only months, where the 13th is a Monday
+        var expected = new[]
+        {
+            new Period(new CalDateTime(2025, 10, 13, 9, 0, 0, tzId), Duration.FromHours(1)),
+            new Period(new CalDateTime(2026, 4, 13, 9, 0, 0, tzId), Duration.FromHours(1)),
+            new Period(new CalDateTime(2026, 7, 13, 9, 0, 0, tzId), Duration.FromHours(1)),
+            new Period(new CalDateTime(2027, 9, 13, 9, 0, 0, tzId), Duration.FromHours(1)),
+            new Period(new CalDateTime(2027, 12, 13, 9, 0, 0, tzId), Duration.FromHours(1)),
+        };
+
+        EventOccurrenceTest(cal, from, to, expected, null);
+    }
+
+    [Test, Category("Recurrence")]
+    public void ByMonthDay_With_ByDay_YearlyByMonthDay_ExpandMatrix_Note2()
+    {
+        var ics = """
+                    BEGIN:VCALENDAR
+                    VERSION:2.0
+                    BEGIN:VEVENT
+                    DTSTART:20260601
+                    RRULE:FREQ=YEARLY;BYMONTHDAY=1,8;BYDAY=22MO,23TU,25MO,36TU;COUNT=3
+                    END:VEVENT
+                    END:VCALENDAR
+                    """;
+
+        var cal = Calendar.Load(ics)!;
+        var expected = new[]
+        {
+            new Period(new CalDateTime(2026, 6, 1), Duration.FromDays(1)),
+            new Period(new CalDateTime(2027, 6, 8), Duration.FromDays(1)),
+            new Period(new CalDateTime(2032, 6, 8), Duration.FromDays(1)),
+        };
+
+        EventOccurrenceTest(cal, new CalDateTime(2026, 1, 1), new CalDateTime(2035, 1, 1), expected, null);
+    }
+
+    [Test, Category("Recurrence")]
+    public void ByMonthDay_With_ByDay_MonthlyByMonthDay_WithOffsets_LimitingBehavior()
+    {
+        var ics = """
+                    BEGIN:VCALENDAR
+                    VERSION:2.0
+                    BEGIN:VEVENT
+                    DTSTART:20260601
+                    RRULE:FREQ=MONTHLY;BYMONTHDAY=1,8;BYDAY=1MO,2TU;COUNT=3
+                    END:VEVENT
+                    END:VCALENDAR
+                    """;
+
+        var cal = Calendar.Load(ics)!;
+        var expected = new[]
+        {
+            new Period(new CalDateTime(2026, 6, 1), Duration.FromDays(1)),
+            new Period(new CalDateTime(2026, 9, 8), Duration.FromDays(1)),
+            new Period(new CalDateTime(2026, 12, 8), Duration.FromDays(1)),
+        };
+
+        EventOccurrenceTest(cal, new CalDateTime(2026, 1, 1), new CalDateTime(2027, 1, 1), expected, null);
+    }
+
+    [Test, Category("Recurrence")]
+    public void ByMonthDay_With_ByDay_YearlyByMonthAndMonthDay_WithOffsets()
+    {
+        var ics = """
+                    BEGIN:VCALENDAR
+                    VERSION:2.0
+                    BEGIN:VEVENT
+                    DTSTART:20260601
+                    RRULE:FREQ=YEARLY;BYMONTH=6,7,8,9,10,11,12;BYMONTHDAY=1,8;BYDAY=1MO,2TU;COUNT=3
+                    END:VEVENT
+                    END:VCALENDAR
+                    """;
+
+        var cal = Calendar.Load(ics)!;
+        var expected = new[]
+        {
+            new Period(new CalDateTime(2026, 6, 1), Duration.FromDays(1)),
+            new Period(new CalDateTime(2026, 9, 8), Duration.FromDays(1)),
+            new Period(new CalDateTime(2026, 12, 8), Duration.FromDays(1)),
+        };
+
+        EventOccurrenceTest(cal, new CalDateTime(2026, 1, 1), new CalDateTime(2027, 1, 1), expected, null);
+    }
+
+    [Test, Category("Recurrence")]
+    public void ByMonthDay_With_ByDay_YearlyByYearDay_WithOffsets_LimitingBehavior()
+    {
+        var ics = """
+                    BEGIN:VCALENDAR
+                    VERSION:2.0
+                    BEGIN:VEVENT
+                    DTSTART:20260601
+                    RRULE:FREQ=YEARLY;BYYEARDAY=152,173,251,272,321,342;BYDAY=22MO,26MO,36TU,37TU,49TU;COUNT=3
+                    END:VEVENT
+                    END:VCALENDAR
+                    """;
+
+        var cal = Calendar.Load(ics)!;
+        var expected = new[]
+        {
+            new Period(new CalDateTime(2026, 6, 1), Duration.FromDays(1)),
+            new Period(new CalDateTime(2026, 9, 8), Duration.FromDays(1)),
+            new Period(new CalDateTime(2026, 12, 8), Duration.FromDays(1)),
+        };
+
+        EventOccurrenceTest(cal, new CalDateTime(2026, 1, 1), new CalDateTime(2030, 1, 1), expected, null);
     }
 }
