@@ -5,6 +5,7 @@
 
 using System;
 using Ical.Net.DataTypes;
+using Ical.Net.TimeZone;
 using NodaTime;
 
 namespace Ical.Net.Utility;
