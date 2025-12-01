@@ -4,6 +4,11 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v5
 
+### 5.1.3 - (2025-12-01)
+
+Fix: Correct handling `RRULE:FREQ=YEARLY` combined with `BYMONTH` and `BYWEEKNO`. The previous implementation could skip occurrences in some scenarios.
+Fix: Correct handling `RRULE:FREQ=YEARLY` when `BYMONTH` ist missing, e.g. `RRULE:FREQ=YEARLY;INTERVAL=2;BYDAY=MO,TU`. Now takes the month of `DTSTART` as a limiter.
+
 ### 5.1.2 - (2025-11-13)
 
 * Chore: Mark classes and interfaces using `EXRULE` as obsolete. Reasoning: `EXRULE` is marked as deprecated in RFC 5545. Neither Google Calendar nor Microsoft Outlook/Exchange support it.
