@@ -407,7 +407,7 @@ public class RecurrenceTests
             .TakeWhileBefore(new CalDateTime(2000, 12, 31)).ToList();
         var evt2Occurrences = evt2.GetOccurrences(new CalDateTime(1997, 9, 1))
             .TakeWhileBefore(new CalDateTime(2000, 12, 31)).ToList();
-        Assert.That(evt1Occurrences.Count == evt2Occurrences.Count, Is.True,
+        Assert.That(evt1Occurrences.Count, Is.EqualTo(evt2Occurrences.Count),
             "ByMonth1 does not match ByMonth2 as it should");
         for (var i = 0; i < evt1Occurrences.Count; i++)
             Assert.That(evt2Occurrences[i].Period, Is.EqualTo(evt1Occurrences[i].Period),
@@ -1654,7 +1654,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 2, 15, 0, 0, _tzid), Duration.FromHours(1)),
-                new Period(new CalDateTime(1997, 9, 2, 18, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 18, 0, 0, _tzid), Duration.FromHours(1))
             },
             timeZones: null
         );
@@ -2009,13 +2009,16 @@ public class RecurrenceTests
         var iCal = Calendar.Load(IcsFiles.YearlyInterval1)!;
         EventOccurrenceTest(
             iCal,
-            new CalDateTime(2006, 1, 1, 7, 0, 0, _tzid),
-            new CalDateTime(2007, 1, 31, 7, 0, 0, _tzid),
-            new[]
-            {
-                new Period(new CalDateTime(2007, 1, 8, 7, 0, 0, _tzid), Duration.FromHours(24)),
-                new Period(new CalDateTime(2007, 1, 9, 7, 0, 0, _tzid), Duration.FromHours(24))
-            },
+            new CalDateTime(2005, 1, 11, 7, 0, 0, _tzid),
+            new CalDateTime(2010, 1, 31, 7, 0, 0, _tzid),
+            [
+                new Period(new CalDateTime(2005, 4, 11, 7, 0, 0, _tzid), Duration.FromHours(24)),
+                new Period(new CalDateTime(2005, 4, 12, 7, 0, 0, _tzid), Duration.FromHours(24)),
+                new Period(new CalDateTime(2007, 4, 9, 7, 0, 0, _tzid), Duration.FromHours(24)),
+                new Period(new CalDateTime(2007, 4, 10, 7, 0, 0, _tzid), Duration.FromHours(24)),
+                new Period(new CalDateTime(2009, 4, 13, 7, 0, 0, _tzid), Duration.FromHours(24)),
+                new Period(new CalDateTime(2009, 4, 14, 7, 0, 0, _tzid), Duration.FromHours(24))
+            ],
             null
         );
     }
