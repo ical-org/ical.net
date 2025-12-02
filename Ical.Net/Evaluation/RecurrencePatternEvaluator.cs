@@ -167,15 +167,7 @@ public class RecurrencePatternEvaluator : Evaluator
             if (searchEndDate < lowerLimit)
                 break;
 
-            // Use the original DTSTART month as the anchor for YEARLY rules when BYMONTH is not specified.
-            // This ensures BYMONTHDAY expansion/limiting is performed relative to the DTSTART month
-            // (the expected behavior for yearly rules without an explicit BYMONTH), instead of the
-            // current interval reference month.
-            var anchorMonth = pattern is { Frequency: FrequencyType.Yearly, ByMonth.Count: 0 }
-                ? originalDate.Month
-                : intervalRefTime.Month;
-
-            var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior, anchorMonth);
+            var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior);
 
             foreach (var t in candidates.Where(t => t >= originalDate))
             {
@@ -312,7 +304,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="pattern"></param>
     /// <param name="expandBehaviors"></param>
     /// <returns>A list of possible dates.</returns>
-    private IEnumerable<CalDateTime> GetCandidates(CalDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors, int anchorMonth)
+    private IEnumerable<CalDateTime> GetCandidates(CalDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
     {
         var expandContext = new ExpandContext() { DatesFullyExpanded = false };
 
@@ -320,9 +312,7 @@ public class RecurrencePatternEvaluator : Evaluator
         dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
         dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1], ref expandContext);
         dates = GetYearDayVariants(dates, pattern, expandBehaviors[2], ref expandContext);
-        // Use the provided anchorMonth (typically the original DTSTART month) so BYMONTHDAY expansion
-        // is performed relative to the intended month when BYMONTH is not specified.
-        dates = GetMonthDayVariants(dates, pattern, expandBehaviors[3], ref expandContext, anchorMonth: anchorMonth);
+        dates = GetMonthDayVariants(dates, pattern, expandBehaviors[3], ref expandContext);
         dates = GetDayVariants(dates, pattern, expandBehaviors[4], ref expandContext);
         dates = GetHourVariants(dates, pattern, expandBehaviors[5]);
         dates = GetMinuteVariants(dates, pattern, expandBehaviors[6]);
@@ -542,7 +532,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// If no BYMONTHDAY rules are specified, the date list is returned unmodified.
     /// </summary>
     /// <returns>The modified list of dates after applying the BYMONTHDAY rules.</returns>
-    private static IEnumerable<CalDateTime> GetMonthDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext, int anchorMonth)
+    private static IEnumerable<CalDateTime> GetMonthDayVariants(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, bool? expand, ref ExpandContext expandContext)
     {
         if (expand == null || pattern.ByMonthDay.Count == 0)
             return dates;
@@ -554,10 +544,10 @@ public class RecurrencePatternEvaluator : Evaluator
         }
 
         // limit behavior
-        return GetMonthDayVariantsLimited(dates, pattern, anchorMonth);
+        return GetMonthDayVariantsLimited(dates, pattern);
     }
 
-    private static IEnumerable<CalDateTime> GetMonthDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern, int anchorMonth)
+    private static IEnumerable<CalDateTime> GetMonthDayVariantsLimited(IEnumerable<CalDateTime> dates, RecurrencePattern pattern)
     {
         // Helper that checks whether the given candidate matches any BYMONTHDAY entry
         // taking negative values into account (relative to the month's length).
@@ -587,10 +577,6 @@ public class RecurrencePatternEvaluator : Evaluator
             }
             else
             {
-                // When BYMONTH is not specified, only consider dates in the anchor month.
-                if (date.Month != anchorMonth)
-                    continue;
-
                 if (MatchesAnyMonthDay(date, pattern.ByMonthDay))
                     yield return date;
             }

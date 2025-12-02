@@ -67,8 +67,8 @@ public class RecurrenceTests
 
     private void EventOccurrenceTest(
         Calendar cal,
-        CalDateTime fromDate,
-        CalDateTime toDate,
+        CalDateTime? fromDate,
+        CalDateTime? toDate,
         Period[] expectedPeriods,
         string[]? timeZones
     ) => EventOccurrenceTest(cal, fromDate, toDate, expectedPeriods, timeZones, 0);
@@ -4806,5 +4806,29 @@ END:VCALENDAR";
         };
 
         Assert.That(occurrences.Select(o => o.Period.StartTime).ToArray(), Is.EqualTo(expected));
+    }
+
+    [Test, Category("Recurrence")]
+    public void FreqYearly_With_ByYearDay_ByMonthDay()
+    {
+        const string ics = """
+                           BEGIN:VCALENDAR
+                           VERSION:2.0
+                           BEGIN:VEVENT
+                           RRULE:FREQ=YEARLY;BYYEARDAY=-1,1;BYMONTHDAY=-1,1;COUNT=3
+                           DTSTART:20250101
+                           END:VEVENT
+                           END:VCALENDAR
+                           """;
+
+        var cal = Calendar.Load(ics)!;
+        Period[] expected =
+        [
+            new (new CalDateTime(2025, 1, 1), Duration.FromDays(1)),
+            new (new CalDateTime(2025, 12, 31), Duration.FromDays(1)),
+            new (new CalDateTime(2026, 1, 1), Duration.FromDays(1))
+        ];
+
+        EventOccurrenceTest(cal, new CalDateTime(2025, 1, 1), null, expected, null);
     }
 }

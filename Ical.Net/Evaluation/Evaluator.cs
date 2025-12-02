@@ -43,7 +43,7 @@ public abstract class Evaluator : IEvaluator
                 case FrequencyType.Yearly:
                     // When a rule uses BYWEEKNO, recurrence enumeration
                     // is based on week numbers relative to the year.
-                    // So we preserve January 1st when adding years; otherwise, preserve month/day.
+                    // So we preserve the weekday when using BYWEEKNO and preserve month/day otherwise.
                     dt = (pattern.ByWeekNo.Count != 0)
                         ? old.AddDays(-old.DayOfYear + 1).AddYears(interval)
                         : old.AddYears(interval);
