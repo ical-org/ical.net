@@ -4831,4 +4831,26 @@ END:VCALENDAR";
 
         EventOccurrenceTest(cal, new CalDateTime(2025, 1, 1), null, expected, null);
     }
+
+    [Test, Category("Recurrence")]
+    public void Yearly_ByMonth_MixedPositiveAndNegative_ByMonthDay_LowerLimitHeuristic()
+    {
+        const string ics = """
+                           BEGIN:VCALENDAR
+                           VERSION:2.0
+                           BEGIN:VEVENT
+                           DTSTART:20250601
+                           RRULE:FREQ=YEARLY;BYMONTH=6;BYMONTHDAY=2,-2;UNTIL=20250627
+                           END:VEVENT
+                           END:VCALENDAR
+                           """;
+
+        var cal = Calendar.Load(ics)!;
+        Period[] expected =
+        [
+            new (new CalDateTime(2025, 6, 2), Duration.FromDays(1))
+        ];
+
+        EventOccurrenceTest(cal, new CalDateTime(2025, 1, 1), null, expected, null);
+    }
 }

@@ -255,8 +255,12 @@ public class RecurrencePatternEvaluator : Evaluator
                 int day;
                 if (pattern.ByMonthDay.Count > 0)
                 {
-                    var md = pattern.ByMonthDay.Min();
-                    day = md > 0 ? Math.Min(md, daysInMonth) : Math.Max(1, daysInMonth + md + 1);
+                    // Map BYMONTHDAY entries (positive and negative) to absolute days
+                    // in the target month, then pick the smallest. This handles cases
+                    // where BYMONTHDAY mixes positive and negative values (e.g. 2,-2).
+                    var mappedDays = pattern.ByMonthDay
+                        .Select(md => md > 0 ? Math.Min(md, daysInMonth) : Math.Max(1, daysInMonth + md + 1));
+                    day = mappedDays.Min();
                 }
                 else
                 {
