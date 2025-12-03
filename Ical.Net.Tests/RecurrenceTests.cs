@@ -15,6 +15,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Tests.TestHelpers;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
@@ -32,37 +33,7 @@ public class RecurrenceTests
         Period[] expectedPeriods,
         string[]? timeZones,
         int eventIndex
-    )
-    {
-        var evt = cal.Events.Skip(eventIndex).First();
-
-        var occurrences = toDate == null
-            ? evt.GetOccurrences(fromDate).ToList()
-            : evt.GetOccurrences(fromDate).TakeWhileBefore(toDate).ToList();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(
-                occurrences,
-                Has.Count.EqualTo(expectedPeriods.Length),
-                "There should have been " + expectedPeriods.Length + " occurrences; there were " + occurrences.Count);
-
-            if (evt.RecurrenceRules.Count > 0)
-            {
-                Assert.That(evt.RecurrenceRules, Has.Count.EqualTo(1));
-            }
-
-            for (var i = 0; i < expectedPeriods.Length; i++)
-            {
-                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveDuration!.Value);
-
-                Assert.That(occurrences[i].Period, Is.EqualTo(period), "Event should occur on " + period);
-                if (timeZones != null)
-                    Assert.That(period.StartTime.TimeZoneName, Is.EqualTo(timeZones[i]),
-                        "Event " + period + " should occur in the " + timeZones[i] + " timezone");
-            }
-        });
-    }
+    ) => OccurrenceTester.AssertOccurrences(cal, fromDate, toDate, expectedPeriods, timeZones, eventIndex);
 
     private void EventOccurrenceTest(
         Calendar cal,
@@ -70,22 +41,22 @@ public class RecurrenceTests
         CalDateTime? toDate,
         Period[] expectedPeriods,
         string[]? timeZones
-    ) => EventOccurrenceTest(cal, fromDate, toDate, expectedPeriods, timeZones, 0);
+    ) => OccurrenceTester.AssertOccurrences(cal, fromDate, toDate, expectedPeriods, timeZones, 0);
 
-    private static readonly TestCaseData[] EventOccurrenceTestCases = new TestCaseData[]
-    {
+    private static readonly TestCaseData[] EventOccurrenceTestCases =
+    [
         new("""
             DTSTART;TZID=Europe/Amsterdam:20201024T023000
             DURATION:PT5M
             RRULE:FREQ=DAILY;UNTIL=20201025T010000Z
             """,
-            new[]
-            {
+            (string[])
+            [
                 "20201024T023000/PT5M",
                 "20201025T023000/PT5M"
-            }
-        ),
-    };
+            ]
+        )
+    ];
 
     [Test, Category("Recurrence")]
     [TestCaseSource(nameof(EventOccurrenceTestCases))]
@@ -4805,133 +4776,5 @@ END:VCALENDAR";
         };
 
         Assert.That(occurrences.Select(o => o.Period.StartTime).ToArray(), Is.EqualTo(expected));
-    }
-
-    [Test, Category("Recurrence")]
-    public void ByMonthDay_With_ByDay_SimpleCase()
-    {
-        const string tzId = "Europe/Berlin";
-        var ics = """
-                   BEGIN:VCALENDAR
-                   VERSION:2.0
-                   BEGIN:VEVENT
-                   DTSTART;TZID=Europe/Berlin:20250913T090000
-                   DURATION:PT1H
-                   RRULE:FREQ=MONTHLY;BYMONTHDAY=13;BYDAY=MO
-                   END:VEVENT
-                   END:VCALENDAR
-                   """;
-
-        var cal = Calendar.Load(ics)!;
-        var from = new CalDateTime(2025, 1, 1);
-        var to = new CalDateTime(2028, 1, 1);
-
-        // Expected occurrences: only months, where the 13th is a Monday
-        var expected = new[]
-        {
-            new Period(new CalDateTime(2025, 10, 13, 9, 0, 0, tzId), Duration.FromHours(1)),
-            new Period(new CalDateTime(2026, 4, 13, 9, 0, 0, tzId), Duration.FromHours(1)),
-            new Period(new CalDateTime(2026, 7, 13, 9, 0, 0, tzId), Duration.FromHours(1)),
-            new Period(new CalDateTime(2027, 9, 13, 9, 0, 0, tzId), Duration.FromHours(1)),
-            new Period(new CalDateTime(2027, 12, 13, 9, 0, 0, tzId), Duration.FromHours(1)),
-        };
-
-        EventOccurrenceTest(cal, from, to, expected, null);
-    }
-
-    [Test, Category("Recurrence")]
-    public void ByMonthDay_With_ByDay_YearlyByMonthDay_ExpandMatrix_Note2()
-    {
-        var ics = """
-                    BEGIN:VCALENDAR
-                    VERSION:2.0
-                    BEGIN:VEVENT
-                    DTSTART:20260601
-                    RRULE:FREQ=YEARLY;BYMONTHDAY=1,8;BYDAY=22MO,23TU,25MO,36TU;COUNT=3
-                    END:VEVENT
-                    END:VCALENDAR
-                    """;
-
-        var cal = Calendar.Load(ics)!;
-        var expected = new[]
-        {
-            new Period(new CalDateTime(2026, 6, 1), Duration.FromDays(1)),
-            new Period(new CalDateTime(2027, 6, 8), Duration.FromDays(1)),
-            new Period(new CalDateTime(2032, 6, 8), Duration.FromDays(1)),
-        };
-
-        EventOccurrenceTest(cal, new CalDateTime(2026, 1, 1), new CalDateTime(2035, 1, 1), expected, null);
-    }
-
-    [Test, Category("Recurrence")]
-    public void ByMonthDay_With_ByDay_MonthlyByMonthDay_WithOffsets_LimitingBehavior()
-    {
-        var ics = """
-                    BEGIN:VCALENDAR
-                    VERSION:2.0
-                    BEGIN:VEVENT
-                    DTSTART:20260601
-                    RRULE:FREQ=MONTHLY;BYMONTHDAY=1,8;BYDAY=1MO,2TU;COUNT=3
-                    END:VEVENT
-                    END:VCALENDAR
-                    """;
-
-        var cal = Calendar.Load(ics)!;
-        var expected = new[]
-        {
-            new Period(new CalDateTime(2026, 6, 1), Duration.FromDays(1)),
-            new Period(new CalDateTime(2026, 9, 8), Duration.FromDays(1)),
-            new Period(new CalDateTime(2026, 12, 8), Duration.FromDays(1)),
-        };
-
-        EventOccurrenceTest(cal, new CalDateTime(2026, 1, 1), new CalDateTime(2027, 1, 1), expected, null);
-    }
-
-    [Test, Category("Recurrence")]
-    public void ByMonthDay_With_ByDay_YearlyByMonthAndMonthDay_WithOffsets()
-    {
-        var ics = """
-                    BEGIN:VCALENDAR
-                    VERSION:2.0
-                    BEGIN:VEVENT
-                    DTSTART:20260601
-                    RRULE:FREQ=YEARLY;BYMONTH=6,7,8,9,10,11,12;BYMONTHDAY=1,8;BYDAY=1MO,2TU;COUNT=3
-                    END:VEVENT
-                    END:VCALENDAR
-                    """;
-
-        var cal = Calendar.Load(ics)!;
-        var expected = new[]
-        {
-            new Period(new CalDateTime(2026, 6, 1), Duration.FromDays(1)),
-            new Period(new CalDateTime(2026, 9, 8), Duration.FromDays(1)),
-            new Period(new CalDateTime(2026, 12, 8), Duration.FromDays(1)),
-        };
-
-        EventOccurrenceTest(cal, new CalDateTime(2026, 1, 1), new CalDateTime(2027, 1, 1), expected, null);
-    }
-
-    [Test, Category("Recurrence")]
-    public void ByMonthDay_With_ByDay_YearlyByYearDay_WithOffsets_LimitingBehavior()
-    {
-        var ics = """
-                    BEGIN:VCALENDAR
-                    VERSION:2.0
-                    BEGIN:VEVENT
-                    DTSTART:20260601
-                    RRULE:FREQ=YEARLY;BYYEARDAY=152,173,251,272,321,342;BYDAY=22MO,26MO,36TU,37TU,49TU;COUNT=3
-                    END:VEVENT
-                    END:VCALENDAR
-                    """;
-
-        var cal = Calendar.Load(ics)!;
-        var expected = new[]
-        {
-            new Period(new CalDateTime(2026, 6, 1), Duration.FromDays(1)),
-            new Period(new CalDateTime(2026, 9, 8), Duration.FromDays(1)),
-            new Period(new CalDateTime(2026, 12, 8), Duration.FromDays(1)),
-        };
-
-        EventOccurrenceTest(cal, new CalDateTime(2026, 1, 1), new CalDateTime(2030, 1, 1), expected, null);
     }
 }
