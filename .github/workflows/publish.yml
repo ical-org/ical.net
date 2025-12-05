@@ -1,54 +1,66 @@
 ﻿name: Publish
-# This job builds and publishes the package to NuGet.
-# It depends on the included tests job to complete successfully.
-# The version number is determined by the existing tag provided 
-# when manually triggering the workflow. 
-# The tag is not limited to a certain branch.
-# The tag MUST be entered, selecting from the branch/tag dropdown will not work.
+# Build and publish package to NuGet.
+# Choose a main version (e.g. v5 or v6). The workflow prints matching tags and picks
+# the most recent tag that starts with the chosen major (by creatordate).
 on:
   workflow_dispatch:
     inputs:
-      version_tag:
-        description: 'You MUST ONLY enter an existing version tag to publish (e.g., "v5.1.0" or "v6.0.0-pre.1")'
+      major_version:
+        description: 'Select the main version to publish. The workflow will pick the most recent tag that starts with this value (e.g. v6 -> v6.2.1).'
         required: true
-        type: string
+        type: choice
+        options:
+          - v5
+          # - v6
 
 jobs:
   tests:
     runs-on: ubuntu-22.04  # ubuntu-24.04 does not include mono needed for net4x tests
     outputs:
-      VERSION: ${{ steps.set_version.outputs.VERSION }}
+      VERSION: ${{ steps.resolve.outputs.VERSION }}
+      TAG_NAME: ${{ steps.resolve.outputs.TAG_NAME }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
       with:
-        fetch-depth: 0  # Fetch all history for all tags and branches
-    
-    - name: Verify tag exists
+        fetch-depth: 0  # Fetch full history and tags
+
+    - name: Show matches for selected major and select latest tag
+      id: resolve
       run: |
+        set -euo pipefail
+
+        Major='${{ github.event.inputs.major_version }}'
+        echo "Selected major: $Major"
+
         git fetch --tags --quiet
-        if ! git rev-parse "${{ inputs.version_tag }}" >/dev/null 2>&1; then
-          echo "::error::Tag '${{ inputs.version_tag }}' does not exist."
-          echo "Available tags:"
-          git tag -l
+
+        # Get matching tags sorted by creatordate (newest first)
+        mapfile -t MATCHING < <(git for-each-ref --sort=-creatordate --format='%(refname:short)' refs/tags | grep -E "^${Major}(\.|$)" || true)
+
+        if [ ${#MATCHING[@]} -eq 0 ]; then
+          echo "::error::No tag found for major '$Major'. Showing latest tags:"
+          git for-each-ref --sort=-creatordate --format='%(refname:short)' refs/tags | head -n 50
           exit 1
         fi
 
-    - name: Checkout tag
-      uses: actions/checkout@v6
-      with:
-        fetch-depth: 0  # Fetch all history for all tags and branches
-        ref: ${{ inputs.version_tag }}
+        echo "Matching tags (newest to oldest):"
+        for t in "${MATCHING[@]}"; do
+          echo " - $t"
+        done
 
-    - name: Set VERSION output
-      id: set_version
-      run: |
-         Version="${{ inputs.version_tag }}"
-         # Strip 'v' prefix for VERSION variable
-         Version="${Version#v}"
-         echo "VERSION=$Version" >> $GITHUB_ENV
-         echo "VERSION=$Version" >> $GITHUB_OUTPUT
-         echo "Version: $Version"
+        # Choose the first (newest) matching tag
+        Tag="${MATCHING[0]}"
+        # Strip 'v' prefix for VERSION variable
+        Version="${Tag#v}"
+
+        echo "Selected tag: $Tag -> version: $Version"
+
+        # Export for later steps and other jobs
+        echo "TAG_NAME=$Tag" >> $GITHUB_OUTPUT
+        echo "VERSION=$Version" >> $GITHUB_OUTPUT
+        echo "TAG_NAME=$Tag" >> $GITHUB_ENV
+        echo "VERSION=$Version" >> $GITHUB_ENV
 
     - name: Set Git config for line endings
       run: git config --global core.autocrlf true
@@ -62,6 +74,12 @@ jobs:
           6.0.x
           3.1.x
 
+    - name: Checkout the resolved tag (detached)
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        ref: ${{ steps.resolve.outputs.TAG_NAME }}
+
     - name: Restore dependencies
       run: dotnet restore
 
@@ -72,15 +90,14 @@ jobs:
       run: dotnet test --no-build --configuration Release --verbosity quiet
 
   publish:
-    runs-on: ubuntu-24.04
     needs: tests
-
+    runs-on: ubuntu-24.04
     steps:
-    - name: Checkout tag
+    - name: Checkout the same tag
       uses: actions/checkout@v6
       with:
-        fetch-depth: 0  # Fetch all history for all tags and branches
-        ref: ${{ inputs.version_tag }}
+        fetch-depth: 0
+        ref: ${{ needs.tests.outputs.TAG_NAME }}
 
     - name: Set Git config for line endings
       run: git config --global core.autocrlf true
@@ -93,7 +110,6 @@ jobs:
 
     - name: Use verified version
       run: |
-        # Reuse the version from tests job
         echo "Using version: ${{ needs.tests.outputs.VERSION }}"
         echo "VERSION=${{ needs.tests.outputs.VERSION }}" >> $GITHUB_ENV
 
@@ -103,14 +119,12 @@ jobs:
         AssemblyVersion=${VERSION%%.*}.0.0
         echo "FILE_VERSION=$FileVersion" >> $GITHUB_ENV
         echo "ASSEMBLY_VERSION=$AssemblyVersion" >> $GITHUB_ENV
-        echo "File Version: $FileVersion"
-        echo "Assembly Version: $AssemblyVersion"
 
     - name: Restore dependencies
       run: dotnet restore
 
     - name: Build and pack for publishing
-      run: |  
+      run: |
         dotnet build --configuration Release Ical.Net/Ical.Net.csproj \
           -p:Version=${{env.VERSION}} \
           -p:FileVersion=${{env.FILE_VERSION}} \
