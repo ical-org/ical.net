@@ -4,23 +4,23 @@
 # The version number is determined by the existing tag provided 
 # when manually triggering the workflow. 
 # The tag is not limited to a certain branch.
+# The tag MUST be entered, selecting from the branch/tag dropdown will not work.
 on:
   workflow_dispatch:
     inputs:
       version_tag:
-        description: 'Enter an existing version tag to publish (e.g., "v5.1.0" or "v6.0.0-pre.1")'
+        description: 'You MUST ONLY enter an existing version tag to publish (e.g., "v5.1.0" or "v6.0.0-pre.1")'
         required: true
         type: string
 
 jobs:
   tests:
-    runs-on: ubuntu-22.04
-    # ubuntu-latest = ubuntu-24.04 does not include mono needed for tests (2025-08-01)
+    runs-on: ubuntu-22.04  # ubuntu-24.04 does not include mono needed for net4x tests
     outputs:
       VERSION: ${{ steps.set_version.outputs.VERSION }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0  # Fetch all history for all tags and branches
     
@@ -35,7 +35,7 @@ jobs:
         fi
 
     - name: Checkout tag
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0  # Fetch all history for all tags and branches
         ref: ${{ inputs.version_tag }}
@@ -54,9 +54,10 @@ jobs:
       run: git config --global core.autocrlf true
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
+          10.0.x
           8.0.x
           6.0.x
           3.1.x
@@ -71,12 +72,12 @@ jobs:
       run: dotnet test --no-build --configuration Release --verbosity quiet
 
   publish:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: tests
 
     steps:
     - name: Checkout tag
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0  # Fetch all history for all tags and branches
         ref: ${{ inputs.version_tag }}
@@ -85,10 +86,10 @@ jobs:
       run: git config --global core.autocrlf true
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
-          8.0.x
+          10.0.x
 
     - name: Use verified version
       run: |
@@ -125,7 +126,7 @@ jobs:
           --no-build
 
     - name: Store artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: ICal.Net_pkg_${{env.VERSION}}.${{github.run_number}}
         path: |
