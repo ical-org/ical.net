@@ -148,9 +148,10 @@ jobs:
           Ical.Net/bin/Release/**/*.snupkg
 
     - name: Push package to NuGet
-      # Does not fail, if the package already exists
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
-        dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{env.VERSION}}.nupkg \
-          --api-key ${{secrets.NUGET_API_KEY}} \
+        dotnet nuget push "Ical.Net/bin/Release/Ical.Net.${{env.VERSION}}.nupkg" \
+          --api-key "$NUGET_API_KEY" \
           --source https://api.nuget.org/v3/index.json \
           --skip-duplicate
