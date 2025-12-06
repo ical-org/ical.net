@@ -1,7 +1,9 @@
-﻿name: Publish
-# Build and publish package to NuGet.
-# Choose a main version (e.g. v5 or v6). The workflow prints matching tags and picks
-# the most recent tag that starts with the chosen major (by creatordate).
+﻿name: Publish Nuget Package
+# This job builds and publishes the package to NuGet.
+# It depends on the included tests job to complete successfully.
+# This workflow finds the most recent tag that starts with 
+# the selected major version (sorted by creatordate)
+# and runs the test, build and publish tasks for that tag.
 on:
   workflow_dispatch:
     inputs:
@@ -25,42 +27,13 @@ jobs:
       with:
         fetch-depth: 0  # Fetch full history and tags
 
-    - name: Show matches for selected major and select latest tag
+    - name: Show matching major version tags and select latest by creatordate
       id: resolve
+      shell: bash
       run: |
         set -euo pipefail
-
-        Major='${{ github.event.inputs.major_version }}'
-        echo "Selected major: $Major"
-
-        git fetch --tags --quiet
-
-        # Get matching tags sorted by creatordate (newest first)
-        mapfile -t MATCHING < <(git for-each-ref --sort=-creatordate --format='%(refname:short)' refs/tags | grep -E "^${Major}(\.|$)" || true)
-
-        if [ ${#MATCHING[@]} -eq 0 ]; then
-          echo "::error::No tag found for major '$Major'. Showing latest tags:"
-          git for-each-ref --sort=-creatordate --format='%(refname:short)' refs/tags | head -n 50
-          exit 1
-        fi
-
-        echo "Matching tags (newest to oldest):"
-        for t in "${MATCHING[@]}"; do
-          echo " - $t"
-        done
-
-        # Choose the first (newest) matching tag
-        Tag="${MATCHING[0]}"
-        # Strip 'v' prefix for VERSION variable
-        Version="${Tag#v}"
-
-        echo "Selected tag: $Tag -> version: $Version"
-
-        # Export for later steps and other jobs
-        echo "TAG_NAME=$Tag" >> $GITHUB_OUTPUT
-        echo "VERSION=$Version" >> $GITHUB_OUTPUT
-        echo "TAG_NAME=$Tag" >> $GITHUB_ENV
-        echo "VERSION=$Version" >> $GITHUB_ENV
+        # no need for chmod when using bash to run the resolver script
+        bash .github/workflows/PublishResolveVersion.sh "${{ github.event.inputs.major_version }}"
 
     - name: Set Git config for line endings
       run: git config --global core.autocrlf true
