@@ -19,20 +19,20 @@ on:
 
 jobs:
   coverage:
-    runs-on: ubuntu-22.04
-    # ubuntu-latest = ubuntu-24.04 does not include mono (2025-08-01)
+    runs-on: ubuntu-22.04  # ubuntu-24.04 does not include mono needed for net4x tests
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0  # Fetch all history for all tags and branches
     - name: Set Git config for line endings
       run: git config --global core.autocrlf true
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
+          10.0.x
           8.0.x
           6.0.x
           3.1.x
@@ -47,12 +47,12 @@ jobs:
       run: dotnet test --no-build --configuration Release --verbosity normal /p:AltCover=true /p:AltCoverXmlReport="coverage.xml" /p:AltCoverStrongNameKey="../IcalNetStrongnameKey.snk" /p:AltCoverAssemblyExcludeFilter="Ical.Net.Tests|NUnit3.TestAdapter|AltCover" /p:AltCoverAttributeFilter="ExcludeFromCodeCoverage" /p:AltCoverLineCover="false"
 
     - name: Store coverage report as artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: coverage-report
         path: ./Ical.Net.Tests/coverage.*.xml  # store all coverage reports
     - name: Upload coverage to Codecov  
-      uses: codecov/codecov-action@v5  
+      uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7
       with:  
         # files: automatically finds all in ./Ical.Net.Tests/
         name: coverage

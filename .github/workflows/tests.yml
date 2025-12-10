@@ -17,20 +17,20 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-22.04
-    # ubuntu-latest = ubuntu-24.04 does not include mono (2025-08-01)
+    runs-on: ubuntu-22.04  # ubuntu-24.04 does not include mono needed for net4x tests
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0  # Fetch all history for all tags and branches
     - name: Set Git config for line endings
       run: git config --global core.autocrlf true
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
+          10.0.x
           8.0.x
           6.0.x
           3.1.x

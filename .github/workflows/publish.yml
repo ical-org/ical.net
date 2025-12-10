@@ -1,65 +1,57 @@
-﻿name: Publish
+﻿name: Publish Nuget Package
 # This job builds and publishes the package to NuGet.
 # It depends on the included tests job to complete successfully.
-# The version number is determined by the existing tag provided 
-# when manually triggering the workflow. 
-# The tag is not limited to a certain branch.
+# This workflow finds the most recent tag that starts with 
+# the selected major version (sorted by creatordate)
+# and runs the test, build and publish tasks for that tag.
 on:
   workflow_dispatch:
     inputs:
-      version_tag:
-        description: 'Enter an existing version tag to publish (e.g., "v5.1.0" or "v6.0.0-pre.1")'
+      major_version:
+        description: 'Select the main version to publish. The workflow will pick the most recent tag that starts with this value (e.g. v6 -> v6.2.1).'
         required: true
-        type: string
+        type: choice
+        options:
+          - v5
+          # - v6
 
 jobs:
   tests:
-    runs-on: ubuntu-22.04
-    # ubuntu-latest = ubuntu-24.04 does not include mono needed for tests (2025-08-01)
+    runs-on: ubuntu-22.04  # ubuntu-24.04 does not include mono needed for net4x tests
     outputs:
-      VERSION: ${{ steps.set_version.outputs.VERSION }}
+      VERSION: ${{ steps.resolve.outputs.VERSION }}
+      TAG_NAME: ${{ steps.resolve.outputs.TAG_NAME }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
-        fetch-depth: 0  # Fetch all history for all tags and branches
-    
-    - name: Verify tag exists
-      run: |
-        git fetch --tags --quiet
-        if ! git rev-parse "${{ inputs.version_tag }}" >/dev/null 2>&1; then
-          echo "::error::Tag '${{ inputs.version_tag }}' does not exist."
-          echo "Available tags:"
-          git tag -l
-          exit 1
-        fi
+        fetch-depth: 0  # Fetch full history and tags
 
-    - name: Checkout tag
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Fetch all history for all tags and branches
-        ref: ${{ inputs.version_tag }}
-
-    - name: Set VERSION output
-      id: set_version
+    - name: Show matching major version tags and select latest by creatordate
+      id: resolve
+      shell: bash
       run: |
-         Version="${{ inputs.version_tag }}"
-         # Strip 'v' prefix for VERSION variable
-         Version="${Version#v}"
-         echo "VERSION=$Version" >> $GITHUB_ENV
-         echo "VERSION=$Version" >> $GITHUB_OUTPUT
-         echo "Version: $Version"
+        set -euo pipefail
+        # no need for chmod when using bash to run the resolver script
+        bash .github/workflows/PublishResolveVersion.sh "${{ github.event.inputs.major_version }}"
 
     - name: Set Git config for line endings
       run: git config --global core.autocrlf true
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
+          10.0.x
           8.0.x
           6.0.x
           3.1.x
+
+    - name: Checkout the resolved tag (detached)
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        ref: ${{ steps.resolve.outputs.TAG_NAME }}
 
     - name: Restore dependencies
       run: dotnet restore
@@ -71,28 +63,26 @@ jobs:
       run: dotnet test --no-build --configuration Release --verbosity quiet
 
   publish:
-    runs-on: ubuntu-22.04
     needs: tests
-
+    runs-on: ubuntu-24.04
     steps:
-    - name: Checkout tag
-      uses: actions/checkout@v4
+    - name: Checkout the same tag
+      uses: actions/checkout@v6
       with:
-        fetch-depth: 0  # Fetch all history for all tags and branches
-        ref: ${{ inputs.version_tag }}
+        fetch-depth: 0
+        ref: ${{ needs.tests.outputs.TAG_NAME }}
 
     - name: Set Git config for line endings
       run: git config --global core.autocrlf true
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
-          8.0.x
+          10.0.x
 
     - name: Use verified version
       run: |
-        # Reuse the version from tests job
         echo "Using version: ${{ needs.tests.outputs.VERSION }}"
         echo "VERSION=${{ needs.tests.outputs.VERSION }}" >> $GITHUB_ENV
 
@@ -102,14 +92,12 @@ jobs:
         AssemblyVersion=${VERSION%%.*}.0.0
         echo "FILE_VERSION=$FileVersion" >> $GITHUB_ENV
         echo "ASSEMBLY_VERSION=$AssemblyVersion" >> $GITHUB_ENV
-        echo "File Version: $FileVersion"
-        echo "Assembly Version: $AssemblyVersion"
 
     - name: Restore dependencies
       run: dotnet restore
 
     - name: Build and pack for publishing
-      run: |  
+      run: |
         dotnet build --configuration Release Ical.Net/Ical.Net.csproj \
           -p:Version=${{env.VERSION}} \
           -p:FileVersion=${{env.FILE_VERSION}} \
@@ -125,7 +113,7 @@ jobs:
           --no-build
 
     - name: Store artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: ICal.Net_pkg_${{env.VERSION}}.${{github.run_number}}
         path: |
@@ -133,9 +121,10 @@ jobs:
           Ical.Net/bin/Release/**/*.snupkg
 
     - name: Push package to NuGet
-      # Does not fail, if the package already exists
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
-        dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{env.VERSION}}.nupkg \
-          --api-key ${{secrets.NUGET_API_KEY}} \
+        dotnet nuget push "Ical.Net/bin/Release/Ical.Net.${{env.VERSION}}.nupkg" \
+          --api-key "$NUGET_API_KEY" \
           --source https://api.nuget.org/v3/index.json \
           --skip-duplicate
