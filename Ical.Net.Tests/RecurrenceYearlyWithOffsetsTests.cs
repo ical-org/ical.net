@@ -63,10 +63,10 @@ public class RecurrenceYearlyWithOffsetsTests
 
         CalDateTime[] expected =
         [
-            CalCalc.GetNthWeekdayOfMonth(2026, 6, DayOfWeek.Monday, 2),
-            CalCalc.GetNthWeekdayOfMonth(2026, 9, DayOfWeek.Monday, 2),
-            CalCalc.GetNthWeekdayOfMonth(2027, 6, DayOfWeek.Monday, 2),
-            CalCalc.GetNthWeekdayOfMonth(2027, 9, DayOfWeek.Monday, 2)
+            new(2026, 6, 8, 9, 0, 0),
+            new(2026, 9, 14, 9, 0, 0),
+            new(2027, 6, 14, 9, 0, 0),
+            new(2027, 9, 13, 9, 0, 0)
         ];
 
         var expectedPeriods = expected
@@ -92,9 +92,9 @@ public class RecurrenceYearlyWithOffsetsTests
 
         CalDateTime[] expected =
         [
-            CalCalc.GetNthWeekdayOfYear(2026, DayOfWeek.Monday, 20),
-            CalCalc.GetNthWeekdayOfYear(2027, DayOfWeek.Monday, 20),
-            CalCalc.GetNthWeekdayOfYear(2028, DayOfWeek.Monday, 20)
+            new(2026, 5, 18, 9, 0, 0),
+            new(2027, 5, 17, 9, 0, 0),
+            new(2028, 5, 15, 9, 0, 0)
         ];
 
         var expectedPeriods = expected
@@ -120,8 +120,8 @@ public class RecurrenceYearlyWithOffsetsTests
 
         CalDateTime[] expected =
         [
-            CalCalc.GetNthWeekdayOfMonth(2026, 6, DayOfWeek.Sunday, -1),
-            CalCalc.GetNthWeekdayOfMonth(2026, 9, DayOfWeek.Sunday, -1)
+            new(2026, 6, 28, 9, 0, 0),
+            new(2026, 9, 27, 9, 0, 0)
         ];
 
         var expectedPeriods = expected

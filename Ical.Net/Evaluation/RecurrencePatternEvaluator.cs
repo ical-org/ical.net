@@ -327,9 +327,8 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="seedDate">The seed date. It is always returned in the list of possible dates.</param>
     /// <param name="pattern"></param>
     /// <param name="expandBehaviors"></param>
-    /// <param name="anchorMonth">The anchor month for BYMONTHDAY expansion when BYMONTH is not specified.</param>
     /// <returns>A list of possible dates.</returns>
-    private IEnumerable<CalDateTime> GetCandidates(CalDateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
+    private IEnumerable<CalDateTime> GetCandidates(CalDateTime seedDate, RecurrencePattern pattern, bool?[] expandBehaviors)
     {
         var expandContext = new ExpandContext { IsCandidateSetFullyExpanded = false };
 
