@@ -41,12 +41,9 @@ public abstract class Evaluator : IEvaluator
                     dt = old.AddDays(-old.Day + 1).AddMonths(interval);
                     break;
                 case FrequencyType.Yearly:
-                    // When a rule uses BYWEEKNO, recurrence enumeration
-                    // is based on week numbers relative to the year.
-                    // So we preserve the weekday when using BYWEEKNO and preserve month/day otherwise.
-                    dt = (pattern.ByWeekNo.Count != 0)
-                        ? old.AddDays(-old.DayOfYear + 1).AddYears(interval)
-                        : old.AddYears(interval);
+                    // RecurrencePatternEvaluator relies on the assumption that after incrementing, the new refDate
+                    // is usually at the first day of an interval.
+                    dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval);
                     break;
                 default:
                     // Frequency should always be valid at this stage.

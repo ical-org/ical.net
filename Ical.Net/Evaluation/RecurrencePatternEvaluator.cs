@@ -167,7 +167,8 @@ public class RecurrencePatternEvaluator : Evaluator
             if (searchEndDate < lowerLimit)
                 break;
 
-            var candidates = GetCandidates(intervalRefTime, pattern, expandBehavior);
+            var candidates =
+                GetCandidates((lowerLimit > intervalRefTime) ? lowerLimit : intervalRefTime, pattern, expandBehavior);
 
             foreach (var t in candidates.Where(t => t >= originalDate))
             {
@@ -218,7 +219,8 @@ public class RecurrencePatternEvaluator : Evaluator
     ///   might fall earlier in the year than the intervalRefTime's month/day. In
     ///   that case we compute the earliest possible date/time that could be
     ///   generated for the interval (earliest month/day/hour/minute/second).
-    /// - If BYWEEKNO is present, the interval may contain days from the previous
+    /// - If neither BYMONTH nor BYWEEKNO is present, we use the original date's month
+    /// - If only BYWEEKNO is present, the interval may contain days from the previous
     ///   or next year (ISO week boundaries). In that case we adjust the interval
     ///   start to the first day of the configured week so we don't miss candidates
     ///   that belong to the week containing Jan 1st.
@@ -227,6 +229,20 @@ public class RecurrencePatternEvaluator : Evaluator
     {
         switch (pattern)
         {
+            case { Frequency: FrequencyType.Yearly, ByMonth.Count: 0, ByWeekNo.Count: 0 }:
+            {
+                // Return intervalRefTime but use the month from the original DTSTART.
+                // Else, the earliest candidate for the interval might be too early
+                // Do this by shifting the intervalRefTime by the difference in months.
+                // This preserves the day/time from intervalRefTime and relies on AddMonths
+                // to perform month-end semantics (e.g. Jan 31 -> Feb 28/29) instead of
+                // manually clamping the day.
+                var monthDelta = originalDate.Month - intervalRefTime.Month;
+                var adjusted = intervalRefTime.AddMonths(monthDelta);
+
+                return new CalDateTime(adjusted.Year, adjusted.Month, adjusted.Day, adjusted.Hour, adjusted.Minute, adjusted.Second, intervalRefTime.TzId);
+            }
+
             case { Frequency: FrequencyType.Yearly, ByMonth.Count: > 0, ByWeekNo.Count: 0 }:
             {
                 // When evaluating a YEARLY rule that restricts months (BYMONTH) but not
@@ -275,6 +291,7 @@ public class RecurrencePatternEvaluator : Evaluator
 
                 return new CalDateTime(year, month, day, hour, minute, second, intervalRefTime.TzId);
             }
+
             case { Frequency: FrequencyType.Yearly, ByWeekNo.Count: not 0 }:
             {
                 // YEARLY with BYWEEKNO: weeks may span year boundaries. Move the
@@ -282,6 +299,7 @@ public class RecurrencePatternEvaluator : Evaluator
                 // the week (including days before Jan 1st) is handled correctly.
                 return GetFirstDayOfWeekDate(intervalRefTime, pattern.FirstDayOfWeek);
             }
+
             default:
             {
                 return intervalRefTime;
@@ -569,21 +587,12 @@ public class RecurrencePatternEvaluator : Evaluator
 
         foreach (var date in dates)
         {
-            if (pattern.ByMonth.Count > 0)
-            {
-                // If BYMONTH is specified, the date must be in one of those months
-                // and match a BYMONTHDAY value.
-                if (!pattern.ByMonth.Contains(date.Month))
-                    continue;
+            // If BYMONTH is specified and this date's month is not included, skip it.
+            if (pattern.ByMonth.Count > 0 && !pattern.ByMonth.Contains(date.Month))
+                continue;
 
-                if (MatchesAnyMonthDay(date, pattern.ByMonthDay))
-                    yield return date;
-            }
-            else
-            {
-                if (MatchesAnyMonthDay(date, pattern.ByMonthDay))
-                    yield return date;
-            }
+            if (MatchesAnyMonthDay(date, pattern.ByMonthDay))
+                yield return date;
         }
     }
 
