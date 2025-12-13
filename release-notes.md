@@ -4,6 +4,16 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v5
 
+### 5.1.4 - (2025-12-13)
+
+Fix: Regression introduced in v5.1.3 affecting `RRULE:FREQ=YEARLY` when negative `BYMONTHDAY` or `BYYEARDAY` values are used. In certain combinations the evaluator could normalize negative positions incorrectly and skip valid occurrences (e.g., end‑of‑month or end‑of‑year instances). This has been fixed — please upgrade to v5.1.4.
+
+Example of an affected rule (prior behavior could skip results):
+```ics
+DTSTART:20250101
+RRULE:FREQ=YEARLY;BYYEARDAY=-1,1;BYMONTHDAY=-1,1
+```
+
 ### 5.1.3 - (2025-12-01)
 
 Fix: Correct handling `RRULE:FREQ=YEARLY` combined with `BYMONTH` and `BYWEEKNO`. The previous implementation could skip occurrences in some scenarios.
