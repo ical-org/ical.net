@@ -67,8 +67,8 @@ public class RecurrenceTests
 
     private void EventOccurrenceTest(
         Calendar cal,
-        CalDateTime fromDate,
-        CalDateTime toDate,
+        CalDateTime? fromDate,
+        CalDateTime? toDate,
         Period[] expectedPeriods,
         string[]? timeZones
     ) => EventOccurrenceTest(cal, fromDate, toDate, expectedPeriods, timeZones, 0);
