@@ -729,12 +729,12 @@ public class RecurrencePatternEvaluator : Evaluator
 
         for (var i = 0; i < occurrenceCount; i++)
         {
-            if (byWeekNoNormalized == null || byWeekNoNormalized.Contains(Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek)))
+            var matchesWeekNo = byWeekNoNormalized == null || byWeekNoNormalized.Contains(Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek));
+            var matchesMonth = pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month);
+
+            if (matchesWeekNo && matchesMonth)
             {
-                if (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month))
-                {
-                    yield return date;
-                }
+                yield return date;
             }
 
             date = date.AddDays(7);
@@ -765,12 +765,12 @@ public class RecurrencePatternEvaluator : Evaluator
         // It's the 53rd week of the year, but all others are 1st week number.
         while (currentWeekNo == weekNo || (nextWeekNo < weekNo && currentWeekNo == nextWeekNo && pattern.Frequency == FrequencyType.Weekly))
         {
-            if (byWeekNoNormalized == null || byWeekNoNormalized.Contains(currentWeekNo))
+            var matchesWeekNo = byWeekNoNormalized == null || byWeekNoNormalized.Contains(currentWeekNo);
+            var matchesMonth = pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month);
+
+            if (matchesWeekNo && matchesMonth)
             {
-                if (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month))
-                {
-                    yield return date;
-                }
+                yield return date;
             }
 
             date = date.AddDays(7);
