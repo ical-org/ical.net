@@ -15,6 +15,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Tests.TestHelpers;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
@@ -32,38 +33,7 @@ public class RecurrenceTests
         Period[] expectedPeriods,
         string[]? timeZones,
         int eventIndex
-    )
-    {
-        var evt = cal.Events.Skip(eventIndex).First();
-        var rule = evt.RecurrenceRules.FirstOrDefault();
-
-        var occurrences = toDate == null
-            ? evt.GetOccurrences(fromDate).ToList()
-            : evt.GetOccurrences(fromDate).TakeWhileBefore(toDate).ToList();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(
-                occurrences,
-                Has.Count.EqualTo(expectedPeriods.Length),
-                "There should have been " + expectedPeriods.Length + " occurrences; there were " + occurrences.Count);
-
-            if (evt.RecurrenceRules.Count > 0)
-            {
-                Assert.That(evt.RecurrenceRules, Has.Count.EqualTo(1));
-            }
-
-            for (var i = 0; i < expectedPeriods.Length; i++)
-            {
-                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveDuration!.Value);
-
-                Assert.That(occurrences[i].Period, Is.EqualTo(period), "Event should occur on " + period);
-                if (timeZones != null)
-                    Assert.That(period.StartTime.TimeZoneName, Is.EqualTo(timeZones[i]),
-                        "Event " + period + " should occur in the " + timeZones[i] + " timezone");
-            }
-        });
-    }
+    ) => OccurrenceTester.AssertOccurrences(cal, fromDate, toDate, expectedPeriods, timeZones, eventIndex);
 
     private void EventOccurrenceTest(
         Calendar cal,
@@ -71,22 +41,22 @@ public class RecurrenceTests
         CalDateTime? toDate,
         Period[] expectedPeriods,
         string[]? timeZones
-    ) => EventOccurrenceTest(cal, fromDate, toDate, expectedPeriods, timeZones, 0);
+    ) => OccurrenceTester.AssertOccurrences(cal, fromDate, toDate, expectedPeriods, timeZones, 0);
 
-    private static readonly TestCaseData[] EventOccurrenceTestCases = new TestCaseData[]
-    {
+    private static readonly TestCaseData[] EventOccurrenceTestCases =
+    [
         new("""
             DTSTART;TZID=Europe/Amsterdam:20201024T023000
             DURATION:PT5M
             RRULE:FREQ=DAILY;UNTIL=20201025T010000Z
             """,
-            new[]
-            {
+            (string[])
+            [
                 "20201024T023000/PT5M",
                 "20201025T023000/PT5M"
-            }
-        ),
-    };
+            ]
+        )
+    ];
 
     [Test, Category("Recurrence")]
     [TestCaseSource(nameof(EventOccurrenceTestCases))]
