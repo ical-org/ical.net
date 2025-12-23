@@ -693,15 +693,16 @@ public class RecurrencePatternEvaluator : Evaluator
     private static IEnumerable<CalDateTime> GetAbsWeekDaysYearly(CalDateTime date, WeekDay weekDay)
     {
         var year = date.Year;
+        var daysInYear = DateTime.IsLeapYear(year) ? 366 : 365;
 
-        // construct a list of possible year days..
+        // Go to Jan 1 and find first occurrence of target weekday
         date = date.AddDays(-date.DayOfYear + 1);
-        while (date.DayOfWeek != weekDay.DayOfWeek)
-        {
-            date = date.AddDays(1);
-        }
+        var offset = ((int) weekDay.DayOfWeek - (int) date.DayOfWeek + 7) % 7;
+        date = date.AddDays(offset);
 
-        while (date.Year == year)
+        // Yield all occurrences (52 or 53 per year)
+        var occurrenceCount = (daysInYear - offset + 6) / 7;
+        for (var i = 0; i < occurrenceCount; i++)
         {
             yield return date;
             date = date.AddDays(7);
@@ -711,24 +712,31 @@ public class RecurrencePatternEvaluator : Evaluator
     private static IEnumerable<CalDateTime> GetAbsWeekDaysMonthly(CalDateTime date, RecurrencePattern pattern, WeekDay weekDay)
     {
         var month = date.Month;
+        var year = date.Year;
+        var daysInMonth = Calendar.GetDaysInMonth(year, month);
 
-        // construct a list of possible month days..
+        // Go to first day of month and find first occurrence of target weekday
         date = date.AddDays(-date.Day + 1);
-        while (date.DayOfWeek != weekDay.DayOfWeek)
-        {
-            date = date.AddDays(1);
-        }
+        var offset = ((int) weekDay.DayOfWeek - (int) date.DayOfWeek + 7) % 7;
+        date = date.AddDays(offset);
 
-        var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
-        while (date.Month == month)
-        {
-            var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+        // Pre-calculate occurrence count (4 or 5 occurrences per month)
+        var occurrenceCount = (daysInMonth - offset + 6) / 7;
 
-            if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
-                && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
+        var byWeekNoNormalized = pattern.ByWeekNo.Count > 0
+            ? GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek))
+            : null;
+
+        for (var i = 0; i < occurrenceCount; i++)
+        {
+            if (byWeekNoNormalized == null || byWeekNoNormalized.Contains(Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek)))
             {
-                yield return date;
+                if (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month))
+                {
+                    yield return date;
+                }
             }
+
             date = date.AddDays(7);
         }
     }
@@ -738,26 +746,31 @@ public class RecurrencePatternEvaluator : Evaluator
         var weekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
 
         // Go to the first day of the week
-        date = date.AddDays(-GetWeekDayOffset(date, pattern.FirstDayOfWeek));
+        var weekDayOffset = GetWeekDayOffset(date, pattern.FirstDayOfWeek);
+        date = date.AddDays(-weekDayOffset);
 
-        // construct a list of possible week days..
-        while (date.DayOfWeek != weekDay.DayOfWeek)
-        {
-            date = date.AddDays(1);
-        }
+        // Find first occurrence of target weekday
+        var offset = ((int) weekDay.DayOfWeek - (int) date.DayOfWeek + 7) % 7;
+        date = date.AddDays(offset);
 
-        var nextWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
         var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
-        var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
+        var nextWeekNo = currentWeekNo;
 
-        // When we manage weekly recurring pattern and we have boundary case:
-        // Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - It's the 53th week of the year, but all another are 1st week number.
+        var byWeekNoNormalized = pattern.ByWeekNo.Count > 0
+            ? GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek))
+            : null;
+
+        // When we manage weekly recurring pattern, and we have boundary case:
+        // Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - 
+        // It's the 53rd week of the year, but all others are 1st week number.
         while (currentWeekNo == weekNo || (nextWeekNo < weekNo && currentWeekNo == nextWeekNo && pattern.Frequency == FrequencyType.Weekly))
         {
-            if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
-                && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
+            if (byWeekNoNormalized == null || byWeekNoNormalized.Contains(currentWeekNo))
             {
-                yield return date;
+                if (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month))
+                {
+                    yield return date;
+                }
             }
 
             date = date.AddDays(7);
@@ -780,18 +793,23 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="offset">The position of the element to extract.</param>
     private static IEnumerable<CalDateTime> GetOffsetDates(IEnumerable<CalDateTime> dates, int? offset)
     {
-        if (offset is null)
-            return dates;
-
-        if (offset == 0)
-            throw new EvaluationException("Encountered a day offset of 0 which is not allowed.");
-
-        if (offset < 0) {
-            offset = -offset;
-            dates = dates.Reverse();
+        switch (offset)
+        {
+            case null:
+                return dates;
+            case 0:
+                throw new EvaluationException("Encountered a day offset of 0 which is not allowed.");
+            case < 0:
+            {
+                var list = dates as IList<CalDateTime> ?? dates.ToList();
+                var index = list.Count + offset.Value;
+                return index >= 0 && index < list.Count
+                    ? [list[index]]
+                    : [];
+            }
+            default:
+                return dates.Skip(offset.Value - 1).Take(1);
         }
-
-        return dates.Skip(offset.Value - 1).Take(1);
     }
 
     /// <summary>
