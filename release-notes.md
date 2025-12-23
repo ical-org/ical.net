@@ -4,6 +4,16 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v5
 
+### 5.2.0 - (2025-12-24)
+
+#### Implemented `BYDAY` with offset and limiting behavior
+
+The following `RRULE` cases are now implemented
+
+1. YEARLY + BYMONTH + numeric BYDAY offsets. Pattern: `FREQ=YEARLY;BYMONTH=6,9;BYDAY=2MO`
+2. YEARLY + numeric BYDAY without BYMONTH. Pattern: `FREQ=YEARLY;BYDAY=20MO`
+3. YEARLY + BYMONTH + negative numeric BYDAY. Pattern: `FREQ=YEARLY;BYMONTH=6,9;BYDAY=-1SU`
+
 ### 5.1.4 - (2025-12-13)
 
 Fix: Regression introduced in v5.1.3 affecting `RRULE:FREQ=YEARLY` when negative `BYMONTHDAY` or `BYYEARDAY` values are used. In certain combinations the evaluator could normalize negative positions incorrectly and skip valid occurrences (e.g., end‑of‑month or end‑of‑year instances). This has been fixed — please upgrade to v5.1.4.
