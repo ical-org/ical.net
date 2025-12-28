@@ -50,9 +50,8 @@ internal static class ToLogExtensions
     public static string ToLog(this Occurrence occurrence)
     {
         return $"""
-                Start: {occurrence.Period.StartTime}
-                  Period: {occurrence.Period.Duration?.ToString() ?? "null"}
-                  End: {occurrence.Period.EffectiveEndTime ?? occurrence.Period.StartTime.Add(occurrence.Period.Duration!.Value)}
+                Start: {occurrence.Start}
+                  End: {occurrence.End}
                 """;
     }
 }

@@ -57,8 +57,12 @@ public class CalendarCollection : List<Calendar>
         // being ordered to avoid full enumeration.
         .OrderedMergeMany();
 
+
     public IEnumerable<Occurrence> GetOccurrences(ZonedDateTime startTime, EvaluationOptions? options = null)
         => GetOccurrences(iCal => iCal.GetOccurrences(startTime.Zone, startTime.ToInstant(), options));
+
+    public IEnumerable<Occurrence> GetOccurrences(DateTimeZone timeZone, Instant? startTime = null, EvaluationOptions? options = null)
+        => GetOccurrences(iCal => iCal.GetOccurrences(timeZone, startTime, options));
 
     public IEnumerable<Occurrence> GetOccurrences<T>(DateTimeZone timeZone, Instant? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
         => GetOccurrences(iCal => iCal.GetOccurrences<T>(timeZone, startTime, options));

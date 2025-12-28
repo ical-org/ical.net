@@ -16,8 +16,12 @@ using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Tests.TestHelpers;
+using Ical.Net.Utility;
+using NodaTime.Extensions;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
+using Duration = Ical.Net.DataTypes.Duration;
+using Period = Ical.Net.DataTypes.Period;
 
 namespace Ical.Net.Tests;
 
@@ -31,17 +35,17 @@ public class RecurrenceTests
         CalDateTime? fromDate,
         CalDateTime? toDate,
         Period[] expectedPeriods,
-        string[]? timeZones,
-        int eventIndex
-    ) => OccurrenceTester.AssertOccurrences(cal, fromDate, toDate, expectedPeriods, timeZones, eventIndex);
+        int eventIndex,
+        string? timeZone = null
+    ) => OccurrenceTester.AssertOccurrences(cal, fromDate, toDate, expectedPeriods, eventIndex, timeZone);
 
     private void EventOccurrenceTest(
         Calendar cal,
         CalDateTime? fromDate,
         CalDateTime? toDate,
         Period[] expectedPeriods,
-        string[]? timeZones
-    ) => OccurrenceTester.AssertOccurrences(cal, fromDate, toDate, expectedPeriods, timeZones, 0);
+        string? timeZone = null
+    ) => OccurrenceTester.AssertOccurrences(cal, fromDate, toDate, expectedPeriods, 0, timeZone);
 
     private static readonly TestCaseData[] EventOccurrenceTestCases =
     [
@@ -86,7 +90,7 @@ public class RecurrenceTests
                     : new Period(p.StartTime.ToTimeZone(tzid), p.Duration.Value))
             .ToArray();
 
-        EventOccurrenceTest(cal, null, null, periods, null, 0);
+        EventOccurrenceTest(cal, null, null, periods, 0);
     }
 
     /// <summary>
@@ -98,30 +102,33 @@ public class RecurrenceTests
         var iCal = Calendar.Load(IcsFiles.YearlyComplex1)!;
         ProgramTest.TestCal(iCal);
         var evt = iCal.Events.First();
-        var occurrences = evt.GetOccurrences(
-                new CalDateTime(2006, 1, 1))
-            .TakeWhileBefore(new CalDateTime(2011, 1, 1)).ToList();
 
-        var dt = new CalDateTime(2007, 1, 1, 8, 30, 0, _tzid);
+        var start = new CalDateTime(2006, 1, 1).ToZonedDateTime(_tzid);
+        var occurrences = evt.GetOccurrences(start)
+            .TakeWhileBefore(new CalDateTime(2011, 1, 1).ToZonedDateTime(_tzid).ToInstant())
+            .ToList();
+
+        var dt = new CalDateTime(2007, 1, 1, 8, 30, 0).ToLocalDateTime();
         var i = 0;
 
         while (dt.Year < 2011)
         {
-            if (dt.GreaterThan(evt.Start!) &&
+            if (dt > evt.Start!.ToLocalDateTime() &&
                 (dt.Year % 2 == 1) && // Every-other year from 2005
                 (dt.Month == 1) &&
-                (dt.DayOfWeek == DayOfWeek.Sunday))
+                (dt.DayOfWeek.ToDayOfWeek() == DayOfWeek.Sunday))
             {
-                var dt1 = dt.AddHours(1);
+                var expectedStart = dt.InZoneLeniently(start.Zone);
+                var dt1 = dt.PlusHours(1).InZoneLeniently(start.Zone);
                 Assert.Multiple(() =>
                 {
-                    Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dt), "Event should occur at " + dt);
-                    Assert.That(occurrences[i + 1].Period.StartTime, Is.EqualTo(dt1), "Event should occur at " + dt);
+                    Assert.That(occurrences[i].Start, Is.EqualTo(expectedStart), "Event should occur at " + expectedStart);
+                    Assert.That(occurrences[i + 1].Start, Is.EqualTo(dt1), "Event should occur at " + dt1);
                 });
                 i += 2;
             }
 
-            dt = dt.AddDays(1);
+            dt = dt.PlusDays(1);
         }
     }
 
@@ -147,8 +154,7 @@ public class RecurrenceTests
                 new(new CalDateTime(2006, 08, 01, 10, 00, 00, _tzid), Duration.FromHours(1)),
                 new(new CalDateTime(2006, 08, 03, 10, 00, 00, _tzid), Duration.FromHours(1)),
                 new(new CalDateTime(2006, 08, 05, 10, 00, 00, _tzid), Duration.FromHours(1))
-            ],
-            null
+            ]
         );
     }
 
@@ -163,30 +169,25 @@ public class RecurrenceTests
         var evt = iCal.Events.First();
 
         var occurrences = evt.GetOccurrences(
-                new CalDateTime(1997, 9, 1))
-            .TakeWhileBefore(new CalDateTime(1998, 1, 1)).ToList();
+            new CalDateTime(1997, 9, 1).ToZonedDateTime(_tzid))
+            .TakeWhileBefore(new CalDateTime(1998, 1, 1).ToZonedDateTime(_tzid).ToInstant())
+            .ToList();
 
-        var dt = new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid);
+        var dt = new CalDateTime(1997, 9, 2, 9, 0, 0).ToZonedDateTime(_tzid);
         var i = 0;
         while (dt.Year < 1998)
         {
-            if (dt.GreaterThanOrEqual(evt.Start!) &&
-                dt.LessThan(new CalDateTime(1997, 12, 24, 0, 0, 0, _tzid)))
+            if (dt.ToInstant() >= evt.Start!.ToZonedDateTime(_tzid).ToInstant() &&
+                dt.ToInstant() < new CalDateTime(1997, 12, 24, 0, 0, 0).ToZonedDateTime(_tzid).ToInstant())
             {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dt), "Event should occur at " + dt);
-                    Assert.That(
-                        (dt.LessThan(new CalDateTime(1997, 10, 26)) && dt.TimeZoneName == "US-Eastern") ||
-                        (dt.GreaterThan(new CalDateTime(1997, 10, 26)) && dt.TimeZoneName == "US-Eastern"),
-                        Is.True,
-                        "Event " + dt +
-                        " doesn't occur in the correct time zone (including Daylight & Standard time zones)");
-                });
+                Assert.That(occurrences[i].Start, Is.EqualTo(dt), "Event should occur at " + dt);
+
                 i++;
             }
 
-            dt = dt.AddDays(1);
+            dt = dt.LocalDateTime
+                .PlusDays(1)
+                .InZoneLeniently(_tzid);
         }
     }
 
@@ -249,57 +250,7 @@ public class RecurrenceTests
                 new(new CalDateTime(1997, 11, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new(new CalDateTime(1997, 12, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new(new CalDateTime(1997, 12, 3, 9, 0, 0, _tzid), Duration.FromHours(1))
-            ],
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
-            }
+            ]
         );
     }
 
@@ -320,8 +271,7 @@ public class RecurrenceTests
                 new(new CalDateTime(1997, 9, 22, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new(new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new(new CalDateTime(1997, 10, 12, 9, 0, 0, _tzid), Duration.FromHours(1))
-            ],
-            null
+            ]
         );
     }
 
@@ -336,22 +286,25 @@ public class RecurrenceTests
         var evt = iCal.Events.First();
 
         var occurrences = evt.GetOccurrences(
-                new CalDateTime(1998, 1, 1))
-            .TakeWhileBefore(new CalDateTime(2000, 12, 31)).ToList();
+            new CalDateTime(1998, 1, 1).ToZonedDateTime(_tzid))
+            .TakeWhileBefore(new CalDateTime(2000, 12, 31).ToZonedDateTime(_tzid).ToInstant())
+            .ToList();
 
-        var dt = new CalDateTime(1998, 1, 1, 9, 0, 0, _tzid);
+        var dt = new CalDateTime(1998, 1, 1, 9, 0, 0, _tzid).ToZonedDateTime();
         var i = 0;
         while (dt.Year < 2001)
         {
-            if (dt.GreaterThanOrEqual(evt.Start!) &&
+            if (dt.ToInstant() >= evt.Start!.ToZonedDateTime(_tzid).ToInstant() &&
                 dt.Month == 1 &&
-                dt.LessThanOrEqual(new CalDateTime(2000, 1, 31, 9, 0, 0, _tzid)))
+                dt.ToInstant() <= new CalDateTime(2000, 1, 31, 9, 0, 0, _tzid).ToZonedDateTime().ToInstant())
             {
-                Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dt), "Event should occur at " + dt);
+                Assert.That(occurrences[i].Start, Is.EqualTo(dt), "Event should occur at " + dt);
                 i++;
             }
 
-            dt = dt.AddDays(1);
+            dt = dt.LocalDateTime
+                .PlusDays(1)
+                .InZoneLeniently(_tzid);
         }
     }
 
@@ -407,20 +360,7 @@ public class RecurrenceTests
                 new(new CalDateTime(1997, 10, 21, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new(new CalDateTime(1997, 10, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new(new CalDateTime(1997, 11, 4, 9, 0, 0, _tzid), Duration.FromHours(1))
-            ],
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
-            }
+            ]
         );
     }
 
@@ -453,27 +393,7 @@ public class RecurrenceTests
                 new(new CalDateTime(1997, 12, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new(new CalDateTime(1997, 12, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new(new CalDateTime(1997, 12, 23, 9, 0, 0, _tzid), Duration.FromHours(1))
-            ],
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
-            }
+            ]
         );
     }
 
@@ -501,20 +421,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 12, 23, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 1, 6, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 1, 20, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -542,8 +448,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 9, 25, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -611,34 +516,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 12, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 12, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -678,31 +555,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 12, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 12, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -728,8 +580,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 10, 16, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -756,19 +607,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1998, 4, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 5, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 6, 5, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -790,13 +628,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 11, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 12, 5, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -824,19 +655,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1998, 3, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 5, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 5, 31, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -860,15 +678,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 1, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 2, 16, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -882,8 +691,8 @@ public class RecurrenceTests
         var iCal = Calendar.Load(IcsFiles.ByMonthDay1)!;
         EventOccurrenceTest(
             iCal,
-            new CalDateTime(1996, 1, 1),
-            new CalDateTime(1998, 3, 1),
+            new CalDateTime(1996, 1, 1).ToTimeZone(_tzid),
+            new CalDateTime(1998, 3, 1).ToTimeZone(_tzid),
             new[]
             {
                 new Period(new CalDateTime(1997, 9, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
@@ -892,15 +701,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 12, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 1, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 2, 26, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -929,19 +729,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 12, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 1, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 1, 15, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -969,19 +756,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1998, 1, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 1, 31, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 2, 1, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -1009,19 +783,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 3, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -1057,27 +818,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1998, 3, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 3, 24, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 3, 31, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -1105,8 +845,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2000, 7, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(2001, 6, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(2001, 7, 10, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1133,8 +872,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2003, 1, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(2003, 2, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(2003, 3, 10, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1161,19 +899,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2003, 4, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(2003, 7, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(2006, 1, 1, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -1194,8 +919,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 5, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 5, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1234,8 +958,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1260,8 +983,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1284,8 +1006,7 @@ public class RecurrenceTests
             {
                 new Period(new CalDateTime(2002, 1, 1, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2002, 12, 31, 10, 0, 0, _tzid), Duration.FromMinutes(30))
-            },
-            null
+            }
         );
     }
 
@@ -1326,8 +1047,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1999, 5, 21, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 5, 22, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 5, 23, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1362,8 +1082,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2003, 1, 3, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2003, 1, 4, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2003, 1, 5, 10, 0, 0, _tzid), Duration.FromMinutes(30))
-            },
-            null
+            }
         );
     }
 
@@ -1391,8 +1110,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 3, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 3, 25, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1448,8 +1166,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1999, 8, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 8, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 8, 26, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1473,14 +1190,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1998, 11, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1999, 8, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(2000, 10, 13, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -1508,19 +1217,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1998, 4, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 5, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 6, 13, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -1541,8 +1237,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1996, 11, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(2000, 11, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(2004, 11, 2, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1562,12 +1257,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 10, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 11, 6, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -1592,16 +1281,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1998, 1, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 2, 26, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1998, 3, 30, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            new[]
-            {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
             }
         );
     }
@@ -1624,9 +1303,8 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 2, 15, 0, 0, _tzid), Duration.FromHours(1)),
-                new Period(new CalDateTime(1997, 9, 2, 18, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            timeZones: null
+                new Period(new CalDateTime(1997, 9, 2, 18, 0, 0, _tzid), Duration.FromHours(1)),
+            }
         );
     }
 
@@ -1649,8 +1327,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 9, 2, 9, 45, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 2, 10, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 2, 10, 15, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1671,8 +1348,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 9, 2, 10, 30, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 2, 13, 30, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1699,8 +1375,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2010, 8, 27, 11, 7, 0, _tzid), Duration.FromMinutes(3)),
                 new Period(new CalDateTime(2010, 8, 27, 11, 8, 0, _tzid), Duration.FromMinutes(3)),
                 new Period(new CalDateTime(2010, 8, 27, 11, 9, 0, _tzid), Duration.FromMinutes(3))
-            },
-            null
+            }
         );
     }
 
@@ -1727,8 +1402,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2010, 8, 27, 11, 49, 0, _tzid), Duration.FromMinutes(3)),
                 new Period(new CalDateTime(2010, 8, 27, 11, 56, 0, _tzid), Duration.FromMinutes(3)),
                 new Period(new CalDateTime(2010, 8, 27, 12, 3, 0, _tzid), Duration.FromMinutes(3))
-            },
-            null
+            }
         );
     }
 
@@ -1793,8 +1467,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 9, 3, 16, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 3, 16, 20, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 9, 3, 16, 40, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1840,8 +1513,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 8, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 8, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 8, 24, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1863,8 +1535,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(1997, 8, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 8, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
                 new Period(new CalDateTime(1997, 8, 31, 9, 0, 0, _tzid), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -1894,8 +1565,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2007, 7, 20, 8, 0, 0, _tzid), Duration.FromHours(9)),
                 new Period(new CalDateTime(2007, 7, 30, 8, 0, 0, _tzid), Duration.FromHours(9)),
                 new Period(new CalDateTime(2007, 7, 31, 8, 0, 0, _tzid), Duration.FromHours(9))
-            },
-            null
+            }
         );
     }
 
@@ -1913,7 +1583,7 @@ public class RecurrenceTests
             periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
         }
 
-        EventOccurrenceTest(iCal, start, end, periods.ToArray(), null);
+        EventOccurrenceTest(iCal, start, end, periods.ToArray());
     }
 
     [Test, Category("Recurrence")]
@@ -1930,7 +1600,7 @@ public class RecurrenceTests
             periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
         }
 
-        EventOccurrenceTest(iCal, start, end, periods.ToArray(), null);
+        EventOccurrenceTest(iCal, start, end, periods.ToArray());
     }
 
     [Test, Category("Recurrence")]
@@ -1947,7 +1617,7 @@ public class RecurrenceTests
             periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
         }
 
-        EventOccurrenceTest(iCal, start, end, periods.ToArray(), null);
+        EventOccurrenceTest(iCal, start, end, periods.ToArray());
     }
 
     /// <summary>
@@ -1965,8 +1635,7 @@ public class RecurrenceTests
             {
                 new Period(new CalDateTime(2008, 2, 11, 7, 0, 0, _tzid), Duration.FromHours(24)),
                 new Period(new CalDateTime(2008, 2, 12, 7, 0, 0, _tzid), Duration.FromHours(24))
-            },
-            null
+            }
         );
     }
 
@@ -1988,8 +1657,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2007, 4, 10, 7, 0, 0, _tzid), Duration.FromHours(24)),
                 new Period(new CalDateTime(2009, 4, 13, 7, 0, 0, _tzid), Duration.FromHours(24)),
                 new Period(new CalDateTime(2009, 4, 14, 7, 0, 0, _tzid), Duration.FromHours(24))
-            ],
-            null
+            ]
         );
     }
 
@@ -2008,8 +1676,7 @@ public class RecurrenceTests
             {
                 new Period(new CalDateTime(2007, 4, 12, 7, 0, 0, _tzid), Duration.FromHours(24)),
                 new Period(new CalDateTime(2007, 4, 15, 7, 0, 0, _tzid), Duration.FromHours(24))
-            },
-            null
+            }
         );
     }
 
@@ -2033,8 +1700,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2007, 4, 9, 7, 0, 0, _tzid), Duration.FromHours(24)),
                 new Period(new CalDateTime(2007, 4, 10, 1, 0, 0, _tzid), Duration.FromHours(24)),
                 new Period(new CalDateTime(2007, 4, 10, 19, 0, 0, _tzid), Duration.FromHours(24))
-            },
-            null
+            }
         );
     }
 
@@ -2063,8 +1729,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2016, 9, 25, 5, 30, 0), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2017, 9, 30, 5, 30, 0), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2018, 9, 30, 5, 30, 0), Duration.FromMinutes(30))
-            },
-            null
+            }
         );
     }
 
@@ -2083,8 +1748,7 @@ public class RecurrenceTests
             new[]
             {
                 new Period(new CalDateTime(2009, 9, 27, 5, 30, 0), new Duration(days: 3, minutes: 30))
-            },
-            null
+            }
         );
     }
 
@@ -2112,8 +1776,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2007, 4, 10, 15, 0, 0), Duration.FromDays(1)),
                 new Period(new CalDateTime(2007, 4, 10, 19, 0, 0), Duration.FromDays(1)),
                 new Period(new CalDateTime(2007, 4, 10, 23, 0, 0), Duration.FromDays(1))
-            },
-            null
+            }
         );
     }
 
@@ -2141,8 +1804,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2007, 4, 9, 11, 0, 0), Duration.FromDays(1)),
                 new Period(new CalDateTime(2007, 4, 9, 11, 30, 0), Duration.FromDays(1)),
                 new Period(new CalDateTime(2007, 4, 9, 12, 0, 0), Duration.FromDays(1))
-            },
-            null
+            }
         );
     }
 
@@ -2169,8 +1831,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2007, 4, 23, 7, 0, 0), Duration.FromDays(1)),
                 new Period(new CalDateTime(2007, 4, 25, 7, 0, 0), Duration.FromDays(1)),
                 new Period(new CalDateTime(2007, 4, 27, 7, 0, 0), Duration.FromDays(1))
-            },
-            null
+            }
         );
     }
 
@@ -2193,8 +1854,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2007, 9, 20, 7, 0, 0), Duration.FromHours(1)),
                 new Period(new CalDateTime(2007, 9, 24, 7, 0, 0), Duration.FromHours(1)),
                 new Period(new CalDateTime(2007, 9, 27, 7, 0, 0), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -2221,8 +1881,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2012, 1, 11, 7, 0, 0), Duration.Zero),
                 new Period(new CalDateTime(2012, 1, 12, 7, 0, 0), Duration.Zero),
                 new Period(new CalDateTime(2012, 1, 13, 7, 0, 0), Duration.Zero)
-            },
-            null
+            }
         );
     }
 
@@ -2248,8 +1907,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2007, 12, 3, 7, 0, 0), Duration.FromHours(1)),
                 new Period(new CalDateTime(2007, 12, 17, 7, 0, 0), Duration.FromHours(1)),
                 new Period(new CalDateTime(2007, 12, 31, 7, 0, 0), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -2279,8 +1937,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2008, 7, 10, 7, 0, 0), Duration.FromHours(1)),
                 new Period(new CalDateTime(2008, 8, 10, 7, 0, 0), Duration.FromHours(1)),
                 new Period(new CalDateTime(2008, 9, 10, 7, 0, 0), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -2311,8 +1968,7 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2018, 9, 10, 7, 0, 0), Duration.FromHours(1)),
                 new Period(new CalDateTime(2019, 9, 10, 7, 0, 0), Duration.FromHours(1)),
                 new Period(new CalDateTime(2020, 9, 10, 7, 0, 0), Duration.FromHours(1))
-            },
-            null
+            }
         );
     }
 
@@ -2342,34 +1998,31 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2009, 12, 9, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2009, 12, 10, 2, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            null,
             0
         );
 
         // Weekly with UNTIL value
         EventOccurrenceTest(
             iCal,
-            new CalDateTime(2009, 12, 4),
-            new CalDateTime(2009, 12, 10),
+            new CalDateTime(2009, 12, 4).ToTimeZone(localTzid),
+            new CalDateTime(2009, 12, 10).ToTimeZone(localTzid),
             new[]
             {
                 new Period(new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            null,
             1
         );
 
         // Weekly with COUNT=2
         EventOccurrenceTest(
             iCal,
-            new CalDateTime(2009, 12, 4),
-            new CalDateTime(2009, 12, 12),
+            new CalDateTime(2009, 12, 4).ToTimeZone(localTzid),
+            new CalDateTime(2009, 12, 12).ToTimeZone(localTzid),
             new[]
             {
                 new Period(new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2009, 12, 11, 2, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            null,
             2
         );
     }
@@ -2395,7 +2048,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2009, 12, 25, 11, 00, 00, localTzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2010, 1, 1, 11, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            null,
             0
         );
 
@@ -2409,7 +2061,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2009, 12, 26, 11, 00, 00, localTzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2010, 1, 2, 11, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            null,
             1
         );
     }
@@ -2439,7 +2090,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2008, 3, 13, 17, 00, 00, localTzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2008, 3, 27, 17, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            null,
             0
         );
     }
@@ -2468,7 +2118,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2010, 2, 23, 8, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            null,
             0
         );
 
@@ -2483,7 +2132,6 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2010, 2, 23, 8, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            null,
             0
         );
     }
@@ -2504,7 +2152,6 @@ public class RecurrenceTests
             fromDate: new CalDateTime(2010, 7, 18),
             toDate: new CalDateTime(2010, 7, 26),
             expectedPeriods: new[] { new Period(new CalDateTime(2010, 05, 23), Duration.FromDays(102)) },
-            timeZones: null,
             eventIndex: 0
         );
 
@@ -2514,7 +2161,6 @@ public class RecurrenceTests
             fromDate: new CalDateTime(2011, 7, 18),
             toDate: new CalDateTime(2011, 7, 26),
             expectedPeriods: new[] { new Period(new CalDateTime(2011, 05, 23), Duration.FromDays(102)) },
-            timeZones: null,
             eventIndex: 0
         );
     }
@@ -2613,8 +2259,10 @@ public class RecurrenceTests
             fromDate: null,
             toDate: null,
             expectedPeriods: expectedPeriods,
-            timeZones: null,
-            eventIndex: 0
+            eventIndex: 0,
+            // The above tests use nominal values as expected
+            // results, so the time zone must be set.
+            timeZone: "Europe/Vienna"
         );
     }
 
@@ -2628,10 +2276,10 @@ public class RecurrenceTests
         var end = new CalDateTime(2019, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYWEEKNO=2"));
 
-        var recurringPeriods = rpe.Evaluate(start, start, default).TakeWhileBefore(end).ToList();
+        var recurringPeriods = rpe.Evaluate(start, start.ToZonedDateTime(_tzid), default).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(1));
-        Assert.That(recurringPeriods.First().StartTime, Is.EqualTo(new CalDateTime(2019, 1, 7)));
+        Assert.That(recurringPeriods.First().Start, Is.EqualTo(new CalDateTime(2019, 1, 7).ToZonedDateTime(_tzid)));
     }
 
     /// <summary>
@@ -2644,15 +2292,15 @@ public class RecurrenceTests
         var end = new CalDateTime(2020, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1"));
 
-        var recurringPeriods = rpe.Evaluate(start, start, default).TakeWhileBefore(end).ToList();
+        var recurringPeriods = rpe.Evaluate(start, start.ToZonedDateTime(_tzid), default).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
         {
-            Assert.That(recurringPeriods[0].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 6)));
-            Assert.That(recurringPeriods[1].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 13)));
-            Assert.That(recurringPeriods[2].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 20)));
-            Assert.That(recurringPeriods[3].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 27)));
+            Assert.That(recurringPeriods[0].Start, Is.EqualTo(new CalDateTime(2020, 1, 6).ToZonedDateTime(_tzid)));
+            Assert.That(recurringPeriods[1].Start, Is.EqualTo(new CalDateTime(2020, 1, 13).ToZonedDateTime(_tzid)));
+            Assert.That(recurringPeriods[2].Start, Is.EqualTo(new CalDateTime(2020, 1, 20).ToZonedDateTime(_tzid)));
+            Assert.That(recurringPeriods[3].Start, Is.EqualTo(new CalDateTime(2020, 1, 27).ToZonedDateTime(_tzid)));
         });
     }
 
@@ -2688,15 +2336,15 @@ public class RecurrenceTests
         var end = new CalDateTime(2020, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1"));
 
-        var recurringPeriods = rpe.Evaluate(start, start, default).TakeWhileBefore(end).ToList();
+        var recurringPeriods = rpe.Evaluate(start, start.ToZonedDateTime(_tzid), default).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
         {
-            Assert.That(recurringPeriods[0].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 6)));
-            Assert.That(recurringPeriods[1].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 13)));
-            Assert.That(recurringPeriods[2].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 20)));
-            Assert.That(recurringPeriods[3].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 27)));
+            Assert.That(recurringPeriods[0].Start, Is.EqualTo(new CalDateTime(2020, 1, 6).ToZonedDateTime(_tzid)));
+            Assert.That(recurringPeriods[1].Start, Is.EqualTo(new CalDateTime(2020, 1, 13).ToZonedDateTime(_tzid)));
+            Assert.That(recurringPeriods[2].Start, Is.EqualTo(new CalDateTime(2020, 1, 20).ToZonedDateTime(_tzid)));
+            Assert.That(recurringPeriods[3].Start, Is.EqualTo(new CalDateTime(2020, 1, 27).ToZonedDateTime(_tzid)));
         });
     }
 
@@ -2712,12 +2360,12 @@ public class RecurrenceTests
         var serializer = new RecurrencePatternSerializer();
         var rp = (RecurrencePattern) serializer.Deserialize(sr)!;
         var rpe = new RecurrencePatternEvaluator(rp);
-        var recurringPeriods = rpe.Evaluate(start, start, null)
+        var recurringPeriods = rpe.Evaluate(start, start.ToZonedDateTime(_tzid), null)
             .TakeWhileBefore(rp.Until!).ToList();
 
         var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
 
-        Assert.That(period.StartTime, Is.EqualTo(new CalDateTime(2025, 11, 24, 9, 0, 0)));
+        Assert.That(period.Start, Is.EqualTo(new CalDateTime(2025, 11, 24, 9, 0, 0).ToZonedDateTime(_tzid)));
     }
 
     /// <summary>
@@ -2788,23 +2436,24 @@ public class RecurrenceTests
         //Testing on both the first day and the next, results used to be different
         for (var i = 0; i <= 1; i++)
         {
-            var checkTime = new CalDateTime(2019, 01, 04, 08, 00, 00, CalDateTime.UtcTzId);
-            checkTime = checkTime.AddDays(i);
+            var checkTime = new CalDateTime(2019, 01, 04, 08, 00, 00).ToZonedDateTime("UTC");
+            checkTime = checkTime.LocalDateTime.PlusDays(i).InZoneLeniently(checkTime.Zone);
             //Valid asking for the exact moment
-            var occurrences = vEvent.GetOccurrences(checkTime).TakeWhile(p => p.Period.StartTime == checkTime).ToList();
+            var occurrences = vEvent.GetOccurrences(checkTime).TakeWhile(p => p.Start == checkTime).ToList();
             Assert.That(occurrences, Has.Count.EqualTo(1));
 
             //Valid if asking for a range starting at the same moment
-            occurrences = vEvent.GetOccurrences(checkTime).TakeWhileBefore(checkTime.AddSeconds(1)).ToList();
+            occurrences = vEvent.GetOccurrences(checkTime).TakeWhileBefore(checkTime.PlusSeconds(1).ToInstant()).ToList();
             Assert.That(occurrences, Has.Count.EqualTo(1));
 
             //Valid if asking for a range starting before and ending after
-            occurrences = vEvent.GetOccurrences(checkTime.AddSeconds(-1)).TakeWhileBefore(checkTime.AddSeconds(1))
+            occurrences = vEvent.GetOccurrences(checkTime.PlusSeconds(-1))
+                .TakeWhileBefore(checkTime.PlusSeconds(1).ToInstant())
                 .ToList();
             Assert.That(occurrences, Has.Count.EqualTo(1));
 
             //Not valid if asking for a range starting before but ending at the same moment
-            occurrences = vEvent.GetOccurrences(checkTime.AddSeconds(-1)).TakeWhileBefore(checkTime).ToList();
+            occurrences = vEvent.GetOccurrences(checkTime.PlusSeconds(-1)).TakeWhileBefore(checkTime.ToInstant()).ToList();
             Assert.That(occurrences.Count, Is.EqualTo(0));
         }
     }
@@ -2864,7 +2513,7 @@ public class RecurrenceTests
         };
 
         var occurrences = iCal.GetOccurrences(
-                new CalDateTime(2006, 1, 1))
+            new CalDateTime(2006, 1, 1).ToZonedDateTime("US/Eastern"))
             .TakeWhileBefore(new CalDateTime(2006, 12, 31))
             .ToList();
 
@@ -2877,7 +2526,7 @@ public class RecurrenceTests
             {
                 Assert.That(items.ContainsKey(evt.Summary!), Is.True,
                     "Holiday text '" + evt.Summary + "' did not match known holidays.");
-                Assert.That(o.Period.StartTime, Is.EqualTo(items[evt.Summary!]),
+                Assert.That(o.Start, Is.EqualTo(items[evt.Summary!].ToZonedDateTime(_tzid)),
                     "Date/time of holiday '" + evt.Summary + "' did not match.");
             });
         }
@@ -2907,18 +2556,20 @@ public class RecurrenceTests
         // ical.net handles the case by pretending DTSTART has the time set to midnight.
         evt.RecurrenceRules.Add(new RecurrencePattern($"FREQ={freq};INTERVAL=10;COUNT=5"));
 
-        var occurrences = evt.GetOccurrences(evt.Start.AddDays(-1)).TakeWhileBefore(evt.Start.AddDays(100))
+        var occurrences = evt.GetOccurrences(evt.Start.ToZonedDateTime().PlusHours(-24))
+            .TakeWhileBefore(evt.Start.AddDays(100))
             .ToList();
 
-        var startDates = occurrences.Select(x => x.Period.StartTime.Value).ToList();
+        var startDates = occurrences.Select(x => x.Start.ToInstant()).ToList();
 
         var expectedStartDates = Enumerable.Range(0, 5)
             .Select(i => DateTime.UtcNow.Date.AddSeconds(i * secsPerInterval * 10))
+            .Select(x => x.ToInstant())
             .ToList();
 
         Assert.Multiple(() =>
         {
-            Assert.That(occurrences.Select(x => x.Period.StartTime.HasTime == hasTime), Is.All.True);
+            Assert.That(occurrences.Select(x => x.End.ToInstant() > x.Start.ToInstant()), Is.All.True);
             Assert.That(startDates, Is.EqualTo(expectedStartDates));
         });
     }
@@ -2931,7 +2582,7 @@ public class RecurrenceTests
         var pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
 
         var startDate = new CalDateTime(2008, 3, 30, 23, 59, 40);
-        var fromDate = new CalDateTime(startDate);
+        var fromDate = startDate.ToZonedDateTime(_tzid);
         var toDate = new CalDateTime(2008, 3, 31, 0, 0, 11);
 
         var evaluator = new RecurrencePatternEvaluator(pattern);
@@ -2944,10 +2595,10 @@ public class RecurrenceTests
         Assert.That(occurrences, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
         {
-            Assert.That(occurrences[0].StartTime, Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 40)));
-            Assert.That(occurrences[1].StartTime, Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 50)));
-            Assert.That(occurrences[2].StartTime, Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 00)));
-            Assert.That(occurrences[3].StartTime, Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 10)));
+            Assert.That(occurrences[0].Start, Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 40).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[1].Start, Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 50).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[2].Start, Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 00).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[3].Start, Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 10).ToZonedDateTime(_tzid)));
         });
     }
 
@@ -3082,16 +2733,16 @@ public class RecurrenceTests
         Assert.That(periods, Has.Count.EqualTo(10));
         Assert.Multiple(() =>
         {
-            Assert.That(periods[0].StartTime.Day, Is.EqualTo(2));
-            Assert.That(periods[1].StartTime.Day, Is.EqualTo(3));
-            Assert.That(periods[2].StartTime.Day, Is.EqualTo(9));
-            Assert.That(periods[3].StartTime.Day, Is.EqualTo(10));
-            Assert.That(periods[4].StartTime.Day, Is.EqualTo(16));
-            Assert.That(periods[5].StartTime.Day, Is.EqualTo(17));
-            Assert.That(periods[6].StartTime.Day, Is.EqualTo(23));
-            Assert.That(periods[7].StartTime.Day, Is.EqualTo(24));
-            Assert.That(periods[8].StartTime.Day, Is.EqualTo(30));
-            Assert.That(periods[9].StartTime.Day, Is.EqualTo(31));
+            Assert.That(periods[0].Start.Day, Is.EqualTo(2));
+            Assert.That(periods[1].Start.Day, Is.EqualTo(3));
+            Assert.That(periods[2].Start.Day, Is.EqualTo(9));
+            Assert.That(periods[3].Start.Day, Is.EqualTo(10));
+            Assert.That(periods[4].Start.Day, Is.EqualTo(16));
+            Assert.That(periods[5].Start.Day, Is.EqualTo(17));
+            Assert.That(periods[6].Start.Day, Is.EqualTo(23));
+            Assert.That(periods[7].Start.Day, Is.EqualTo(24));
+            Assert.That(periods[8].Start.Day, Is.EqualTo(30));
+            Assert.That(periods[9].Start.Day, Is.EqualTo(31));
         });
     }
 
@@ -3134,7 +2785,7 @@ public class RecurrenceTests
     public void Recurrence_WithOutOfBoundsUtc_ShouldFailWithCorrectException(string ical, bool shouldThrow)
     {
         var cal = Calendar.Load(ical)!;
-        Assert.That(() => cal.GetOccurrences().ToList(),
+        Assert.That(() => cal.GetOccurrences(DateUtil.GetZone(_tzid)).ToList(),
             shouldThrow ? Throws.InstanceOf<EvaluationOutOfRangeException>() : Throws.Nothing);
     }
 
@@ -3188,25 +2839,24 @@ END:VCALENDAR";
 
         var calendar = Calendar.Load(ical)!;
         var firstEvent = calendar.Events.First();
-        var startSearch = new CalDateTime(DateTime.Parse("2015-08-28T07:00:00", CultureInfo.InvariantCulture), _tzid);
-        var endSearch = new CalDateTime(DateTime.Parse("2016-08-28T07:00:00", CultureInfo.InvariantCulture).AddDays(7),
-            _tzid);
+        var startSearch = new CalDateTime(DateTime.Parse("2015-08-28T07:00:00", CultureInfo.InvariantCulture), _tzid)
+            .ToZonedDateTime();
+        var endSearch = new CalDateTime(DateTime.Parse("2016-08-28T07:00:00", CultureInfo.InvariantCulture).AddDays(7), _tzid)
+            .ToZonedDateTime()
+            .ToInstant();
 
         var occurrences = firstEvent.GetOccurrences(startSearch).TakeWhileBefore(endSearch)
             .Select(o => o.Period)
             .ToList();
 
-        var firstExpectedOccurrence =
-            new CalDateTime(DateTime.Parse("2016-08-29T08:00:00", CultureInfo.InvariantCulture), _tzid);
-        Assert.That(occurrences.First().StartTime, Is.EqualTo(firstExpectedOccurrence));
+        var firstExpectedOccurrence = new CalDateTime(DateTime.Parse("2016-08-29T08:00:00", CultureInfo.InvariantCulture), _tzid).ToZonedDateTime();
+        Assert.That(occurrences.First().Start, Is.EqualTo(firstExpectedOccurrence));
 
-        var firstExpectedRDate =
-            new CalDateTime(DateTime.Parse("2016-08-30T10:00:00", CultureInfo.InvariantCulture), _tzid);
-        Assert.That(occurrences[1].StartTime.Equals(firstExpectedRDate), Is.True);
+        var firstExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-30T10:00:00", CultureInfo.InvariantCulture), _tzid).ToZonedDateTime();
+        Assert.That(occurrences[1].Start.Equals(firstExpectedRDate), Is.True);
 
-        var secondExpectedRDate =
-            new CalDateTime(DateTime.Parse("2016-08-31T10:00:00", CultureInfo.InvariantCulture), _tzid);
-        Assert.That(occurrences[2].StartTime.Equals(secondExpectedRDate), Is.True);
+        var secondExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-31T10:00:00", CultureInfo.InvariantCulture), _tzid).ToZonedDateTime();
+        Assert.That(occurrences[2].Start.Equals(secondExpectedRDate), Is.True);
     }
 
     [Test]
@@ -3254,20 +2904,21 @@ END:VCALENDAR";
         var startSearch = new CalDateTime(DateTime.Parse("2016-07-01T00:00:00", CultureInfo.InvariantCulture), "UTC");
         var endSearch = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00", CultureInfo.InvariantCulture), "UTC");
 
-        var lastExpected = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00", CultureInfo.InvariantCulture), "UTC");
-        var occurrences = firstEvent.GetOccurrences(startSearch).TakeWhileBefore(endSearch)
+        var lastExpected = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00", CultureInfo.InvariantCulture), "UTC").ToZonedDateTime();
+        var occurrences = firstEvent.GetOccurrences(startSearch.ToZonedDateTime())
+            .TakeWhileBefore(endSearch.ToZonedDateTime().ToInstant())
             .Select(o => o.Period)
             .ToList();
 
-        Assert.That(occurrences.Last().StartTime.Equals(lastExpected), Is.False);
+        Assert.That(occurrences.Last().Start.Equals(lastExpected), Is.False);
 
         //Create 1 second of overlap
         endSearch = new CalDateTime(endSearch.Value.AddSeconds(1), "UTC");
-        occurrences = firstEvent.GetOccurrences(startSearch).TakeWhileBefore(endSearch)
+        occurrences = firstEvent.GetOccurrences(startSearch.ToZonedDateTime()).TakeWhileBefore(endSearch.ToZonedDateTime().ToInstant())
             .Select(o => o.Period)
             .ToList();
 
-        Assert.That(occurrences.Last().StartTime.Equals(lastExpected), Is.True);
+        Assert.That(occurrences.Last().Start.Equals(lastExpected), Is.True);
     }
 
     [Test, Category("RECURRENCE-ID")]
@@ -3332,30 +2983,24 @@ END:VCALENDAR";
 
         var calendar = Calendar.Load(ical)!;
 
-        var orderedOccurrences = calendar.GetOccurrences()
+        var orderedOccurrences = calendar.GetOccurrences(DateUtil.GetZone("Europe/Bucharest"))
             .Take(10)
             .ToList();
 
-        // This occurrence was modified using RECURRENCE-ID
-        var expectedSept1Start = new CalDateTime(DateTime.Parse("2016-09-01T16:30:00", CultureInfo.InvariantCulture),
-            "Europe/Bucharest");
-        var expectedSept1End = new CalDateTime(DateTime.Parse("2016-09-01T22:00:00", CultureInfo.InvariantCulture),
-            "Europe/Bucharest");
+        var expectedSept1Start = new CalDateTime(DateTime.Parse("2016-09-01T16:30:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
+        var expectedSept1End = new CalDateTime(DateTime.Parse("2016-09-01T22:00:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
         Assert.Multiple(() =>
         {
-            Assert.That(orderedOccurrences[3].Period.StartTime, Is.EqualTo(expectedSept1Start));
-            Assert.That(orderedOccurrences[3].Period.EffectiveEndTime, Is.EqualTo(expectedSept1End));
+            Assert.That(orderedOccurrences[3].Start, Is.EqualTo(expectedSept1Start));
+            Assert.That(orderedOccurrences[3].End, Is.EqualTo(expectedSept1End));
         });
 
-        // This occurrence was modified using RECURRENCE-ID
-        var expectedSept3Start = new CalDateTime(DateTime.Parse("2016-09-03T07:00:00", CultureInfo.InvariantCulture),
-            "Europe/Bucharest");
-        var expectedSept3End = new CalDateTime(DateTime.Parse("2016-09-03T12:30:00", CultureInfo.InvariantCulture),
-            "Europe/Bucharest");
+        var expectedSept3Start = new CalDateTime(DateTime.Parse("2016-09-03T07:00:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
+        var expectedSept3End = new CalDateTime(DateTime.Parse("2016-09-03T12:30:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
         Assert.Multiple(() =>
         {
-            Assert.That(orderedOccurrences[5].Period.StartTime, Is.EqualTo(expectedSept3Start));
-            Assert.That(orderedOccurrences[5].Period.EffectiveEndTime, Is.EqualTo(expectedSept3End));
+            Assert.That(orderedOccurrences[5].Start, Is.EqualTo(expectedSept3Start));
+            Assert.That(orderedOccurrences[5].End, Is.EqualTo(expectedSept3End));
         });
     }
 
@@ -3487,21 +3132,21 @@ END:VCALENDAR";
         vEvent.RecurrenceRules.Add(rrule);
 
         // Exactly on start time
-        var testingTime = new CalDateTime(2019, 6, 7, 9, 0, 0);
+        var testingTime = new CalDateTime(2019, 6, 7, 9, 0, 0).ToZonedDateTime(_tzid);
 
-        var occurrences = vEvent.GetOccurrences(testingTime).TakeWhile(p => p.Period.StartTime == testingTime).ToList();
+        var occurrences = vEvent.GetOccurrences(testingTime).TakeWhile(p => p.Start == testingTime).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(1));
 
         // One second before end time
-        testingTime = new CalDateTime(2019, 6, 7, 16, 59, 59);
+        testingTime = new CalDateTime(2019, 6, 7, 16, 59, 59).ToZonedDateTime(_tzid);
 
-        occurrences = vEvent.GetOccurrences(testingTime).TakeWhileBefore(testingTime).ToList();
+        occurrences = vEvent.GetOccurrences(testingTime).TakeWhileBefore(testingTime.ToInstant()).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(1));
 
         // Exactly on end time
-        testingTime = new CalDateTime(2019, 6, 7, 17, 0, 0);
+        testingTime = new CalDateTime(2019, 6, 7, 17, 0, 0).ToZonedDateTime(_tzid);
 
-        occurrences = vEvent.GetOccurrences(testingTime).TakeWhileBefore(testingTime).ToList();
+        occurrences = vEvent.GetOccurrences(testingTime).TakeWhileBefore(testingTime.ToInstant()).ToList();
         Assert.That(occurrences.Count, Is.EqualTo(0));
     }
 
@@ -3804,7 +3449,9 @@ END:VCALENDAR";
 
         evt.RecurrenceRules.Add(GetPattern());
 
-        IEnumerable<Occurrence> GetOccurrences() => evt.GetOccurrences(testCase.StartAt ?? null);
+        var startAt = testCase.StartAt?.ToZonedDateTime(_tzid).ToInstant();
+
+        IEnumerable<Occurrence> GetOccurrences() => evt.GetOccurrences(DateUtil.GetZone(_tzid), startAt);
 
         if (testCase.ExceptionStep == RecurrenceTestExceptionStep.GetOccurrenceInvocation)
         {
@@ -3818,14 +3465,14 @@ END:VCALENDAR";
 
         if (testCase.ExceptionStep == RecurrenceTestExceptionStep.Enumeration)
         {
-            Assert.That(() => EnumerateOccurrences().Last().Period.EffectiveEndTime, throwsConstraint);
+            Assert.That(() => EnumerateOccurrences().Last().End, throwsConstraint);
             return;
         }
 
         var occurrences = EnumerateOccurrences();
 
-        var startDates = occurrences.Select(x => x.Period.StartTime).ToList();
-        Assert.That(startDates, Is.EqualTo(testCase.Instances));
+        var startDates = occurrences.Select(x => x.Start).ToList();
+        Assert.That(startDates, Is.EqualTo(testCase.Instances?.Select(x => x.ToZonedDateTime(_tzid)).ToList()));
     }
 
     [Test]
@@ -3846,7 +3493,7 @@ END:VCALENDAR";
         calendar.Events.Add(springAdminEvent);
         var searchStart = new CalDateTime(2024, 04, 15);
         var searchEnd = new CalDateTime(2050, 05, 31);
-        var occurrences = calendar.GetOccurrences(searchStart).TakeWhileBefore(searchEnd);
+        var occurrences = calendar.GetOccurrences(searchStart.ToZonedDateTime("US/Eastern")).TakeWhileBefore(searchEnd);
         Assert.That(occurrences.Count, Is.EqualTo(27));
 
         springAdminEvent.Start = new CalDateTime(2024, 04, 16);
@@ -3856,7 +3503,7 @@ END:VCALENDAR";
 
         searchStart = new CalDateTime(2024, 04, 16);
         searchEnd = new CalDateTime(2050, 05, 31);
-        occurrences = calendar.GetOccurrences(searchStart).TakeWhileBefore(searchEnd);
+        occurrences = calendar.GetOccurrences(searchStart.ToZonedDateTime("US/Eastern")).TakeWhileBefore(searchEnd);
 
         // occurrences are 26 here, omitting 4/16/2024
         Assert.That(occurrences.Count, Is.EqualTo(27));
@@ -3881,7 +3528,7 @@ END:VCALENDAR";
 
         var calendar = Calendar.Load(ical)!;
         // Set start date for occurrences to search to the end date of the event
-        var occurrences = calendar.GetOccurrences(new CalDateTime(2024, 12, 2))
+        var occurrences = calendar.GetOccurrences(new CalDateTime(2024, 12, 2).ToZonedDateTime("US/Eastern"))
             .TakeWhileBefore(new CalDateTime(2024, 12, 3));
 
         Assert.That(occurrences, Is.Empty);
@@ -3907,7 +3554,7 @@ END:VCALENDAR";
 
         // Although the occurrences are unbounded, we can still call GetOccurrences without
         // specifying bounds, because the instances are only generated on enumeration.
-        var occurrences = calendar.GetOccurrences();
+        var occurrences = calendar.GetOccurrences(DateUtil.GetZone(_tzid));
 
         var instances = occurrences.Take(100).ToList();
 
@@ -3915,11 +3562,10 @@ END:VCALENDAR";
     }
 
     [Test, Category("Recurrence")]
-    [TestCase(null)]
     [TestCase("UTC")]
     [TestCase("Europe/Vienna")]
     [TestCase("America/New_York")]
-    public void TestDtStartTimezone(string? tzId)
+    public void TestDtStartTimezone(string tzId)
     {
         var icalText = """
                        BEGIN:VCALENDAR
@@ -3936,14 +3582,16 @@ END:VCALENDAR";
         var cal = Calendar.Load(icalText)!;
         var evt = cal.Events.First();
         var ev = new EventEvaluator(evt);
-        var occurrences = ev.Evaluate(evt.DtStart!, evt.DtStart!.ToTimeZone(tzId), null)
-            .TakeWhileBefore(evt.DtStart.AddMinutes(61).ToTimeZone(tzId));
-        var occurrencesStartTimes = occurrences.Select(x => x.StartTime).Take(2).ToList();
+
+        var occurrences = ev.Evaluate(evt.DtStart!, evt.DtStart!.ToZonedDateTime(tzId), null)
+            .TakeWhileBefore(evt.DtStart.AddMinutes(61).ToZonedDateTime(tzId).ToInstant());
+
+        var occurrencesStartTimes = occurrences.Select(x => x.Start).Take(2).ToList();
 
         var expectedStartTimes = new[]
         {
-            new CalDateTime(2018, 06, 12, 18, 0, 0, "Europe/Vienna"),
-            new CalDateTime(2018, 06, 12, 19, 0, 0, "Europe/Vienna"),
+            new CalDateTime(2018, 06, 12, 18, 0, 0, "Europe/Vienna").ToZonedDateTime(tzId),
+            new CalDateTime(2018, 06, 12, 19, 0, 0, "Europe/Vienna").ToZonedDateTime(tzId),
         };
 
         Assert.That(expectedStartTimes.SequenceEqual(occurrencesStartTimes), Is.True);
@@ -3990,7 +3638,7 @@ END:VCALENDAR";
                 ? Throws.Exception.TypeOf<EvaluationLimitExceededException>()
                 : Throws.Nothing;
 
-        Assert.That(() => cal.GetOccurrences(options: options).ToList(), constraint);
+        Assert.That(() => cal.GetOccurrences(DateUtil.GetZone(_tzid), options: options).ToList(), constraint);
     }
 
     [TestCase("FREQ=DAILY;INTERVAL=2;UNTIL=20250430T000000Z")]
@@ -4089,21 +3737,22 @@ END:VCALENDAR";
                   END:VCALENDAR
                   """;
         var cal = Calendar.Load(ics)!;
-        var occ = cal.GetOccurrences().ToList();
+
+        var tz = DateUtil.GetZone("Europe/Vienna");
+
+        var occ = cal.GetOccurrences(tz).ToList();
 
         Assert.Multiple(() =>
         {
             Assert.That(occ.Count, Is.EqualTo(2));
 
-            Assert.That(occ[0].Period.StartTime, Is.EqualTo(new CalDateTime(2020, 10, 24, 2, 30, 0, "Europe/Vienna")));
-            Assert.That(occ[0].Period.EffectiveEndTime,
-                Is.EqualTo(new CalDateTime(2020, 10, 24, 3, 15, 0, "Europe/Vienna")));
-            Assert.That(occ[0].Period.EffectiveDuration, Is.EqualTo(new Duration(0, 0, 0, 45, 0)));
+            Assert.That(occ[0].Start, Is.EqualTo(tz.MapLocal(new(2020, 10, 24, 2, 30)).First()));
+            Assert.That(occ[0].End, Is.EqualTo(tz.MapLocal(new(2020, 10, 24, 3, 15, 0)).First()));
+            Assert.That(occ[0].End - occ[0].Start, Is.EqualTo(NodaTime.Duration.FromMinutes(45)));
 
-            Assert.That(occ[1].Period.StartTime, Is.EqualTo(new CalDateTime(2020, 10, 25, 2, 30, 0, "Europe/Vienna")));
-            Assert.That(occ[1].Period.EffectiveEndTime,
-                Is.EqualTo(new CalDateTime(2020, 10, 25, 2, 15, 0, "Europe/Vienna")));
-            Assert.That(occ[1].Period.EffectiveDuration, Is.EqualTo(new Duration(0, 0, 0, 45, 0)));
+            Assert.That(occ[1].Start, Is.EqualTo(tz.MapLocal(new(2020, 10, 25, 2, 30, 0)).First()));
+            Assert.That(occ[1].End, Is.EqualTo(tz.MapLocal(new(2020, 10, 25, 2, 15, 0)).Last()));
+            Assert.That(occ[1].End - occ[1].Start, Is.EqualTo(NodaTime.Duration.FromMinutes(45)));
         });
     }
 
@@ -4122,16 +3771,16 @@ END:VCALENDAR";
 
         cal.ExceptionDates.Add(new CalDateTime("20250102"));
 
-        var occurrences = cal.GetOccurrences(new CalDateTime(periodStart))
+        var occurrences = cal.GetOccurrences(new CalDateTime(periodStart).ToZonedDateTime(_tzid))
             .Take(2)
-            .Select(o => o.Period.StartTime)
+            .Select(o => o.Start)
             .ToList();
 
         var expectedDates = new[]
         {
             new CalDateTime(expected1),
             new CalDateTime(expected2)
-        };
+        }.Select(x => x.ToZonedDateTime(_tzid)).ToList();
 
         Assert.That(occurrences, Is.EqualTo(expectedDates));
     }
@@ -4156,16 +3805,16 @@ END:VCALENDAR";
         // Should be considered only at the exact time
         cal.ExceptionDates.Add(new CalDateTime("20250703T150000"));
 
-        var occurrences = cal.GetOccurrences()
+        var occurrences = cal.GetOccurrences(DateUtil.GetZone(_tzid))
             .Take(2)
-            .Select(o => o.Period.StartTime)
+            .Select(o => o.Start)
             .ToList();
 
         var expectedDates = new[]
         {
             new CalDateTime("20250702T100000"),
             new CalDateTime("20250704T100000")
-        };
+        }.Select(x => x.ToZonedDateTime(_tzid)).ToList();
 
         Assert.That(occurrences, Is.EqualTo(expectedDates));
     }
@@ -4186,10 +3835,8 @@ END:VCALENDAR";
                                 END:VCALENDAR
                                 """)!;
 
-        var evt = cal.Events.Single();
-
-        var occurrences = cal.GetOccurrences()
-            .Select(o => o.Period.StartTime)
+        var occurrences = cal.GetOccurrences(DateUtil.GetZone(_tzid))
+            .Select(o => o.Start)
             .ToList();
 
         var expectedDates = new[]
@@ -4208,7 +3855,7 @@ END:VCALENDAR";
             // same as above. All-day EXDATEs are matched against the date in the RDATE's time zone,
             // so 20250702 isn't excluded even though on Jul 3 in DTSTART's TZ.
             new CalDateTime("20250702T234500", "Etc/GMT+12"),
-        };
+        }.Select(x => x.ToZonedDateTime(_tzid)).ToList();
 
         Assert.That(occurrences, Is.EqualTo(expectedDates));
     }
@@ -4228,25 +3875,26 @@ END:VCALENDAR";
                                 END:VCALENDAR
                                 """)!;
 
-        var occurrences = cal.GetOccurrences(new CalDateTime("20250710T120000"))
-            .Select(o => o.Period.StartTime)
+        var occurrences = cal.GetOccurrences(new CalDateTime("20250710T120000").ToZonedDateTime(_tzid))
+            .Select(o => o.Start)
             .Take(5)
             .ToList();
 
         var expectedDates = new string[]
-            {
-                // RDATE
-                "20250707T000000",
-                // RRULE
-                "20250708T000000",
-                // RDATE
-                "20250710T000000",
-                // RRULE
-                "20250715T000000",
-                // RRULE
-                "20250722T000000",
-            }.Select(x => new CalDateTime(x))
-            .ToList();
+        {
+            // RDATE
+            "20250707T000000",
+            // RRULE
+            "20250708T000000",
+            // RDATE
+            "20250710T000000",
+            // RRULE
+            "20250715T000000",
+            // RRULE
+            "20250722T000000",
+        }.Select(x => new CalDateTime(x))
+        .Select(x => x.ToZonedDateTime(_tzid))
+        .ToList();
 
         Assert.That(occurrences, Is.EqualTo(expectedDates));
     }
@@ -4282,12 +3930,15 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var firstFewOccurrences = cal.GetOccurrences().Take(3).ToList();
+        var tz = DateUtil.GetZone(periodStartTzId ?? _tzid);
+
+        var firstFewOccurrences = cal.GetOccurrences(tz).Take(3).ToList();
 
         var periodStart = new CalDateTime(periodStartStr, periodStartTzId);
-        Assert.That(cal.GetOccurrences(periodStart).First(), Is.EqualTo(firstFewOccurrences[1]));
+        var zonedStart = periodStart.ToZonedDateTime(tz);
+        Assert.That(cal.GetOccurrences(zonedStart).First(), Is.EqualTo(firstFewOccurrences[1]));
 
-        var nextPeriodStart = periodStart.HasTime ? periodStart.AddSeconds(1) : periodStart.AddDays(1);
+        var nextPeriodStart = periodStart.HasTime ? zonedStart.PlusSeconds(1) : zonedStart.PlusHours(24);
         Assert.That(cal.GetOccurrences(nextPeriodStart).First(), Is.EqualTo(firstFewOccurrences[2]));
     }
 
@@ -4321,8 +3972,10 @@ END:VCALENDAR";
                                  END:VCALENDAR
                                  """)!;
 
+        var tz = DateUtil.GetZone(_tzid);
+
         var occurrences = cal
-            .GetOccurrences<CalendarEvent>().ToList();
+            .GetOccurrences<CalendarEvent>(tz).ToList();
 
         var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceId == new CalDateTime(2025, 11, 3));
 
@@ -4330,10 +3983,10 @@ END:VCALENDAR";
         {
             Assert.That(occurrences, Has.Count.EqualTo(4));
             Assert.That(overrideOcc, Is.Not.Null);
-            Assert.That(overrideOcc!.Period.StartTime,
-                Is.EqualTo(new CalDateTime(dtStart.Year, dtStart.Month, dtStart.Day)));
+            Assert.That(overrideOcc!.Start,
+                Is.EqualTo(new CalDateTime(dtStart.Year, dtStart.Month, dtStart.Day).ToZonedDateTime(tz)));
             Assert.That(((CalendarEvent) overrideOcc.Source).Summary, Is.EqualTo("Override Event"));
-            if (overrideOcc.Period.StartTime.Year == 2028) Assert.That(occurrences.IndexOf(overrideOcc), Is.EqualTo(2));
+            if (overrideOcc.Start.Year == 2028) Assert.That(occurrences.IndexOf(overrideOcc), Is.EqualTo(2));
         }
     }
 
@@ -4371,8 +4024,10 @@ END:VCALENDAR";
                                 END:VCALENDAR
                                 """)!;
 
+        var tz = DateUtil.GetZone(_tzid);
+
         var occurrences = cal
-            .GetOccurrences<CalendarEvent>().ToList();
+            .GetOccurrences<CalendarEvent>(tz).ToList();
 
         var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceId == new CalDateTime(2025, 11, 3));
 
@@ -4380,8 +4035,8 @@ END:VCALENDAR";
         {
             Assert.That(occurrences, Has.Count.EqualTo(4));
             Assert.That(overrideOcc, Is.Not.Null);
-            Assert.That(overrideOcc!.Period.StartTime,
-                Is.EqualTo(new CalDateTime(2025, 11, 5)));
+            Assert.That(overrideOcc!.Start,
+                Is.EqualTo(new CalDateTime(2025, 11, 5).ToZonedDateTime(tz)));
             // The last override in the calendar is taken
             Assert.That(((CalendarEvent) overrideOcc.Source).Summary, Is.EqualTo("Override Event 2"));
         }
@@ -4423,8 +4078,10 @@ END:VCALENDAR";
                                 END:VCALENDAR
                                 """)!;
 
+        var tz = DateUtil.GetZone(_tzid);
+
         var occurrences = cal
-            .GetOccurrences<CalendarEvent>().ToList();
+            .GetOccurrences<CalendarEvent>(tz).ToList();
 
         var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceId == new CalDateTime(2025, 11, 3));
 
@@ -4432,8 +4089,8 @@ END:VCALENDAR";
         {
             Assert.That(occurrences, Has.Count.EqualTo(4));
             Assert.That(overrideOcc, Is.Not.Null);
-            Assert.That(overrideOcc!.Period.StartTime,
-                Is.EqualTo(new CalDateTime(2025, 11, 4)));
+            Assert.That(overrideOcc!.Start,
+                Is.EqualTo(new CalDateTime(2025, 11, 4).ToZonedDateTime(tz)));
             // The override with the highest SEQUENCE is taken, even if it comes earlier in the calendar
             Assert.That(((CalendarEvent) overrideOcc.Source).Summary, Is.EqualTo("Override Event 2"));
         }
@@ -4460,20 +4117,25 @@ END:VCALENDAR";
         var calendar = new Calendar();
         calendar.Events.Add(vEvent);
 
-        var intervalStart = eventStart;
-        var intervalEnd = intervalStart.AddDays(7 * evaluationsCount);
+        var tz = DateUtil.GetZone("UTC");
+
+        var intervalStart = eventStart.ToZonedDateTime(tz);
+        var intervalEnd = intervalStart.LocalDateTime
+            .PlusDays(7 * evaluationsCount)
+            .InZoneLeniently(tz)
+            .ToInstant();
 
         var occurrences = RecurrenceUtil.GetOccurrences(
                 recurrable: vEvent,
                 periodStart: intervalStart)
             .TakeWhileBefore(intervalEnd);
-        var occurrenceSet = new HashSet<CalDateTime>(occurrences.Select(o => o.Period.StartTime));
+        var occurrenceSet = occurrences.Select(o => o.Start).ToHashSet();
 
         Assert.That(occurrenceSet, Has.Count.EqualTo(evaluationsCount));
 
         for (var currentOccurrence = intervalStart;
-             currentOccurrence.CompareTo(intervalEnd) < 0;
-             currentOccurrence = (CalDateTime) currentOccurrence.AddDays(7))
+             currentOccurrence.ToInstant() < intervalEnd;
+             currentOccurrence = currentOccurrence.LocalDateTime.PlusDays(7).InZoneLeniently(tz))
         {
             var contains = occurrenceSet.Contains(currentOccurrence);
             Assert.That(contains, Is.True,
@@ -4496,26 +4158,28 @@ END:VCALENDAR";
         calendar.Events.Add(vEvent);
         calendar.Events.Add(vEvent2);
 
-        var searchStart = new CalDateTime(2015, 12, 29);
-        var searchEnd = new CalDateTime(2017, 02, 10);
+        var tz = DateUtil.GetZone(_tzid);
+
+        var searchStart = new CalDateTime(2015, 12, 29).ToZonedDateTime(tz);
+        var searchEnd = new CalDateTime(2017, 02, 10).ToZonedDateTime(tz).ToInstant();
         var occurrences = calendar.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
 
         var firstOccurrence = occurrences.First();
-        var firstStartCopy = firstStart.Copy();
-        var firstEndCopy = firstEnd.Copy();
+        var firstStartCopy = firstStart.ToZonedDateTime(tz);
+        var firstEndCopy = firstEnd.ToZonedDateTime(tz);
         Assert.Multiple(() =>
         {
-            Assert.That(firstOccurrence.Period.StartTime, Is.EqualTo(firstStartCopy));
-            Assert.That(firstOccurrence.Period.EffectiveEndTime, Is.EqualTo(firstEndCopy));
+            Assert.That(firstOccurrence.Start, Is.EqualTo(firstStartCopy));
+            Assert.That(firstOccurrence.End, Is.EqualTo(firstEndCopy));
         });
 
         var secondOccurrence = occurrences.Last();
-        var secondStartCopy = secondStart.Copy();
-        var secondEndCopy = secondEnd.Copy();
+        var secondStartCopy = secondStart.ToZonedDateTime(tz);
+        var secondEndCopy = secondEnd.ToZonedDateTime(tz);
         Assert.Multiple(() =>
         {
-            Assert.That(secondOccurrence.Period.StartTime, Is.EqualTo(secondStartCopy));
-            Assert.That(secondOccurrence.Period.EffectiveEndTime, Is.EqualTo(secondEndCopy));
+            Assert.That(secondOccurrence.Start, Is.EqualTo(secondStartCopy));
+            Assert.That(secondOccurrence.End, Is.EqualTo(secondEndCopy));
         });
     }
 
@@ -4575,36 +4239,38 @@ END:VCALENDAR";
                             END:VCALENDAR
                             """;
 
-        var collection = Calendar.Load(ical)!;
-        var startCheck = new CalDateTime(2016, 11, 11);
-        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck)
-            .TakeWhileBefore(startCheck.AddMonths(1)).ToList();
+        var tz = DateUtil.GetZone("W. Europe Standard Time");
 
-        CalDateTime[] expectedStartDates =
-        [
-            new CalDateTime("20161114T000100", "W. Europe Standard Time"),
-            new CalDateTime("20161114T120100", "W. Europe Standard Time"),
-            new CalDateTime("20161121T000100", "W. Europe Standard Time"),
-            new CalDateTime("20161121T120100", "W. Europe Standard Time"),
-            new CalDateTime("20161128T043000", "W. Europe Standard Time"), // The replaced entry
-            new CalDateTime("20161128T120100", "W. Europe Standard Time"),
-            new CalDateTime("20161205T000100", "W. Europe Standard Time"),
-            new CalDateTime("20161205T120100", "W. Europe Standard Time")
-        ];
+        var collection = Calendar.Load(ical)!;
+        var startCheck = new CalDateTime(2016, 11, 11).ToZonedDateTime(tz);
+        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck)
+            .TakeWhileBefore(startCheck.LocalDateTime.PlusMonths(1).InZoneLeniently(tz).ToInstant()).ToList();
+
+        var expectedStartDates = new List<CalDateTime>
+        {
+            new("20161114T000100", "W. Europe Standard Time"),
+            new("20161114T120100", "W. Europe Standard Time"),
+            new("20161121T000100", "W. Europe Standard Time"),
+            new("20161121T120100", "W. Europe Standard Time"),
+            new("20161128T043000", "W. Europe Standard Time"), // The replaced entry
+            new("20161128T120100", "W. Europe Standard Time"),
+            new("20161205T000100", "W. Europe Standard Time"),
+            new("20161205T120100", "W. Europe Standard Time")
+        }.Select(x => x.ToZonedDateTime()).ToList();
 
         // Specify end time that is between the original occurrence at 20161128T0001 and the overridden one at 20161128T0030.
         // The overridden one shouldn't be returned, because it was replaced and the other one is in the future.
-        var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck))
-            .TakeWhileBefore(new CalDateTime("20161128T002000", "W. Europe Standard Time"))
+        var occurrences2 = collection.GetOccurrences<CalendarEvent>(startCheck)
+            .TakeWhileBefore(new CalDateTime("20161128T002000", "W. Europe Standard Time").ToInstant())
             .ToList();
 
         Assert.Multiple(() =>
         {
             // endTime = 20161211T000000
-            Assert.That(occurrences.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates));
+            Assert.That(occurrences.Select(x => x.Start), Is.EqualTo(expectedStartDates));
 
             // endTime = 20161128T002000
-            Assert.That(occurrences2.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates.Take(4)));
+            Assert.That(occurrences2.Select(x => x.Start), Is.EqualTo(expectedStartDates.Take(4)));
         });
     }
 
@@ -4632,36 +4298,39 @@ END:VCALENDAR";
                             END:VCALENDAR
                             """;
 
+        var tz = DateUtil.GetZone(_tzid);
+
         var collection = Calendar.Load(ical)!;
-        var startCheck = new CalDateTime(2023, 10, 1);
+        var startCheck = new CalDateTime(2023, 10, 1).ToZonedDateTime(tz);
         var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck)
-            .TakeWhileBefore(startCheck.AddMonths(1))
+            .TakeWhileBefore(startCheck.LocalDateTime.PlusMonths(1).InZoneLeniently(tz).ToInstant())
             .ToList();
 
-        var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck))
-            .TakeWhileBefore(new CalDateTime(2023, 12, 31))
+        var occurrences2 = collection.GetOccurrences<CalendarEvent>(startCheck)
+            .TakeWhileBefore(new CalDateTime(2023, 12, 31).ToZonedDateTime(tz).ToInstant())
             .ToList();
 
-        CalDateTime[] expectedStartDates =
-        [
+        var expectedStartDates = new List<CalDateTime>
+        {
             new(2023, 10, 1),
             new(2023, 11, 15), // the replaced occurrence
             new(2023, 12, 1)
-        ];
+        }.Select(x => x.ToZonedDateTime(tz)).ToList();
 
         Assert.Multiple(() =>
         {
             // For endTime=20231002
-            Assert.That(occurrences.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates.Take(1)));
+            Assert.That(occurrences.Select(x => x.Start), Is.EqualTo(expectedStartDates.Take(1)));
 
             // For endTime=20231231
-            Assert.That(occurrences2.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates.Take(3)));
+            Assert.That(occurrences2.Select(x => x.Start), Is.EqualTo(expectedStartDates.Take(3)));
         });
     }
 
     [Test]
     public void CalendarCollection_GetOccurrences_ShouldEnumerateAndMerge()
     {
+        var tz = DateUtil.GetZone(_tzid);
         var cal1 = new Calendar();
         cal1.Events.Add(
             new CalendarEvent { DtStart = new CalDateTime(2025, 1, 1), DtEnd = new CalDateTime(2025, 1, 2) });
@@ -4673,11 +4342,11 @@ END:VCALENDAR";
         var collection = new CalendarCollection { cal1, cal2 };
 
         // Runs OrderedMergeMany
-        var occurrences = collection.GetOccurrences().ToList();
+        var occurrences = collection.GetOccurrences(tz).ToList();
         Assert.That(occurrences.Count, Is.EqualTo(2));
 
         // Generic overload
-        var occurrencesTyped = collection.GetOccurrences<CalendarEvent>().ToList();
+        var occurrencesTyped = collection.GetOccurrences<CalendarEvent>(tz).ToList();
         Assert.That(occurrencesTyped.Count, Is.EqualTo(2));
     }
 
@@ -4706,8 +4375,8 @@ END:VCALENDAR";
                    """;
 
         var cal = Calendar.Load(ical)!;
-        var from = new CalDateTime(2025, 01, 01, 0, 0, 0, CalDateTime.UtcTzId);
-        var to = new CalDateTime(2025, 01, 04, 0, 0, 0, CalDateTime.UtcTzId);
+        var from = new CalDateTime(2025, 01, 01, 0, 0, 0, CalDateTime.UtcTzId).ToZonedDateTime();
+        var to = new CalDateTime(2025, 01, 04, 0, 0, 0, CalDateTime.UtcTzId).ToZonedDateTime().ToInstant();
 
         var occurrences = cal.GetOccurrences(from).TakeWhileBefore(to).ToList();
 
@@ -4720,9 +4389,9 @@ END:VCALENDAR";
             new CalDateTime(2025, 01, 02, 10, 0, 0, CalDateTime.UtcTzId),
             new CalDateTime(2025, 01, 03, 10, 0, 0, CalDateTime.UtcTzId),
             new CalDateTime(2025, 01, 03, 10, 0, 0, CalDateTime.UtcTzId),
-        };
+        }.Select(x => x.ToZonedDateTime()).ToList();
 
-        Assert.That(occurrences.Select(o => o.Period.StartTime).ToArray(), Is.EqualTo(expected));
+        Assert.That(occurrences.Select(o => o.Start).ToArray(), Is.EqualTo(expected));
     }
 
     [Test, Category("RECURRENCE-ID")]
@@ -4756,8 +4425,8 @@ END:VCALENDAR";
                    """;
 
         var cal = Calendar.Load(ical)!;
-        var from = new CalDateTime(2025, 01, 01, 0, 0, 0, CalDateTime.UtcTzId);
-        var to = new CalDateTime(2025, 01, 04, 0, 0, 0, CalDateTime.UtcTzId);
+        var from = new CalDateTime(2025, 01, 01, 0, 0, 0, CalDateTime.UtcTzId).ToZonedDateTime();
+        var to = new CalDateTime(2025, 01, 04, 0, 0, 0, CalDateTime.UtcTzId).ToZonedDateTime().ToInstant();
 
         var occurrences = cal.GetOccurrences(from).TakeWhileBefore(to).ToList();
 
@@ -4767,8 +4436,8 @@ END:VCALENDAR";
             new CalDateTime(2025, 01, 01, 10, 0, 0, CalDateTime.UtcTzId),
             new CalDateTime(2025, 01, 02, 12, 0, 0, CalDateTime.UtcTzId),
             new CalDateTime(2025, 01, 03, 10, 0, 0, CalDateTime.UtcTzId),
-        };
+        }.Select(x => x.ToZonedDateTime()).ToList();
 
-        Assert.That(occurrences.Select(o => o.Period.StartTime).ToArray(), Is.EqualTo(expected));
+        Assert.That(occurrences.Select(o => o.Start).ToArray(), Is.EqualTo(expected));
     }
 }

@@ -88,7 +88,8 @@ public class MatchTimeZoneTests
             System.Globalization.DateTimeStyles.AssumeUniversal |
             System.Globalization.DateTimeStyles.AdjustToUniversal).AsCalDateTime();
         
-        var occurrences = evt.GetOccurrences(new CalDateTime(2024, 10, 01)).TakeWhileBefore(new CalDateTime(2024, 10, 07));
+        var occurrences = evt.GetOccurrences(new CalDateTime(2024, 10, 01).ToZonedDateTime("Australia/Sydney"))
+            .TakeWhileBefore(new CalDateTime(2024, 10, 07));
 
         Assert.Multiple(() =>
         {
