@@ -9,7 +9,10 @@ using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
+using NodaTime;
 using NUnit.Framework;
+using Duration = Ical.Net.DataTypes.Duration;
+using Period = Ical.Net.DataTypes.Period;
 
 namespace Ical.Net.Tests;
 
@@ -194,7 +197,9 @@ public class FreeBusyTest
     [Test]
     public void PeriodCollidesWith_WhenNoDurationShouldThrow()
     {
-        Assert.Throws<ArgumentException>(() => _ = new FreeBusyEntry(new(new CalDateTime(2025, 1, 1, 0, 0, 0, "UTC")), FreeBusyStatus.Free));
+        Assert.Throws<ArgumentException>(() =>
+            _ = new FreeBusyEntry(new(new CalDateTime(2025, 1, 1, 0, 0, 0, "UTC")), FreeBusyStatus.Free));
+    }
 
     [Test, Category("FreeBusy")]
     public void CreateReturnsBusyWhenAcceptedParticipantIsRequested()
@@ -249,6 +254,7 @@ public class FreeBusyTest
         var organizer = new Organizer("mailto:organizer@example.com");
         var contacts = new[] { new Attendee("mailto:busy@example.com ") };
         var freeBusy = cal.GetFreeBusy(
+            DateTimeZone.Utc,
             organizer,
             contacts,
             new CalDateTime(2025, 9, 1, 0, 0, 0),
@@ -258,7 +264,7 @@ public class FreeBusyTest
         {
             Assert.That(freeBusy.Entries, Has.Count.EqualTo(1));
             Assert.That(freeBusy.Entries[0].Status, Is.EqualTo(FreeBusyStatus.Busy));
-            Assert.That(freeBusy.Entries[0].StartTime, Is.EqualTo(busyEvent.Start));
+            Assert.That(freeBusy.Entries[0].StartTime.AsUtc, Is.EqualTo(busyEvent.Start.AsUtc));
         }
     }
 
@@ -278,7 +284,7 @@ public class FreeBusyTest
         evt.Attendees.Add(attendee);
 
         var organizer = new Organizer("mailto:organizer@example.com");
-        var freeBusy = calendar.GetFreeBusy(organizer, contacts, new(2025, 9, 1, 0, 0, 0), new(2025, 9, 2, 0, 0, 0));
+        var freeBusy = calendar.GetFreeBusy(DateTimeZone.Utc, organizer, contacts, new(2025, 9, 1, 0, 0, 0), new(2025, 9, 2, 0, 0, 0));
         return freeBusy ?? throw new InvalidOperationException("GetFreeBusy returned null.");
     }
 }

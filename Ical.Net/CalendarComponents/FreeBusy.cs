@@ -11,6 +11,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Utility;
 using NodaTime;
+using Period = Ical.Net.DataTypes.Period;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -36,7 +37,7 @@ public class FreeBusy : UniqueComponent, IMergeable
 
         foreach (var o in occurrences)
         {
-            // We only "opaque" events
+            // Ignore transparent events. Only opaque events are considered as busy time.
             if (o.Source is not CalendarEvent evt || evt.Transparency == TransparencyType.Transparent)
             {
                 continue;
@@ -51,7 +52,7 @@ public class FreeBusy : UniqueComponent, IMergeable
                 continue;
             }
 
-            fb.Entries.Add(new FreeBusyEntry(o.Period, status.Value));
+            fb.Entries.Add(new FreeBusyEntry(new Period(o.Start.ToInstant(), o.End.ToInstant()), status.Value));
         }
 
         return fb;
