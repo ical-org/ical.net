@@ -13,7 +13,7 @@ on:
         type: choice
         options:
           - v5
-          # - v6
+          - v6
 
 jobs:
   tests:
