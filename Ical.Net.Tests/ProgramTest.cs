@@ -52,60 +52,36 @@ public class ProgramTest
 
         // Get occurrences for the first event
         var occurrences = evt1.GetOccurrences(
-            new CalDateTime(1996, 1, 1))
-            .TakeWhileBefore(new CalDateTime(2000, 1, 1)).ToList();
+            new CalDateTime(1996, 1, 1).ToZonedDateTime(_tzid))
+            .TakeWhileBefore(new CalDateTime(2000, 1, 1).ToZonedDateTime(_tzid).ToInstant()).ToList();
 
         var dateTimes = new[]
         {
-            new CalDateTime(1997, 9, 10, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 9, 11, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 9, 13, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 9, 14, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid),
-            new CalDateTime(1999, 3, 10, 9, 0, 0, _tzid),
-            new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid),
-            new CalDateTime(1999, 3, 12, 9, 0, 0, _tzid),
-            new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid)
-        };
-
-        var timeZones = new[]
-        {
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern"
+            new CalDateTime(1997, 9, 10, 9, 0, 0, _tzid).ToZonedDateTime(),
+            new CalDateTime(1997, 9, 11, 9, 0, 0, _tzid).ToZonedDateTime(),
+            new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid).ToZonedDateTime(),
+            new CalDateTime(1997, 9, 13, 9, 0, 0, _tzid).ToZonedDateTime(),
+            new CalDateTime(1997, 9, 14, 9, 0, 0, _tzid).ToZonedDateTime(),
+            new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid).ToZonedDateTime(),
+            new CalDateTime(1999, 3, 10, 9, 0, 0, _tzid).ToZonedDateTime(),
+            new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid).ToZonedDateTime(),
+            new CalDateTime(1999, 3, 12, 9, 0, 0, _tzid).ToZonedDateTime(),
+            new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid).ToZonedDateTime(),
         };
 
         for (var i = 0; i < dateTimes.Length; i++)
         {
-            CalDateTime dt = dateTimes[i];
-            var start = occurrences[i].Period.StartTime;
+            var dt = dateTimes[i];
+            var start = occurrences[i].Start;
             Assert.That(start, Is.EqualTo(dt));
-
-            var expectedZone = DateUtil.GetZone(dt.TimeZoneName);
-            var actualZone = DateUtil.GetZone(timeZones[i]);
-
-            //Assert.AreEqual();
-
-            //Normalize the time zones and then compare equality
-            Assert.That(actualZone, Is.EqualTo(expectedZone));
-
-            //Assert.IsTrue(dt.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
         }
 
         Assert.That(occurrences.Count == dateTimes.Length, Is.True, "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
         // Get occurrences for the 2nd event
         occurrences = evt2.GetOccurrences(
-            new CalDateTime(1996, 1, 1))
-            .TakeWhileBefore(new CalDateTime(1998, 4, 1)).ToList();
+            new CalDateTime(1996, 1, 1).ToZonedDateTime(_tzid))
+            .TakeWhileBefore(new CalDateTime(1998, 4, 1).ToZonedDateTime(_tzid).ToInstant()).ToList();
 
         var dateTimes1 = new[]
         {
@@ -127,38 +103,15 @@ public class ProgramTest
             new CalDateTime(1998, 3, 17, 9, 0, 0, _tzid),
             new CalDateTime(1998, 3, 24, 9, 0, 0, _tzid),
             new CalDateTime(1998, 3, 31, 9, 0, 0, _tzid)
-        };
-
-        var timeZones1 = new[]
-        {
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern"
-        };
+        }.Select(x => x.ToZonedDateTime()).ToArray();
 
         for (var i = 0; i < dateTimes1.Length; i++)
         {
-            CalDateTime dt = dateTimes1[i];
-            var start = occurrences[i].Period.StartTime;
+            var dt = dateTimes1[i];
+            var start = occurrences[i].Start;
             Assert.Multiple(() =>
             {
                 Assert.That(start, Is.EqualTo(dt));
-                Assert.That(dt.TimeZoneName == timeZones1[i], Is.True, "Event " + dt + " should occur in the " + timeZones1[i] + " timezone");
             });
         }
 

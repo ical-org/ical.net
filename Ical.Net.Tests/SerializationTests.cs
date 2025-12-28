@@ -28,7 +28,7 @@ public class SerializationTests
     private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
     private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
     private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
-    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), Duration = (_later.Value - _nowTime.Value).ToDurationExact() };
+    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = _nowTime, Duration = (_later.Value - _nowTime.Value).ToDurationExact() };
     private static Calendar DeserializeCalendar(string s) => Calendar.Load(s);
 
     internal static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
@@ -555,8 +555,8 @@ public class SerializationTests
         const string expectedString = "This is an expected string";
         var e = new CalendarEvent
         {
-            Start = new CalDateTime(_nowTime),
-            End = new CalDateTime(_later),
+            Start = _nowTime,
+            End = _later,
             Summary = expectedString,
         };
 

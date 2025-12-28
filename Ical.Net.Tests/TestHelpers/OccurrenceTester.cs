@@ -3,28 +3,36 @@
 // Licensed under the MIT license.
 //
 #nullable enable
+using System;
 using System.Linq;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
+using Ical.Net.Utility;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests.TestHelpers;
 
 internal static class OccurrenceTester
 {
+    private const string _tzid = "US-Eastern";
+
     public static void AssertOccurrences(
         Calendar cal,
         CalDateTime? fromDate,
         CalDateTime? toDate,
-        Period[] expectedPeriods,
-        string[]? timeZones,
-        int eventIndex
-    )
+        DataTypes.Period[] expectedPeriods,
+        int eventIndex,
+        string? timeZone = null)
     {
         var evt = cal.Events.Skip(eventIndex).First();
 
+        var tz = DateUtil.GetZone(timeZone ?? _tzid);
+        var start = fromDate?.ToZonedDateTime(tz).ToInstant();
+
         var occurrences = toDate == null
-            ? evt.GetOccurrences(fromDate).ToList()
-            : evt.GetOccurrences(fromDate).TakeWhileBefore(toDate).ToList();
+            ? evt.GetOccurrences(tz, start).ToList()
+            : evt.GetOccurrences(tz, start).TakeWhileBefore(toDate.ToZonedDateTime(tz).ToInstant()).ToList();
 
         Assert.Multiple(() =>
         {
@@ -40,14 +48,28 @@ internal static class OccurrenceTester
 
             for (var i = 0; i < expectedPeriods.Length; i++)
             {
-                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveDuration!.Value);
+                var start = expectedPeriods[i].StartTime.ToZonedDateTime(tz);
 
-                Assert.That(occurrences[i].Period, Is.EqualTo(period), "Event should occur on " + period);
-                if (timeZones != null)
+                ZonedDateTime end;
+
+                if (expectedPeriods[i].Duration is { } d)
                 {
-                    Assert.That(period.StartTime.TimeZoneName, Is.EqualTo(timeZones[i]),
-                        $"Event {period} should occur in the {timeZones[i]} timezone");
+                    end = start.LocalDateTime
+                        .Plus(d.GetNominalPart())
+                        .InZoneRelativeTo(start)
+                        .Plus(d.GetTimePart());
                 }
+                else if (expectedPeriods[i].EndTime is { } periodEnd)
+                {
+                    end = periodEnd.ToZonedDateTime(tz);
+                }
+                else
+                {
+                    throw new Exception("Expected test period must have a duration or an end");
+                }
+
+                Assert.That(occurrences[i].Start, Is.EqualTo(start), "Event should start on " + start);
+                Assert.That(occurrences[i].End, Is.EqualTo(end), "Event should end on " + end);
             }
         });
     }

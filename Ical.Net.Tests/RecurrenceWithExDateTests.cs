@@ -9,6 +9,8 @@ using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using Ical.Net.Utility;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -56,13 +58,13 @@ public class RecurrenceWithExDateTests
         var ics = serializer.SerializeToString(calendar)!;
 
         var deserializedCalendar = Calendar.Load(ics)!;
-        var occurrences = deserializedCalendar.GetOccurrences<CalendarEvent>().ToList();
+        var occurrences = deserializedCalendar.GetOccurrences<CalendarEvent>(DateUtil.GetZone(timeZoneId)).ToList();
 
         Assert.Multiple(() =>
         {
             if (useExDateWithTime)
             {
-                Assert.That(occurrences.Single().Period, Is.EqualTo(new Period(start, end.Subtract(start))));
+                Assert.That(occurrences.Single().Period, Is.EqualTo((start.ToZonedDateTime(timeZoneId), end.ToZonedDateTime(timeZoneId))));
                 Assert.That(ics, Does.Contain("EXDATE;TZID=Europe/London:20241019T210000"));
             }
             else
@@ -95,7 +97,7 @@ public class RecurrenceWithExDateTests
                   """;
 
         var cal = Calendar.Load(ics)!;
-        var occurrences = cal.GetOccurrences<CalendarEvent>().ToList();
+        var occurrences = cal.GetOccurrences<CalendarEvent>(DateUtil.GetZone("GMT")).ToList();
 
         var serializer = new CalendarSerializer();
         ics = serializer.SerializeToString(cal);
@@ -118,7 +120,7 @@ public class RecurrenceWithExDateTests
                     o => !cal
                         .Events[0]!
                         .ExceptionDates.GetAllDates()
-                        .Any(ex => ex.Equals(o.Period.StartTime))), Is.True);
+                        .Any(ex => ex.ToInstant().Equals(o.Start.ToInstant()))), Is.True);
             Assert.That(ics, Does.Contain("EXDATE:20241019T190000Z"));
         });
     }
@@ -143,7 +145,7 @@ public class RecurrenceWithExDateTests
                   """;
 
         var cal = Calendar.Load(ics)!;
-        var occurrences = cal.GetOccurrences<CalendarEvent>().ToList();
+        var occurrences = cal.GetOccurrences<CalendarEvent>(DateUtil.GetZone("Europe/Berlin")).ToList();
 
         var serializer = new CalendarSerializer();
         ics = serializer.SerializeToString(cal);
@@ -177,7 +179,7 @@ public class RecurrenceWithExDateTests
                     o => !cal
                         .Events[0]!
                         .ExceptionDates.GetAllDates()
-                        .Any(ex => ex.Equals(o.Period.StartTime))), Is.True);
+                        .Any(ex => ex.ToInstant().Equals(o.Start.ToInstant()))), Is.True);
             Assert.That(ics, Does.Contain("EXDATE;TZID=Europe/Berlin:20231029T090000,20231105T090000,20231112T090000"));
         });
     }
@@ -205,7 +207,7 @@ public class RecurrenceWithExDateTests
         var cal = Calendar.Load(ics)!;
         // serialize and deserialize to ensure the exclusion dates de/serialized
         cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString()!)!;
-        var occurrences = cal.GetOccurrences<CalendarEvent>().ToList();
+        var occurrences = cal.GetOccurrences<CalendarEvent>(DateUtil.GetZone("America/New_York")).ToList();
 
         // Occurrences:
         // October 25, 2023, 09:00 AM (EDT, UTC-4)
@@ -230,7 +232,7 @@ public class RecurrenceWithExDateTests
                     o => !cal
                         .Events[0]!
                         .ExceptionDates.GetAllDates()
-                        .Any(ex => ex.Equals(o.Period.StartTime))), Is.True);
+                        .Any(ex => ex.ToInstant().Equals(o.Start.ToInstant()))), Is.True);
         });
     }
 }
