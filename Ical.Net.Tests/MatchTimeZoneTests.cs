@@ -83,12 +83,13 @@ public class MatchTimeZoneTests
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
-        var expectedUntil = DateTime.ParseExact(inputUntil, "yyyyMMddTHHmmssZ",
+        var expectedUntil = new CalDateTime(DateTime.ParseExact(inputUntil, "yyyyMMddTHHmmssZ",
             System.Globalization.CultureInfo.InvariantCulture,
             System.Globalization.DateTimeStyles.AssumeUniversal |
-            System.Globalization.DateTimeStyles.AdjustToUniversal).AsCalDateTime();
+            System.Globalization.DateTimeStyles.AdjustToUniversal));
         
-        var occurrences = evt.GetOccurrences(new CalDateTime(2024, 10, 01)).TakeWhileBefore(new CalDateTime(2024, 10, 07));
+        var occurrences = evt.GetOccurrences(new CalDateTime(2024, 10, 01).ToZonedDateTime("Australia/Sydney"))
+            .TakeWhileBefore(new CalDateTime(2024, 10, 07));
 
         Assert.Multiple(() =>
         {

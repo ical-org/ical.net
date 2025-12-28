@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-using System;
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
 
@@ -36,7 +35,7 @@ public class Trigger : EncodableDataType
             // Ensure date/time has a time part
             if (!_mDateTime.HasTime)
             {
-                _mDateTime = new CalDateTime(_mDateTime.Date, new TimeOnly(), _mDateTime.TzId);
+                _mDateTime = new CalDateTime(_mDateTime.Date, new NodaTime.LocalTime(), _mDateTime.TzId);
             }
         }
     }
@@ -88,7 +87,7 @@ public class Trigger : EncodableDataType
             return;
         }
 
-        DateTime = t.DateTime?.Copy();
+        DateTime = t.DateTime;
         Duration = t.Duration;
         Related = t.Related;
     }

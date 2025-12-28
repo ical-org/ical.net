@@ -13,6 +13,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Tests.Logging;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests.WikiSamples;
@@ -72,7 +73,8 @@ internal class RecurrenceWikiTests
         };
 
         // Get all occurrences of the series.
-        IEnumerable<Occurrence> allOccurrences = calendarEvent.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("UTC");
+        IEnumerable<Occurrence> allOccurrences = calendarEvent.GetOccurrences(tz);
         Assert.That(allOccurrences.Count(), Is.EqualTo(5));
 
         // Wiki code end
@@ -80,21 +82,16 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             5 occurrences:
-            Start: 07/10/2025
-              Period: P1D
-              End: 07/11/2025
-            Start: 07/12/2025
-              Period: P1D
-              End: 07/13/2025
-            Start: 07/14/2025
-              Period: P1D
-              End: 07/15/2025
-            Start: 07/16/2025
-              Period: P1D
-              End: 07/17/2025
-            Start: 07/18/2025
-              Period: P1D
-              End: 07/19/2025
+            Start: 2025-07-10T00:00:00 UTC (+00)
+              End: 2025-07-11T00:00:00 UTC (+00)
+            Start: 2025-07-12T00:00:00 UTC (+00)
+              End: 2025-07-13T00:00:00 UTC (+00)
+            Start: 2025-07-14T00:00:00 UTC (+00)
+              End: 2025-07-15T00:00:00 UTC (+00)
+            Start: 2025-07-16T00:00:00 UTC (+00)
+              End: 2025-07-17T00:00:00 UTC (+00)
+            Start: 2025-07-18T00:00:00 UTC (+00)
+              End: 2025-07-19T00:00:00 UTC (+00)
             """;
 
         var generatedOccurrences = ToWikiPeriodString(allOccurrences);
@@ -135,7 +132,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
         Assert.That(occurrences.Count(), Is.EqualTo(2));
 
         // Wiki code end
@@ -155,12 +153,10 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             2 occurrences:
-            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/10/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 07/12/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/12/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 2025-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-10T10:00:00 Europe/Zurich (+02)
+            Start: 2025-07-12T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-12T10:00:00 Europe/Zurich (+02)
             """;
         
         // Non-Wiki Asserts
@@ -208,7 +204,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
 
@@ -227,21 +224,16 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             5 occurrences:
-            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/10/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 07/12/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/12/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 07/10/2026 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/10/2026 10:00:00 +02:00 Europe/Zurich
-            Start: 07/12/2026 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/12/2026 10:00:00 +02:00 Europe/Zurich
-            Start: 07/10/2027 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/10/2027 10:00:00 +02:00 Europe/Zurich
+            Start: 2025-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-10T10:00:00 Europe/Zurich (+02)
+            Start: 2025-07-12T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-12T10:00:00 Europe/Zurich (+02)
+            Start: 2026-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2026-07-10T10:00:00 Europe/Zurich (+02)
+            Start: 2026-07-12T09:00:00 Europe/Zurich (+02)
+              End: 2026-07-12T10:00:00 Europe/Zurich (+02)
+            Start: 2027-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2027-07-10T10:00:00 Europe/Zurich (+02)
             """;
 
         // Non-Wiki Asserts
@@ -291,7 +283,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
 
@@ -311,18 +304,14 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             4 occurrences:
-            Start: 06/29/2025 16:00:00 +02:00 Europe/Zurich
-              Period: PT4H
-              End: 06/29/2025 20:00:00 +02:00 Europe/Zurich
-            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT4H
-              End: 07/10/2025 13:00:00 +02:00 Europe/Zurich
-            Start: 07/27/2025 16:00:00 +02:00 Europe/Zurich
-              Period: PT4H
-              End: 07/27/2025 20:00:00 +02:00 Europe/Zurich
-            Start: 08/31/2025 16:00:00 +02:00 Europe/Zurich
-              Period: PT4H
-              End: 08/31/2025 20:00:00 +02:00 Europe/Zurich
+            Start: 2025-06-29T16:00:00 Europe/Zurich (+02)
+              End: 2025-06-29T20:00:00 Europe/Zurich (+02)
+            Start: 2025-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-10T13:00:00 Europe/Zurich (+02)
+            Start: 2025-07-27T16:00:00 Europe/Zurich (+02)
+              End: 2025-07-27T20:00:00 Europe/Zurich (+02)
+            Start: 2025-08-31T16:00:00 Europe/Zurich (+02)
+              End: 2025-08-31T20:00:00 Europe/Zurich (+02)
             """;
 
         // Non-Wiki Asserts
@@ -369,7 +358,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("UTC");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
 
@@ -389,18 +379,14 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             4 occurrences:
-            Start: 07/10/2025 20:00:00 +00:00 UTC
-              Period: PT15M
-              End: 07/10/2025 20:15:00 +00:00 UTC
-            Start: 07/10/2025 21:00:00 +00:00 UTC
-              Period: PT15M
-              End: 07/10/2025 21:15:00 +00:00 UTC
-            Start: 07/10/2025 23:00:00 +00:00 UTC
-              Period: PT15M
-              End: 07/10/2025 23:15:00 +00:00 UTC
-            Start: 07/11/2025 00:00:00 +00:00 UTC
-              Period: PT15M
-              End: 07/11/2025 00:15:00 +00:00 UTC
+            Start: 2025-07-10T20:00:00 UTC (+00)
+              End: 2025-07-10T20:15:00 UTC (+00)
+            Start: 2025-07-10T21:00:00 UTC (+00)
+              End: 2025-07-10T21:15:00 UTC (+00)
+            Start: 2025-07-10T23:00:00 UTC (+00)
+              End: 2025-07-10T23:15:00 UTC (+00)
+            Start: 2025-07-11T00:00:00 UTC (+00)
+              End: 2025-07-11T00:15:00 UTC (+00)
             """;
 
         // Non-Wiki Asserts
@@ -468,7 +454,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
 
@@ -498,18 +485,14 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             4 occurrences:
-            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/10/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 07/12/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/12/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 07/13/2025 13:00:00 +02:00 Europe/Zurich
-              Period: PT13M
-              End: 07/13/2025 13:13:00 +02:00 Europe/Zurich
-            Start: 07/16/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/16/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 2025-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-10T10:00:00 Europe/Zurich (+02)
+            Start: 2025-07-12T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-12T10:00:00 Europe/Zurich (+02)
+            Start: 2025-07-13T13:00:00 Europe/Zurich (+02)
+              End: 2025-07-13T13:13:00 Europe/Zurich (+02)
+            Start: 2025-07-16T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-16T10:00:00 Europe/Zurich (+02)
             """;
         
         // Non-Wiki Asserts
@@ -553,7 +536,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
 
@@ -572,15 +556,12 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             3 occurrences:
-            Start: 03/24/2025 09:00:00 +01:00 Europe/Zurich
-              Period: PT1H
-              End: 03/24/2025 10:00:00 +01:00 Europe/Zurich
-            Start: 03/31/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 03/31/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 04/07/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 04/07/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 2025-03-24T09:00:00 Europe/Zurich (+01)
+              End: 2025-03-24T10:00:00 Europe/Zurich (+01)
+            Start: 2025-03-31T09:00:00 Europe/Zurich (+02)
+              End: 2025-03-31T10:00:00 Europe/Zurich (+02)
+            Start: 2025-04-07T09:00:00 Europe/Zurich (+02)
+              End: 2025-04-07T10:00:00 Europe/Zurich (+02)
             """;
 
         // Non-Wiki Asserts
@@ -618,9 +599,10 @@ internal class RecurrenceWikiTests
             End = start.AddYears(10).AddHours(1)
         });
         
+        var tz = TimeZoneResolvers.Default("UTC");
         var occurrences =
             calendar.Events
-                .SelectMany(ev => ev.GetOccurrences().Take(1))
+                .SelectMany(ev => ev.GetOccurrences(tz).Take(1))
                 .ToArray();
 
         // Wiki code end
@@ -629,12 +611,10 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             2 occurrences:
-            Start: 09/01/2025 10:00:00 +00:00 UTC
-              Period: PT1H
-              End: 09/01/2025 11:00:00 +00:00 UTC
-            Start: 09/01/2035 10:00:00 +00:00 UTC
-              Period: PT1H
-              End: 09/01/2035 11:00:00 +00:00 UTC
+            Start: 2025-09-01T10:00:00 UTC (+00)
+              End: 2025-09-01T11:00:00 UTC (+00)
+            Start: 2035-09-01T10:00:00 UTC (+00)
+              End: 2035-09-01T11:00:00 UTC (+00)
             """;
 
         // Non-Wiki Asserts

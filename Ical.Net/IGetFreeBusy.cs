@@ -6,12 +6,13 @@
 using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using NodaTime;
 
 namespace Ical.Net;
 
 public interface IGetFreeBusy
 {
-    FreeBusy? GetFreeBusy(FreeBusy freeBusyRequest);
-    FreeBusy? GetFreeBusy(CalDateTime fromInclusive, CalDateTime toExclusive);
-    FreeBusy? GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, CalDateTime fromInclusive, CalDateTime toExclusive);
+    FreeBusy? GetFreeBusy(DateTimeZone timeZone, FreeBusy freeBusyRequest);
+    FreeBusy? GetFreeBusy(DateTimeZone timeZone, CalDateTime fromInclusive, CalDateTime toExclusive);
+    FreeBusy? GetFreeBusy(DateTimeZone timeZone, Organizer organizer, IEnumerable<Attendee> contacts, CalDateTime fromInclusive, CalDateTime toExclusive);
 }

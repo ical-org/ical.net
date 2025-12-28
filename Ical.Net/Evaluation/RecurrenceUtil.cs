@@ -9,12 +9,18 @@ using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
+using NodaTime;
 
 namespace Ical.Net.Evaluation;
 
 internal static class RecurrenceUtil
 {
-    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime? periodStart, EvaluationOptions? options = null)
+    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, ZonedDateTime periodStart, EvaluationOptions? options = null)
+    {
+        return GetOccurrences(recurrable, periodStart.Zone, periodStart.ToInstant(), options);
+    }
+
+    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, DateTimeZone timeZone, Instant? periodStart, EvaluationOptions? options = null)
     {
         var evaluator = recurrable.Evaluator;
         if (evaluator == null || recurrable.Start == null)
@@ -24,19 +30,18 @@ internal static class RecurrenceUtil
 
         var start = recurrable.Start;
 
-        var periods = evaluator.Evaluate(start, periodStart, options);
+        var periods = evaluator.Evaluate(start, timeZone, periodStart, options);
         if (periodStart != null)
         {
             periods =
                 from p in periods
-                let effectiveEndTime = p.EffectiveEndTime
                 where
-                    p.StartTime.GreaterThanOrEqual(periodStart)
-                    || ((effectiveEndTime != null) && effectiveEndTime.GreaterThan(periodStart))
+                    p.Start.ToInstant() >= periodStart
+                    || (p.End != null && p.End.Value.ToInstant() > periodStart.Value)
                 select p;
         }
 
-        return periods.Select(p => new Occurrence(recurrable, p));
+        return periods.Select(p => new Occurrence(recurrable, p.Start, p.End ?? p.Start));
     }
 
     public static bool?[] GetExpandBehaviorList(RecurrencePattern p)

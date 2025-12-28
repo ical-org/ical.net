@@ -56,10 +56,10 @@ public class CalDateTimeTests
     [Test, TestCaseSource(nameof(ToTimeZoneTestCases))]
     public void ToTimeZoneTests(CalendarEvent calendarEvent, string targetTimeZone)
     {
-        var startAsUtc = calendarEvent.Start!.AsUtc;
+        var startAsUtc = calendarEvent.Start!.ToInstant();
 
         var convertedStart = calendarEvent.Start.ToTimeZone(targetTimeZone);
-        var convertedAsUtc = convertedStart.AsUtc;
+        var convertedAsUtc = convertedStart.ToInstant();
 
         Assert.That(convertedAsUtc, Is.EqualTo(startAsUtc));
     }
@@ -97,11 +97,11 @@ public class CalDateTimeTests
         var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00", CultureInfo.InvariantCulture);
 
         var someDt = new CalDateTime(someTime.DateTime, "America/New_York");
-        var firstUtc = someDt.AsUtc;
-        Assert.That(firstUtc, Is.EqualTo(someTime.UtcDateTime));
+        var firstUtc = someDt.ToInstant();
+        Assert.That(firstUtc, Is.EqualTo(NodaTime.Instant.FromDateTimeOffset(someTime)));
 
         someDt = new CalDateTime(someTime.DateTime, "Europe/Berlin");
-        var berlinUtc = someDt.AsUtc;
+        var berlinUtc = someDt.ToInstant();
         Assert.That(berlinUtc, Is.Not.EqualTo(firstUtc));
     }
 
@@ -150,7 +150,7 @@ public class CalDateTimeTests
     public static IEnumerable ToStringTestCases()
     {
         yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"), "O", null)
-            .Returns("2024-08-30T10:30:00.0000000+12:00 Pacific/Auckland")
+            .Returns("2024-08-30T10:30:00.0000000 Pacific/Auckland")
             .SetName("Date and time with 'O' format arg, default culture");
 
         yield return new TestCaseData(new CalDateTime(2024, 8, 30), "O", null)
@@ -159,7 +159,7 @@ public class CalDateTimeTests
 
         yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"), "O",
                 CultureInfo.GetCultureInfo("fr-FR"))
-            .Returns("2024-08-30T10:30:00.0000000+12:00 Pacific/Auckland")
+            .Returns("2024-08-30T10:30:00.0000000 Pacific/Auckland")
             .SetName("Date and time with 'O' format arg, French culture");
 
         yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"),
@@ -306,8 +306,8 @@ public class CalDateTimeTests
         var c = new CalDateTime(dt, tzId: "Europe/Berlin");
 
         var c2 = new CalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, c.TzId);
-        var c3 = new CalDateTime(new DateOnly(dt.Year, dt.Month, dt.Day),
-            new TimeOnly(dt.Hour, dt.Minute, dt.Second), c.TzId);
+        var c3 = new CalDateTime(new NodaTime.LocalDate(dt.Year, dt.Month, dt.Day),
+            new NodaTime.LocalTime(dt.Hour, dt.Minute, dt.Second), c.TzId);
 
         Assert.Multiple(() =>
         {
@@ -316,41 +316,9 @@ public class CalDateTimeTests
             Assert.That(CalDateTime.UtcNow.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(CalDateTime.Today.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
-            Assert.That(c.Time?.ToTimeSpan(), Is.EqualTo(dt.TimeOfDay));
+            Assert.That(c.Time, Is.EqualTo(NodaTime.LocalDateTime.FromDateTime(dt).TimeOfDay));
             Assert.That(c.Add(-Duration.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));
             Assert.That(c.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture), Is.EqualTo("02.01.2025 Europe/Berlin"));
-            // Create a date-only CalDateTime from a CalDateTime
-            Assert.That(new CalDateTime(new CalDateTime(2025, 1, 1)), Is.EqualTo(new CalDateTime(2025, 1, 1)));
-        });
-    }
-
-    private static TestCaseData[] AddAndSubtractTestCases => [
-        new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: null), 0),
-        new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: CalDateTime.UtcTzId), 0),
-        new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: "Europe/Paris"), 1)
-        ];
-
-    [Test, TestCaseSource(nameof(AddAndSubtractTestCases))]
-    public void AddAndSubtract_ShouldBeReversible(CalDateTime t, int tzOffs)
-    {
-        var d = Duration.FromHours(4);
-        var expectedTimeSpan = d.ToTimeSpanUnspecified();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(t.Add(d).Add(-d), Is.EqualTo(t));
-            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(expectedTimeSpan));
-            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(d.ToTimeSpan(t)));
-        });
-
-        d = Duration.FromDays(1);
-        expectedTimeSpan = d.ToTimeSpanUnspecified().Add(TimeSpan.FromHours(tzOffs));
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(t.Add(d).Add(-d), Is.EqualTo(t));
-            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(expectedTimeSpan));
-            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(d.ToTimeSpan(t)));
         });
     }
 

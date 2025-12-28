@@ -25,7 +25,7 @@ namespace Ical.Net.CalendarComponents;
 /// - Related property
 /// - TextCollection DataType for 'text' items separated by commas
 /// </remarks>
-public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<CalendarEvent>
+public class CalendarEvent : RecurringComponent, IAlarmContainer
 {
     internal const string ComponentName = "VEVENT";
 
@@ -87,77 +87,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         {
             if (DtEnd is not null) throw new InvalidOperationException("DURATION property cannot be set when DTEND property is not null.");
             SetProperty("DURATION", value);
-        }
-    }
-
-    /// <summary>
-    /// Gets the duration that gets added to the period start time to get the period end time.
-    /// <para/>
-    /// If the <see cref="CalendarEvent.Duration"/> property is not null, its value will be returned.<br/>
-    /// If <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> are set, it will return <see cref="CalendarEvent.DtEnd"/> minus <see cref="CalendarEvent.DtStart"/>.<br/>
-    /// Otherwise, if DtStart is date-only, it will return a duration of 1d, otherwise it will return <see cref="Duration.Zero"/>.
-    /// </summary>
-    /// <remarks>
-    /// Note: For recurring events, the <b>exact duration</b> of individual occurrences may vary due to DST transitions
-    /// of the given <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> timezones.
-    /// </remarks>
-    /// <returns>The duration that gets added to the period start time to get the period end time.</returns>
-    public Duration EffectiveDuration
-    {
-        get
-        {
-            // 3.8.5.3. Recurrence Rule
-            // If the duration of the recurring component is specified with the
-            // "DURATION" property, then the same NOMINAL duration will apply to
-            // all the members of the generated recurrence set and the exact
-            // duration of each recurrence instance will depend on its specific
-            // start time.
-            if (Duration is not null)
-                return Duration.Value;
-
-            if (DtStart is not { } dtStart)
-            {
-                // Mustn't happen
-                throw new InvalidOperationException("DtStart must be set.");
-            }
-
-            if (DtEnd is { } dtEnd)
-            {
-                /*
-                    The 'DTEND' property for a 'VEVENT' calendar component specifies the
-                    non-inclusive end of the event.
-
-                    3.8.5.3. Recurrence Rule:
-                    If the duration of the recurring component is specified with the
-                    "DTEND" or "DUE" property, then the same EXACT duration will apply
-                    to all the members of the generated recurrence set.
-
-                    We use the difference from DtStart to DtEnd (neglecting timezone),
-                    because the caller will set the period end time to the
-                    same timezone as the event end time. This finally leads to an exact duration
-                    calculation from the zoned start time to the zoned end time.
-                    */
-                return dtEnd.Subtract(dtStart);
-            }
-
-            if (!dtStart.HasTime)
-            {
-                // RFC 5545 3.6.1:
-                // For cases where a "VEVENT" calendar component
-                // specifies a "DTSTART" property with a DATE value type but no
-                // "DTEND" nor "DURATION" property, the event’s duration is taken to
-                // be one day.
-                return DataTypes.Duration.FromDays(1);
-            }
-
-            // For DtStart.HasTime but no DtEnd - also the default case
-            //
-            // RFC 5545 3.6.1:
-            // For cases where a "VEVENT" calendar component
-            // specifies a "DTSTART" property with a DATE-TIME value type but no
-            // "DTEND" property, the event ends on the same calendar date and
-            // time of day specified by the "DTSTART" property.
-            return DataTypes.Duration.Zero;
         }
     }
 
@@ -306,7 +235,4 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
 
         return true;
     }
-
-    /// <inheritdoc/>
-    public int CompareTo(CalendarEvent? other) => DtStart?.CompareTo(other?.DtStart) ?? -1;
 }

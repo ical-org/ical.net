@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
+using NodaTime;
 
 namespace Ical.Net;
 
@@ -27,8 +28,9 @@ public interface IGetOccurrences
     /// <para/>
     /// It is advisable to limit indefinite sequences by applying the <see cref="CollectionExtensions.TakeWhileBefore(IEnumerable{Occurrence},CalDateTime)"/> extension method,
     /// or LINQ methods like <c>.TakeWhile()</c>
-    /// </remarks>  
-    IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, EvaluationOptions? options = null);
+    /// </remarks>
+    IEnumerable<Occurrence> GetOccurrences(ZonedDateTime startTime, EvaluationOptions? options = null);
+    IEnumerable<Occurrence> GetOccurrences(DateTimeZone timeZone, Instant? startTime = null, EvaluationOptions? options = null);
 }
 
 public interface IGetOccurrencesTyped : IGetOccurrences
@@ -49,5 +51,6 @@ public interface IGetOccurrencesTyped : IGetOccurrences
     /// It is advisable to limit indefinite sequences by applying the <see cref="CollectionExtensions.TakeWhileBefore(IEnumerable{Occurrence},CalDateTime)"/> extension method,
     /// or LINQ methods like <c>.TakeWhile()</c>
     /// </remarks>  
-    IEnumerable<Occurrence> GetOccurrences<T>(CalDateTime? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent;
+    IEnumerable<Occurrence> GetOccurrences<T>(ZonedDateTime startTime, EvaluationOptions? options = null) where T : IRecurringComponent;
+    IEnumerable<Occurrence> GetOccurrences<T>(DateTimeZone timeZone, Instant? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent;
 }

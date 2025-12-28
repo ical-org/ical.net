@@ -6,13 +6,15 @@
 using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
+using NodaTime;
+using NodaTime.Extensions;
+using NodaTime.TimeZones;
 
 namespace Ical.Net.Evaluation;
 
 public abstract class Evaluator : IEvaluator
 {
-    protected void IncrementDate(ref CalDateTime dt, RecurrencePattern pattern, int interval)
+    protected static void IncrementDate(ref ZonedDateTime dt, RecurrencePattern pattern, int interval)
     {
         if (interval == 0)
             return;
@@ -23,27 +25,43 @@ public abstract class Evaluator : IEvaluator
             switch (pattern.Frequency)
             {
                 case FrequencyType.Secondly:
-                    dt = old.AddSeconds(interval);
+                    dt = old.PlusSeconds(interval);
                     break;
                 case FrequencyType.Minutely:
-                    dt = old.AddMinutes(interval);
+                    dt = old.PlusMinutes(interval);
                     break;
                 case FrequencyType.Hourly:
-                    dt = old.AddHours(interval);
+                    dt = old.PlusHours(interval);
                     break;
                 case FrequencyType.Daily:
-                    dt = old.AddDays(interval);
+                    dt = old.LocalDateTime
+                        .PlusDays(interval)
+                        .InZoneLeniently(old.Zone);
                     break;
                 case FrequencyType.Weekly:
-                    dt = DateUtil.AddWeeks(old, interval, pattern.FirstDayOfWeek);
+                    var isoDayOfWeek = pattern.FirstDayOfWeek.ToIsoDayOfWeek();
+                    if (old.Date.DayOfWeek != isoDayOfWeek)
+                    {
+                        old = old.LocalDateTime
+                            .Previous(isoDayOfWeek)
+                            .InZoneLeniently(old.Zone);
+                    }
+
+                    dt = old.LocalDateTime
+                        .PlusWeeks(interval)
+                        .InZoneLeniently(old.Zone);
                     break;
                 case FrequencyType.Monthly:
-                    dt = old.AddDays(-old.Day + 1).AddMonths(interval);
+                    dt = old.LocalDateTime
+                        .PlusDays(-old.Day + 1)
+                        .PlusMonths(interval)
+                        .InZoneLeniently(old.Zone);
                     break;
                 case FrequencyType.Yearly:
-                    // RecurrencePatternEvaluator relies on the assumption that after incrementing, the new refDate
-                    // is usually at the first day of an interval.
-                    dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval);
+                    dt = old.LocalDateTime
+                        .PlusDays(-old.DayOfYear + 1)
+                        .PlusYears(interval)
+                        .InZoneLeniently(old.Zone);
                     break;
                 default:
                     // Frequency should always be valid at this stage.
@@ -58,5 +76,10 @@ public abstract class Evaluator : IEvaluator
         }
     }
 
-    public abstract IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options);
+    public virtual IEnumerable<EvaluationPeriod> Evaluate(CalDateTime referenceDate, ZonedDateTime periodStart, EvaluationOptions? options)
+    {
+        return Evaluate(referenceDate, periodStart.Zone, periodStart.ToInstant(), options);
+    }
+
+    public abstract IEnumerable<EvaluationPeriod> Evaluate(CalDateTime referenceDate, DateTimeZone timeZone, Instant? periodStart, EvaluationOptions? options);
 }
