@@ -9,7 +9,10 @@ using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
+using NodaTime;
 using NUnit.Framework;
+using Duration = Ical.Net.DataTypes.Duration;
+using Period = Ical.Net.DataTypes.Period;
 
 namespace Ical.Net.Tests;
 
@@ -194,6 +197,94 @@ public class FreeBusyTest
     [Test]
     public void PeriodCollidesWith_WhenNoDurationShouldThrow()
     {
-        Assert.Throws<ArgumentException>(() => _ = new FreeBusyEntry(new(new CalDateTime(2025, 1, 1, 0, 0, 0, "UTC")), FreeBusyStatus.Free));
+        Assert.Throws<ArgumentException>(() =>
+            _ = new FreeBusyEntry(new(new CalDateTime(2025, 1, 1, 0, 0, 0, "UTC")), FreeBusyStatus.Free));
+    }
+
+    [Test, Category("FreeBusy")]
+    public void CreateReturnsBusyWhenAcceptedParticipantIsRequested()
+    {
+        var contacts = new[] { new Attendee("MAILTO:BUSY@EXAMPLE.COM") };
+        var freeBusy = BuildFreeBusyWithContacts("mailto:busy@example.com", EventParticipationStatus.Accepted, contacts);
+
+        Assert.That(freeBusy.Entries, Has.Count.EqualTo(1));
+        Assert.That(freeBusy.Entries[0].Status, Is.EqualTo(FreeBusyStatus.Busy));
+    }
+
+    [Test, Category("FreeBusy")]
+    public void CreateReturnsBusyTentativeWhenTentativeParticipantIsRequested()
+    {
+        var contacts = new[] { new Attendee("mailto:busy@example.com") };
+        var freeBusy = BuildFreeBusyWithContacts("MAILTO:busy@example.com", EventParticipationStatus.Tentative, contacts);
+
+        Assert.That(freeBusy.Entries, Has.Count.EqualTo(1));
+        Assert.That(freeBusy.Entries[0].Status, Is.EqualTo(FreeBusyStatus.BusyTentative));
+    }
+
+    [Test, Category("FreeBusy")]
+    public void CreateIgnoresParticipantsWithDeclinedStatus()
+    {
+        var contacts = new[] { new Attendee("MAILTO:BUSY@EXAMPLE.COM") };
+        var freeBusy = BuildFreeBusyWithContacts("mailto:busy@example.com", EventParticipationStatus.Declined, contacts);
+
+        Assert.That(freeBusy.Entries, Is.Empty);
+    }
+
+    [Test, Category("FreeBusy")]
+    public void CreateFiltersOccurrencesByRequestAttendees()
+    {
+        var cal = new Calendar();
+
+        var busyEvent = cal.Create<CalendarEvent>();
+        busyEvent.Start = new CalDateTime(2025, 9, 1, 9, 0, 0);
+        busyEvent.End = new CalDateTime(2025, 9, 1, 10, 0, 0);
+        busyEvent.Attendees.Add(new Attendee("MAILTO:busy@example.com")
+        {
+            ParticipationStatus = EventParticipationStatus.Accepted
+        });
+
+        var otherEvent = cal.Create<CalendarEvent>();
+        otherEvent.Start = new CalDateTime(2025, 9, 1, 11, 0, 0);
+        otherEvent.End = new CalDateTime(2025, 9, 1, 12, 0, 0);
+        otherEvent.Attendees.Add(new Attendee("MAILTO:friend@example.com")
+        {
+            ParticipationStatus = EventParticipationStatus.Accepted
+        });
+
+        var organizer = new Organizer("mailto:organizer@example.com");
+        var contacts = new[] { new Attendee("mailto:busy@example.com ") };
+        var freeBusy = cal.GetFreeBusy(
+            DateTimeZone.Utc,
+            organizer,
+            contacts,
+            new CalDateTime(2025, 9, 1, 0, 0, 0),
+            new CalDateTime(2025, 9, 2, 0, 0, 0))!;
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(freeBusy.Entries, Has.Count.EqualTo(1));
+            Assert.That(freeBusy.Entries[0].Status, Is.EqualTo(FreeBusyStatus.Busy));
+            Assert.That(freeBusy.Entries[0].StartTime.AsUtc, Is.EqualTo(busyEvent.Start.AsUtc));
+        }
+    }
+
+    // Helper method to build FreeBusy with specified attendee and contacts.
+    private static FreeBusy BuildFreeBusyWithContacts(string eventAttendeeUri, string? participantStatus, IEnumerable<Attendee> contacts)
+    {
+        var calendar = new Calendar();
+        var evt = calendar.Create<CalendarEvent>();
+        evt.Start = new CalDateTime(2025, 9, 1, 9, 0, 0);
+        evt.End = new CalDateTime(2025, 9, 1, 10, 0, 0);
+
+        var attendee = new Attendee(eventAttendeeUri);
+        if (participantStatus != null)
+        {
+            attendee.ParticipationStatus = participantStatus;
+        }
+        evt.Attendees.Add(attendee);
+
+        var organizer = new Organizer("mailto:organizer@example.com");
+        var freeBusy = calendar.GetFreeBusy(DateTimeZone.Utc, organizer, contacts, new(2025, 9, 1, 0, 0, 0), new(2025, 9, 2, 0, 0, 0));
+        return freeBusy ?? throw new InvalidOperationException("GetFreeBusy returned null.");
     }
 }
