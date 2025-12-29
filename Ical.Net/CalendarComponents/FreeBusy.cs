@@ -11,6 +11,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Utility;
 using NodaTime;
+using Period = Ical.Net.DataTypes.Period;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -18,7 +19,7 @@ public class FreeBusy : UniqueComponent, IMergeable
 {
     public static FreeBusy? Create(ICalendarObject obj, DateTimeZone timeZone, FreeBusy freeBusyRequest, EvaluationOptions? options = null)
     {
-        if ((obj is not IGetOccurrencesTyped occ))
+        if (obj is not IGetOccurrencesTyped occ)
         {
             return null;
         }
@@ -26,17 +27,8 @@ public class FreeBusy : UniqueComponent, IMergeable
         var occurrences = occ.GetOccurrences<CalendarEvent>(timeZone, freeBusyRequest.Start?.ToZonedDateTime(timeZone).ToInstant(), options)
             .TakeWhile(p => (freeBusyRequest.End == null) || (p.Start.ToInstant() < freeBusyRequest.End.ToInstant()));
 
-        var contacts = new List<string>();
-        var isFilteredByAttendees = false;
-
-        if (freeBusyRequest.Attendees.Count > 0)
-        {
-            isFilteredByAttendees = true;
-            var attendees = freeBusyRequest.Attendees
-                .Where(a => a.Value != null)
-                .Select(a => a.Value!.OriginalString.Trim());
-            contacts.AddRange(attendees);
-        }
+        var attendeeContacts = BuildAttendeeContacts(freeBusyRequest);
+        var isFilteredByAttendees = attendeeContacts.Count > 0;
 
         var fb = freeBusyRequest;
         fb.Uid = Guid.NewGuid().ToString();
@@ -45,61 +37,61 @@ public class FreeBusy : UniqueComponent, IMergeable
 
         foreach (var o in occurrences)
         {
-            if (o.Source is not IUniqueComponent uc)
+            // Ignore transparent events. Only opaque events are considered as busy time.
+            if (o.Source is not CalendarEvent evt || evt.Transparency == TransparencyType.Transparent)
+            {
                 continue;
-
-            var evt = uc as CalendarEvent;
-            var accepted = false;
-            var type = FreeBusyStatus.Busy;
-
-            // We only accept events, and only "opaque" events.
-            if (evt != null && evt.Transparency != TransparencyType.Transparent)
-            {
-                accepted = true;
             }
 
-            // If the result is filtered by attendees, then
-            // we won't accept it until we find an event
-            // that is being attended by this person.
-            if (accepted && isFilteredByAttendees)
+            var status = isFilteredByAttendees
+                ? GetStatusByAttendees(evt, attendeeContacts)
+                : FreeBusyStatus.Busy;
+
+            if (status == null)
             {
-                accepted = false;
-
-                var participatingAttendeeQuery = uc.Attendees
-                    .Where(attendee =>
-                        attendee.Value != null
-                        && attendee.ParticipationStatus != null
-                        && contacts.Contains(attendee.Value.OriginalString.Trim()))
-                    .Select(pa => pa.ParticipationStatus!.ToUpperInvariant());
-
-                foreach (var participatingAttendee in participatingAttendeeQuery)
-                {
-                    switch (participatingAttendee)
-                    {
-                        case EventParticipationStatus.Tentative:
-                            accepted = true;
-                            type = FreeBusyStatus.BusyTentative;
-                            break;
-                        case EventParticipationStatus.Accepted:
-                            accepted = true;
-                            type = FreeBusyStatus.Busy;
-                            break;
-                    }
-                }
+                continue;
             }
 
-            if (accepted)
-            {
-                // If the entry was accepted, add it to our list!
-
-                // Values MUST always be in UTC on FREEBUSY
-                var period = new DataTypes.Period(o.Start.ToInstant(), o.End.ToInstant());
-
-                fb.Entries.Add(new FreeBusyEntry(period, type));
-            }
+            fb.Entries.Add(new FreeBusyEntry(new Period(o.Start.ToInstant(), o.End.ToInstant()), status.Value));
         }
 
         return fb;
+    }
+
+    private static HashSet<string> BuildAttendeeContacts(FreeBusy freeBusyRequest)
+    {
+        var contacts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var attendee in freeBusyRequest.Attendees)
+        {
+            var value = attendee.Value?.OriginalString.Trim();
+            if (!string.IsNullOrEmpty(value))
+            {
+                contacts.Add(value);
+            }
+        }
+        return contacts;
+    }
+
+    private static FreeBusyStatus? GetStatusByAttendees(CalendarEvent evt, HashSet<string> contacts)
+    {
+        foreach (var attendee in evt.Attendees)
+        {
+            var trimmed = attendee.Value?.OriginalString.Trim();
+            if (string.IsNullOrEmpty(trimmed) || attendee.ParticipationStatus == null || !contacts.Contains(trimmed))
+            {
+                continue;
+            }
+
+            switch (attendee.ParticipationStatus.ToUpperInvariant())
+            {
+                case EventParticipationStatus.Tentative:
+                    return FreeBusyStatus.BusyTentative;
+                case EventParticipationStatus.Accepted:
+                    return FreeBusyStatus.Busy;
+            }
+        }
+
+        return null;
     }
 
     public static FreeBusy CreateRequest(CalDateTime fromInclusive, CalDateTime toExclusive, Organizer? organizer, IEnumerable<Attendee>? contacts)
@@ -110,6 +102,7 @@ public class FreeBusy : UniqueComponent, IMergeable
             DtStart = fromInclusive,
             DtEnd = toExclusive
         };
+
         if (organizer != null)
         {
             fb.Organizer = organizer;
