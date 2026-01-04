@@ -175,5 +175,18 @@ public class RecurrencePattern : EncodableDataType
         FirstDayOfWeek = r.FirstDayOfWeek;
     }
 
+    internal bool HasByRules()
+    {
+        return ByDay.Count > 0
+            || ByMonth.Count > 0
+            || ByMonthDay.Count > 0
+            || ByWeekNo.Count > 0
+            || ByYearDay.Count > 0
+            || ByHour.Count > 0
+            || ByMinute.Count > 0
+            || BySecond.Count > 0
+            || BySetPosition.Count > 0;
+    }
+
     private static bool CollectionEquals<T>(IEnumerable<T> c1, IEnumerable<T> c2) => c1.SequenceEqual(c2);
 }

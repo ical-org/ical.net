@@ -50,7 +50,7 @@ internal sealed class RecurrencePatternEvaluator
         _until = pattern.Until?.ToZonedDateTime(timeZone).ToInstant();
         _count = pattern.Count;
         _interval = Math.Max(1, pattern.Interval);
-        _rule = new(pattern);
+        _rule = ByRuleValues.From(pattern);
 
         _firstDayOfWeek = pattern.FirstDayOfWeek.ToIsoDayOfWeek();
         _weekYearRule = WeekYearRules.ForMinDaysInFirstWeek(4, _firstDayOfWeek);
@@ -208,13 +208,16 @@ internal sealed class RecurrencePatternEvaluator
             // Evaluate the entire set so that negative offsets can be handled
             var values = recurrenceSet.ToList();
 
-            // Generate the set positions based on the number of items in the set
-            var setPositions = _rule.GetSetPositions(values.Count);
-
-            // Yield the values from each set position
-            foreach (var pos in setPositions)
+            if (values.Count > 0)
             {
-                yield return values[pos - 1];
+                // Generate the set positions based on the number of items in the set
+                var setPositions = _rule.GetSetPositions(values.Count);
+
+                // Yield the values from each set position
+                foreach (var pos in setPositions)
+                {
+                    yield return values[pos - 1];
+                }
             }
 
             // Increment before enumerating the next set

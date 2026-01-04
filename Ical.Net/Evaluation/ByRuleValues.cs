@@ -18,89 +18,78 @@ namespace Ical.Net.Evaluation;
 /// </summary>
 internal sealed class ByRuleValues
 {
+    public static readonly ByRuleValues Empty = new();
+
     private static readonly Func<int, int> IdentityFunc = e => e;
 
     private readonly IsoDayOfWeek firstDayOfWeek;
     private DayOfWeekComparer? dayOfWeekComparer;
 
     private readonly int[] normalMonths;
-
     private readonly int[] normalHours;
     private readonly int[] normalMinutes;
     private readonly int[] normalSeconds;
 
     private readonly int[] byWeekNo;
-    private readonly NormalValues<int, int> weeks;
+    private Dictionary<int, int[]>? weeks;
 
     private readonly int[] byYearDay;
-    private readonly NormalValues<int, int> yearDays;
+    private Dictionary<int, int[]>? yearDays;
 
     private readonly int[] byMonthDay;
-    private readonly NormalValues<(int Year, int Month), int> monthDays;
+    private Dictionary<int, int[]>? monthDays;
+
+    private readonly int[] bySetPos;
+    private Dictionary<int, int[]>? setPos;
 
     private readonly WeekDayValue[] byDay;
     private IsoDayOfWeek[]? normalDaysOfWeek;
     private WeekDayValue[]? daysOfWeekWithOffset;
 
-    private readonly int[] bySetPos;
-    private readonly NormalValues<int, int> setPos;
+    /// <summary>
+    /// Constructor for static Empty
+    /// </summary>
+    private ByRuleValues()
+    {
+        normalMonths = [];
+        normalHours = [];
+        normalMinutes = [];
+        normalSeconds = [];
+        byWeekNo = [];
+        byYearDay = [];
+        byMonthDay = [];
+        byDay = [];
+        bySetPos = [];
+    }
+
+    private ByRuleValues(RecurrencePattern pattern)
+    {
+        firstDayOfWeek = pattern.FirstDayOfWeek.ToIsoDayOfWeek();
+
+        normalMonths = SortValues(pattern.ByMonth);
+        normalHours = SortValues(pattern.ByHour);
+        normalMinutes = SortValues(pattern.ByMinute);
+        normalSeconds = SortValues(pattern.BySecond);
+
+        byWeekNo = [.. pattern.ByWeekNo];
+        byYearDay = [.. pattern.ByYearDay];
+        byMonthDay = [.. pattern.ByMonthDay];
+        bySetPos = [.. pattern.BySetPosition];
+
+        // If all values are positive, just sort once
+        HasNegativeSetPos = bySetPos.Any(static x => x < 0);
+
+        byDay = [.. pattern.ByDay.Select(static x => new WeekDayValue(x))];
+        HasByDayOffsets = byDay.Any(static x => x.Offset != null);
+    }
 
     /// <summary>
     /// Normalizes BY rules for evaluation. BY rule values that change
     /// based on the date are cached for repeated use.
     /// </summary>
     /// <param name="pattern"></param>
-    public ByRuleValues(RecurrencePattern pattern)
-    {
-        firstDayOfWeek = pattern.FirstDayOfWeek.ToIsoDayOfWeek();
-
-        normalMonths = SortValues(pattern.ByMonth);
-
-        normalHours = SortValues(pattern.ByHour);
-        normalMinutes = SortValues(pattern.ByMinute);
-        normalSeconds = SortValues(pattern.BySecond);
-
-        byWeekNo = [.. pattern.ByWeekNo];
-        weeks = new();
-
-        // If all values are non-negative, just sort once
-        if (byWeekNo.All(static x => x >= 0))
-        {
-            Array.Sort(byWeekNo);
-            weeks.Values = byWeekNo;
-            weeks.AlwaysNormal = true;
-        }
-
-
-        byYearDay = [.. pattern.ByYearDay];
-        yearDays = new();
-
-        // If all values are positive, just sort once
-        if (byYearDay.All(static x => x > 0))
-        {
-            Array.Sort(byYearDay);
-            yearDays.Values = byYearDay;
-            yearDays.AlwaysNormal = true;
-        }
-
-        byMonthDay = [.. pattern.ByMonthDay];
-        monthDays = new();
-
-        byDay = [.. pattern.ByDay.Select(static x => new WeekDayValue(x))];
-        HasByDayOffsets = byDay.Any(static x => x.Offset != null);
-
-        bySetPos = [.. pattern.BySetPosition];
-        setPos = new();
-
-        // If all values are positive, just sort once
-        HasNegativeSetPos = bySetPos.Any(static x => x < 0);
-        if (!HasNegativeSetPos)
-        {
-            Array.Sort(bySetPos);
-            setPos.Values = bySetPos;
-            setPos.AlwaysNormal = true;
-        }
-    }
+    public static ByRuleValues From(RecurrencePattern pattern)
+        => pattern.HasByRules() ? new(pattern) : Empty;
 
     /// <summary>
     /// Normalized BYMONTH values.
@@ -188,13 +177,15 @@ internal sealed class ByRuleValues
     /// <returns></returns>
     public int[] GetWeeks(int weeksInWeekYear)
     {
-        if (weeks.Values is null || (!weeks.AlwaysNormal && weeks.Key != weeksInWeekYear))
+        weeks ??= [];
+
+        if (!weeks.TryGetValue(weeksInWeekYear, out var normalWeeks))
         {
-            weeks.Values = NormalizeWeekNo(byWeekNo, weeksInWeekYear);
-            weeks.Key = weeksInWeekYear;
+            normalWeeks = NormalizeWeekNo(byWeekNo, weeksInWeekYear);
+            weeks[weeksInWeekYear] = normalWeeks;
         }
 
-        return weeks.Values;
+        return normalWeeks;
     }
 
     /// <summary>
@@ -204,13 +195,17 @@ internal sealed class ByRuleValues
     /// <returns></returns>
     public int[] GetYearDays(int year)
     {
-        if (yearDays.Values is null || (!yearDays.AlwaysNormal && yearDays.Key != year))
+        var daysInYear = CalendarSystem.Iso.GetDaysInYear(year);
+
+        yearDays ??= [];
+
+        if (!yearDays.TryGetValue(daysInYear, out var normalYearDays))
         {
-            yearDays.Values = NormalizeYearDays(byYearDay, year);
-            yearDays.Key = year;
+            normalYearDays = NormalizeYearDays(byYearDay, daysInYear);
+            yearDays[daysInYear] = normalYearDays;
         }
 
-        return yearDays.Values;
+        return normalYearDays;
     }
 
     /// <summary>
@@ -221,13 +216,17 @@ internal sealed class ByRuleValues
     /// <returns></returns>
     public int[] GetMonthDays(int year, int month)
     {
-        if (monthDays.Values is null || (!monthDays.AlwaysNormal && monthDays.Key != (year, month)))
+        var daysInMonth = CalendarSystem.Iso.GetDaysInMonth(year, month);
+
+        monthDays ??= [];
+
+        if (!monthDays.TryGetValue(daysInMonth, out var normalMonthDays))
         {
-            monthDays.Values = NormalizeMonthDay(byMonthDay, year, month);
-            monthDays.Key = (year, month);
+            normalMonthDays = NormalizeMonthDay(byMonthDay, daysInMonth);
+            monthDays[daysInMonth] = normalMonthDays;
         }
 
-        return monthDays.Values;
+        return normalMonthDays;
     }
 
     /// <summary>
@@ -237,17 +236,25 @@ internal sealed class ByRuleValues
     /// <returns></returns>
     public int[] GetSetPositions(int count = 0)
     {
-        if (setPos.Values is null || (!setPos.AlwaysNormal && setPos.Key != count))
+        setPos ??= [];
+
+        if (!setPos.TryGetValue(count, out var normalSetPos))
         {
-            setPos.Values = NormalizeSetPos(bySetPos, count);
-            setPos.Key = count;
+            normalSetPos = NormalizeSetPos(bySetPos, count);
+            setPos[count] = normalSetPos;
         }
 
-        return setPos.Values;
+        return normalSetPos;
     }
 
-    private static int[] SortValues(ICollection<int> byRule)
+    private static int[] SortValues(List<int> byRule)
     {
+        if (byRule.Count == 0)
+        {
+            // Return static empty array
+            return [];
+        }
+
         int[] values = [.. byRule];
         Array.Sort(values);
         return values;
@@ -262,10 +269,8 @@ internal sealed class ByRuleValues
             .ToArray();
     }
 
-    private static int[] NormalizeYearDays(int[] yearDays, int year)
+    private static int[] NormalizeYearDays(int[] yearDays, int daysInYear)
     {
-        var daysInYear = CalendarSystem.Iso.GetDaysInYear(year);
-
         return yearDays
             .Select(yearDay => (yearDay > 0) ? yearDay : (daysInYear + yearDay + 1))
             .OrderBy(IdentityFunc)
@@ -273,10 +278,8 @@ internal sealed class ByRuleValues
             .ToArray();
     }
 
-    private static int[] NormalizeMonthDay(int[] byMonthDay, int year, int month)
+    private static int[] NormalizeMonthDay(int[] byMonthDay, int daysInMonth)
     {
-        var daysInMonth = CalendarSystem.Iso.GetDaysInMonth(year, month);
-
         return byMonthDay
             .Select(monthDay => (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1))
             .Where(day => day > 0 && day <= daysInMonth)
@@ -299,39 +302,17 @@ internal sealed class ByRuleValues
 
     private static int[] NormalizeSetPos(int[] bySetPos, int count)
     {
+        if (count == 0)
+        {
+            return bySetPos.OrderBy(IdentityFunc).Distinct().ToArray();
+        }
+
         return bySetPos
             .Select(setPos => (setPos < 0) ? setPos + count + 1 : setPos)
             .Where(setPos => 0 < setPos && setPos <= count)
             .OrderBy(IdentityFunc)
             .OrderedDistinct()
             .ToArray();
-    }
-
-    /// <summary>
-    /// Holds normalized values and a cache key.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="R"></typeparam>
-    private sealed class NormalValues<T, R> where T: struct, IComparable<T> where R : struct
-    {
-        /// <summary>
-        /// Cache key used to normalize the values.
-        /// </summary>
-        public T Key { get; set; }
-
-        /// <summary>
-        /// The normalized values.
-        /// </summary>
-        public R[]? Values { get; set; }
-
-        /// <summary>
-        /// When true, the values should not need to be changed again.
-        /// This is for BY rules that might only need to be normalized
-        /// once based on the values. For example, BYSETPOS with all
-        /// positive values should only need to be sorted once and
-        /// never need to change again.
-        /// </summary>
-        public bool AlwaysNormal { get; set; }
     }
 
     /// <summary>
