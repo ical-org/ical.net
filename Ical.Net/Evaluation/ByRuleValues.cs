@@ -110,6 +110,11 @@ internal sealed class ByRuleValues
     /// </summary>
     public int[] Seconds => _normalSeconds;
 
+    /// <summary>
+    /// True if there are any BYDAY values with offsets.
+    /// Use this instead of checking the Length of <see cref="DaysOfWeekWithOffset"/>
+    /// to prevent creating the array unless needed.
+    /// </summary>
     public bool HasByDayOffsets { get; }
 
     public bool HasNegativeSetPos { get; }

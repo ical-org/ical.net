@@ -8,10 +8,11 @@ using NodaTime;
 using NodaTime.TimeZones;
 
 namespace Ical.Net;
+
 internal static class NodaTimeExtensions
 {
     /// <summary>
-    /// Returns a ZonedDateTime that is matches the time zone and
+    /// Returns a ZonedDateTime that matches the time zone and
     /// offset of the start value, or shifts forward if the local
     /// time does not exist.
     /// </summary>
@@ -34,10 +35,8 @@ internal static class NodaTimeExtensions
             {
                 return last;
             }
-            else
-            {
-                return map.First();
-            }
+
+            return map.First();
         }
         else
         {

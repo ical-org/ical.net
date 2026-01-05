@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
@@ -32,7 +33,7 @@ internal sealed class RecurrencePatternEvaluator
     private readonly int _referenceWeekNo;
 
     private ZonedDateTime _seed;
-    private int _unmatchedIncrementCount = 0;
+    private int _unmatchedIncrementCount;
 
     public RecurrencePatternEvaluator(
         RecurrencePattern pattern,
@@ -173,7 +174,7 @@ internal sealed class RecurrencePatternEvaluator
                     .InZoneLeniently(start.Zone);
         }
 
-        throw new EvaluationException("Invalid frequency type");
+        throw new EvaluationException($"Invalid frequency type {_frequency}");
 
         long FromInterval(long value) => _interval * (value / _interval);
 
@@ -186,14 +187,13 @@ internal sealed class RecurrencePatternEvaluator
         {
             return StartByRules();
         }
-        else if (_rule.HasNegativeSetPos)
+
+        if (_rule.HasNegativeSetPos)
         {
             return LimitSetPosition();
         }
-        else
-        {
-            return LimitSetPositionPositiveOnly();
-        }
+
+        return LimitSetPositionPositiveOnly();
     }
 
     /// <summary>
@@ -290,14 +290,13 @@ internal sealed class RecurrencePatternEvaluator
         {
             return ByMinute();
         }
-        else if (_frequency > FrequencyType.Secondly)
+
+        if (_frequency > FrequencyType.Secondly)
         {
             return ExpandSecond();
         }
-        else
-        {
-            return LimitSecond();
-        }
+
+        return LimitSecond();
     }
 
     private IEnumerable<ZonedDateTime> LimitSecond()
@@ -330,14 +329,13 @@ internal sealed class RecurrencePatternEvaluator
         {
             return ByHour();
         }
-        else if (_frequency > FrequencyType.Minutely)
+
+        if (_frequency > FrequencyType.Minutely)
         {
             return ExpandMinute();
         }
-        else
-        {
-            return LimitMinute();
-        }
+
+        return LimitMinute();
     }
 
     private IEnumerable<ZonedDateTime> LimitMinute()
@@ -370,14 +368,13 @@ internal sealed class RecurrencePatternEvaluator
         {
             return ByDay();
         }
-        else if (_frequency > FrequencyType.Hourly)
+
+        if (_frequency > FrequencyType.Hourly)
         {
             return ExpandHour();
         }
-        else
-        {
-            return LimitHour();
-        }
+
+        return LimitHour();
     }
 
     private IEnumerable<ZonedDateTime> LimitHour()
@@ -413,18 +410,14 @@ internal sealed class RecurrencePatternEvaluator
         if (!_rule.ByDay)
         {
             if (_frequency is FrequencyType.Monthly or FrequencyType.Yearly
-                && !_rule.ByMonthDay
-                && !_rule.ByYearDay
-                && !_rule.ByWeekNo)
+                && _rule is { ByMonthDay: false, ByYearDay: false, ByWeekNo: false })
             {
                 // These values represent months,
                 // so they must be set to the reference day.
                 return LimitDayByReferenceDay();
             }
-            else
-            {
-                return ByMonthDay();
-            }
+
+            return ByMonthDay();
         }
 
         return _frequency switch
@@ -445,18 +438,18 @@ internal sealed class RecurrencePatternEvaluator
         {
             return _rule.ByMonth ? LimitDayOfMonth() : LimitDayOfYear();
         }
-        else if (_rule.ByWeekNo)
+
+        if (_rule.ByWeekNo)
         {
             return ExpandDayFromWeek();
         }
-        else if (_rule.ByMonth)
+
+        if (_rule.ByMonth)
         {
             return ExpandDayFromMonth();
         }
-        else
-        {
-            return ExpandDayFromYear();
-        }
+
+        return ExpandDayFromYear();
     }
 
     /// <summary>
@@ -484,11 +477,12 @@ internal sealed class RecurrencePatternEvaluator
     /// Only used for DAILY or smaller.
     /// </summary>
     /// <returns></returns>
+    /// <exception cref="EvaluationException"></exception>
     private IEnumerable<ZonedDateTime> LimitDayOfWeek()
     {
         if (_rule.HasByDayOffsets)
         {
-            throw new EvaluationException($"BYDAY offsets are not supported in {_frequency}");
+            throw new EvaluationException($"BYDAY offsets are invalid with frequency {_frequency}");
         }
 
         var daysOfWeek = _rule.DaysOfWeekWithoutOffset;
@@ -506,7 +500,6 @@ internal sealed class RecurrencePatternEvaluator
     /// Limit by day of month.
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="EvaluationException"></exception>
     private IEnumerable<ZonedDateTime> LimitDayOfMonth()
     {
         foreach (var value in ByMonthDay())
@@ -560,7 +553,6 @@ internal sealed class RecurrencePatternEvaluator
     /// Limit by day of year.
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="EvaluationException"></exception>
     private IEnumerable<ZonedDateTime> LimitDayOfYear()
     {
         foreach (var value in ByMonthDay())
@@ -712,32 +704,28 @@ internal sealed class RecurrencePatternEvaluator
         // Expanding with and without offsets is done separately
         // because offsets require extra work that can be skipped
         // if there are no offsets.
-        var results = ExpandDayOfWeekWithoutOffset(start, end, daysWithoutOffset);
-
-        if (_rule.HasByDayOffsets)
+        if (!_rule.HasByDayOffsets)
         {
-            // BYDAY offsets are a finite list of days that is likely small,
-            // so it is more efficient to just calculate all of the days
-            // and then sort instead of generating the days in order.
-            var offsetResults = GetDayOfWeekWithOffset(start, end, _rule.DaysOfWeekWithOffset);
-
-            if (daysWithoutOffset.Length > 0)
-            {
-                // There are days with and without offsets,
-                // so they need to be merged together.
-                results = offsetResults
-                    .OrderedMerge(results)
-                    .OrderedDistinct();
-            }
-            else
-            {
-                // There are only days with offsets,
-                // so skip merging but still skip duplicates.
-                results = offsetResults.OrderedDistinct();
-            }
+            return ExpandDayOfWeekWithoutOffset(start, end, daysWithoutOffset);
         }
 
-        return results;
+        // BYDAY offsets are a finite list of days that is likely small,
+        // so it is more efficient to just calculate all of the days
+        // and then sort instead of generating the days in order.
+        IEnumerable<LocalDate> results = GetDayOfWeekWithOffset(start, end, _rule.DaysOfWeekWithOffset);
+
+        if (daysWithoutOffset.Length > 0)
+        {
+            // There are days with and without offsets,
+            // so they need to be merged together.
+            results = ExpandDayOfWeekWithoutOffset(start, end, daysWithoutOffset)
+                .OrderedMerge(results);
+        }
+
+        // An offset can overlap with another offset (e.g. 3WE,-3WE in
+        // certain months are the same date), and can overlap with days
+        // without offsets, so skip duplicates.
+        return results.OrderedDistinct();
     }
 
     /// <summary>
@@ -752,10 +740,7 @@ internal sealed class RecurrencePatternEvaluator
         LocalDate end,
         IsoDayOfWeek[] weekDays)
     {
-        if (weekDays.Length == 0)
-        {
-            yield break;
-        }
+        Debug.Assert(weekDays.Length > 0);
 
         var value = start;
 
@@ -788,7 +773,6 @@ internal sealed class RecurrencePatternEvaluator
     /// <param name="end">Exclusive end of the range</param>
     /// <param name="weekDays">Days of the week.</param>
     /// <returns>A sorted list of days within the range.</returns>
-    /// <exception cref="EvaluationException"></exception>
     private static List<LocalDate> GetDayOfWeekWithOffset(
         LocalDate start,
         LocalDate end,
@@ -835,31 +819,29 @@ internal sealed class RecurrencePatternEvaluator
         {
             return ByYearDay();
         }
-        else if (_frequency == FrequencyType.Weekly)
+
+        if (_frequency == FrequencyType.Weekly)
         {
-            throw new EvaluationException("BYMONTHDAY is not supported in WEEKLY");
+            throw new EvaluationException("BYMONTHDAY is invalid with frequency WEEKLY");
         }
-        else if (_frequency > FrequencyType.Weekly)
+
+        if (_frequency > FrequencyType.Weekly)
         {
             if (_rule.ByYearDay)
             {
                 // Values will be days, so just limit
                 return LimitMonthDay();
             }
-            else if (_rule.ByWeekNo)
+
+            if (_rule.ByWeekNo)
             {
                 return ExpandMonthDayFromWeek();
             }
-            else
-            {
-                return ExpandMonthDayFromMonth();
-            }
-        }
-        else
-        {
-            return LimitMonthDay();
+
+            return ExpandMonthDayFromMonth();
         }
 
+        return LimitMonthDay();
     }
 
     private IEnumerable<ZonedDateTime> LimitMonthDay()
@@ -924,18 +906,18 @@ internal sealed class RecurrencePatternEvaluator
         {
             return ByWeekNo();
         }
-        else if (_frequency == FrequencyType.Yearly)
+
+        if (_frequency == FrequencyType.Yearly)
         {
             return ExpandYearDay();
         }
-        else if (_frequency < FrequencyType.Daily)
+
+        if (_frequency < FrequencyType.Daily)
         {
             return LimitYearDay();
         }
-        else
-        {
-            throw new EvaluationException($"BYYEARDAY is not supported with {_frequency}");
-        }
+
+        throw new EvaluationException($"BYYEARDAY is invalid with frequency {_frequency}");
     }
 
     private IEnumerable<ZonedDateTime> LimitYearDay()
@@ -963,7 +945,7 @@ internal sealed class RecurrencePatternEvaluator
             {
                 var result = startOfYear.PlusDays(day - 1);
 
-                // Ignore values outside of the calendar year
+                // Ignore values outside the calendar year
                 if (result.Year != value.Year)
                 {
                     continue;
@@ -998,14 +980,13 @@ internal sealed class RecurrencePatternEvaluator
         {
             return ByMonth();
         }
-        else if (_frequency == FrequencyType.Yearly)
+
+        if (_frequency == FrequencyType.Yearly)
         {
             return ExpandWeekNo();
         }
-        else
-        {
-            throw new EvaluationException($"BYWEEKNO is not supported with {_frequency}");
-        }
+
+        throw new EvaluationException($"BYWEEKNO is invalid with frequency {_frequency}");
     }
 
     /// <summary>
@@ -1084,14 +1065,13 @@ internal sealed class RecurrencePatternEvaluator
         {
             return Expand();
         }
-        else if (_frequency == FrequencyType.Yearly)
+
+        if (_frequency == FrequencyType.Yearly)
         {
             return ExpandMonth();
         }
-        else
-        {
-            return LimitMonth();
-        }
+
+        return LimitMonth();
     }
 
     private IEnumerable<ZonedDateTime> LimitMonth()
@@ -1148,7 +1128,6 @@ internal sealed class RecurrencePatternEvaluator
     /// Gets the next seed value based on the recurrence frequency
     /// and interval.
     /// </summary>
-    /// <param name="seed"></param>
     /// <returns></returns>
     /// <exception cref="EvaluationLimitExceededException"></exception>
     /// <exception cref="EvaluationException"></exception>
@@ -1185,7 +1164,7 @@ internal sealed class RecurrencePatternEvaluator
                 .At(_seed.TimeOfDay)
                 .InZoneLeniently(_seed.Zone),
 
-            _ => throw new EvaluationException("Invalid frequency")
+            _ => throw new EvaluationException($"Invalid frequency ${_frequency}")
         };
     }
 }
