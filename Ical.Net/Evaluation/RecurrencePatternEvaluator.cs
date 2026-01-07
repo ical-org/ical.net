@@ -651,8 +651,8 @@ internal sealed class RecurrencePatternEvaluator
                 else if (end.Month != value.Month && end.Day != 1)
                 {
                     // Week starts within the month and ends after the month.
-                    // End is exclusive, so just make sure it is 1 day outside the month
-                    end = new LocalDate(value.Year, end.Month, 1);
+                    // End is exclusive, so just make sure it day 1 of the next month.
+                    end = new LocalDate(end.Year, end.Month, 1);
                 }
             }
 
