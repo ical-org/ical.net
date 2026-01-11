@@ -3463,9 +3463,13 @@ END:VCALENDAR";
 
         evt.RecurrenceRules.Add(GetPattern());
 
-        var startAt = testCase.StartAt?.ToZonedDateTime(_tzid).ToInstant();
+        // Evaluate all tests in UTC so that INSTANCES match
+        // the local date and time of the expected values.
+        var timeZone = DateUtil.GetZone("UTC");
 
-        IEnumerable<Occurrence> GetOccurrences() => evt.GetOccurrences(DateUtil.GetZone(_tzid), startAt);
+        var startAt = testCase.StartAt?.ToZonedDateTime(timeZone).ToInstant();
+
+        IEnumerable<Occurrence> GetOccurrences() => evt.GetOccurrences(timeZone, startAt);
 
         if (testCase.ExceptionStep == RecurrenceTestExceptionStep.GetOccurrenceInvocation)
         {
@@ -3486,7 +3490,7 @@ END:VCALENDAR";
         var occurrences = EnumerateOccurrences();
 
         var startDates = occurrences.Select(x => x.Start).ToList();
-        Assert.That(startDates, Is.EqualTo(testCase.Instances?.Select(x => x.ToZonedDateTime(_tzid)).ToList()));
+        Assert.That(startDates, Is.EqualTo(testCase.Instances?.Select(x => x.ToZonedDateTime(timeZone)).ToList()));
     }
 
     [Test]
