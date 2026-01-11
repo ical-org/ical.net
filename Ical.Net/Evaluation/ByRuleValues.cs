@@ -30,17 +30,12 @@ internal sealed class ByRuleValues
     private readonly int[] _normalMinutes;
     private readonly int[] _normalSeconds;
 
-    private readonly int[] _byWeekNo;
-    private Dictionary<int, int[]>? _weeks;
+    private readonly int[] _normalPositiveSetPos;
 
-    private readonly int[] _byYearDay;
-    private Dictionary<int, int[]>? _yearDays;
-
-    private readonly int[] _byMonthDay;
-    private Dictionary<int, int[]>? _monthDays;
-
-    private readonly int[] _bySetPos;
-    private Dictionary<int, int[]>? _setPos;
+    private readonly NormalValues _byWeekNo;
+    private readonly NormalValues _byYearDay;
+    private readonly NormalValues _byMonthDay;
+    private readonly NormalValues _bySetPos;
 
     private readonly WeekDayValue[] _byDay;
     private IsoDayOfWeek[]? _normalDaysOfWeek;
@@ -55,11 +50,14 @@ internal sealed class ByRuleValues
         _normalHours = [];
         _normalMinutes = [];
         _normalSeconds = [];
-        _byWeekNo = [];
-        _byYearDay = [];
-        _byMonthDay = [];
+        _normalPositiveSetPos = [];
         _byDay = [];
-        _bySetPos = [];
+
+        // Must initialize set arrays to []
+        _byWeekNo = new();
+        _byYearDay = new();
+        _byMonthDay = new();
+        _bySetPos = new();
     }
 
     private ByRuleValues(RecurrencePattern pattern)
@@ -71,15 +69,18 @@ internal sealed class ByRuleValues
         _normalMinutes = SortValues(pattern.ByMinute);
         _normalSeconds = SortValues(pattern.BySecond);
 
-        _byWeekNo = [.. pattern.ByWeekNo];
-        _byYearDay = [.. pattern.ByYearDay];
-        _byMonthDay = [.. pattern.ByMonthDay];
-        _bySetPos = [.. pattern.BySetPosition];
+        _byWeekNo = new(pattern.ByWeekNo);
+        _byYearDay = new(pattern.ByYearDay);
+        _byMonthDay = new(pattern.ByMonthDay);
+        _bySetPos = new(pattern.BySetPosition);
 
         _byDay = [.. pattern.ByDay.Select(static x => new WeekDayValue(x))];
 
         HasByDayOffsets = _byDay.Any(static x => x.Offset != null);
-        HasNegativeSetPos = _bySetPos.Any(static x => x < 0);
+        HasNegativeSetPos = pattern.BySetPosition.Any(static x => x < 0);
+
+        _normalPositiveSetPos = HasNegativeSetPos || pattern.BySetPosition.Count == 0
+            ? [] : pattern.BySetPosition.OrderBy(_identityFunc).Distinct().ToArray();
     }
 
     /// <summary>
@@ -111,12 +112,21 @@ internal sealed class ByRuleValues
     public int[] Seconds => _normalSeconds;
 
     /// <summary>
+    /// Normalized positive BYSETPOS values. This is only
+    /// set when all values are positive.
+    /// </summary>
+    public int[] PositiveSetPos => _normalPositiveSetPos;
+
+    /// <summary>
     /// True if there are any BYDAY values with offsets.
     /// Use this instead of checking the Length of <see cref="DaysOfWeekWithOffset"/>
     /// to prevent creating the array unless needed.
     /// </summary>
     public bool HasByDayOffsets { get; }
 
+    /// <summary>
+    /// True if BYSETPOS has negative values.
+    /// </summary>
     public bool HasNegativeSetPos { get; }
 
     #region BY rule exists
@@ -139,6 +149,9 @@ internal sealed class ByRuleValues
     public bool BySetPosition => _bySetPos.Length > 0;
     #endregion
 
+    /// <summary>
+    /// Days of the week. Values are NOT normalized or sorted.
+    /// </summary>
     public WeekDayValue[] DaysOfWeek => _byDay;
 
     /// <summary>
@@ -180,17 +193,7 @@ internal sealed class ByRuleValues
     /// <param name="weeksInWeekYear"></param>
     /// <returns></returns>
     public int[] GetWeeks(int weeksInWeekYear)
-    {
-        _weeks ??= [];
-
-        if (!_weeks.TryGetValue(weeksInWeekYear, out var normalWeeks))
-        {
-            normalWeeks = NormalizeWeekNo(_byWeekNo, weeksInWeekYear);
-            _weeks[weeksInWeekYear] = normalWeeks;
-        }
-
-        return normalWeeks;
-    }
+        => _byWeekNo.Normalize(weeksInWeekYear);
 
     /// <summary>
     /// Get normalized yeardays based on the year.
@@ -200,16 +203,7 @@ internal sealed class ByRuleValues
     public int[] GetYearDays(int year)
     {
         var daysInYear = CalendarSystem.Iso.GetDaysInYear(year);
-
-        _yearDays ??= [];
-
-        if (!_yearDays.TryGetValue(daysInYear, out var normalYearDays))
-        {
-            normalYearDays = NormalizeYearDays(_byYearDay, daysInYear);
-            _yearDays[daysInYear] = normalYearDays;
-        }
-
-        return normalYearDays;
+        return _byYearDay.Normalize(daysInYear);
     }
 
     /// <summary>
@@ -221,16 +215,7 @@ internal sealed class ByRuleValues
     public int[] GetMonthDays(int year, int month)
     {
         var daysInMonth = CalendarSystem.Iso.GetDaysInMonth(year, month);
-
-        _monthDays ??= [];
-
-        if (!_monthDays.TryGetValue(daysInMonth, out var normalMonthDays))
-        {
-            normalMonthDays = NormalizeMonthDay(_byMonthDay, daysInMonth);
-            _monthDays[daysInMonth] = normalMonthDays;
-        }
-
-        return normalMonthDays;
+        return _byMonthDay.Normalize(daysInMonth);
     }
 
     /// <summary>
@@ -238,60 +223,33 @@ internal sealed class ByRuleValues
     /// </summary>
     /// <param name="count"></param>
     /// <returns></returns>
-    public int[] GetSetPositions(int count = 0)
+    public int[] GetSetPositions(int count) => _bySetPos.Normalize(count);
+
+    /// <summary>
+    /// Copies values to an array and sorts.
+    /// </summary>
+    /// <param name="values"></param>
+    /// <returns></returns>
+    private static int[] SortValues(List<int> values)
     {
-        _setPos ??= [];
-
-        if (!_setPos.TryGetValue(count, out var normalSetPos))
-        {
-            normalSetPos = NormalizeSetPos(_bySetPos, count);
-            _setPos[count] = normalSetPos;
-        }
-
-        return normalSetPos;
-    }
-
-    private static int[] SortValues(List<int> byRule)
-    {
-        if (byRule.Count == 0)
+        if (values.Count == 0)
         {
             // Return static empty array
             return [];
         }
 
-        int[] values = [.. byRule];
-        Array.Sort(values);
-        return values;
+        int[] result = [.. values];
+        Array.Sort(result);
+
+        return result;
     }
 
-    private static int[] NormalizeWeekNo(int[] byWeekNo, int weeksInWeekYear)
-    {
-        return byWeekNo
-            .Select(weekNo => (weekNo >= 0) ? weekNo : weeksInWeekYear + weekNo + 1)
-            .OrderBy(_identityFunc)
-            .OrderedDistinct()
-            .ToArray();
-    }
-
-    private static int[] NormalizeYearDays(int[] yearDays, int daysInYear)
-    {
-        return yearDays
-            .Select(yearDay => (yearDay > 0) ? yearDay : (daysInYear + yearDay + 1))
-            .OrderBy(_identityFunc)
-            .OrderedDistinct()
-            .ToArray();
-    }
-
-    private static int[] NormalizeMonthDay(int[] byMonthDay, int daysInMonth)
-    {
-        return byMonthDay
-            .Select(monthDay => (monthDay > 0) ? monthDay : (daysInMonth + monthDay + 1))
-            .Where(day => day > 0 && day <= daysInMonth)
-            .OrderBy(_identityFunc)
-            .OrderedDistinct()
-            .ToArray();
-    }
-
+    /// <summary>
+    /// Gets normalized days of the week that do not have offsets.
+    /// </summary>
+    /// <param name="byDay"></param>
+    /// <param name="dayOfWeekComparer"></param>
+    /// <returns></returns>
     private static IsoDayOfWeek[] NormalizeDaysWithoutOffset(WeekDayValue[] byDay, DayOfWeekComparer dayOfWeekComparer)
     {
         var normalizedDays = byDay
@@ -304,19 +262,50 @@ internal sealed class ByRuleValues
         return normalizedDays;
     }
 
-    private static int[] NormalizeSetPos(int[] bySetPos, int count)
+    private struct NormalValues
     {
-        if (count == 0)
+        private readonly int[] _values;
+        private Dictionary<int, int[]>? _cache;
+
+        public readonly int Length => _values.Length;
+
+        public NormalValues() => _values = [];
+
+        public NormalValues(List<int> values)
         {
-            return bySetPos.OrderBy(_identityFunc).Distinct().ToArray();
+            _values = values.Count == 0 ? [] : [.. values];
         }
 
-        return bySetPos
-            .Select(setPos => (setPos < 0) ? setPos + count + 1 : setPos)
-            .Where(setPos => 0 < setPos && setPos <= count)
-            .OrderBy(_identityFunc)
-            .OrderedDistinct()
-            .ToArray();
+        public int[] Normalize(int max)
+        {
+            // Lazy create dictionary to reduce allocations
+            _cache ??= [];
+
+            // Cache normalized values using max values as the key
+            if (!_cache.TryGetValue(max, out var result))
+            {
+                result = Normalize(_values, max);
+                _cache[max] = result;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets normalized values based on the range of [1,max].
+        /// </summary>
+        /// <param name="values"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        private static int[] Normalize(int[] values, int max)
+        {
+            return values
+                .Select(x => (x > 0) ? x : x + max + 1)
+                .Where(x => 0 < x && x <= max)
+                .OrderBy(_identityFunc)
+                .OrderedDistinct()
+                .ToArray();
+        }
     }
 
     /// <summary>

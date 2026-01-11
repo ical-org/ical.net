@@ -236,7 +236,7 @@ internal sealed class RecurrencePatternEvaluator
         // Set positions are all positive, so the set positions do
         // not change based on the size of the set. This allows
         // the set to yield one at a time.
-        var setPositions = _rule.GetSetPositions();
+        var setPositions = _rule.PositiveSetPos;
 
         while (true)
         {
