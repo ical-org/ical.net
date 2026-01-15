@@ -48,4 +48,17 @@ public class RecurrencePattern : RecurrenceRule
         BySetPosition = r.BySetPosition;
         FirstDayOfWeek = r.FirstDayOfWeek;
     }
+
+    internal bool HasByRules()
+    {
+        return ByDay.Count > 0
+            || ByMonth.Count > 0
+            || ByMonthDay.Count > 0
+            || ByWeekNo.Count > 0
+            || ByYearDay.Count > 0
+            || ByHour.Count > 0
+            || ByMinute.Count > 0
+            || BySecond.Count > 0
+            || BySetPosition.Count > 0;
+    }
 }
