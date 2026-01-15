@@ -10,7 +10,6 @@ using System.Globalization;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
 using NodaTime;
 using NodaTime.Extensions;
 using NUnit.Framework;
@@ -517,11 +516,10 @@ public class RecurrenceTests_From_Issues
         // Bug #879
 
         var rp = new RecurrencePattern("FREQ=WEEKLY;BYDAY=SU,MO,TU,WE,TH,FR;BYMONTH=5,6,7,8,9");
-        var rpe = new RecurrencePatternEvaluator(rp);
 
         var referenceDate = new CalDateTime(2025, 11, 07, 0, 0, 0, "Central Standard Time");
         var start = referenceDate.ToZonedDateTime();
-        var recurringPeriods = rpe.Evaluate(referenceDate, start.Zone, start.ToInstant(), null);
+        var recurringPeriods = rp.Evaluate(referenceDate, start);
 
         var result = recurringPeriods.FirstOrDefault()?.Start;
 

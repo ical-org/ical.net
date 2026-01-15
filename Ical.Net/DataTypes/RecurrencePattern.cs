@@ -6,9 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes;
 
@@ -175,5 +173,16 @@ public class RecurrencePattern : EncodableDataType
         FirstDayOfWeek = r.FirstDayOfWeek;
     }
 
-    private static bool CollectionEquals<T>(IEnumerable<T> c1, IEnumerable<T> c2) => c1.SequenceEqual(c2);
+    internal bool HasByRules()
+    {
+        return ByDay.Count > 0
+            || ByMonth.Count > 0
+            || ByMonthDay.Count > 0
+            || ByWeekNo.Count > 0
+            || ByYearDay.Count > 0
+            || ByHour.Count > 0
+            || ByMinute.Count > 0
+            || BySecond.Count > 0
+            || BySetPosition.Count > 0;
+    }
 }

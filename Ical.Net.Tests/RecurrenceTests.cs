@@ -932,13 +932,18 @@ public class RecurrenceTests
     {
         var start = new CalDateTime(2019, 1, 1);
         var end = new CalDateTime(2019, 12, 31);
-        var rpe1 = new RecurrencePatternEvaluator(new RecurrencePattern(
-            "FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53"));
-        var rpe2 = new RecurrencePatternEvaluator(new RecurrencePattern(
-            "FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=53,51,49,47,45,43,41,39,37,35,33,31,29,27,25,23,21,19,17,15,13,11,9,7,5,3,1"));
 
-        var recurringPeriods1 = rpe1.Evaluate(start, start, null).TakeWhileBefore(end).ToList();
-        var recurringPeriods2 = rpe2.Evaluate(start, start, null).TakeWhileBefore(end).ToList();
+        var recurringPeriods1 = new RecurrencePattern(
+            "FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53")
+            .Evaluate(start, start)
+            .TakeWhileBefore(end)
+            .ToList();
+
+        var recurringPeriods2 = new RecurrencePattern(
+            "FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=53,51,49,47,45,43,41,39,37,35,33,31,29,27,25,23,21,19,17,15,13,11,9,7,5,3,1")
+            .Evaluate(start, start)
+            .TakeWhileBefore(end)
+            .ToList();
 
         Assert.That(recurringPeriods2, Has.Count.EqualTo(recurringPeriods1.Count));
     }
@@ -2295,9 +2300,9 @@ public class RecurrenceTests
     {
         var start = new CalDateTime(2019, 1, 1);
         var end = new CalDateTime(2019, 12, 31);
-        var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYWEEKNO=2"));
 
-        var recurringPeriods = rpe.Evaluate(start, start.ToZonedDateTime(_tzid), default).TakeWhileBefore(end).ToList();
+        var recurringPeriods = new RecurrencePattern("FREQ=YEARLY;BYDAY=MO;BYWEEKNO=2")
+            .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(1));
         Assert.That(recurringPeriods.First().Start, Is.EqualTo(new CalDateTime(2019, 1, 7).ToZonedDateTime(_tzid)));
@@ -2311,9 +2316,9 @@ public class RecurrenceTests
     {
         var start = new CalDateTime(2020, 1, 1);
         var end = new CalDateTime(2020, 12, 31);
-        var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1"));
 
-        var recurringPeriods = rpe.Evaluate(start, start.ToZonedDateTime(_tzid), default).TakeWhileBefore(end).ToList();
+        var recurringPeriods = new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1")
+            .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
@@ -2355,9 +2360,9 @@ public class RecurrenceTests
     {
         var start = new CalDateTime(2020, 1, 1);
         var end = new CalDateTime(2020, 12, 31);
-        var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1"));
 
-        var recurringPeriods = rpe.Evaluate(start, start.ToZonedDateTime(_tzid), default).TakeWhileBefore(end).ToList();
+        var recurringPeriods = new RecurrencePattern("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1")
+            .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
@@ -2380,8 +2385,7 @@ public class RecurrenceTests
         var start = new CalDateTime(2010, 11, 27, 9, 0, 0);
         var serializer = new RecurrencePatternSerializer();
         var rp = (RecurrencePattern) serializer.Deserialize(sr)!;
-        var rpe = new RecurrencePatternEvaluator(rp);
-        var recurringPeriods = rpe.Evaluate(start, start.ToZonedDateTime(_tzid), null)
+        var recurringPeriods = rp.Evaluate(start, start.ToZonedDateTime(_tzid))
             .TakeWhileBefore(rp.Until!).ToList();
 
         var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
@@ -2606,13 +2610,10 @@ public class RecurrenceTests
         var fromDate = startDate.ToZonedDateTime(_tzid);
         var toDate = new CalDateTime(2008, 3, 31, 0, 0, 11);
 
-        var evaluator = new RecurrencePatternEvaluator(pattern);
-        var occurrences = evaluator.Evaluate(
-                startDate,
-                fromDate,
-                default)
+        var occurrences = pattern.Evaluate(startDate, fromDate)
             .TakeWhileBefore(toDate)
             .ToList();
+
         Assert.That(occurrences, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
         {
@@ -2636,13 +2637,9 @@ public class RecurrenceTests
         var fromDate = new CalDateTime(DateTime.Parse("4/1/2008 10:08:10 AM", us));
         var toDate = new CalDateTime(DateTime.Parse("4/1/2008 10:43:23 AM", us));
 
-        var evaluator = new RecurrencePatternEvaluator(pattern);
-
-        var occurrences = evaluator.Evaluate(
-                startDate,
-                fromDate,
-                default)
+        var occurrences = pattern.Evaluate(startDate, fromDate)
             .TakeWhileBefore(toDate);
+
         Assert.That(occurrences.Count, Is.Not.EqualTo(0));
     }
 
@@ -2742,15 +2739,11 @@ public class RecurrenceTests
         var evtStart = new CalDateTime(2006, 12, 1);
         var evtEnd = new CalDateTime(2007, 1, 1);
 
-        var evaluator = new RecurrencePatternEvaluator(rpattern);
-
         // Add the exception dates
-        var periods = evaluator.Evaluate(
-                evtStart,
-                evtStart,
-                default)
+        var periods = rpattern.Evaluate(evtStart, evtStart)
             .TakeWhileBefore(evtEnd)
             .ToList();
+
         Assert.That(periods, Has.Count.EqualTo(10));
         Assert.Multiple(() =>
         {
@@ -3470,9 +3463,13 @@ END:VCALENDAR";
 
         evt.RecurrenceRules.Add(GetPattern());
 
-        var startAt = testCase.StartAt?.ToZonedDateTime(_tzid).ToInstant();
+        // Evaluate all tests in UTC so that INSTANCES match
+        // the local date and time of the expected values.
+        var timeZone = DateUtil.GetZone("UTC");
 
-        IEnumerable<Occurrence> GetOccurrences() => evt.GetOccurrences(DateUtil.GetZone(_tzid), startAt);
+        var startAt = testCase.StartAt?.ToZonedDateTime(timeZone).ToInstant();
+
+        IEnumerable<Occurrence> GetOccurrences() => evt.GetOccurrences(timeZone, startAt);
 
         if (testCase.ExceptionStep == RecurrenceTestExceptionStep.GetOccurrenceInvocation)
         {
@@ -3493,7 +3490,7 @@ END:VCALENDAR";
         var occurrences = EnumerateOccurrences();
 
         var startDates = occurrences.Select(x => x.Start).ToList();
-        Assert.That(startDates, Is.EqualTo(testCase.Instances?.Select(x => x.ToZonedDateTime(_tzid)).ToList()));
+        Assert.That(startDates, Is.EqualTo(testCase.Instances?.Select(x => x.ToZonedDateTime(timeZone)).ToList()));
     }
 
     [Test]
@@ -4568,5 +4565,268 @@ END:VCALENDAR";
         while ((expectedStart = expectedStart.PlusMinutes(10)).Day == 2);
 
         Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void YearlyByMonthByDay_AroundForwardDaylightSaving_ShiftsHourOnlyOnTransitionDay()
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=YEARLY;BYMONTH=3;BYDAY=2SA,2SU;COUNT=4"));
+        evt.Start = new("20250308T020000", "America/New_York");
+        evt.Duration = Duration.FromMinutes(90);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var result = cal.GetOccurrences(evt.Start.ToZonedDateTime())
+            .Select(x => x.Start)
+            .ToList();
+
+        var expected = new List<LocalDateTime>
+        {
+            new(2025, 3, 8, 2, 0),
+            // Hour is 3AM because 2AM does not exist
+            new(2025, 3, 9, 3, 0),
+            new(2026, 3, 8, 3, 0),
+            // Hour is still 2AM after transition
+            new(2026, 3, 14, 2, 0),
+        }.Select(x => x.InZoneStrictly(tz)).ToList();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void Monthly_OnForwardDaylightSaving_ShiftsHourOnlyOnTransitionDay()
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=MONTHLY;BYDAY=2SU;COUNT=4"));
+        evt.Start = new("20250112T020000", "America/New_York");
+        evt.Duration = Duration.FromMinutes(90);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var result = cal.GetOccurrences(evt.Start.ToZonedDateTime())
+            .Select(x => x.Start)
+            .ToList();
+
+        var expected = new List<LocalDateTime>
+        {
+            new(2025, 1, 12, 2, 0),
+            new(2025, 2, 9, 2, 0),
+            // Hour is 3AM because 2AM does not exist
+            new(2025, 3, 9, 3, 0),
+            // Hour is still 2AM after transition
+            new(2025, 4, 13, 2, 0),
+        }.Select(x => x.InZoneStrictly(tz)).ToList();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void MonthlyUtcEvent_OnForwardDaylightSaving_HourShiftsAfterTransition()
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=MONTHLY;BYDAY=2SU;COUNT=4"));
+        evt.Start = new("20250112T070000", "UTC");
+        evt.Duration = Duration.FromMinutes(90);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var result = cal.GetOccurrences(tz, evt.Start.ToInstant())
+            .Select(x => x.Start)
+            .ToList();
+
+        var expected = new List<LocalDateTime>
+        {
+            new(2025, 1, 12, 2, 0),
+            new(2025, 2, 9, 2, 0),
+            // Hour shifts to 3AM because the event was evaluated in UTC
+            // so the hour is held to 7AM UTC always.
+            new(2025, 3, 9, 3, 0),
+            new(2025, 4, 13, 3, 0),
+        }.Select(x => x.InZoneStrictly(tz)).ToList();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void MonthlyByDayByHour_AroundForwardDaylightSaving_CountIsCorrect()
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=MONTHLY;BYDAY=2SU;BYHOUR=1,2,3;COUNT=5"));
+        evt.Start = new("20250309T010000", "America/New_York");
+        evt.Duration = Duration.FromMinutes(90);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var result = cal.GetOccurrences(tz, evt.Start.ToInstant())
+            .Select(x => x.Start)
+            .ToList();
+
+        var expected = new List<LocalDateTime>
+        {
+            new(2025, 3, 9, 1, 0),
+            // 2AM is skipped
+            new(2025, 3, 9, 3, 0),
+            new(2025, 4, 13, 1, 0),
+            new(2025, 4, 13, 2, 0),
+            new(2025, 4, 13, 3, 0),
+        }.Select(x => x.InZoneStrictly(tz)).ToList();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void MonthlyByDayByHourByMinute_AroundForwardDaylightSaving_CountIsCorrect()
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=MONTHLY;BYDAY=2SU;BYHOUR=1,2,3;BYMINUTE=0,3;COUNT=10"));
+        evt.Start = new("20250309T010000", "America/New_York");
+        evt.Duration = Duration.FromMinutes(90);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var result = cal.GetOccurrences(tz, evt.Start.ToInstant())
+            .Select(x => x.Start)
+            .ToList();
+
+        var expected = new List<LocalDateTime>
+        {
+            new(2025, 3, 9, 1, 0),
+            new(2025, 3, 9, 1, 3),
+            // 2AM is skipped
+            new(2025, 3, 9, 3, 0),
+            new(2025, 3, 9, 3, 3),
+            new(2025, 4, 13, 1, 0),
+            new(2025, 4, 13, 1, 3),
+            new(2025, 4, 13, 2, 0),
+            new(2025, 4, 13, 2, 3),
+            new(2025, 4, 13, 3, 0),
+            new(2025, 4, 13, 3, 3),
+        }.Select(x => x.InZoneStrictly(tz)).ToList();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void MonthlyByDayByHour_AroundBackwardDaylightSaving_CountIsCorrect()
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=MONTHLY;BYDAY=1SU;BYHOUR=1,2,3;COUNT=6"));
+        evt.Start = new("20251102T010000", "America/New_York");
+        evt.Duration = Duration.FromMinutes(90);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var result = cal.GetOccurrences(tz, evt.Start.ToInstant())
+            .Select(x => x.Start)
+            .ToList();
+
+        var expected = new List<LocalDateTime>
+        {
+            new(2025, 11, 2, 1, 0),
+            new(2025, 11, 2, 2, 0),
+            new(2025, 11, 2, 3, 0),
+            new(2025, 12, 7, 1, 0),
+            new(2025, 12, 7, 2, 0),
+            new(2025, 12, 7, 3, 0),
+        }.Select(x => x.InZoneLeniently(tz)).ToList();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void Hourly_BackwardDaylightSaving_CountIsCorrect()
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=HOURLY;COUNT=6"));
+        evt.Start = new("20251102T000000", "America/New_York");
+        evt.Duration = Duration.FromMinutes(1);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var start = new LocalDate(2025, 11, 2)
+            .AtStartOfDayInZone(tz);
+
+        var result = cal.GetOccurrences(start)
+            .Select(x => x.Start)
+            .ToList();
+
+        var expected = new List<OffsetDateTime>
+        {
+            new(new(2025, 11, 2, 0, 0), tz.MaxOffset),
+            new(new(2025, 11, 2, 1, 0), tz.MaxOffset),
+            new(new(2025, 11, 2, 1, 0), tz.MinOffset),
+            new(new(2025, 11, 2, 2, 0), tz.MinOffset),
+            new(new(2025, 11, 2, 3, 0), tz.MinOffset),
+            new(new(2025, 11, 2, 4, 0), tz.MinOffset),
+        }.Select(x => x.InZone(tz)).ToList();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void Hourly_BackwardDaylightSaving_StartAtTransition_CountIsCorrect()
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=HOURLY;COUNT=6"));
+        evt.Start = new("20251102T000000", "America/New_York");
+        evt.Duration = Duration.FromMinutes(1);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var start = new OffsetDateTime(new(2025, 11, 2, 1, 0), tz.MinOffset)
+            .InZone(tz);
+
+        var result = cal.GetOccurrences(start)
+            .Select(x => x.Start)
+            .ToList();
+
+        var expected = new List<OffsetDateTime>
+        {
+            //new(new(2025, 11, 2, 0, 0), tz.MaxOffset),
+            //new(new(2025, 11, 2, 1, 0), tz.MaxOffset),
+            new(new(2025, 11, 2, 1, 0), tz.MinOffset),
+            new(new(2025, 11, 2, 2, 0), tz.MinOffset),
+            new(new(2025, 11, 2, 3, 0), tz.MinOffset),
+            new(new(2025, 11, 2, 4, 0), tz.MinOffset),
+        }.Select(x => x.InZone(tz)).ToList();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void StartingAfterCount_ProducesNoValues()
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRules.Add(new("FREQ=DAILY;COUNT=3"));
+        evt.Start = new("20250101");
+        evt.Duration = Duration.FromMinutes(90);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = DateUtil.GetZone("America/New_York");
+        var start = new LocalDate(2025, 1, 4).AtStartOfDayInZone(tz);
+        var result = cal.GetOccurrences(start)
+            .Select(x => x.Start)
+            .ToList();
+
+        Assert.That(result, Is.Empty);
     }
 }
