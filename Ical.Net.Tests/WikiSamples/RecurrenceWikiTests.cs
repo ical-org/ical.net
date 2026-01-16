@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +12,6 @@ using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Tests.Logging;
 using Microsoft.Extensions.Logging;
-using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests.WikiSamples;

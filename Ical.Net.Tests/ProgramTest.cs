@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;

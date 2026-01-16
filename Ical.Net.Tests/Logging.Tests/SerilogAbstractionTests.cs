@@ -2,13 +2,12 @@
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
-#nullable enable
+
 using System;
 using System.IO;
 using Ical.Net.Tests.Logging.Abstractions;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Serilog;
 using Serilog.Events;
 
 namespace Ical.Net.Tests.Logging.Tests;

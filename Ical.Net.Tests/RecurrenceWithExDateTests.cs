@@ -3,14 +3,12 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
-using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;

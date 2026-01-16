@@ -3,8 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
-using System;
 using System.IO;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;

@@ -2,11 +2,10 @@
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
-#nullable enable
+
 using System;
 using System.Linq;
 using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
 using Ical.Net.Utility;
 using NodaTime;
 using NUnit.Framework;

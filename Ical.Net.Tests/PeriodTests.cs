@@ -3,9 +3,7 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System;
-using System.Collections.Generic;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using NUnit.Framework;
