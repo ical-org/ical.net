@@ -38,8 +38,8 @@ internal class CollectionHelpersTests
     [TestCase(new int[] { }, new int[] { }, new int[] { })]
     [TestCase(new int[] { }, new[] { 2, 4, 6 }, new[] { 2, 4, 6 })]
     [TestCase(new[] { 2, 4, 6 }, new int[] { }, new[] { 2, 4, 6 })]
-    [TestCase(new[] { 3, 4 }, new int[] { 1, 2 }, new[] { 1, 2, 3, 4 })]
-    [TestCase(new[] { 1, 2, 3 }, new int[] { 2, 3, 4 }, new[] { 1, 2, 2, 3, 3, 4 })]
+    [TestCase(new[] { 3, 4 }, new[] { 1, 2 }, new[] { 1, 2, 3, 4 })]
+    [TestCase(new[] { 1, 2, 3 }, new[] { 2, 3, 4 }, new[] { 1, 2, 2, 3, 3, 4 })]
     public void TestMerge(IList<int> seq1, IList<int> seq2, IList<int> expected)
     {
         var result = seq1.OrderedMerge(seq2).ToList();

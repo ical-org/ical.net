@@ -14,10 +14,8 @@ internal class IcsFiles
 
     internal static string ReadStream(string manifestResource)
     {
-        using (var stream = _assembly.GetManifestResourceStream(manifestResource))
-        {
-            return new StreamReader(stream).ReadToEnd();
-        }
+        using var stream = _assembly.GetManifestResourceStream(manifestResource)!;
+        return new StreamReader(stream).ReadToEnd();
     }
 
     internal static string Alarm1 => ReadStream("Ical.Net.Tests.Calendars.Alarm.ALARM1.ics");

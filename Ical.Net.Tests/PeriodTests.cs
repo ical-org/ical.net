@@ -145,7 +145,7 @@ public class PeriodTests
                 "A period should not equal null.");
 
             // Test equality with object of different type.
-            Assert.That(period1.Equals("string"), Is.False,
+            Assert.That(period1!.Equals("string"), Is.False,
                 "A period should not be equal to an object of different type.");
         });
     }

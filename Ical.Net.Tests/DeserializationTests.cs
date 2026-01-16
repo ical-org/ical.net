@@ -24,7 +24,7 @@ public class DeserializationTests
     [Test]
     public void Attendee1()
     {
-        var iCal = Calendar.Load(IcsFiles.Attendee1);
+        var iCal = Calendar.Load(IcsFiles.Attendee1)!;
         Assert.That(iCal.Events, Has.Count.EqualTo(1));
 
         var evt = iCal.Events.First();
@@ -69,7 +69,7 @@ public class DeserializationTests
     [Test]
     public void Attendee2()
     {
-        var iCal = Calendar.Load(IcsFiles.Attendee2);
+        var iCal = Calendar.Load(IcsFiles.Attendee2)!;
         Assert.That(iCal.Events, Has.Count.EqualTo(1));
 
         var evt = iCal.Events.First();
@@ -99,11 +99,11 @@ public class DeserializationTests
     [Test]
     public void Bug2033495()
     {
-        var iCal = Calendar.Load(IcsFiles.Bug2033495);
+        var iCal = Calendar.Load(IcsFiles.Bug2033495)!;
         Assert.Multiple(() =>
         {
             Assert.That(iCal.Events, Has.Count.EqualTo(1));
-            Assert.That(iCal.Properties["X-LOTUS-CHILD_UID"].Value, Is.EqualTo("XXX"));
+            Assert.That(iCal.Properties["X-LOTUS-CHILD_UID"]?.Value, Is.EqualTo("XXX"));
         });
     }
 
@@ -114,14 +114,14 @@ public class DeserializationTests
     [Test]
     public void Bug2938007()
     {
-        var iCal = Calendar.Load(IcsFiles.Bug2938007);
+        var iCal = Calendar.Load(IcsFiles.Bug2938007)!;
         Assert.That(iCal.Events, Has.Count.EqualTo(1));
 
         var evt = iCal.Events.First();
         Assert.Multiple(() =>
         {
-            Assert.That(evt.Start.HasTime, Is.EqualTo(true));
-            Assert.That(evt.End.HasTime, Is.EqualTo(true));
+            Assert.That(evt.Start?.HasTime, Is.True);
+            Assert.That(evt.End?.HasTime, Is.True);
         });
 
         var results = evt.GetOccurrences(new LocalDateTime(2010, 1, 17, 0, 0, 0).InZoneLeniently("Asia/Tokyo"))
@@ -158,7 +158,7 @@ public class DeserializationTests
     [Test]
     public void CaseInsensitive4()
     {
-        var iCal = Calendar.Load(IcsFiles.CaseInsensitive4);
+        var iCal = Calendar.Load(IcsFiles.CaseInsensitive4)!;
         Assert.That(iCal.Version, Is.EqualTo("2.5"));
     }
 
@@ -192,7 +192,7 @@ public class DeserializationTests
     [Test]
     public void EmptyLines1()
     {
-        var iCal = Calendar.Load(IcsFiles.EmptyLines1);
+        var iCal = Calendar.Load(IcsFiles.EmptyLines1)!;
         Assert.That(iCal.Events, Has.Count.EqualTo(2), "iCalendar should have 2 events");
     }
 
@@ -215,7 +215,7 @@ public class DeserializationTests
     [Test]
     public void EmptyLines3()
     {
-        var iCal = Calendar.Load(IcsFiles.EmptyLines3);
+        var iCal = Calendar.Load(IcsFiles.EmptyLines3)!;
         Assert.That(iCal.Todos, Has.Count.EqualTo(1), "iCalendar should have 1 todo");
     }
 
@@ -225,14 +225,14 @@ public class DeserializationTests
     [Test]
     public void EmptyLines4()
     {
-        var iCal = Calendar.Load(IcsFiles.EmptyLines4);
+        var iCal = Calendar.Load(IcsFiles.EmptyLines4)!;
         Assert.That(iCal.Events, Has.Count.EqualTo(28));
     }
 
     [Test]
     public void Encoding2()
     {
-        var iCal = Calendar.Load(IcsFiles.Encoding2);
+        var iCal = Calendar.Load(IcsFiles.Encoding2)!;
         ProgramTest.TestCal(iCal);
         var evt = iCal.Events.First();
 
@@ -256,7 +256,7 @@ public class DeserializationTests
     [Test]
     public void Encoding3()
     {
-        var iCal = Calendar.Load(IcsFiles.Encoding3);
+        var iCal = Calendar.Load(IcsFiles.Encoding3)!;
         ProgramTest.TestCal(iCal);
         var evt = iCal.Events.First();
 
@@ -301,7 +301,7 @@ public class DeserializationTests
                  END:VEVENT
                  END:VCALENDAR
                  """;
-        var iCal = Calendar.Load(sr);
+        var iCal = Calendar.Load(sr)!;
         Assert.That(iCal.Events.Count == 2, Is.True, "There should be 2 events in the parsed calendar");
         Assert.That(iCal.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], Is.Not.Null, "Event fd940618-45e2-4d19-b118-37fd7a8e3906 should exist in the calendar");
         Assert.That(iCal.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], Is.Not.Null, "Event ebfbd3e3-cc1e-4a64-98eb-ced2598b3908 should exist in the calendar");
@@ -310,14 +310,14 @@ public class DeserializationTests
     [Test]
     public void GeographicLocation1_2()
     {
-        var iCal = Calendar.Load(IcsFiles.GeographicLocation1);
+        var iCal = Calendar.Load(IcsFiles.GeographicLocation1)!;
         ProgramTest.TestCal(iCal);
         var evt = iCal.Events.First();
 
         Assert.Multiple(() =>
         {
-            Assert.That(evt.GeographicLocation.Latitude, Is.EqualTo(37.386013), "Latitude should be 37.386013; it is not.");
-            Assert.That(evt.GeographicLocation.Longitude, Is.EqualTo(-122.082932), "Longitude should be -122.082932; it is not.");
+            Assert.That(evt.GeographicLocation?.Latitude, Is.EqualTo(37.386013), "Latitude should be 37.386013; it is not.");
+            Assert.That(evt.GeographicLocation?.Longitude, Is.EqualTo(-122.082932), "Longitude should be -122.082932; it is not.");
         });
     }
 
@@ -325,7 +325,7 @@ public class DeserializationTests
     public void Google1()
     {
         var tzId = "Europe/Berlin";
-        var iCal = Calendar.Load(IcsFiles.Google1);
+        var iCal = Calendar.Load(IcsFiles.Google1)!;
         var evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
         Assert.That(evt, Is.Not.Null);
         var dtStart2 = new CalDateTime(2006, 12, 18);
@@ -357,7 +357,7 @@ public class DeserializationTests
     [Test]
     public void RecurrenceDates1()
     {
-        var iCal = Calendar.Load(IcsFiles.RecurrenceDates1);
+        var iCal = Calendar.Load(IcsFiles.RecurrenceDates1)!;
 
         var expectedStartTimes = new List<CalDateTime>
         {
@@ -380,15 +380,15 @@ public class DeserializationTests
 
         var expectedEndTime = new CalDateTime(new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc));
 
-        var actualStartTimes = iCal.Events[0].RecurrenceDates.GetAllPeriods()
+        var actualStartTimes = iCal.Events[0]!.RecurrenceDates.GetAllPeriods()
             .Select(p => p.StartTime)
-            .Union(iCal.Events[0].RecurrenceDates.GetAllDates())
+            .Union(iCal.Events[0]!.RecurrenceDates.GetAllDates())
             .ToList();
 
         Assert.Multiple(() =>
         {
             Assert.That(iCal.Events, Has.Count.EqualTo(1));
-            Assert.That(iCal.Events[0].RecurrenceDatesPeriodLists, Has.Count.EqualTo(3));
+            Assert.That(iCal.Events[0]!.RecurrenceDatesPeriodLists, Has.Count.EqualTo(3));
             Assert.That(actualStartTimes, Has.Count.EqualTo(expectedStartTimes.Count));
 
             foreach (var date in expectedStartTimes)
@@ -397,7 +397,7 @@ public class DeserializationTests
                     Is.EqualTo(date), "Should contain " + date);
             }
 
-            Assert.That(iCal.Events[0].RecurrenceDates.Contains(new DataTypes.Period(expectedStartTimes[1], expectedEndTime)));
+            Assert.That(iCal.Events[0]!.RecurrenceDates.Contains(new DataTypes.Period(expectedStartTimes[1], expectedEndTime)));
         });
     }
 
@@ -407,15 +407,15 @@ public class DeserializationTests
     [Test]
     public void RequestStatus1()
     {
-        var iCal = Calendar.Load(IcsFiles.RequestStatus1);
+        var iCal = Calendar.Load(IcsFiles.RequestStatus1)!;
         Assert.That(iCal.Events, Has.Count.EqualTo(1));
         Assert.That(iCal.Events.First().RequestStatuses, Has.Count.EqualTo(4));
 
         var rs = iCal.Events.First().RequestStatuses[0];
         Assert.Multiple(() =>
         {
-            Assert.That(rs.StatusCode.Primary, Is.EqualTo(2));
-            Assert.That(rs.StatusCode.Secondary, Is.EqualTo(0));
+            Assert.That(rs.StatusCode?.Primary, Is.EqualTo(2));
+            Assert.That(rs.StatusCode?.Secondary, Is.EqualTo(0));
             Assert.That(rs.Description, Is.EqualTo("Success"));
         });
         Assert.That(rs.ExtraData, Is.Null);
@@ -423,8 +423,8 @@ public class DeserializationTests
         rs = iCal.Events.First().RequestStatuses[1];
         Assert.Multiple(() =>
         {
-            Assert.That(rs.StatusCode.Primary, Is.EqualTo(3));
-            Assert.That(rs.StatusCode.Secondary, Is.EqualTo(1));
+            Assert.That(rs.StatusCode?.Primary, Is.EqualTo(3));
+            Assert.That(rs.StatusCode?.Secondary, Is.EqualTo(1));
             Assert.That(rs.Description, Is.EqualTo("Invalid property value"));
             Assert.That(rs.ExtraData, Is.EqualTo("DTSTART:96-Apr-01"));
         });
@@ -432,8 +432,8 @@ public class DeserializationTests
         rs = iCal.Events.First().RequestStatuses[2];
         Assert.Multiple(() =>
         {
-            Assert.That(rs.StatusCode.Primary, Is.EqualTo(2));
-            Assert.That(rs.StatusCode.Secondary, Is.EqualTo(8));
+            Assert.That(rs.StatusCode?.Primary, Is.EqualTo(2));
+            Assert.That(rs.StatusCode?.Secondary, Is.EqualTo(8));
             Assert.That(rs.Description, Is.EqualTo(" Success, repeating event ignored. Scheduled as a single event."));
             Assert.That(rs.ExtraData, Is.EqualTo("RRULE:FREQ=WEEKLY;INTERVAL=2"));
         });
@@ -441,8 +441,8 @@ public class DeserializationTests
         rs = iCal.Events.First().RequestStatuses[3];
         Assert.Multiple(() =>
         {
-            Assert.That(rs.StatusCode.Primary, Is.EqualTo(4));
-            Assert.That(rs.StatusCode.Secondary, Is.EqualTo(1));
+            Assert.That(rs.StatusCode?.Primary, Is.EqualTo(4));
+            Assert.That(rs.StatusCode?.Secondary, Is.EqualTo(1));
             Assert.That(rs.Description, Is.EqualTo("Event conflict. Date/time is busy."));
         });
         Assert.That(rs.ExtraData, Is.Null);
@@ -456,16 +456,16 @@ public class DeserializationTests
     {
         var serializer = new StringSerializer();
         var value = @"test\with\;characters";
-        var unescaped = (string)serializer.Deserialize(new StringReader(value));
+        var unescaped = (string?) serializer.Deserialize(new StringReader(value));
 
         Assert.That(unescaped, Is.EqualTo(@"test\with;characters"), "String unescaping was incorrect.");
 
         value = @"C:\Path\To\My\New\Information";
-        unescaped = (string)serializer.Deserialize(new StringReader(value));
+        unescaped = (string?) serializer.Deserialize(new StringReader(value));
         Assert.That(unescaped, Is.EqualTo("C:\\Path\\To\\My\new\\Information"), "String unescaping was incorrect.");
 
         value = @"\""This\r\nis\Na\, test\""\;\\;,";
-        unescaped = (string)serializer.Deserialize(new StringReader(value));
+        unescaped = (string?) serializer.Deserialize(new StringReader(value));
 
         Assert.That(unescaped, Is.EqualTo("\"This\\r\nis\na, test\";\\;,"), "String unescaping was incorrect.");
     }
@@ -473,7 +473,7 @@ public class DeserializationTests
     [Test]
     public void Transparency2()
     {
-        var iCal = Calendar.Load(IcsFiles.Transparency2);
+        var iCal = Calendar.Load(IcsFiles.Transparency2)!;
 
         Assert.That(iCal.Events, Has.Count.EqualTo(1));
         var evt = iCal.Events.First();
@@ -500,7 +500,7 @@ public class DeserializationTests
     [Test]
     public void Outlook2007_LineFolds1()
     {
-        var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds);
+        var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds)!;
         var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20).ToZonedDateTime("America/New_York")).TakeWhileBefore(new CalDateTime(2009, 06, 22).ToZonedDateTime("America/New_York").ToInstant()).ToList();
         Assert.That(events, Has.Count.EqualTo(1));
     }
@@ -509,7 +509,7 @@ public class DeserializationTests
     public void Outlook2007_LineFolds2()
     {
         var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
-        var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds);
+        var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds)!;
         var events = iCal.GetOccurrences<CalendarEvent>(new CalDateTime(2009, 06, 20).ToZonedDateTime("America/New_York")).TakeWhileBefore(new CalDateTime(2009, 06, 22).ToZonedDateTime("America/New_York").ToInstant()).ToList();
         Assert.That(((CalendarEvent)events[0].Source).Location, Is.EqualTo(longName));
     }
@@ -520,10 +520,10 @@ public class DeserializationTests
     [Test]
     public void Parameter1()
     {
-        var iCal = Calendar.Load(IcsFiles.Parameter1);
+        var iCal = Calendar.Load(IcsFiles.Parameter1)!;
 
         var evt = iCal.Events.First();
-        IList<CalendarParameter> parms = evt.Properties["DTSTART"].Parameters.AllOf("VALUE").ToList();
+        IList<CalendarParameter> parms = evt.Properties["DTSTART"]!.Parameters.AllOf("VALUE").ToList();
         Assert.Multiple(() =>
         {
             Assert.That(parms, Has.Count.EqualTo(2));
@@ -538,7 +538,7 @@ public class DeserializationTests
     [Test]
     public void Parameter2()
     {
-        var iCal = Calendar.Load(IcsFiles.Parameter2);
+        var iCal = Calendar.Load(IcsFiles.Parameter2)!;
         Assert.That(iCal.Events, Has.Count.EqualTo(2));
     }
 
@@ -561,7 +561,7 @@ public class DeserializationTests
     [Test]
     public void Property1()
     {
-        var iCal = Calendar.Load(IcsFiles.Property1);
+        var iCal = Calendar.Load(IcsFiles.Property1)!;
 
         IList<ICalendarProperty> props = iCal.Properties.AllOf("VERSION").ToList();
         Assert.That(props, Has.Count.EqualTo(2));
@@ -586,7 +586,7 @@ public class DeserializationTests
                       END:VCALENDAR
                       """;
 
-        var calendar = Calendar.Load(calStr);
+        var calendar = Calendar.Load(calStr)!;
 
         Assert.Multiple(() =>
         {
@@ -607,7 +607,7 @@ public class DeserializationTests
                       END:VCALENDAR
                       """;
 
-        var calendar = Calendar.Load(ics);
+        var calendar = Calendar.Load(ics)!;
         var deserialized = new CalendarSerializer(calendar).SerializeToString();
 
         Assert.Multiple(() =>

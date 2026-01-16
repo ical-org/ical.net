@@ -3897,7 +3897,7 @@ END:VCALENDAR";
             .Take(5)
             .ToList();
 
-        var expectedDates = new string[]
+        var expectedDates = new[]
         {
             // RDATE
             "20250707T000000",

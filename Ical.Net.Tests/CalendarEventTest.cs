@@ -136,7 +136,7 @@ public class CalendarEventTest
         };
 
         cal.Events.Add(evt);
-        Assert.That(evt.DtStamp.IsUtc, Is.True, "DTSTAMP should always be of type UTC.");
+        Assert.That(evt.DtStamp?.IsUtc, Is.True, "DTSTAMP should always be of type UTC.");
     }
 
     /// <summary>
@@ -238,7 +238,7 @@ public class CalendarEventTest
             END:VTIMEZONE
             END:VCALENDAR
             """;
-        var timezones = Calendar.Load(ical)
+        var timezones = Calendar.Load(ical)!
             .TimeZones.First()
             .Children.Cast<CalendarComponent>()
             .ToArray();

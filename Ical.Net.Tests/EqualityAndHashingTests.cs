@@ -55,7 +55,7 @@ public class EqualityAndHashingTests
         DtEnd = new CalDateTime(_later),
     };
 
-    private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
+    private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } })!;
 
     [Test]
     public void Resources_Tests()
@@ -179,7 +179,7 @@ public class EqualityAndHashingTests
         Assert.That(asUtc, Is.Not.EqualTo(asLocal));
     }
 
-    private void TestComparison(Func<CalDateTime, CalDateTime, bool> calOp, Func<int?, int?, bool> intOp)
+    private void TestComparison(Func<CalDateTime?, CalDateTime?, bool> calOp, Func<int?, int?, bool> intOp)
     {
         int? intSome = 1;
         int? intGreater = 2;

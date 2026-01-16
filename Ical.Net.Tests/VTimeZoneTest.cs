@@ -107,7 +107,7 @@ public class VTimeZoneTest
         var iCal = CreateTestCalendar("Europe/Moscow");
         var serializer = new CalendarSerializer();
         // Unwrap the lines to make it easier to search for specific values
-        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal));
+        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal)!);
 
         using (Assert.EnterMultipleScope())
         {
@@ -201,7 +201,7 @@ public class VTimeZoneTest
         var iCal = CreateTestCalendar("America/Anchorage");
         var serializer = new CalendarSerializer();
         // Unwrap the lines to make it easier to search for specific values
-        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal));
+        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal)!);
 
         using (Assert.EnterMultipleScope())
         {

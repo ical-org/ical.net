@@ -28,7 +28,7 @@ public class CopyComponentTests
         DtEnd = new CalDateTime(_later),
     };
 
-    private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
+    private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } })!;
 
     [Test]
     public void CopyCalendarEventTest()
@@ -40,7 +40,7 @@ public class CopyComponentTests
         orig.GeographicLocation = new GeographicLocation(48.210033, 16.363449);
         orig.Transparency = TransparencyType.Opaque;
         orig.Attachments.Add(new Attachment("https://original.org/"));
-        var copy = orig.Copy<CalendarEvent>();
+        var copy = orig.Copy<CalendarEvent>()!;
 
         copy.Uid = "Goodbye";
         copy.Summary = "Copy summary";
@@ -78,7 +78,7 @@ public class CopyComponentTests
             Entries = { new FreeBusyEntry(new Period(new CalDateTime(2024, 10, 1), Duration.FromDays(1)), FreeBusyStatus.Busy) { Language = "English" }}
         };
 
-        var copy = orig.Copy<FreeBusy>();
+        var copy = orig.Copy<FreeBusy>()!;
 
         Assert.Multiple(() =>
         {
@@ -102,7 +102,7 @@ public class CopyComponentTests
             Description = "Test Alarm"
         };
 
-        var copy = orig.Copy<Alarm>();
+        var copy = orig.Copy<Alarm>()!;
 
         Assert.Multiple(() =>
         {
@@ -125,7 +125,7 @@ public class CopyComponentTests
             Status = "NeedsAction"
         };
 
-        var copy = orig.Copy<Todo>();
+        var copy = orig.Copy<Todo>()!;
 
         Assert.Multiple(() =>
         {
@@ -151,7 +151,7 @@ public class CopyComponentTests
             Status = "Draft"
         };
 
-        var copy = orig.Copy<Journal>();
+        var copy = orig.Copy<Journal>()!;
 
         Assert.Multiple(() =>
         {

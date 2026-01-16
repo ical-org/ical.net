@@ -24,7 +24,7 @@ public class CalendarPropertiesTest
         var iCal = new Calendar();
         iCal.AddProperty(propName, propValue);
 
-        var result = new CalendarSerializer().SerializeToString(iCal);
+        var result = new CalendarSerializer().SerializeToString(iCal)!;
 
         var lines = result.Split(new[] { SerializationConstants.LineBreak }, StringSplitOptions.None);
         var propLine = lines.FirstOrDefault(x => x.StartsWith("X-WR-CALNAME:"));

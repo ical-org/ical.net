@@ -13,13 +13,14 @@ namespace Ical.Net.Tests.Logging.Abstractions;
 
 internal class InMemorySink : ILogEventSink
 {
-    public static InMemorySink Instance;
+    public static InMemorySink Instance = null!;
 
-    private ConcurrentQueue<Serilog.Events.LogEvent> _events { get; } = new();
+    private ConcurrentQueue<Serilog.Events.LogEvent> Events { get; } = new();
 
     public InMemorySink()
     {
         Instance = this;
+        OutputTemplate = Options.DefaultOutputTemplate;
     }
 
     public int MaxLogsCount { get; set; } = Options.DefaultMaxLogsCount;
@@ -33,7 +34,7 @@ internal class InMemorySink : ILogEventSink
             var formatter = new MessageTemplateTextFormatter(OutputTemplate, CultureInfo.InvariantCulture);
             using var writer = new System.IO.StringWriter();
 
-            foreach (var logEvent in _events)
+            foreach (var logEvent in Events)
             {
                 formatter.Format(logEvent, writer);
                 yield return writer.ToString().TrimEnd(System.Environment.NewLine.ToCharArray());
@@ -44,10 +45,10 @@ internal class InMemorySink : ILogEventSink
 
     public void Emit(Serilog.Events.LogEvent logEvent)
     {
-        if (_events.Count >= MaxLogsCount)
+        if (Events.Count >= MaxLogsCount)
         {
-            _events.TryDequeue(out _);
+            Events.TryDequeue(out _);
         }
-        _events.Enqueue(logEvent);
+        Events.Enqueue(logEvent);
     }
 }

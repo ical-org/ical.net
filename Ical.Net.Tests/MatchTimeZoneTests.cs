@@ -32,7 +32,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
@@ -78,7 +78,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
@@ -128,7 +128,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
@@ -161,7 +161,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
@@ -195,7 +195,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
@@ -228,7 +228,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 

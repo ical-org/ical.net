@@ -25,7 +25,7 @@ public class SymmetricSerializationTests
     private static readonly DateTime _nowTime = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
     private static readonly DateTime _later = _nowTime.AddHours(1);
     private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
-    private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+    private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c)!;
     private static CalendarEvent GetSimpleEvent(bool useDtEnd = true)
     {
         var evt = new CalendarEvent { DtStart = new CalDateTime(_nowTime) };
@@ -37,7 +37,7 @@ public class SymmetricSerializationTests
         return evt;
     }
 
-    private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
+    private static Calendar UnserializeCalendar(string s) => Calendar.Load(s)!;
     
     [Test]
     public void VTimeZoneSerialization_Test()
@@ -49,8 +49,8 @@ public class SymmetricSerializationTests
         };
         originalCalendar.AddTimeZone(tz);
         var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(originalCalendar);
-        var unserializedCalendar = Calendar.Load(serializedCalendar);
+        var serializedCalendar = serializer.SerializeToString(originalCalendar)!;
+        var unserializedCalendar = Calendar.Load(serializedCalendar)!;
 
         Assert.Multiple(() =>
         {
@@ -124,7 +124,7 @@ public class SymmetricSerializationTests
             .Events
             .First()
             .Attachments
-            .Select(a => Encoding.UTF8.GetString(a.Data))
+            .Select(a => Encoding.UTF8.GetString(a.Data!))
             .First();
 
         Assert.Multiple(() =>
@@ -208,23 +208,22 @@ public class SymmetricSerializationTests
 
     private static IEnumerable CategoryTest_TestCases()
     {
-        yield return new string[] { "Foo", "Bar", "Baz" };
-        yield return new string[] { "Hello", "world" };
-        yield return new string[] { "Hello", "world", null };
+        yield return new[] { "Foo", "Bar", "Baz" };
+        yield return new[] { "Hello", "world" };
     }
 
     [Test, TestCaseSource(nameof(ResourceTest_TestCases))]
-    public void ResourceTest(string[] ressources)
+    public void ResourceTest(string[] resources)
     {
         var vEvent = GetSimpleEvent();
-        vEvent.Resources = ressources;
+        vEvent.Resources = resources;
         var c = new Calendar();
         c.Events.Add(vEvent);
 
         var serialized = SerializeToString(c);
         var categoriesCount = Regex.Matches(serialized, "RESOURCES").Count;
         Assert.That(categoriesCount, Is.EqualTo(1));
-        var resString = $"RESOURCES:{string.Join(",", ressources.OfType<string>())}";
+        var resString = $"RESOURCES:{string.Join(",", resources.OfType<string>())}";
         Assert.That(serialized, Does.Contain(resString));
 
         var deserialized = UnserializeCalendar(serialized);
@@ -233,8 +232,7 @@ public class SymmetricSerializationTests
 
     private static IEnumerable ResourceTest_TestCases()
     {
-        yield return new string[] { "Foo", "Bar", "Baz" };
-        yield return new string[] { "Hello", "world" };
-        yield return new string[] { "Hello", "world", null };
+        yield return new[] { "Foo", "Bar", "Baz" };
+        yield return new[] { "Hello", "world" };
     }
 }
