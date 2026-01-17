@@ -52,11 +52,11 @@ public class SymmetricSerializationTests
         var serializedCalendar = serializer.SerializeToString(originalCalendar)!;
         var unserializedCalendar = Calendar.Load(serializedCalendar)!;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(unserializedCalendar.TimeZones, Is.EqualTo(originalCalendar.TimeZones).AsCollection);
             Assert.That(unserializedCalendar, Is.EqualTo(originalCalendar));
-        });
+        }
         Assert.That(unserializedCalendar.GetHashCode(), Is.EqualTo(originalCalendar.GetHashCode()));
     }
 
@@ -72,12 +72,12 @@ public class SymmetricSerializationTests
         var serialized = SerializeToString(calendar);
         var unserialized = UnserializeCalendar(serialized);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(unserialized.GetHashCode(), Is.EqualTo(calendar.GetHashCode()));
             Assert.That(calendar.Events.SequenceEqual(unserialized.Events), Is.True);
             Assert.That(unserialized, Is.EqualTo(calendar));
-        });
+        }
     }
 
     public static IEnumerable<ITestCaseData> AttendeeSerialization_TestCases()
@@ -127,10 +127,7 @@ public class SymmetricSerializationTests
             .Select(a => Encoding.UTF8.GetString(a.Data!))
             .First();
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(unserializedAttachment, Is.EqualTo(expectedAttachment));
-        });
+        Assert.That(unserializedAttachment, Is.EqualTo(expectedAttachment));
     }
 
     public static IEnumerable BinaryAttachment_TestCases()
@@ -171,12 +168,12 @@ public class SymmetricSerializationTests
             .Select(a => a.Uri)
             .Single();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(unserializedUri, Is.EqualTo(expectedUri));
             Assert.That(unserialized.GetHashCode(), Is.EqualTo(calendar.GetHashCode()));
             Assert.That(unserialized, Is.EqualTo(calendar));
-        });
+        }
     }
 
     public static IEnumerable UriAttachment_TestCases()

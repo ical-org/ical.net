@@ -44,12 +44,12 @@ public class PeriodListTests
         periodList[1] = period2;
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(period1, Is.EqualTo(retrievedPeriod));
             Assert.That(periodList.Contains(period1), Is.True);
             Assert.That(periodList[periodList.IndexOf(period2)], Is.EqualTo(period2));
-        });
+        }
     }
 
     [Test]
@@ -81,7 +81,7 @@ public class PeriodListTests
         periodList.Add(dateTimeUtcPeriod);
 
         // Act & Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(periodList.Count, Is.EqualTo(1));
 
@@ -95,7 +95,7 @@ public class PeriodListTests
             Assert.That(() => periodList.Insert(0, dateOnlyPeriod), Throws.ArgumentException);
             ;
             Assert.That(periodList.Count, Is.EqualTo(1));
-        });
+        }
 
     }
     [Test]
@@ -116,11 +116,11 @@ public class PeriodListTests
         periodList.Clear();
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(count, Is.EqualTo(2));
             Assert.That(periodList, Has.Count.EqualTo(0));
-        });
+        }
     }
 
     [Test]
@@ -134,7 +134,7 @@ public class PeriodListTests
         var periodList = PeriodList.FromStringReader(reader);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(periodList, Has.Count.EqualTo(2));
             Assert.That(periodList[0].StartTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 0, 0, 0, "UTC")));
@@ -142,7 +142,7 @@ public class PeriodListTests
             Assert.That(periodList[1].StartTime, Is.EqualTo(new CalDateTime(2025, 1, 2, 0, 0, 0, "UTC")));
             Assert.That(periodList[1].EndTime, Is.EqualTo(new CalDateTime(2025, 1, 2, 1, 0, 0, "UTC")));
             Assert.That(periodList.IsReadOnly, Is.EqualTo(false));
-        });
+        }
     }
 
     [Test]
@@ -160,11 +160,11 @@ public class PeriodListTests
         periodList.Insert(1, period2);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(periodList, Has.Count.EqualTo(3));
             Assert.That(periodList[1], Is.EqualTo(period2));
-        });
+        }
     }
 
     [Test]
@@ -183,10 +183,10 @@ public class PeriodListTests
         periodList.RemoveAt(1);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(periodList, Has.Count.EqualTo(2));
             Assert.That(periodList[1], Is.EqualTo(period3));
-        });
+        }
     }
 }

@@ -104,14 +104,16 @@ public class ProgramTest
             new CalDateTime(1998, 3, 31, 9, 0, 0, _tzid)
         }.Select(x => x.ToZonedDateTime()).ToArray();
 
-        for (var i = 0; i < dateTimes1.Length; i++)
+        using (Assert.EnterMultipleScope())
         {
-            var dt = dateTimes1[i];
-            var start = occurrences[i].Start;
-            Assert.Multiple(() =>
+            for (var i = 0; i < dateTimes1.Length; i++)
             {
-                Assert.That(start, Is.EqualTo(dt));
-            });
+                var dt = dateTimes1[i];
+                var start = occurrences[i].Start;
+                {
+                    Assert.That(start, Is.EqualTo(dt));
+                }
+            }
         }
 
         Assert.That(occurrences, Has.Count.EqualTo(dateTimes1.Length), "There should be exactly " + dateTimes1.Length + " occurrences; there were " + occurrences.Count);

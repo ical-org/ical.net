@@ -22,11 +22,11 @@ internal class CollectionHelpersTests
     [Test]
     public void ExDateTests()
     {
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(GetExceptionDates(), Is.Not.Null);
             Assert.That(GetExceptionDates(), Is.Not.EqualTo(null));
-        });
+        }
 
         var changedPeriod = GetExceptionDates();
         changedPeriod[0][0] = new Period(new CalDateTime(_now.AddHours(-1)), changedPeriod[0][0].EndTime);

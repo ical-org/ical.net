@@ -51,13 +51,12 @@ public class AttendeeTest
 
         evt.Attendees.Add(_attendees[0]);
         Assert.That(evt.Attendees, Has.Count.EqualTo(1));
-
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             //the properties below had been set to null during the Attendees.Add operation in NuGet version 2.1.4
             Assert.That(evt.Attendees[0].Role, Is.EqualTo(ParticipationRole.RequiredParticipant));
             Assert.That(evt.Attendees[0].ParticipationStatus, Is.EqualTo(EventParticipationStatus.Tentative));
-        });
+        }
     }
 
     [Test, Category("Attendee")]

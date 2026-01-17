@@ -34,7 +34,7 @@ public class DeserializationTests
         var attendee1 = evt.Attendees[0];
         var attendee2 = evt.Attendees[1];
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // Values
             Assert.That(attendee1.Value, Is.EqualTo(new Uri("mailto:joecool@example.com")));
@@ -43,8 +43,8 @@ public class DeserializationTests
             // MEMBERS
             Assert.That(attendee1.Members, Has.Count.EqualTo(1));
             Assert.That(attendee2.Members.Count, Is.EqualTo(0));
-        });
-        Assert.Multiple(() =>
+        }
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(attendee1.Members[0], Is.EqualTo(new Uri("mailto:DEV-GROUP@example.com").ToString()));
 
@@ -52,13 +52,13 @@ public class DeserializationTests
             Assert.That(attendee1.DelegatedFrom.Count, Is.EqualTo(0));
             Assert.That(attendee2.DelegatedFrom, Has.Count.EqualTo(1));
             Assert.That(attendee2.DelegatedFrom[0], Is.EqualTo(new Uri("mailto:immud@example.com").ToString()));
-        });
-        Assert.Multiple(() =>
+        }
+        using (Assert.EnterMultipleScope())
         {
             // DELEGATED-TO
             Assert.That(attendee1.DelegatedTo.Count, Is.EqualTo(0));
             Assert.That(attendee2.DelegatedTo.Count, Is.EqualTo(0));
-        });
+        }
     }
 
     /// <summary>
@@ -81,14 +81,14 @@ public class DeserializationTests
         // Values
         Assert.That(attendee1[0].Value, Is.EqualTo(new Uri("mailto:joecool@example.com")));
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // MEMBERS
             Assert.That(attendee1[0].Members, Has.Count.EqualTo(3));
             Assert.That(attendee1[0].Members[0], Is.EqualTo(new Uri("mailto:DEV-GROUP@example.com").ToString()));
             Assert.That(attendee1[0].Members[1], Is.EqualTo(new Uri("mailto:ANOTHER-GROUP@example.com").ToString()));
             Assert.That(attendee1[0].Members[2], Is.EqualTo(new Uri("mailto:THIRD-GROUP@example.com").ToString()));
-        });
+        }
     }
 
     /// <summary>
@@ -100,11 +100,11 @@ public class DeserializationTests
     public void Bug2033495()
     {
         var iCal = Calendar.Load(IcsFiles.Bug2033495)!;
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(iCal.Events, Has.Count.EqualTo(1));
             Assert.That(iCal.Properties["X-LOTUS-CHILD_UID"]?.Value, Is.EqualTo("XXX"));
-        });
+        }
     }
 
     /// <summary>
@@ -118,21 +118,18 @@ public class DeserializationTests
         Assert.That(iCal.Events, Has.Count.EqualTo(1));
 
         var evt = iCal.Events.First();
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(evt.Start?.HasTime, Is.True);
             Assert.That(evt.End?.HasTime, Is.True);
-        });
+        }
 
         var results = evt.GetOccurrences(new LocalDateTime(2010, 1, 17, 0, 0, 0).InZoneLeniently("Asia/Tokyo"))
             .TakeWhileBefore(new LocalDateTime(2010, 2, 1, 0, 0, 0).InZoneLeniently("Asia/Tokyo").ToInstant());
 
         foreach (var o in results)
         {
-            Assert.Multiple(() =>
-            {
-                Assert.That(o.Start.ToInstant(), Is.LessThan(o.End.ToInstant()));
-            });
+            Assert.That(o.Start.ToInstant(), Is.LessThan(o.End.ToInstant()));
         }
     }
 
@@ -201,11 +198,11 @@ public class DeserializationTests
     {
         var calendars = CalendarCollection.Load(IcsFiles.EmptyLines2);
         Assert.That(calendars, Has.Count.EqualTo(2));
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(calendars[0].Events, Has.Count.EqualTo(2), "iCalendar should have 2 events");
             Assert.That(calendars[1].Events, Has.Count.EqualTo(2), "iCalendar should have 2 events");
-        });
+        }
     }
 
     /// <summary>
@@ -260,11 +257,11 @@ public class DeserializationTests
         ProgramTest.TestCal(iCal);
         var evt = iCal.Events.First();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(evt.Uid, Is.EqualTo("uuid1153170430406"), "UID should be 'uuid1153170430406'; it is " + evt.Uid);
             Assert.That(evt.Sequence, Is.EqualTo(1), "SEQUENCE should be 1; it is " + evt.Sequence);
-        });
+        }
     }
 
     [Test]
@@ -314,11 +311,11 @@ public class DeserializationTests
         ProgramTest.TestCal(iCal);
         var evt = iCal.Events.First();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(evt.GeographicLocation?.Latitude, Is.EqualTo(37.386013), "Latitude should be 37.386013; it is not.");
             Assert.That(evt.GeographicLocation?.Longitude, Is.EqualTo(-122.082932), "Longitude should be -122.082932; it is not.");
-        });
+        }
     }
 
     [Test]
@@ -385,7 +382,7 @@ public class DeserializationTests
             .Union(iCal.Events[0]!.RecurrenceDates.GetAllDates())
             .ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(iCal.Events, Has.Count.EqualTo(1));
             Assert.That(iCal.Events[0]!.RecurrenceDatesPeriodLists, Has.Count.EqualTo(3));
@@ -398,7 +395,7 @@ public class DeserializationTests
             }
 
             Assert.That(iCal.Events[0]!.RecurrenceDates.Contains(new DataTypes.Period(expectedStartTimes[1], expectedEndTime)));
-        });
+        }
     }
 
     /// <summary>
@@ -412,39 +409,39 @@ public class DeserializationTests
         Assert.That(iCal.Events.First().RequestStatuses, Has.Count.EqualTo(4));
 
         var rs = iCal.Events.First().RequestStatuses[0];
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(rs.StatusCode?.Primary, Is.EqualTo(2));
             Assert.That(rs.StatusCode?.Secondary, Is.EqualTo(0));
             Assert.That(rs.Description, Is.EqualTo("Success"));
-        });
+        }
         Assert.That(rs.ExtraData, Is.Null);
 
         rs = iCal.Events.First().RequestStatuses[1];
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(rs.StatusCode?.Primary, Is.EqualTo(3));
             Assert.That(rs.StatusCode?.Secondary, Is.EqualTo(1));
             Assert.That(rs.Description, Is.EqualTo("Invalid property value"));
             Assert.That(rs.ExtraData, Is.EqualTo("DTSTART:96-Apr-01"));
-        });
+        }
 
         rs = iCal.Events.First().RequestStatuses[2];
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(rs.StatusCode?.Primary, Is.EqualTo(2));
             Assert.That(rs.StatusCode?.Secondary, Is.EqualTo(8));
             Assert.That(rs.Description, Is.EqualTo(" Success, repeating event ignored. Scheduled as a single event."));
             Assert.That(rs.ExtraData, Is.EqualTo("RRULE:FREQ=WEEKLY;INTERVAL=2"));
-        });
+        }
 
         rs = iCal.Events.First().RequestStatuses[3];
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(rs.StatusCode?.Primary, Is.EqualTo(4));
             Assert.That(rs.StatusCode?.Secondary, Is.EqualTo(1));
             Assert.That(rs.Description, Is.EqualTo("Event conflict. Date/time is busy."));
-        });
+        }
         Assert.That(rs.ExtraData, Is.Null);
     }
 
@@ -524,12 +521,12 @@ public class DeserializationTests
 
         var evt = iCal.Events.First();
         IList<CalendarParameter> parms = evt.Properties["DTSTART"]!.Parameters.AllOf("VALUE").ToList();
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(parms, Has.Count.EqualTo(2));
             Assert.That(parms[0].Values.First(), Is.EqualTo("DATE"));
             Assert.That(parms[1].Values.First(), Is.EqualTo("OTHER"));
-        });
+        }
     }
 
     /// <summary>
@@ -588,11 +585,11 @@ public class DeserializationTests
 
         var calendar = Calendar.Load(calStr)!;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(calendar.Events.Single().DtEnd != null, Is.EqualTo(useDtEnd));
             Assert.That(calendar.Events.Single().Duration != null, Is.EqualTo(!useDtEnd));
-        });
+        }
     }
 
     [Test]
@@ -610,13 +607,13 @@ public class DeserializationTests
         var calendar = Calendar.Load(ics)!;
         var deserialized = new CalendarSerializer(calendar).SerializeToString();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(calendar.ProductId, Is.EqualTo(null));
             Assert.That(calendar.Version, Is.EqualTo(null));
             // The serialized calendar should not contain the PRODID or VERSION properties, which are required
             Assert.That(deserialized, Does.Not.Contain("PRODID:").And.Not.Contains("VERSION:"));
-        });
+        }
     }
 
     [Test, Category("DurationSerializer")]
@@ -653,10 +650,10 @@ public class DeserializationTests
     [TestCase("Invalid")]
     public void Duration_InvalidArguments_ShouldThrow(string text)
     {
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(new DurationSerializer().Deserialize(new StringReader(text)), Is.Null);
             Assert.That(DataTypes.Duration.Parse(text), Is.Null);
-        });
+        }
     }
 }

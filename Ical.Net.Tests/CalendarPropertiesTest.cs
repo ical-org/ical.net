@@ -83,7 +83,7 @@ public class CalendarPropertiesTest
         var propDescription = calEvent.Properties.FirstOrDefault(x => x.Name == "X-ALT-DESC")!;
         var propProjects = calEvent.Properties.FirstOrDefault(x => x.Name == "X-PROJECTS")!;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(propDescription.Parameters, Has.Count.EqualTo(1));
             Assert.That(propDescription.Value, Is.EqualTo("<html><body>BodyText</body></html>"));
@@ -93,7 +93,7 @@ public class CalendarPropertiesTest
             Assert.That(propProjects.Value, Is.EqualTo("ProjectA,ProjectB"));
             Assert.That(propProjects.Parameters.FirstOrDefault(p => p.Name == "PROP")!.Value!.ToString(), Is.EqualTo("name"));
             Assert.That(propProjects.Parameters.FirstOrDefault(p => p.Name == "PRIO")!.Value!.ToString(), Is.EqualTo("high"));
-        });
+        }
     }
 
     [Test]

@@ -52,7 +52,7 @@ public class CopyComponentTests
         var serializedOrig = SerializeEvent(orig);
         var serializedCopy = SerializeEvent(copy);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // Should be a deep copy and changes only apply to the copy instance
             Assert.That(copy.Uid, Is.Not.EqualTo(orig.Uid));
@@ -65,7 +65,7 @@ public class CopyComponentTests
 
             Assert.That(Regex.Matches(serializedOrig, uidPattern, RegexOptions.Compiled, TimeSpan.FromSeconds(100)), Has.Count.EqualTo(1));
             Assert.That(Regex.Matches(serializedCopy, uidPattern, RegexOptions.Compiled, TimeSpan.FromSeconds(100)), Has.Count.EqualTo(1));
-        });
+        }
     }
 
     [Test]
@@ -80,7 +80,7 @@ public class CopyComponentTests
 
         var copy = orig.Copy<FreeBusy>()!;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // Start/DtStart and End/DtEnd are the same
             Assert.That(copy.Start, Is.EqualTo(orig.DtStart));
@@ -89,7 +89,7 @@ public class CopyComponentTests
             Assert.That(copy.Entries[0].StartTime, Is.EqualTo(orig.Entries[0].StartTime));
             Assert.That(copy.Entries[0].Duration, Is.EqualTo(orig.Entries[0].Duration));
             Assert.That(copy.Entries[0].Status, Is.EqualTo(orig.Entries[0].Status));
-        });
+        }
     }
 
     [Test]
@@ -104,12 +104,12 @@ public class CopyComponentTests
 
         var copy = orig.Copy<Alarm>()!;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(copy.Action, Is.EqualTo(orig.Action));
             Assert.That(copy.Trigger?.DateTime, Is.EqualTo(orig.Trigger.DateTime));
             Assert.That(copy.Description, Is.EqualTo(orig.Description));
-        });
+        }
     }
 
     [Test]
@@ -127,7 +127,7 @@ public class CopyComponentTests
 
         var copy = orig.Copy<Todo>()!;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(copy.Summary, Is.EqualTo(orig.Summary));
             Assert.That(copy.Description, Is.EqualTo(orig.Description));
@@ -135,7 +135,7 @@ public class CopyComponentTests
             Assert.That(copy.Priority, Is.EqualTo(orig.Priority));
             Assert.That(copy.Contacts, Is.EquivalentTo(orig.Contacts));
             Assert.That(copy.Status, Is.EqualTo(orig.Status));
-        });
+        }
     }
 
     [Test]
@@ -153,7 +153,7 @@ public class CopyComponentTests
 
         var copy = orig.Copy<Journal>()!;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(copy.Summary, Is.EqualTo(orig.Summary));
             Assert.That(copy.Description, Is.EqualTo(orig.Description));
@@ -161,6 +161,6 @@ public class CopyComponentTests
             Assert.That(copy.Categories, Is.EquivalentTo(orig.Categories));
             Assert.That(copy.Priority, Is.EqualTo(orig.Priority));
             Assert.That(copy.Status, Is.EqualTo(orig.Status));
-        });
+        }
     }
 }

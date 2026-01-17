@@ -20,12 +20,12 @@ public class JournalTest
         Assert.That(iCal.Journals, Has.Count.EqualTo(1));
         var j = iCal.Journals[0];
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(j, Is.Not.Null, "Journal entry was null");
             Assert.That(j!.Status, Is.EqualTo(JournalStatus.Draft), "Journal entry should have been in DRAFT status, but it was in " + j.Status + " status.");
             Assert.That(j.Class, Is.EqualTo("PUBLIC"), "Journal class should have been PUBLIC, but was " + j.Class + ".");
-        });
+        }
         Assert.That(j.Start, Is.Null);
     }
 
@@ -37,7 +37,7 @@ public class JournalTest
         Assert.That(iCal.Journals, Has.Count.EqualTo(1));
         var j = iCal.Journals.First();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(j, Is.Not.Null, "Journal entry was null");
             Assert.That(j.Status, Is.EqualTo(JournalStatus.Final), "Journal entry should have been in FINAL status, but it was in " + j.Status + " status.");
@@ -67,7 +67,7 @@ public class JournalTest
                 j.Organizer?.Value?.Host,
                 Is.EqualTo("host.com"));
             Assert.That(j.Start, Is.Null);
-        });
+        }
     }
 
     [Test, Category("Journal")]

@@ -57,17 +57,17 @@ public class CalendarEventTest
         };
 
         cal.Events.Add(evt);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(cal.Children, Has.Count.EqualTo(1));
             Assert.That(cal.Children[0], Is.SameAs(evt));
-        });
+        }
         cal.RemoveChild(evt);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(cal.Children.Count, Is.EqualTo(0));
             Assert.That(cal.Events.Count, Is.EqualTo(0));
-        });
+        }
     }
 
     /// <summary>
@@ -86,18 +86,18 @@ public class CalendarEventTest
         };
 
         cal.Events.Add(evt);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(cal.Children, Has.Count.EqualTo(1));
             Assert.That(cal.Children[0], Is.SameAs(evt));
-        });
+        }
 
         cal.Events.Remove(evt);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(cal.Children.Count, Is.EqualTo(0));
             Assert.That(cal.Events.Count, Is.EqualTo(0));
-        });
+        }
     }
 
     /// <summary>
@@ -196,11 +196,11 @@ public class CalendarEventTest
 
         var newResources = new[] { "Hello", "Goodbye" };
         e.Resources = new List<string>(newResources);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(newResources, Is.EquivalentTo(e.Resources));
             Assert.That(e.Resources.Any(r => resources.Contains(r)), Is.False);
-        });
+        }
 
         //See https://github.com/rianjs/ical.net/issues/208
         e.Resources = Array.Empty<string>();
@@ -265,13 +265,13 @@ public class CalendarEventTest
             DtStart = new CalDateTime(2025, 10, 11, 12, 13, 14, CalDateTime.UtcTzId)
         };
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(() => evt.DtEnd = new CalDateTime(2025, 12, 11), Throws.Nothing);
             Assert.That(() => evt.Duration = Duration.FromDays(1), Throws.InvalidOperationException);
             Assert.That(() => evt.DtEnd = null, Throws.Nothing);
             Assert.That(() => evt.Duration = Duration.FromDays(1), Throws.Nothing);
             Assert.That(() => evt.DtEnd = new CalDateTime(2025, 12, 11), Throws.InvalidOperationException);
-        });
+        }
     }
 }
