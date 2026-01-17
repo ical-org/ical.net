@@ -15,7 +15,7 @@ internal class InMemorySink : ILogEventSink
 {
     public static InMemorySink Instance = null!;
 
-    private ConcurrentQueue<Serilog.Events.LogEvent> Events { get; } = new();
+    private readonly ConcurrentQueue<Serilog.Events.LogEvent> _events = new();
 
     public InMemorySink()
     {
@@ -34,7 +34,7 @@ internal class InMemorySink : ILogEventSink
             var formatter = new MessageTemplateTextFormatter(OutputTemplate, CultureInfo.InvariantCulture);
             using var writer = new System.IO.StringWriter();
 
-            foreach (var logEvent in Events)
+            foreach (var logEvent in _events)
             {
                 formatter.Format(logEvent, writer);
                 yield return writer.ToString().TrimEnd(System.Environment.NewLine.ToCharArray());
@@ -45,10 +45,10 @@ internal class InMemorySink : ILogEventSink
 
     public void Emit(Serilog.Events.LogEvent logEvent)
     {
-        if (Events.Count >= MaxLogsCount)
+        if (_events.Count >= MaxLogsCount)
         {
-            Events.TryDequeue(out _);
+            _events.TryDequeue(out _);
         }
-        Events.Enqueue(logEvent);
+        _events.Enqueue(logEvent);
     }
 }

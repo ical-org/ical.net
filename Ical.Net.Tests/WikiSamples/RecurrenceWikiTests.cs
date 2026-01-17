@@ -131,8 +131,8 @@ internal class RecurrenceWikiTests
 
         // Calculate all occurrences
         var tz = TimeZoneResolvers.Default("Europe/Zurich");
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz).ToList();
-        Assert.That(occurrences.Count, Is.EqualTo(2));
+        var occurrences = calendar.GetOccurrences(tz).ToList();
+        Assert.That(occurrences, Has.Count.EqualTo(2));
 
         // Wiki code end
 

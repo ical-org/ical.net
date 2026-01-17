@@ -75,7 +75,7 @@ public class Organizer : EncodableDataType
 
     public Organizer() { }
 
-    public Organizer(string value) : this()
+    public Organizer(string? value) : this()
     {
         if (string.IsNullOrWhiteSpace(value))
         {

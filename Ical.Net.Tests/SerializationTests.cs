@@ -44,9 +44,9 @@ public class SerializationTests
                     if (((IComparable)p1.Value).CompareTo(p2.Value) != 0)
                         continue;
                 }
-                else if (p1.Value is IEnumerable)
+                else if (p1.Value is IEnumerable p1Enumerable)
                 {
-                    CompareEnumerables((IEnumerable)p1.Value, (IEnumerable) p2.Value!, p1.Name);
+                    Assert.That(p1Enumerable, Is.EquivalentTo((IEnumerable) p2.Value!));
                 }
                 else
                 {
@@ -74,24 +74,6 @@ public class SerializationTests
             {
                 Assert.That(child2, Is.EqualTo(child1), "The child objects are not equal.");
             }
-        }
-    }
-
-    public static void CompareEnumerables(IEnumerable? a1, IEnumerable? a2, string value)
-    {
-        if (a1 == null && a2 == null)
-        {
-            return;
-        }
-
-        Assert.That((a1 == null && a2 != null) || (a1 != null && a2 == null), Is.False, value + " do not match - one item is null");
-
-        var enum1 = a1!.GetEnumerator();
-        var enum2 = a2!.GetEnumerator();
-
-        while (enum1.MoveNext() && enum2.MoveNext())
-        {
-            Assert.That(enum2.Current, Is.EqualTo(enum1.Current), value + " do not match");
         }
     }
 
