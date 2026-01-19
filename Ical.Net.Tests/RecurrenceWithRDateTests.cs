@@ -3,17 +3,13 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
-using Ical.Net.Collections;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
-using NodaTime;
 using NUnit.Framework;
 using Duration = Ical.Net.DataTypes.Duration;
 using Period = Ical.Net.DataTypes.Period;
@@ -42,14 +38,14 @@ public class RecurrenceWithRDateTests
 
         var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(2));
             Assert.That(occurrences[0].Start, Is.EqualTo(new CalDateTime(2023, 10, 1, 10, 0, 0).ToZonedDateTime("America/New_York")));
             Assert.That(occurrences[1].Start, Is.EqualTo(new CalDateTime(2023, 10, 2, 10, 0, 0).ToZonedDateTime("America/New_York")));
             Assert.That(ics, Does.Contain("RDATE:20231002T100000"));
             Assert.That(ics, Does.Contain("DURATION:PT1H"));
-        });
+        }
     }
 
     [Test]
@@ -75,14 +71,14 @@ public class RecurrenceWithRDateTests
 
         var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(2));
             Assert.That(occurrences[0].Start, Is.EqualTo(new CalDateTime(2023, 10, 1, 10, 0, 0).ToZonedDateTime("America/New_York")));
             Assert.That(occurrences[1].Start, Is.EqualTo(new CalDateTime(2023, 10, 2).ToZonedDateTime("America/New_York")));
             Assert.That(ics, Does.Contain("RDATE;VALUE=DATE:20231002"));
             Assert.That(ics, Does.Not.Contain("DURATION:"));
-        });
+        }
     }
 
     [Test]
@@ -110,7 +106,7 @@ public class RecurrenceWithRDateTests
 
         var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone(tzId)).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(3));
             Assert.That(occurrences[0].Start, Is.EqualTo(new CalDateTime(2023, 10, 1, 10, 0, 0, tzId).ToZonedDateTime(tzId)));
@@ -118,7 +114,7 @@ public class RecurrenceWithRDateTests
             Assert.That(occurrences[2].Start, Is.EqualTo(new CalDateTime(2023, 10, 3, 10, 0, 0, tzId).ToZonedDateTime(tzId)));
             Assert.That(ics, Does.Contain("RDATE;TZID=America/New_York:20231002T100000,20231003T100000"));
             Assert.That(ics, Does.Contain("DURATION:PT2H"));
-        });
+        }
     }
 
     [Test]
@@ -145,11 +141,11 @@ public class RecurrenceWithRDateTests
         // Serialization
 
         var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = serializer.SerializeToString(cal)!;
 
         var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone(tzId)).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(3));
             Assert.That(occurrences[0].Start, Is.EqualTo(new CalDateTime(2023, 10, 1, 10, 0, 0, tzId).ToZonedDateTime(tzId)));
@@ -159,14 +155,14 @@ public class RecurrenceWithRDateTests
             Assert.That(occurrences[2].End, Is.EqualTo(new CalDateTime(2023, 10, 3, 15, 0, 0, tzId).ToZonedDateTime(tzId)));
             // Line folding is used for long lines
             Assert.That(ics, Does.Contain("RDATE;TZID=America/New_York;VALUE=PERIOD:20231002T100000/PT4H,20231003T1000\r\n 00/PT5H"));
-        });
+        }
 
         // Deserialization
 
         cal = Calendar.Load(ics)!;
         occurrences = cal.Events.First().GetOccurrences(DateUtil.GetZone(tzId)).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(3));
             Assert.That(occurrences[0].Start, Is.EqualTo(new CalDateTime(2023, 10, 1, 10, 0, 0, tzId).ToZonedDateTime(tzId)));
@@ -174,7 +170,7 @@ public class RecurrenceWithRDateTests
             Assert.That(occurrences[2].Start, Is.EqualTo(new CalDateTime(2023, 10, 3, 10, 0, 0, tzId).ToZonedDateTime(tzId)));
             Assert.That(occurrences[1].End, Is.EqualTo(new CalDateTime(2023, 10, 2, 14, 0, 0, tzId).ToZonedDateTime(tzId)));
             Assert.That(occurrences[2].End, Is.EqualTo(new CalDateTime(2023, 10, 3, 15, 0, 0, tzId).ToZonedDateTime(tzId)));
-        });
+        }
     }
 
     [Test]
@@ -197,7 +193,7 @@ public class RecurrenceWithRDateTests
 
         var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(3));
             Assert.That(occurrences[0].Start, Is.EqualTo(new CalDateTime(2023, 10, 1, 10, 0, 0).ToZonedDateTime("America/New_York")));
@@ -206,7 +202,7 @@ public class RecurrenceWithRDateTests
             Assert.That(occurrences[2].End, Is.EqualTo(new CalDateTime(2023, 10, 3, 13, 0, 0).ToZonedDateTime("America/New_York")));
             Assert.That(ics, Does.Contain("RDATE:20231002T100000"));
             Assert.That(ics, Does.Contain("RDATE;VALUE=PERIOD:20231003T100000/PT3H"));
-        });
+        }
     }
 
     [Test]
@@ -233,7 +229,7 @@ public class RecurrenceWithRDateTests
 
         var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(3));
             Assert.That(occurrences[0].Start,
@@ -244,7 +240,7 @@ public class RecurrenceWithRDateTests
                 Is.EqualTo(new CalDateTime(2023, 10, 3, 10, 0, 0, "Europe/London").ToZonedDateTime("America/New_York")));
             Assert.That(ics, Does.Contain("RDATE;TZID=America/Los_Angeles:20231002T100000"));
             Assert.That(ics, Does.Contain("RDATE;TZID=Europe/London:20231003T100000"));
-        });
+        }
     }
 
     [Test]
@@ -267,7 +263,7 @@ public class RecurrenceWithRDateTests
 
         var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(3));
             Assert.That(occurrences[0].Start, Is.EqualTo(eventStart.ToZonedDateTime("America/New_York")));
@@ -277,7 +273,7 @@ public class RecurrenceWithRDateTests
             Assert.That(ics, Does.Contain("RDATE;VALUE=PERIOD:20231002/P1D"));
             Assert.That(ics, Does.Contain("RDATE:20231003T100000"));
             Assert.That(ics, Does.Contain("DURATION:P2D"));
-        });
+        }
     }
 
     [Test]
@@ -304,14 +300,14 @@ public class RecurrenceWithRDateTests
 
         var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(3));
             Assert.That(occurrences[0].Start, Is.EqualTo(new CalDateTime(2023, 10, 1, 10, 0, 0).ToZonedDateTime("America/New_York")));
             Assert.That(occurrences[1].Start, Is.EqualTo(new CalDateTime(2023, 10, 2, 10, 0, 0).ToZonedDateTime("America/New_York")));
             Assert.That(occurrences[2].Start, Is.EqualTo(new CalDateTime(2023, 10, 2, 11, 0, 0).ToZonedDateTime("America/New_York")));
             Assert.That(ics, Does.Contain("RDATE;VALUE=PERIOD:20231002T100000/PT2H,20231002T110000/PT2H"));
-        });
+        }
     }
 
     [Test]
@@ -338,7 +334,7 @@ public class RecurrenceWithRDateTests
 
         var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(101)); // Including the original event
             for (var i = 0; i < 101; i++)
@@ -349,7 +345,7 @@ public class RecurrenceWithRDateTests
             Assert.That(ics, Does.Contain("RDATE:20231002T100000,20231003T100000,20231004T100000,20231005T100000,2023"));
             // Last folded line
             Assert.That(ics, Does.Contain(" 00,20240107T100000,20240108T100000,20240109T100000"));
-        });
+        }
     }
 
     [Test]
@@ -374,14 +370,14 @@ public class RecurrenceWithRDateTests
 
         var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(2));
             Assert.That(occurrences[0].Start, Is.EqualTo(eventStart.ToZonedDateTime("America/New_York")));
             Assert.That(occurrences[1].Start, Is.EqualTo(periodDuplicate.StartTime.ToZonedDateTime("America/New_York")));
 
             Assert.That(ics, Does.Contain("RDATE;VALUE=PERIOD:20231002T100000/PT2H"));
-        });
+        }
     }
 
     [Test]

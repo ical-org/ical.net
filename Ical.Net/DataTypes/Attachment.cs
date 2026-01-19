@@ -42,7 +42,7 @@ public class Attachment : EncodableDataType
         }
     }
 
-    public Attachment(string value) : this()
+    public Attachment(string? value) : this()
     {
         if (string.IsNullOrEmpty(value))
         {

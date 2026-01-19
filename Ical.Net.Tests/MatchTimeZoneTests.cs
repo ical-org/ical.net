@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -33,14 +32,14 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 13, 00, 00, CalDateTime.UtcTzId);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(until, Is.EqualTo(expectedUntil));
             Assert.That(occurrences.Count, Is.EqualTo(4));
@@ -55,7 +54,7 @@ public class MatchTimeZoneTests
                must NOT be included, because 20231105T130000Z => November 5, 2023: 08:00 AM (America/New_York)
                (Daylight Saving Time in America/New_York ended on Sunday, November 5, 2023, at 2:00 AM)
            */
-        });
+        }
     }
 
     [Test, Category("Recurrence")]
@@ -79,7 +78,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
@@ -91,7 +90,7 @@ public class MatchTimeZoneTests
         var occurrences = evt.GetOccurrences(new CalDateTime(2024, 10, 01).ToZonedDateTime("Australia/Sydney"))
             .TakeWhileBefore(new CalDateTime(2024, 10, 07));
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(until, Is.EqualTo(expectedUntil));
             Assert.That(occurrences.Count, Is.EqualTo(expectedOccurrences));
@@ -107,7 +106,7 @@ public class MatchTimeZoneTests
                October 6, 2024: 01:00 AM - 02:00 AM (UTC+1100) (Australia/Sydney)
                (Daylight Saving Time in Australia/Sydney starts on Sunday, October 6, 2024, at 2:00 AM)
            */
-        });
+        }
     }
 
     [Test, Category("Recurrence")]
@@ -129,18 +128,18 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, CalDateTime.UtcTzId);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
         
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(until, Is.EqualTo(expectedUntil));
             Assert.That(occurrences.Count, Is.EqualTo(5));
-        });
+        }
     }
 
     [Test, Category("Recurrence")]
@@ -162,18 +161,18 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, null);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(until, Is.EqualTo(expectedUntil));
             Assert.That(occurrences.Count, Is.EqualTo(5));
-        });
+        }
 
     }
 
@@ -196,18 +195,18 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, null);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
         
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(until, Is.EqualTo(expectedUntil));
             Assert.That(occurrences.Count, Is.EqualTo(5));
-        });
+        }
     }
 
     [Test, Category("Recurrence")]
@@ -229,17 +228,17 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical);
+        var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(until, Is.EqualTo(expectedUntil));
             Assert.That(occurrences.Count, Is.EqualTo(5));
-        });
+        }
     }
 }

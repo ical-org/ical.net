@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -121,11 +120,11 @@ public class RecurrenceTests
             {
                 var expectedStart = dt.InZoneLeniently(start.Zone);
                 var dt1 = dt.PlusHours(1).InZoneLeniently(start.Zone);
-                Assert.Multiple(() =>
+                using (Assert.EnterMultipleScope())
                 {
                     Assert.That(occurrences[i].Start, Is.EqualTo(expectedStart), "Event should occur at " + expectedStart);
                     Assert.That(occurrences[i + 1].Start, Is.EqualTo(dt1), "Event should occur at " + dt1);
-                });
+                }
                 i += 2;
             }
 
@@ -2321,13 +2320,13 @@ public class RecurrenceTests
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(recurringPeriods[0].Start, Is.EqualTo(new CalDateTime(2020, 1, 6).ToZonedDateTime(_tzid)));
             Assert.That(recurringPeriods[1].Start, Is.EqualTo(new CalDateTime(2020, 1, 13).ToZonedDateTime(_tzid)));
             Assert.That(recurringPeriods[2].Start, Is.EqualTo(new CalDateTime(2020, 1, 20).ToZonedDateTime(_tzid)));
             Assert.That(recurringPeriods[3].Start, Is.EqualTo(new CalDateTime(2020, 1, 27).ToZonedDateTime(_tzid)));
-        });
+        }
     }
 
     [Test, Category("Recurrence")]
@@ -2365,13 +2364,13 @@ public class RecurrenceTests
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(recurringPeriods[0].Start, Is.EqualTo(new CalDateTime(2020, 1, 6).ToZonedDateTime(_tzid)));
             Assert.That(recurringPeriods[1].Start, Is.EqualTo(new CalDateTime(2020, 1, 13).ToZonedDateTime(_tzid)));
             Assert.That(recurringPeriods[2].Start, Is.EqualTo(new CalDateTime(2020, 1, 20).ToZonedDateTime(_tzid)));
             Assert.That(recurringPeriods[3].Start, Is.EqualTo(new CalDateTime(2020, 1, 27).ToZonedDateTime(_tzid)));
-        });
+        }
     }
 
     /// <summary>
@@ -2547,13 +2546,13 @@ public class RecurrenceTests
         {
             var evt = o.Source as CalendarEvent;
             Assert.That(evt, Is.Not.Null);
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(items.ContainsKey(evt.Summary!), Is.True,
                     "Holiday text '" + evt.Summary + "' did not match known holidays.");
                 Assert.That(o.Start, Is.EqualTo(items[evt.Summary!].ToZonedDateTime(_tzid)),
                     "Date/time of holiday '" + evt.Summary + "' did not match.");
-            });
+            }
         }
     }
 
@@ -2592,11 +2591,11 @@ public class RecurrenceTests
             .Select(x => x.ToInstant())
             .ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences.Select(x => x.End.ToInstant() > x.Start.ToInstant()), Is.All.True);
             Assert.That(startDates, Is.EqualTo(expectedStartDates));
-        });
+        }
     }
 
     [Test, Category("Recurrence")]
@@ -2615,13 +2614,13 @@ public class RecurrenceTests
             .ToList();
 
         Assert.That(occurrences, Has.Count.EqualTo(4));
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences[0].Start, Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 40).ToZonedDateTime(_tzid)));
             Assert.That(occurrences[1].Start, Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 50).ToZonedDateTime(_tzid)));
             Assert.That(occurrences[2].Start, Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 00).ToZonedDateTime(_tzid)));
             Assert.That(occurrences[3].Start, Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 10).ToZonedDateTime(_tzid)));
-        });
+        }
     }
 
     [Test, Category("Recurrence")]
@@ -2691,7 +2690,7 @@ public class RecurrenceTests
     [Test, Category("Recurrence")]
     public void TryingToSetInvalidFrequency_ShouldThrow()
     {
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // Using the constructor
             Assert.That(() => _ = new RecurrencePattern((FrequencyType) int.MaxValue, 1),
@@ -2700,7 +2699,7 @@ public class RecurrenceTests
             // Using the property
             Assert.That(() => _ = new RecurrencePattern { Frequency = (FrequencyType) 9876543 },
                 Throws.TypeOf<ArgumentOutOfRangeException>());
-        });
+        }
     }
 
     [Test, Category("Recurrence")]
@@ -2745,7 +2744,7 @@ public class RecurrenceTests
             .ToList();
 
         Assert.That(periods, Has.Count.EqualTo(10));
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(periods[0].Start.Day, Is.EqualTo(2));
             Assert.That(periods[1].Start.Day, Is.EqualTo(3));
@@ -2757,7 +2756,7 @@ public class RecurrenceTests
             Assert.That(periods[7].Start.Day, Is.EqualTo(24));
             Assert.That(periods[8].Start.Day, Is.EqualTo(30));
             Assert.That(periods[9].Start.Day, Is.EqualTo(31));
-        });
+        }
     }
 
     [Test]
@@ -3003,19 +3002,19 @@ END:VCALENDAR";
 
         var expectedSept1Start = new CalDateTime(DateTime.Parse("2016-09-01T16:30:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
         var expectedSept1End = new CalDateTime(DateTime.Parse("2016-09-01T22:00:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(orderedOccurrences[3].Start, Is.EqualTo(expectedSept1Start));
             Assert.That(orderedOccurrences[3].End, Is.EqualTo(expectedSept1End));
-        });
+        }
 
         var expectedSept3Start = new CalDateTime(DateTime.Parse("2016-09-03T07:00:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
         var expectedSept3End = new CalDateTime(DateTime.Parse("2016-09-03T12:30:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(orderedOccurrences[5].Start, Is.EqualTo(expectedSept3Start));
             Assert.That(orderedOccurrences[5].End, Is.EqualTo(expectedSept3End));
-        });
+        }
     }
 
     [Test]
@@ -3668,7 +3667,7 @@ END:VCALENDAR";
         var serializer = new RecurrencePatternSerializer();
         var recurrencePattern = serializer.Deserialize(new StringReader(rRule)) as RecurrencePattern;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(recurrencePattern, Is.Not.Null);
             Assert.That(recurrencePattern?.Until, Is.Not.Null);
@@ -3676,7 +3675,7 @@ END:VCALENDAR";
                 Is.EqualTo(new CalDateTime(2025, 4, 30, 0, 0, 0, CalDateTime.UtcTzId)));
             Assert.That(recurrencePattern?.Frequency, Is.EqualTo(FrequencyType.Daily));
             Assert.That(recurrencePattern?.Interval, Is.EqualTo(2));
-        });
+        }
     }
 
     [Test]
@@ -3714,28 +3713,28 @@ END:VCALENDAR";
         var recurrencePattern =
             serializer.Deserialize(new StringReader(";FREQ=DAILY;INTERVAL=2;UNTIL=20250430T000000Z")) as
                 RecurrencePattern;
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(recurrencePattern, Is.Not.Null);
             Assert.That(recurrencePattern?.Until,
                 Is.EqualTo(new CalDateTime(2025, 4, 30, 0, 0, 0, CalDateTime.UtcTzId)));
             Assert.That(recurrencePattern?.Frequency, Is.EqualTo(FrequencyType.Daily));
             Assert.That(recurrencePattern?.Interval, Is.EqualTo(2));
-        });
+        }
     }
 
     [Test]
     public void Disallowed_Recurrence_RangeChecks_Should_Throw()
     {
         var serializer = new RecurrencePatternSerializer();
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(() => serializer.CheckMutuallyExclusive("a", "b", 1, CalDateTime.Now),
                 Throws.TypeOf<ArgumentOutOfRangeException>());
             Assert.That(() => serializer.CheckRange("a", 0, 1, 2, false), Throws.TypeOf<ArgumentOutOfRangeException>());
             Assert.That(() => serializer.CheckRange("a", (int?) 0, 1, 2, false),
                 Throws.TypeOf<ArgumentOutOfRangeException>());
-        });
+        }
     }
 
     [Test]
@@ -3760,7 +3759,7 @@ END:VCALENDAR";
 
         var occ = cal.GetOccurrences(tz).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occ.Count, Is.EqualTo(2));
 
@@ -3771,7 +3770,7 @@ END:VCALENDAR";
             Assert.That(occ[1].Start, Is.EqualTo(tz.MapLocal(new(2020, 10, 25, 2, 30, 0)).First()));
             Assert.That(occ[1].End, Is.EqualTo(tz.MapLocal(new(2020, 10, 25, 2, 15, 0)).Last()));
             Assert.That(occ[1].End - occ[1].Start, Is.EqualTo(NodaTime.Duration.FromMinutes(45)));
-        });
+        }
     }
 
     [Test]
@@ -3898,7 +3897,7 @@ END:VCALENDAR";
             .Take(5)
             .ToList();
 
-        var expectedDates = new string[]
+        var expectedDates = new[]
         {
             // RDATE
             "20250707T000000",
@@ -4185,20 +4184,20 @@ END:VCALENDAR";
         var firstOccurrence = occurrences.First();
         var firstStartCopy = firstStart.ToZonedDateTime(tz);
         var firstEndCopy = firstEnd.ToZonedDateTime(tz);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(firstOccurrence.Start, Is.EqualTo(firstStartCopy));
             Assert.That(firstOccurrence.End, Is.EqualTo(firstEndCopy));
-        });
+        }
 
         var secondOccurrence = occurrences.Last();
         var secondStartCopy = secondStart.ToZonedDateTime(tz);
         var secondEndCopy = secondEnd.ToZonedDateTime(tz);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(secondOccurrence.Start, Is.EqualTo(secondStartCopy));
             Assert.That(secondOccurrence.End, Is.EqualTo(secondEndCopy));
-        });
+        }
     }
 
     [Test]
@@ -4282,14 +4281,14 @@ END:VCALENDAR";
             .TakeWhileBefore(new CalDateTime("20161128T002000", "W. Europe Standard Time").ToInstant())
             .ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // endTime = 20161211T000000
             Assert.That(occurrences.Select(x => x.Start), Is.EqualTo(expectedStartDates));
 
             // endTime = 20161128T002000
             Assert.That(occurrences2.Select(x => x.Start), Is.EqualTo(expectedStartDates.Take(4)));
-        });
+        }
     }
 
     [Test]
@@ -4335,14 +4334,14 @@ END:VCALENDAR";
             new(2023, 12, 1)
         }.Select(x => x.ToZonedDateTime(tz)).ToList();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // For endTime=20231002
             Assert.That(occurrences.Select(x => x.Start), Is.EqualTo(expectedStartDates.Take(1)));
 
             // For endTime=20231231
             Assert.That(occurrences2.Select(x => x.Start), Is.EqualTo(expectedStartDates.Take(3)));
-        });
+        }
     }
 
     [Test]

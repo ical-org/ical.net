@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -83,13 +82,13 @@ public class RecurrenceTests_From_Issues
         var occurrence = occurrences.Single();
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences.Count(), Is.EqualTo(1));
             Assert.That(occurrence.Source, Is.SameAs(myEvent));
             Assert.That(occurrence.Start, Is.EqualTo(myEvent.Start.ToZonedDateTime(tzId)));
             Assert.That(occurrence.End, Is.EqualTo(myEvent.End.ToZonedDateTime(tzId)));
-        });
+        }
     }
 
     [Test]
@@ -117,13 +116,13 @@ public class RecurrenceTests_From_Issues
         var occurrence = occurrences.Single();
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences.Count(), Is.EqualTo(1));
             Assert.That(occurrence.Source, Is.SameAs(myEvent));
             Assert.That(occurrence.Start, Is.EqualTo(myEvent.Start.ToZonedDateTime(tzId)));
             Assert.That(occurrence.End, Is.EqualTo(myEvent.End.ToZonedDateTime(tzId)));
-        });
+        }
     }
 
     [Test]
@@ -153,13 +152,13 @@ public class RecurrenceTests_From_Issues
         var occurrence = occurrences.Single();
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences.Count, Is.EqualTo(1));
             Assert.That(occurrence.Source, Is.SameAs(myEvent));
             Assert.That(occurrence.Start, Is.EqualTo(myEvent.Start.ToZonedDateTime(timeZoneId)));
             Assert.That(occurrence.End, Is.EqualTo(myEvent.End.ToZonedDateTime(timeZoneId)));
-        });
+        }
     }
 
     [Test]
@@ -190,13 +189,13 @@ public class RecurrenceTests_From_Issues
         var occurrence = occurrences.Single();
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences.Count, Is.EqualTo(1));
             Assert.That(occurrence.Source, Is.SameAs(myEvent));
             Assert.That(occurrence.Start, Is.EqualTo(myEvent.Start.ToZonedDateTime(timeZoneId)));
             Assert.That(occurrence.End, Is.EqualTo(myEvent.End.ToZonedDateTime(timeZoneId)));
-        });
+        }
     }
 
     [Test]
@@ -225,14 +224,14 @@ public class RecurrenceTests_From_Issues
         var occurrence = occurrences.Single();
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(myEvent.IsAllDay, Is.True);
             Assert.That(occurrences.Count, Is.EqualTo(1));
             Assert.That(occurrence.Source, Is.SameAs(myEvent));
             Assert.That(occurrence.Start, Is.EqualTo(myEvent.Start.ToZonedDateTime(timeZoneId)));
             Assert.That(occurrence.End, Is.EqualTo(myEvent.End.ToZonedDateTime(timeZoneId)));
-        });
+        }
     }
 
     [Test]
@@ -261,14 +260,14 @@ public class RecurrenceTests_From_Issues
         var occurrence = occurrences.Single();
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences.Count, Is.EqualTo(1));
             Assert.That(occurrence.Source, Is.SameAs(myEvent));
             Assert.That(myEvent.IsAllDay, Is.True);
             Assert.That(occurrence.Start, Is.EqualTo(myEvent.Start.ToZonedDateTime(timeZoneId)));
             Assert.That(occurrence.End, Is.EqualTo(myEvent.End.ToZonedDateTime(timeZoneId)));
-        });
+        }
     }
 
     [Test]
@@ -499,7 +498,7 @@ public class RecurrenceTests_From_Issues
         var occurrences = vEvent.GetOccurrences(new CalDateTime(2017, 06, 01, 00, 00, 00)).TakeWhileBefore(new CalDateTime(2017, 06, 30, 23, 59, 0)).ToList();
         var excludedDays = new List<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday, DayOfWeek.Tuesday, DayOfWeek.Thursday };
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences.Count, Is.EqualTo(13));
             // Assert that none of the occurrences contain a weekday from the ByDay list
@@ -507,7 +506,7 @@ public class RecurrenceTests_From_Issues
             {
                 Assert.That(excludedDays, Does.Not.Contain(occurrence.Start.DayOfWeek.ToDayOfWeek()));
             }
-        });
+        }
     }
 
     [Test]

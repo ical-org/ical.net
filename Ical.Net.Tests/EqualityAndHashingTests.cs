@@ -26,13 +26,13 @@ public class EqualityAndHashingTests
     [Test, TestCaseSource(nameof(CalDateTime_TestCases))]
     public void CalDateTime_Tests(CalDateTime incomingDt, CalDateTime expectedDt)
     {
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(expectedDt.Value, Is.EqualTo(incomingDt.Value));
             Assert.That(expectedDt.GetHashCode(), Is.EqualTo(incomingDt.GetHashCode()));
             Assert.That(expectedDt.TzId, Is.EqualTo(incomingDt.TzId));
             Assert.That(incomingDt.Equals(expectedDt), Is.True);
-        });
+        }
     }
 
     public static IEnumerable CalDateTime_TestCases()
@@ -55,7 +55,7 @@ public class EqualityAndHashingTests
         DtEnd = new CalDateTime(_later),
     };
 
-    private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
+    private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } })!;
 
     [Test]
     public void Resources_Tests()
@@ -84,13 +84,13 @@ public class EqualityAndHashingTests
         e.Resources.AddRange(origContents);
         Assert.That(origContents, Is.EquivalentTo(e.Resources));
         serialized = SerializeEvent(e);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("Foo"));
             Assert.That(serialized, Does.Contain("Bar"));
             Assert.That(serialized, Does.Not.Contain("Baz"));
             Assert.That(serialized, Does.Not.Contain("Hello"));
-        });
+        }
     }
 
     private static (byte[] original, byte[] copy) GetAttachments()
@@ -104,11 +104,11 @@ public class EqualityAndHashingTests
     [Test, TestCaseSource(nameof(PeriodTestCases))]
     public void PeriodTests(Period a, Period b)
     {
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(b.GetHashCode(), Is.EqualTo(a.GetHashCode()));
             Assert.That(b, Is.EqualTo(a));
-        });
+        }
     }
 
     public static IEnumerable PeriodTestCases()
@@ -160,11 +160,11 @@ public class EqualityAndHashingTests
         var aThenB = new List<PeriodList> { a, b };
         var bThenA = new List<PeriodList> { b, a };
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(collectionEqual, Is.EqualTo(true));
             Assert.That(CollectionHelpers.Equals(aThenB, bThenA), Is.True);
-        });
+        }
     }
 
     [Test]
@@ -179,7 +179,7 @@ public class EqualityAndHashingTests
         Assert.That(asUtc, Is.Not.EqualTo(asLocal));
     }
 
-    private void TestComparison(Func<CalDateTime, CalDateTime, bool> calOp, Func<int?, int?, bool> intOp)
+    private void TestComparison(Func<CalDateTime?, CalDateTime?, bool> calOp, Func<int?, int?, bool> intOp)
     {
         int? intSome = 1;
         int? intGreater = 2;
@@ -187,7 +187,7 @@ public class EqualityAndHashingTests
         var dtSome = new CalDateTime(2018, 1, 1);
         var dtGreater = new CalDateTime(2019, 1, 1);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(calOp(null, null), Is.EqualTo(intOp(null, null)));
             Assert.That(calOp(null, dtSome), Is.EqualTo(intOp(null, intSome)));
@@ -195,7 +195,7 @@ public class EqualityAndHashingTests
             Assert.That(calOp(dtSome, dtSome), Is.EqualTo(intOp(intSome, intSome)));
             Assert.That(calOp(dtSome, dtGreater), Is.EqualTo(intOp(intSome, intGreater)));
             Assert.That(calOp(dtGreater, dtSome), Is.EqualTo(intOp(intGreater, intSome)));
-        });
+        }
     }
 
     [Test]

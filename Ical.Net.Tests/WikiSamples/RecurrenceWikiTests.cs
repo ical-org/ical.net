@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +12,6 @@ using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Tests.Logging;
 using Microsoft.Extensions.Logging;
-using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests.WikiSamples;
@@ -129,12 +127,12 @@ internal class RecurrenceWikiTests
 
         // Serialize Calendar to string
         var calendarSerializer = new CalendarSerializer();
-        var generatedIcs = calendarSerializer.SerializeToString(calendar);
+        var generatedIcs = calendarSerializer.SerializeToString(calendar)!;
 
         // Calculate all occurrences
         var tz = TimeZoneResolvers.Default("Europe/Zurich");
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
-        Assert.That(occurrences.Count(), Is.EqualTo(2));
+        var occurrences = calendar.GetOccurrences(tz).ToList();
+        Assert.That(occurrences, Has.Count.EqualTo(2));
 
         // Wiki code end
 

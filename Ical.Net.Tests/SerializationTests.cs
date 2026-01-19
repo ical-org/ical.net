@@ -26,10 +26,10 @@ public class SerializationTests
     private static readonly CalDateTime _nowTime = CalDateTime.Now;
     private static readonly CalDateTime _later = _nowTime.AddHours(1);
     private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
-    private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+    private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c)!;
     private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
     private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = _nowTime, Duration = (_later.Value - _nowTime.Value).ToDurationExact() };
-    private static Calendar DeserializeCalendar(string s) => Calendar.Load(s);
+    private static Calendar DeserializeCalendar(string s) => Calendar.Load(s)!;
 
     internal static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
     {
@@ -44,9 +44,9 @@ public class SerializationTests
                     if (((IComparable)p1.Value).CompareTo(p2.Value) != 0)
                         continue;
                 }
-                else if (p1.Value is IEnumerable)
+                else if (p1.Value is IEnumerable p1Enumerable)
                 {
-                    CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
+                    Assert.That(p1Enumerable, Is.EquivalentTo((IEnumerable) p2.Value!), message: p1.Name + " do not match");
                 }
                 else
                 {
@@ -74,24 +74,6 @@ public class SerializationTests
             {
                 Assert.That(child2, Is.EqualTo(child1), "The child objects are not equal.");
             }
-        }
-    }
-
-    public static void CompareEnumerables(IEnumerable a1, IEnumerable a2, string value)
-    {
-        if (a1 == null && a2 == null)
-        {
-            return;
-        }
-
-        Assert.That((a1 == null && a2 != null) || (a1 != null && a2 == null), Is.False, value + " do not match - one item is null");
-
-        var enum1 = a1.GetEnumerator();
-        var enum2 = a2.GetEnumerator();
-
-        while (enum1.MoveNext() && enum2.MoveNext())
-        {
-            Assert.That(enum2.Current, Is.EqualTo(enum1.Current), value + " do not match");
         }
     }
 
@@ -141,7 +123,7 @@ public class SerializationTests
         Assert.That(match.Success, Is.True, $"could not find a(n) '{name}' with value '{value}'");
         return match.Groups[1].Value.Length == 0
             ? new Dictionary<string, string>()
-            : match.Groups[1].Value.Substring(1).Split(';').Select(v => v.Split('=')).ToDictionary(v => v[0], v => v.Length > 1 ? v[1] : null);
+            : match.Groups[1].Value.Substring(1).Split(';').Select(v => v.Split('=')).ToDictionary(v => v[0], v => v.Length > 1 ? v[1] : string.Empty);
     }
 
     [Test, Category("Serialization")]
@@ -179,19 +161,19 @@ public class SerializationTests
 
         var vTimezone = InspectSerializedSection(serializedCalendar,
             "VTIMEZONE", ["TZID:" + vTz.TzId]);
-        var offset = tzInfos[0].OffsetTo!.ToString();
+        var offset = tzInfos[0]!.OffsetTo!.ToString();
 
         InspectSerializedSection(vTimezone, "STANDARD",
-            ["TZNAME:" + tzInfos[0].TimeZoneName, "TZOFFSETTO:" + offset]);
+            ["TZNAME:" + tzInfos[0]!.TimeZoneName, "TZOFFSETTO:" + offset]);
 
         InspectSerializedSection(vTimezone, "DAYLIGHT",
-            ["TZNAME:" + tzInfos[1].TimeZoneName, "TZOFFSETFROM:" + offset]);
+            ["TZNAME:" + tzInfos[1]!.TimeZoneName, "TZOFFSETFROM:" + offset]);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(deserializedCalendar.TimeZones, Has.Count.EqualTo(1));
-            Assert.That(deserializedCalendar.TimeZones[0].TimeZoneInfos, Has.Count.EqualTo(2));
-        });
+            Assert.That(deserializedCalendar.TimeZones[0]!.TimeZoneInfos, Has.Count.EqualTo(2));
+        }
     }
 
     [Test, Category("Serialization")]
@@ -224,11 +206,11 @@ public class SerializationTests
         var serializer = new CalendarSerializer();
         var serializedCalendar = serializer.SerializeToString(cal)!;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serializedCalendar.StartsWith("BEGIN:VCALENDAR"), Is.True);
             Assert.That(serializedCalendar.EndsWith("END:VCALENDAR" + SerializationConstants.LineBreak), Is.True);
-        });
+        }
 
         var expectProperties = new[] { "METHOD:PUBLISH", "VERSION:2.0" };
 
@@ -291,27 +273,27 @@ public class SerializationTests
         evt.Attendees[0].ParticipationStatus = EventParticipationStatus.Declined;
 
         var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(cal);
+        var serializedCalendar = serializer.SerializeToString(cal)!;
 
         var vEvt = InspectSerializedSection(serializedCalendar, "VEVENT", new[] { "ORGANIZER:" + org });
 
         foreach (var a in evt.Attendees)
         {
-            var vals = GetValues(vEvt, "ATTENDEE", a.Value.OriginalString.ToString());
+            var vals = GetValues(vEvt, "ATTENDEE", a.Value!.OriginalString.ToString());
             foreach (var v in new Dictionary<string, string>
             {
-                ["CN"] = a.CommonName,
-                ["ROLE"] = a.Role,
+                ["CN"] = a.CommonName!,
+                ["ROLE"] = a.Role!,
                 ["RSVP"] = a.Rsvp.ToString()
                     .ToUpperInvariant(),
-                ["PARTSTAT"] = a.ParticipationStatus
+                ["PARTSTAT"] = a.ParticipationStatus!
             })
             {
-                Assert.Multiple(() =>
+                using (Assert.EnterMultipleScope())
                 {
                     Assert.That(vals.ContainsKey(v.Key), Is.True, $"could not find key '{v.Key}'");
                     Assert.That(vals[v.Key], Is.EqualTo(v.Value), $"ATTENDEE prop '{v.Key}' differ");
-                });
+                }
             }
         }
     }
@@ -338,11 +320,11 @@ public class SerializationTests
         var c = new Calendar();
         c.Events.Add(e);
         var serialized = SerializeToString(c);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(e.Duration, Is.EqualTo(originalDuration));
             Assert.That(serialized, Does.Contain("DURATION"));
-        });
+        }
     }
 
     [Test]
@@ -422,12 +404,12 @@ public class SerializationTests
            """;
         var deserializedEvent = Calendar.Load<CalendarEvent>(ics).Single();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(deserializedEvent.Description, Does.Contain("\t"));
             Assert.That(deserializedEvent.Description, Does.Contain("�"));
             Assert.That(deserializedEvent.Description, Does.Contain("�"));
-        });
+        }
     }
 
     [Test]
@@ -455,17 +437,17 @@ public class SerializationTests
         var timeZone = Calendar.Load<VTimeZone>(ics).Single();
         Assert.That(timeZone, Is.Not.Null, "Expected the TimeZone to be successfully deserialized");
         var timeZoneInfos = timeZone.TimeZoneInfos;
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(timeZoneInfos, Is.Not.Null, "Expected TimeZoneInfos to be deserialized");
             Assert.That(timeZoneInfos, Has.Count.EqualTo(2), "Expected 2 TimeZoneInfos");
-            Assert.That(timeZoneInfos[0].Name, Is.EqualTo("STANDARD"));
-            Assert.That(timeZoneInfos[0].OffsetFrom, Is.EqualTo(new UtcOffset("+0200")));
-            Assert.That(timeZoneInfos[0].OffsetTo, Is.EqualTo(new UtcOffset("+0100")));
-            Assert.That(timeZoneInfos[1].Name, Is.EqualTo("DAYLIGHT"));
-            Assert.That(timeZoneInfos[1].OffsetFrom, Is.EqualTo(new UtcOffset("+0100")));
-            Assert.That(timeZoneInfos[1].OffsetTo, Is.EqualTo(new UtcOffset("+0200")));
-        });
+            Assert.That(timeZoneInfos[0]!.Name, Is.EqualTo("STANDARD"));
+            Assert.That(timeZoneInfos[0]!.OffsetFrom, Is.EqualTo(new UtcOffset("+0200")));
+            Assert.That(timeZoneInfos[0]!.OffsetTo, Is.EqualTo(new UtcOffset("+0100")));
+            Assert.That(timeZoneInfos[1]!.Name, Is.EqualTo("DAYLIGHT"));
+            Assert.That(timeZoneInfos[1]!.OffsetFrom, Is.EqualTo(new UtcOffset("+0100")));
+            Assert.That(timeZoneInfos[1]!.OffsetTo, Is.EqualTo(new UtcOffset("+0200")));
+        }
     }
 
     [Test]
@@ -486,7 +468,7 @@ public class SerializationTests
         {
             Events = { e },
         };
-        var serialized = new CalendarSerializer().SerializeToString(c);
+        var serialized = new CalendarSerializer().SerializeToString(c)!;
         var serializedUntilNotContainsZSuffix = serialized
             .Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
             .Single(line => line.StartsWith("RRULE:", StringComparison.Ordinal));
@@ -507,22 +489,22 @@ public class SerializationTests
 
         var serialized = new CalendarSerializer().SerializeToString(c);
         
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain($"PRODID:{c.ProductId}"));
             Assert.That(serialized, Does.Contain($"VERSION:{c.Version}"));
-        });
+        }
     }
 
     [Test]
     public void ProductId_and_Version_HaveDefaultValues()
     {
         var c = new Calendar();
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(c.ProductId, Is.EqualTo(LibraryMetadata.ProdId));
             Assert.That(c.Version, Is.EqualTo(LibraryMetadata.Version));
-        });
+        }
     }
 
     [Test]
@@ -545,8 +527,8 @@ public class SerializationTests
             },
         };
         var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(cal1);
-        var cal2 = Calendar.Load(serializedCalendar);
+        var serializedCalendar = serializer.SerializeToString(cal1)!;
+        var cal2 = Calendar.Load(serializedCalendar)!;
         Assert.That(cal2.Events.Single().Attachments.Single().FormatType, Is.EqualTo("application/json"));
     }
 
@@ -561,12 +543,12 @@ public class SerializationTests
             Summary = expectedString,
         };
 
-        var serialized = new CalendarSerializer().SerializeToString(e);
-        Assert.Multiple(() =>
+        var serialized = new CalendarSerializer().SerializeToString(e)!;
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized.Contains(expectedString, StringComparison.Ordinal), Is.True);
             Assert.That(!serialized.Contains("VCALENDAR", StringComparison.Ordinal), Is.True);
-        });
+        }
     }
 
     [TestCase("en-US")] // English (United States)
@@ -589,7 +571,7 @@ public class SerializationTests
             var culture = new CultureInfo(cultureStr);
             CultureInfo.CurrentCulture = culture;
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 // Deserialize
                 Assert.That(() => Calendar.Load(
@@ -603,8 +585,7 @@ public class SerializationTests
                     """), Throws.Nothing);
                 // Serialize
                 Assert.That(() => new DurationSerializer().SerializeToString(new Duration(null, -1)), Is.EqualTo("-P1D"));
-
-            });
+            }
         }    
         finally
         {
@@ -637,10 +618,10 @@ public class SerializationTests
         bool HasBom(byte[] bytes) =>
             bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(HasBom(noBomBytes), Is.False, "Stream should not contain a UTF-8 BOM");
             Assert.That(HasBom(withBomBytes), Is.True, "Stream should contain a UTF-8 BOM");
-        });
+        }
     }
 }
