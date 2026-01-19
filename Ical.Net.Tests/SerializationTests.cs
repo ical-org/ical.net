@@ -46,7 +46,7 @@ public class SerializationTests
                 }
                 else if (p1.Value is IEnumerable p1Enumerable)
                 {
-                    Assert.That(p1Enumerable, Is.EquivalentTo((IEnumerable) p2.Value!));
+                    Assert.That(p1Enumerable, Is.EquivalentTo((IEnumerable) p2.Value!), message: p1.Name + " do not match");
                 }
                 else
                 {
