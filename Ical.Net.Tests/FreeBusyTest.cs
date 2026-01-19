@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
@@ -37,7 +36,7 @@ public class FreeBusyTest
             new CalDateTime(2025, 10, 1, 0, 0, 0),
             new CalDateTime(2025, 10, 7, 11, 59, 59))!;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 7, 59, 59).ToTimeZone("America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Free));
@@ -47,7 +46,7 @@ public class FreeBusyTest
                 Is.EqualTo(FreeBusyStatus.Busy));
             Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 9, 0, 0).ToTimeZone("America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Free));
-        });
+        }
     }
 
     [Test, Category("FreeBusy")]
@@ -65,7 +64,7 @@ public class FreeBusyTest
             new CalDateTime(2025, 6, 1, 0, 0, 0, "UTC"),
             new CalDateTime(2025, 6, 7, 0, 0, 0, "UTC"))!;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // Period completely before the event (ends when event starts)
             var periodBefore = new Period(new CalDateTime(2025, 6, 1, 7, 0, 0, "UTC"),
@@ -90,7 +89,7 @@ public class FreeBusyTest
                                          new CalDateTime(2025, 6, 1, 12, 0, 0, "UTC"));
             Assert.That(freeBusy.GetFreeBusyStatus(periodAfter),
                 Is.EqualTo(FreeBusyStatus.Free));
-        });
+        }
     }
 
     [Test]
@@ -105,7 +104,7 @@ public class FreeBusyTest
 
         // Period with duration: effective end time = start + 1 hour (exclusive)
         var periodWithDuration = new FreeBusyEntry(new(new(start), Duration.FromHours(1)), FreeBusyStatus.Free);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(periodWithDuration.Contains(null), Is.False, "Contains should return false for null dt.");
             Assert.That(periodWithDuration.Contains(dtBefore), Is.False, "Contains should return false if dt is before start.");
@@ -113,7 +112,7 @@ public class FreeBusyTest
             Assert.That(periodWithDuration.Contains(dtMid), Is.True, "Contains should return true for dt in the middle.");
             Assert.That(periodWithDuration.Contains(dtAtEnd), Is.False, "Contains should return false for dt equal to effective end (exclusive).");
             Assert.That(periodWithDuration.Contains(dtAfter), Is.False, "Contains should return false for dt after effective end.");
-        });
+        }
     }
 
 
@@ -123,12 +122,12 @@ public class FreeBusyTest
         var f1 = new FreeBusyEntry(period1, FreeBusyStatus.Free);
         var f2 = period2 is null ? null : new FreeBusyEntry(period2, FreeBusyStatus.Free);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(f1.CollidesWith(f2), Is.EqualTo(expected));
 
             Assert.That(f2?.CollidesWith(f1) == true, Is.EqualTo(expected));
-        });
+        }
     }
 
     private static IEnumerable<TestCaseData> CollidesWithPeriodTestCases

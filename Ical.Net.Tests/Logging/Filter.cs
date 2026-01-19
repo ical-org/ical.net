@@ -1,7 +1,6 @@
 ﻿// Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 
-#nullable enable
 using Microsoft.Extensions.Logging;
 
 namespace Ical.Net.Tests.Logging;

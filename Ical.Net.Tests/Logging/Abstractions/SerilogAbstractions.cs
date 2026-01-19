@@ -2,7 +2,7 @@
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
-#nullable enable
+
 using System.Globalization;
 using Ical.Net.Tests.Logging.Adapters;
 using Microsoft.Extensions.Logging;

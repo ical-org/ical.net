@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using Ical.Net.CalendarComponents;
 using NUnit.Framework;
 
@@ -17,11 +16,11 @@ public class ComponentTest
         var iCal = new Calendar();
         var evt = iCal.Create<CalendarEvent>();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(evt.Uid, Is.Not.Null);
             Assert.That(evt.Created, Is.Null); // We don't want this to be set automatically
             Assert.That(evt.DtStamp, Is.Not.Null);
-        });
+        }
     }
 }

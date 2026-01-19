@@ -35,11 +35,11 @@ public class VTimeZoneTest
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("TZID:America/Phoenix"), "Time zone not found in serialization");
             Assert.That(serialized, Does.Contain("DTSTART:19670430T020000"), "Daylight savings for Phoenix was not serialized properly.");
-        });
+        }
     }
 
     [Test, Category("VTimeZone")]
@@ -49,11 +49,11 @@ public class VTimeZoneTest
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("TZID:America/Phoenix"), "Time zone not found in serialization");
             Assert.That(serialized, Does.Not.Contain("BEGIN:DAYLIGHT"), "Daylight savings should not exist for Phoenix.");
-        });
+        }
     }
 
     [Test, Category("VTimeZone")]
@@ -63,13 +63,13 @@ public class VTimeZoneTest
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("TZID:US Mountain Standard Time"), "Time zone not found in serialization");
             Assert.That(serialized, Does.Contain("BEGIN:STANDARD"));
             Assert.That(serialized, Does.Contain("BEGIN:DAYLIGHT"));
             Assert.That(serialized, Does.Contain("X-LIC-LOCATION"), "X-LIC-LOCATION was not serialized");
-        });
+        }
     }
 
     [Test, Category("VTimeZone")]
@@ -106,7 +106,7 @@ public class VTimeZoneTest
         var iCal = CreateTestCalendar("Europe/Moscow");
         var serializer = new CalendarSerializer();
         // Unwrap the lines to make it easier to search for specific values
-        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal));
+        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal)!);
 
         using (Assert.EnterMultipleScope())
         {
@@ -200,7 +200,7 @@ public class VTimeZoneTest
         var iCal = CreateTestCalendar("America/Anchorage");
         var serializer = new CalendarSerializer();
         // Unwrap the lines to make it easier to search for specific values
-        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal));
+        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal)!);
 
         using (Assert.EnterMultipleScope())
         {

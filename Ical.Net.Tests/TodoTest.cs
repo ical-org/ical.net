@@ -20,14 +20,14 @@ public class TodoTest
     [Test, TestCaseSource(nameof(ActiveTodo_TestCases)), Category("Todo")]
     public void ActiveTodo_Tests(string calendarString, IList<KeyValuePair<CalDateTime, bool>> incoming)
     {
-        var iCal = Calendar.Load(calendarString);
+        var iCal = Calendar.Load(calendarString)!;
         ProgramTest.TestCal(iCal);
         var todo = iCal.Todos;
 
         foreach (var calDateTime in incoming)
         {
             var dt = new CalDateTime(calDateTime.Key.Date, calDateTime.Key.Time, _tzid).ToZonedDateTime(_tzid);
-            Assert.That(todo[0].IsActive(dt), Is.EqualTo(calDateTime.Value));
+            Assert.That(todo[0]!.IsActive(dt), Is.EqualTo(calDateTime.Value));
         }
     }
 
@@ -169,14 +169,14 @@ public class TodoTest
     [Test, TestCaseSource(nameof(CompletedTodo_TestCases)), Category("Todo")]
     public void CompletedTodo_Tests(string calendarString, IList<KeyValuePair<CalDateTime, bool>> incoming)
     {
-        var iCal = Calendar.Load(calendarString);
+        var iCal = Calendar.Load(calendarString)!;
         ProgramTest.TestCal(iCal);
         var todo = iCal.Todos;
 
         foreach (var calDateTime in incoming)
         {
             var dt = new CalDateTime(calDateTime.Key.Date, calDateTime.Key.Time, _tzid).ToZonedDateTime(_tzid);
-            Assert.That(todo[0].IsCompleted(dt), Is.EqualTo(calDateTime.Value));
+            Assert.That(todo[0]!.IsCompleted(dt), Is.EqualTo(calDateTime.Value));
         }
     }
 
@@ -194,7 +194,7 @@ public class TodoTest
     [Test, Category("Todo")]
     public void Todo7_1()
     {
-        var iCal = Calendar.Load(IcsFiles.Todo7);
+        var iCal = Calendar.Load(IcsFiles.Todo7)!;
         var todo = iCal.Todos;
 
         var items = new List<CalDateTime>
@@ -211,7 +211,7 @@ public class TodoTest
             new CalDateTime(2007, 4, 6, 9, 0, 0, _tzid)
         }.Select(x => x.ToZonedDateTime(_tzid)).ToList();
 
-        var occurrences = todo[0].GetOccurrences(
+        var occurrences = todo[0]!.GetOccurrences(
             new CalDateTime(2006, 7, 1, 9, 0, 0).ToZonedDateTime(_tzid))
             .TakeWhileBefore(new CalDateTime(2007, 7, 1, 9, 0, 0).ToZonedDateTime(_tzid).ToInstant()).ToList();
 

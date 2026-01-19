@@ -3,9 +3,7 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System;
-using System.Collections.Generic;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using NUnit.Framework;
@@ -22,7 +20,7 @@ public class PeriodTests
         var periodWithEndTime = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"), new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York"));
         var periodWithDuration = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"), Duration.FromHours(1));
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(period.StartTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
             Assert.That(period.EndTime, Is.Null);
@@ -33,13 +31,13 @@ public class PeriodTests
             Assert.That(periodWithDuration.StartTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
 
             Assert.That(Period.Create(period.StartTime).Duration, Is.Null);
-        });
+        }
     }
 
     [Test]
     public void CreatePeriodWithInvalidArgumentsShouldThrow()
     {
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // EndTime is before StartTime
             Assert.Throws<ArgumentException>(() => _ = new Period(
@@ -58,7 +56,7 @@ public class PeriodTests
             // StartTime is date-only while EndTime has time
             Assert.Throws<ArgumentException>(() => _ = new Period(new CalDateTime(2025, 1, 2, 0, 0, 0),
                 new CalDateTime(2025, 1, 1)));
-        });
+        }
     }
 
     [Test]
@@ -74,13 +72,13 @@ public class PeriodTests
                 new CalDateTime(2025, 1, 1, 0, 0, 0, null))
         };
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             foreach (var p in periods)
             {
                 Assert.Throws<ArgumentException>(() => _ = new Period(p.Item1, p.Item2));
             }
-        });
+        }
     }
 
     [Test]
@@ -89,7 +87,7 @@ public class PeriodTests
         var dt = new CalDateTime(2025, 6, 1, 0, 0, 0, "Europe/Vienna")
             .ToZonedDateTime();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(new EvaluationPeriod(dt).CompareTo(null),
                 Is.EqualTo(1));
@@ -99,7 +97,7 @@ public class PeriodTests
                 Is.EqualTo(1));
             Assert.That(new EvaluationPeriod(dt).CompareTo(new EvaluationPeriod(dt.PlusHours(1))),
                 Is.EqualTo(-1));
-        });
+        }
     }
 
 
@@ -122,7 +120,7 @@ public class PeriodTests
         var period2 = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"), duration1);
         var period3 = new Period(start, duration2);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // Test equality for identical periods.
             Assert.That(period1.Equals(period2), Is.True,
@@ -147,8 +145,8 @@ public class PeriodTests
                 "A period should not equal null.");
 
             // Test equality with object of different type.
-            Assert.That(period1.Equals("string"), Is.False,
+            Assert.That(period1!.Equals("string"), Is.False,
                 "A period should not be equal to an object of different type.");
-        });
+        }
     }
 }

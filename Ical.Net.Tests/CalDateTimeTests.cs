@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
@@ -45,12 +44,12 @@ public class CalDateTimeTests
         var floating = dt.ToTimeZone(null);
         var dt2 = floating.ToTimeZone("Europe/Vienna");
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(dt, Is.EqualTo(dt2));
             Assert.That(floating.TzId, Is.Null);
             Assert.That(floating.Value, Is.EqualTo(dt.Value));
-        });
+        }
     }
 
     [Test, TestCaseSource(nameof(ToTimeZoneTestCases))]
@@ -288,13 +287,13 @@ public class CalDateTimeTests
     {
         var dt = new CalDateTime(2025, 1, 15);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(() => dt.Add(Duration.FromHours(1)), Throws.TypeOf<InvalidOperationException>());
             Assert.That(() => dt.AddHours(2), Throws.TypeOf<InvalidOperationException>());
             Assert.That(() => dt.AddMinutes(3), Throws.TypeOf<InvalidOperationException>());
             Assert.That(() => dt.AddSeconds(4), Throws.TypeOf<InvalidOperationException>());
-        });
+        }
     }
 
     [Test]
@@ -309,7 +308,7 @@ public class CalDateTimeTests
         var c3 = new CalDateTime(new NodaTime.LocalDate(dt.Year, dt.Month, dt.Day),
             new NodaTime.LocalTime(dt.Hour, dt.Minute, dt.Second), c.TzId);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(c2.Value, Is.EqualTo(c3.Value));
             Assert.That(c2.TzId, Is.EqualTo(c3.TzId));
@@ -319,7 +318,7 @@ public class CalDateTimeTests
             Assert.That(c.Time, Is.EqualTo(NodaTime.LocalDateTime.FromDateTime(dt).TimeOfDay));
             Assert.That(c.Add(-Duration.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));
             Assert.That(c.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture), Is.EqualTo("02.01.2025 Europe/Berlin"));
-        });
+        }
     }
 
     private static TestCaseData[] CalDateTime_FromDateTime_HandlesKindCorrectlyTestCases =>
@@ -344,14 +343,14 @@ public class CalDateTimeTests
     public void ConstructorWithIso8601UtcString_ShouldResultInUtc(string value, string? tzId)
     {
         var dt = new CalDateTime(value, tzId);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(dt.Value, Is.EqualTo(new DateTime(2025, 7, 3, 6, 0, 0, DateTimeKind.Utc)));
 #pragma warning disable CA1305
             Assert.That(dt.ToString("yyyy-MM-dd HH:mm:ss"), Is.EqualTo("2025-07-03 06:00:00 UTC"));
 #pragma warning restore CA1305
             Assert.That(dt.IsUtc, Is.True);
-        });
+        }
     }
 
     [Test]
