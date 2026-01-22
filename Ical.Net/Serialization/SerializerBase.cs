@@ -33,6 +33,13 @@ public abstract class SerializerBase : IStringSerializer
     public abstract string? SerializeToString(object? obj);
     public abstract object? Deserialize(TextReader tr);
 
+    public virtual object? Deserialize(ReadOnlySpan<char> value)
+    {
+        // Default implementation for backward compatibility
+        using var reader = new StringReader(value.ToString());
+        return Deserialize(reader);
+    }
+
     public object? Deserialize(Stream stream, Encoding encoding)
     {
         using var sr = new StreamReader(stream, encoding);

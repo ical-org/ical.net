@@ -434,9 +434,7 @@ private static ParserState ProcessNormal(
         var type = _dataTypeMapper.GetPropertyMapping(property) ?? typeof(string);
         var serializer = _serializerFactory.Build(type, context) as SerializerBase;
 
-        using var valueReader = new StringReader(value.ToString());
-        // Missing overload for ReadOnlySpan<char>, so we use StringReader
-        var propertyValue = serializer?.Deserialize(valueReader);
+        var propertyValue = serializer?.Deserialize(value);
 
         if (propertyValue is IEnumerable<string> propertyValues)
         {
