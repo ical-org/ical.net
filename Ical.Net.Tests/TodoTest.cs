@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -237,5 +238,34 @@ public class TodoTest
 
         Assert.That(firstOccurrence, Is.Not.Null);
         Assert.That(firstOccurrence.Start, Is.EqualTo(firstOccurrence.End));
+    }
+
+    [Test, Category("Todo")]
+    public void Todo_RecurrenceWithNoEnd_IsCompletedUntilNextOccurrence()
+    {
+        var start = new CalDateTime(2026, 1, 15, 0, 0, 0, "UTC");
+
+        var todo = new Todo
+        {
+            Start = start,
+            RecurrenceRules = [new("FREQ=DAILY;BYDAY=TH")],
+        };
+
+        todo.Status = "COMPLETED";
+        todo.Completed = new CalDateTime(new LocalDate(2026, 1, 16)
+            .AtMidnight()
+            .InUtc()
+            .ToInstant());
+
+        var results = Enumerable.Range(14, 10)
+            .Select(x => new LocalDate(2026, 1, x))
+            .Select(x => todo.IsCompleted(x.AtMidnight().InUtc()))
+            .ToList();
+
+        // Jan 14-21: true (8 days) - TODO is considered completed
+        // Jan 22-23: false (2 days) - TODO is NOT completed
+        List<bool> expected = [true, true, true, true, true, true, true, true, false, false];
+
+        Assert.That(results, Is.EquivalentTo(expected));
     }
 }
