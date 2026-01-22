@@ -3,14 +3,11 @@
 // Licensed under the MIT license.
 //
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
-using NodaTime;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -106,54 +103,23 @@ public class Todo : RecurringComponent, IAlarmContainer
     }
 
     /// <summary>
-    /// Use this method to determine if an item has been completed.
-    /// This takes into account recurrence items and the previous date
-    /// of completion, if any.
-    /// <note>
-    /// This method evaluates the recurrence pattern for this item
-    /// as necessary to ensure all relevant information is taken
-    /// into account to give the most accurate result possible.
-    /// </note>
+    /// Is <c>true</c> if the item is completed. An item is
+    /// completed if <c>Status</c> is set to completed,
+    /// <c>Completed</c> has a value, or
+    /// <c>PercentComplete</c> is 100%.
     /// </summary>
-    /// <returns>True if the item has been completed</returns>
-    public virtual bool IsCompleted(ZonedDateTime currDt)
-    {
-        if (Status == TodoStatus.Completed)
-        {
-            if (Completed == null)
-            {
-                return true;
-            }
-
-            var completed = Completed.ToZonedDateTime(currDt.Zone);
-
-            if (completed.ToInstant() > currDt.ToInstant())
-            {
-                return true;
-            }
-
-            // Evaluate to the previous occurrence.
-            var periods = _mEvaluator.EvaluateToPreviousOccurrence(completed, currDt, options: null);
-
-            return periods.All(p => p.Start.ToInstant() <= completed.ToInstant() || currDt.ToInstant() < p.Start.ToInstant());
-        }
-        return false;
-    }
+    public virtual bool IsCompleted => Status == TodoStatus.Completed
+        || Completed != null
+        || PercentComplete == 100;
 
     /// <summary>
-    /// Returns 'True' if the item is Active as of <paramref name="currDt"/>.
-    /// An item is Active if it requires action of some sort.
+    /// Is <c>true</c> if the item not completed or cancelled.
     /// </summary>
-    /// <param name="currDt">The date and time to test.</param>
-    /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
-    public virtual bool IsActive(ZonedDateTime value)
-        => (DtStart == null || value.ToInstant() >= DtStart.ToZonedDateTime(value.Zone).ToInstant())
-           && (!IsCompleted(value) && !IsCancelled);
+    public virtual bool IsActive => !IsCompleted && !IsCancelled;
 
     /// <summary>
-    /// Returns True if the item was cancelled.
+    /// Is <c>true</c> if item <c>Status</c> is set to cancelled.
     /// </summary>
-    /// <returns>True if the item was cancelled, False otherwise.</returns>
     public virtual bool IsCancelled => string.Equals(Status, TodoStatus.Cancelled, TodoStatus.Comparison);
 
     public override IEvaluator Evaluator => _mEvaluator;
