@@ -293,13 +293,7 @@ public class ZCharArrayTests
 
     [Test]
     public void Constants_ShouldHaveExpectedValues()
-    {
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(ZCharArray.DefaultBufferCapacity, Is.EqualTo(10_000_000));
-            Assert.That(ZCharArray.MaxBufferCapacity, Is.EqualTo(100_000_000));
-        }
-    }
+        => Assert.That(ZCharArray.DefaultBufferCapacity, Is.EqualTo(10_000_000));
 
     [Test]
     public void LargeDataWrite_ShouldHandleCorrectly()

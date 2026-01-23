@@ -71,8 +71,13 @@ public class SimpleDeserializer
         var stack = new Stack<ICalendarComponent?>();
         ICalendarComponent? currentComponent = null;
 
-        foreach (var contentLine in ReadContentLines(reader))
+        // Note: ReadContentLines yields volatile ReadOnlyMemory<char> segments
+        //       pointing to a shared buffer that is reused for subsequent lines.
+        //       Each segment must be consumed or copied before the next iteration.
+        //       It cannot be used with LINQ methods.
+        foreach (var contentLine in ReadContentLinesUnsafe(reader))
         {
+            // Parse the content line into a CalendarProperty immediately
             var calProperty = ParseContentLine(context, contentLine.Span);
 
             if (string.Equals(calProperty.Name, "BEGIN", StringComparison.OrdinalIgnoreCase))
@@ -271,84 +276,85 @@ public class SimpleDeserializer
         }
     }
 
-/// <summary>
-/// Reads unfolded content lines from the specified text reader
-/// according to RFC 5545 line folding rules.
-/// </summary>
-/// <remarks>
-/// This method processes input according to the iCalendar (RFC 5545) specification, combining
-/// folded lines into single logical lines. RFC 5545 mandates CRLF (\\r\\n) line endings, but this
-/// implementation accepts standalone LF (\\n) and bare CR (\\r) for practical interoperability,
-/// and matching compatibility with the former TextReader.ReadLine() behavior.
-/// The caller is responsible for disposing the provided reader if necessary.
-/// </remarks>
-/// <param name="reader">The text reader from which to read the content lines. Cannot be null.</param>
-/// <returns>
-/// An enumerable collection of Memory segments, each representing a logical content line with line folding removed.
-/// The collection is empty if no lines are present.</returns>
-private static IEnumerable<ReadOnlyMemory<char>> ReadContentLines(TextReader reader)
-{
-    var buffer = System.Buffers.ArrayPool<char>.Shared.Rent(8192);
-
-    // Use ZCharArray to accumulate the unfolded content into a single rented buffer
-    // It is explicitly disposed after the iteration is complete, ensuring the Memory<char> segments
-    // refer to a valid array throughout the deserialization process.
-    var unfoldedBuffer = new ZCharArray(ZCharArray.DefaultBufferCapacity);
-
-    // Track indices for yielding segments later
-    var lineBoundaries = new List<(int Start, int Length)>();
-    var state = ParserState.Normal;
-    var currentLineStart = 0;
-
-    try
+    /// <summary>
+    /// Reads unfolded content lines from the specified text reader
+    /// according to RFC 5545 line folding rules.
+    /// </summary>
+    /// <remarks>
+    /// This method processes input according to the iCalendar (RFC 5545) specification, combining
+    /// folded lines into single logical lines. RFC 5545 mandates CRLF (\\r\\n) line endings, but this
+    /// implementation accepts standalone LF (\\n) and bare CR (\\r) for practical interoperability,
+    /// and matching compatibility with the former TextReader.ReadLine() behavior.
+    /// <para/>
+    /// <b>IMPORTANT</b>: This method uses a <b>volatile buffer approach</b> for zero-allocation streaming.
+    /// Each yielded ReadOnlyMemory&lt;char&gt; points to a shared buffer that is reused for subsequent lines.
+    /// Callers <b>MUST</b> consume or copy the data before requesting the next line, as the buffer contents
+    /// will be overwritten.
+    /// The caller is responsible for disposing the provided reader if necessary.
+    /// </remarks>
+    /// <param name="reader">The text reader from which to read the content lines. Cannot be null.</param>
+    /// <returns>
+    /// An enumerable collection of volatile Memory segments, each representing a logical content line with line folding removed.
+    /// The collection is empty if no lines are present. Each segment is valid only until the next iteration.</returns>
+    private static IEnumerable<ReadOnlyMemory<char>> ReadContentLinesUnsafe(TextReader reader)
     {
-        int charsRead;
-        while ((charsRead = reader.Read(buffer, 0, buffer.Length)) > 0)
-        {
-            for (var i = 0; i < charsRead; i++)
-            {
-                var c = buffer[i];
+        var buffer = System.Buffers.ArrayPool<char>.Shared.Rent(8192);
 
-                state = state switch
+        // Use ZCharArray as a volatile buffer for the unfolded content, using zero-allocation streaming.
+        // The buffer is reused (reset) after each line is yielded.
+        var unfoldedBuffer = new ZCharArray(ZCharArray.DefaultBufferCapacity);
+
+        var state = ParserState.Normal;
+
+        try
+        {
+            int charsRead;
+            while ((charsRead = reader.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                for (var i = 0; i < charsRead; i++)
                 {
-                    ParserState.FoldCheck => ProcessFoldCheck(c, ref unfoldedBuffer, ref currentLineStart, ref i,
-                        lineBoundaries),
-                    ParserState.SawCr => ProcessSawCr(c, ref i),
-                    ParserState.Normal => ProcessNormal(buffer, charsRead, ref unfoldedBuffer, ref i),
-                    _ => state
-                };
+                    var c = buffer[i];
+                    var shouldYield = false;
+
+                    state = state switch
+                    {
+                        ParserState.FoldCheck => ProcessFoldCheck(c, ref unfoldedBuffer, ref i, out shouldYield),
+                        ParserState.SawCr => ProcessSawCr(c, ref i),
+                        ParserState.Normal => ProcessNormal(buffer, charsRead, ref unfoldedBuffer, ref i),
+                        _ => state
+                    };
+
+                    if (shouldYield && unfoldedBuffer.Length > 0) //NOSONAR - false positive 'always evaluates to false'
+                    {
+                        // Yield the current line as a !!! volatile ReadOnlyMemory !!! pointing to the shared buffer
+                        yield return new ReadOnlyMemory<char>(unfoldedBuffer.UnderlyingArray, 0, unfoldedBuffer.Length);
+
+                        // Reset the buffer for reuse with the next line
+                        unfoldedBuffer.Reset();
+                    }
+                }
+            }
+
+            // Yield the final line as a !!! volatile ReadOnlyMemory !!! if the buffer isn't empty
+            if (unfoldedBuffer.Length > 0)
+            {
+                yield return new ReadOnlyMemory<char>(unfoldedBuffer.UnderlyingArray, 0, unfoldedBuffer.Length);
             }
         }
-
-        // Record the final line if the buffer isn't empty
-        var finalLength = unfoldedBuffer.Length - currentLineStart;
-        if (finalLength > 0)
+        finally
         {
-            lineBoundaries.Add((currentLineStart, finalLength));
-        }
-
-        // Access the underlying char array to yield Memory slices
-        var underlyingArray = unfoldedBuffer.UnderlyingArray;
-        foreach (var (start, len) in lineBoundaries)
-        {
-            yield return new ReadOnlyMemory<char>(underlyingArray, start, len);
+            // Must be explicitly disposed, because 'using'
+            // is not allowed when passing the array by ref to methods.
+            unfoldedBuffer.Dispose();
+            System.Buffers.ArrayPool<char>.Shared.Return(buffer);
         }
     }
-    finally
-    {
-        // Must be explicitly disposed, because 'using'
-        // is not allowed when passing the array by ref to methods.
-        unfoldedBuffer.Dispose();
-        System.Buffers.ArrayPool<char>.Shared.Return(buffer);
-    }
-}
 
-private static ParserState ProcessFoldCheck(
+    private static ParserState ProcessFoldCheck(
     char c,
     ref ZCharArray unfoldedBuffer,
-    ref int currentLineStart,
     ref int i,
-    List<(int Start, int Length)> lineBoundaries)
+    out bool shouldYield)
     {
         /*
         Handling folded lines per RFC 5545:
@@ -365,19 +371,16 @@ private static ParserState ProcessFoldCheck(
                 as part of the same logical line
         */
 
+        shouldYield = false;
+
         // If the char after a newline is Space or Tab, it's a fold.
         if (c == ' ' || c == '\t')
         {
             return ParserState.Normal;
         }
 
-        // Not a fold. Record the segment for the completed line.
-        var length = unfoldedBuffer.Length - currentLineStart;
-        if (length > 0)
-        {
-            lineBoundaries.Add((currentLineStart, length));
-        }
-        currentLineStart = unfoldedBuffer.Length;
+        // Not a fold. Signal that the current line should be yielded.
+        shouldYield = unfoldedBuffer.Length > 0;
 
         // We must re-evaluate this character in the 'Normal' state context.
         i--;

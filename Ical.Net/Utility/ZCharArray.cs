@@ -18,7 +18,7 @@ internal struct ZCharArray : IDisposable
 {
     // ArrayPool is thread-safe
     private static readonly ArrayPool<char>
-        Pool = ArrayPool<char>.Create(MaxBufferCapacity, 100);
+        Pool = ArrayPool<char>.Shared;
 
     private char[]? _bufferArray;
     private int _currentLength;
@@ -27,12 +27,7 @@ internal struct ZCharArray : IDisposable
     /// The default capacity of the array.
     /// </summary>
     public const int DefaultBufferCapacity = 10_000_000;
-
-    /// <summary>
-    /// The maximum capacity of the array.
-    /// </summary>
-    public const int MaxBufferCapacity = 100_000_000;
-
+    
     /// <summary>
     /// Creates a new <see cref="ZCharArray"/> with a length of <see cref="DefaultBufferCapacity"/>>.
     /// </summary>
