@@ -27,8 +27,6 @@ namespace Ical.Net.Serialization;
 /// </remarks>
 public class SimpleDeserializer
 {
-    private const int NotFound = -1;
-
     internal SimpleDeserializer(
         DataTypeMapper dataTypeMapper,
         ISerializerFactory serializerFactory,
@@ -71,15 +69,8 @@ public class SimpleDeserializer
         var stack = new Stack<ICalendarComponent?>();
         ICalendarComponent? currentComponent = null;
 
-        // Note: ReadContentLines yields volatile ReadOnlyMemory<char> segments
-        //       pointing to a shared buffer that is reused for subsequent lines.
-        //       Each segment must be consumed or copied before the next iteration.
-        //       It cannot be used with LINQ methods.
-        foreach (var contentLine in ReadContentLinesUnsafe(reader))
+        foreach (var calProperty in DeserializeContentLines(reader, context))
         {
-            // Parse the content line into a CalendarProperty immediately
-            var calProperty = ParseContentLine(context, contentLine.Span);
-
             if (string.Equals(calProperty.Name, "BEGIN", StringComparison.OrdinalIgnoreCase))
             {
                 stack.Push(currentComponent); // The first component pushed is null
@@ -125,11 +116,11 @@ public class SimpleDeserializer
 
     private static void EnsureValueIsString(CalendarProperty calProperty, out string value)
     {
-        value = string.Empty;
         if (calProperty.Value is not string val)
         {
             // This should never happen
             Debug.Assert(calProperty.Value is string, "CalendarProperty.Value must be of type string.");
+            value = string.Empty;
         }
         else
         {
@@ -161,7 +152,7 @@ public class SimpleDeserializer
         }
     }
 
-    private CalendarProperty ParseContentLine(SerializationContext context, ReadOnlySpan<char> input)
+    private CalendarProperty DeserializeContentLine(SerializationContext context, ReadOnlySpan<char> input)
     {
         const string nameEndChars = ":;";
 
@@ -181,14 +172,14 @@ public class SimpleDeserializer
             remaining = remaining.Slice(1); // Consume ';'
 
             var equalsIdx = remaining.IndexOf('=');
-            if (equalsIdx == NotFound) break;
+            if (equalsIdx == -1) break;
 
             var paramName = remaining.Slice(0, equalsIdx).ToString();
             var parameter = new CalendarParameter(paramName);
             remaining = remaining.Slice(equalsIdx + 1);
 
             // Parse one or more comma-separated values (handling quoted strings)
-            var indexAfterParsing = ParseValues(remaining, parameter, nameEndChars);
+            var indexAfterParsing = ParseValues(remaining, parameter, nameEndChars, input);
 
             property.AddParameter(parameter);
             remaining = remaining.Slice(indexAfterParsing);
@@ -206,7 +197,7 @@ public class SimpleDeserializer
         return property;
     }
 
-    private static int ParseValues(ReadOnlySpan<char> remaining, CalendarParameter parameter, string nameEndChars)
+    private static int ParseValues(ReadOnlySpan<char> remaining, CalendarParameter parameter, string nameEndChars, ReadOnlySpan<char> fullLine)
     {
         var i = 0;
         var inQuotes = false;
@@ -220,9 +211,9 @@ public class SimpleDeserializer
             // Note: Quotes are expected to be balanced
             inQuotes = ToggleInQuotes(c, inQuotes);
             if (inQuotes) continue;
-
+            
             // Wait for a delimiter to extract the value
-            if (",;:".IndexOf(c) == NotFound) continue;
+            if (",;:".IndexOf(c) == -1) continue; // netstandard2.0 compatible
 
             // Extract the value
             var pValueSpan = remaining.Slice(valueStart, i - valueStart);
@@ -234,7 +225,13 @@ public class SimpleDeserializer
             valueStart = i + 1;
 
             // If we hit (another) ';' or ':', we are done with this parameter
-            if (nameEndChars.IndexOf(c) != NotFound) break;
+            if (nameEndChars.IndexOf(c) != -1) break; // netstandard2.0 compatible
+        }
+
+        // Check for unbalanced quotes at the end of the line
+        if (inQuotes)
+        {
+            throw new SerializationException($"Unbalanced quotes in line '{fullLine.ToString()}'");
         }
 
         return i;
@@ -245,7 +242,7 @@ public class SimpleDeserializer
 
     private static void ThrowIfNameEndMissing(ReadOnlySpan<char> input, int nameEnd)
     {
-        if (nameEnd == NotFound)
+        if (nameEnd == -1)
         {
             throw new SerializationException($"Could not parse line (missing name): '{input.ToString()}'");
         }
@@ -277,32 +274,28 @@ public class SimpleDeserializer
     }
 
     /// <summary>
-    /// Reads unfolded content lines from the specified text reader
-    /// according to RFC 5545 line folding rules.
+    /// Reads and parses unfolded content lines from the specified text reader
+    /// according to RFC 5545 line folding rules, yielding CalendarProperty objects.
     /// </summary>
     /// <remarks>
     /// This method processes input according to the iCalendar (RFC 5545) specification, combining
-    /// folded lines into single logical lines. RFC 5545 mandates CRLF (\\r\\n) line endings, but this
-    /// implementation accepts standalone LF (\\n) and bare CR (\\r) for practical interoperability,
-    /// and matching compatibility with the former TextReader.ReadLine() behavior.
-    /// <para/>
-    /// <b>IMPORTANT</b>: This method uses a <b>volatile buffer approach</b> for zero-allocation streaming.
-    /// Each yielded ReadOnlyMemory&lt;char&gt; points to a shared buffer that is reused for subsequent lines.
-    /// Callers <b>MUST</b> consume or copy the data before requesting the next line, as the buffer contents
-    /// will be overwritten.
+    /// folded lines into single logical lines and parsing them into CalendarProperty objects.
+    /// RFC 5545 mandates CRLF (\\r\\n) line endings, but this implementation accepts standalone 
+    /// LF (\\n) and bare CR (\\r) for practical interoperability.
     /// The caller is responsible for disposing the provided reader if necessary.
     /// </remarks>
     /// <param name="reader">The text reader from which to read the content lines. Cannot be null.</param>
+    /// <param name="context">The serialization context for parsing properties.</param>
     /// <returns>
-    /// An enumerable collection of volatile Memory segments, each representing a logical content line with line folding removed.
-    /// The collection is empty if no lines are present. Each segment is valid only until the next iteration.</returns>
-    private static IEnumerable<ReadOnlyMemory<char>> ReadContentLinesUnsafe(TextReader reader)
+    /// An enumerable collection of CalendarProperty objects representing each parsed content line.
+    /// The collection is empty if no lines are present.</returns>
+    private IEnumerable<CalendarProperty> DeserializeContentLines(TextReader reader, SerializationContext context)
     {
         var buffer = System.Buffers.ArrayPool<char>.Shared.Rent(8192);
 
-        // Use ZCharArray as a volatile buffer for the unfolded content, using zero-allocation streaming.
+        // Use PooledCharBuffer as a buffer for the unfolded content, using zero-allocation streaming.
         // The buffer is reused (reset) after each line is yielded.
-        var unfoldedBuffer = new ZCharArray(ZCharArray.DefaultBufferCapacity);
+        var unfoldedBuffer = new PooledCharBuffer(PooledCharBuffer.DefaultBufferCapacity);
 
         var state = ParserState.Normal;
 
@@ -311,6 +304,7 @@ public class SimpleDeserializer
             int charsRead;
             while ((charsRead = reader.Read(buffer, 0, buffer.Length)) > 0)
             {
+                // character-by-character loop is the most maintainable
                 for (var i = 0; i < charsRead; i++)
                 {
                     var c = buffer[i];
@@ -326,8 +320,8 @@ public class SimpleDeserializer
 
                     if (shouldYield && unfoldedBuffer.Length > 0) //NOSONAR - false positive 'always evaluates to false'
                     {
-                        // Yield the current line as a !!! volatile ReadOnlyMemory !!! pointing to the shared buffer
-                        yield return new ReadOnlyMemory<char>(unfoldedBuffer.UnderlyingArray, 0, unfoldedBuffer.Length);
+                        // Parse the current line immediately before the buffer is reused
+                        yield return DeserializeContentLine(context, unfoldedBuffer.Span);
 
                         // Reset the buffer for reuse with the next line
                         unfoldedBuffer.Reset();
@@ -335,10 +329,10 @@ public class SimpleDeserializer
                 }
             }
 
-            // Yield the final line as a !!! volatile ReadOnlyMemory !!! if the buffer isn't empty
+            // Parse and yield the final line if the buffer isn't empty
             if (unfoldedBuffer.Length > 0)
             {
-                yield return new ReadOnlyMemory<char>(unfoldedBuffer.UnderlyingArray, 0, unfoldedBuffer.Length);
+                yield return DeserializeContentLine(context, unfoldedBuffer.Span);
             }
         }
         finally
@@ -346,15 +340,15 @@ public class SimpleDeserializer
             // Must be explicitly disposed, because 'using'
             // is not allowed when passing the array by ref to methods.
             unfoldedBuffer.Dispose();
-            System.Buffers.ArrayPool<char>.Shared.Return(buffer);
+            System.Buffers.ArrayPool<char>.Shared.Return(buffer, clearArray: true);
         }
     }
 
     private static ParserState ProcessFoldCheck(
-    char c,
-    ref ZCharArray unfoldedBuffer,
-    ref int i,
-    out bool shouldYield)
+        char c,
+        ref PooledCharBuffer unfoldedBuffer,
+        ref int i,
+        out bool shouldYield)
     {
         /*
         Handling folded lines per RFC 5545:
@@ -385,52 +379,53 @@ public class SimpleDeserializer
         // We must re-evaluate this character in the 'Normal' state context.
         i--;
         return ParserState.Normal;
-}
+    }
 
-private static ParserState ProcessSawCr(char c, ref int i)
-{
-    // RFC 5545 mandates CRLF line endings, but we accept standalone LF and bare CR for compatibility.
-    // If CR is followed by LF, consume both. Otherwise, treat CR as a line ending.
-    if (c == '\n')
+    private static ParserState ProcessSawCr(char c, ref int i)
     {
-        // CRLF sequence - consume the LF and proceed to fold check
+        // RFC 5545 mandates CRLF line endings, but we accept standalone LF and bare CR for compatibility.
+        // If CR is followed by LF, consume both. Otherwise, treat CR as a line ending.
+        if (c == '\n')
+        {
+            // CRLF sequence - consume the LF and proceed to fold check
+            return ParserState.FoldCheck;
+        }
+
+        // Bare CR - treat as line ending but re-process current character
+        i--;
         return ParserState.FoldCheck;
     }
-    
-    // Bare CR - treat as line ending but re-process current character
-    i--;
-    return ParserState.FoldCheck;
-}
 
-private static ParserState ProcessNormal(
-    char[] buffer,
-    int charsRead,
-    ref ZCharArray unfoldedBuffer,
-    ref int i)
-{
-    // Look ahead to the next newline character so we can write chunks.
-    // This search is more efficient than writing one char at a time.
-    var searchSpan = buffer.AsSpan(i, charsRead - i);
-    var newlineIndex = searchSpan.IndexOfAny('\r', '\n');
-
-    switch (newlineIndex)
+    private static ParserState ProcessNormal(
+        char[] buffer,
+        int charsRead,
+        ref PooledCharBuffer unfoldedBuffer,
+        ref int i)
     {
-        case NotFound:
+        // Look ahead to the next newline character so we can write chunks.
+        // This search is more efficient than writing one char at a time.
+        var searchSpan = buffer.AsSpan(i, charsRead - i);
+        var newlineIndex = searchSpan.IndexOfAny('\r', '\n');
+
+        if (newlineIndex == -1)
+        {
             // No newlines found, write all remaining characters
             unfoldedBuffer.Write(searchSpan);
             i = charsRead - 1; // Set to end, loop will increment to charsRead
             return ParserState.Normal;
-        case > 0:
+        }
+
+        if (newlineIndex > 0)
+        {
             // Write characters up to the newline
             unfoldedBuffer.Write(searchSpan.Slice(0, newlineIndex));
-            break;
+        }
+
+        // Move to the newline character and handle state transition
+        i += newlineIndex;
+
+        return buffer[i] == '\r' ? ParserState.SawCr : ParserState.FoldCheck;
     }
-
-    // Move to the newline character and handle state transition
-    i += newlineIndex;
-
-    return buffer[i] == '\r' ? ParserState.SawCr : ParserState.FoldCheck;
-}
 
     private void SetPropertyValue(SerializationContext context, CalendarProperty property, ReadOnlySpan<char> value)
     {

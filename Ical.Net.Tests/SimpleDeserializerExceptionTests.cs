@@ -226,5 +226,23 @@ public class SimpleDeserializerExceptionTests
         
         Assert.That(() => Calendar.Load(icsWithCrLf), Throws.Nothing);
     }
+
+    [Test, Category("Deserialization")]
+    [TestCase("""
+              BEGIN:VCALENDAR
+              VERSION:2.0
+              BEGIN:VEVENT
+              UID:event123@example.com
+              DTSTART:20260101T100000Z
+              DTEND:20260101T110000Z
+              SUMMARY:Team Meeting
+              ATTENDEE;CN="John Doe;RSVP=TRUE:mailto:john@example.com
+              END:VEVENT
+              END:VCALENDAR
+              """,
+        TestName = "UnbalancedQuotes")]
+    public void Unbalanced_Quotes_ShouldThrow(string ics)
+        => Assert.That(() => Calendar.Load(ics), Throws.Exception.TypeOf<SerializationException>()
+            .With.Message.Contains("Unbalanced quotes in line 'ATTENDEE;CN"));
 }
 
