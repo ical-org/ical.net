@@ -365,11 +365,10 @@ public class SimpleDeserializer
                 as part of the same logical line
         */
 
-        shouldYield = false;
-
         // If the char after a newline is Space or Tab, it's a fold.
         if (c == ' ' || c == '\t')
         {
+            shouldYield = false;
             return ParserState.Normal;
         }
 

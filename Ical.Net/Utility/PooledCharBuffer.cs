@@ -122,7 +122,7 @@ internal struct PooledCharBuffer : IDisposable
         // Grow the buffer by renting a larger array and copying existing data
         var newCapacity = requiredLength * 2;
         var newArray = Pool.Rent(newCapacity);
-        Array.Copy(_bufferArray, newArray, Math.Min(_bufferArray.Length, newCapacity));
+        Array.Copy(_bufferArray, newArray, Math.Min(_currentLength, newCapacity));
         Pool.Return(_bufferArray, clearArray: true);
         _bufferArray = newArray;
     }
