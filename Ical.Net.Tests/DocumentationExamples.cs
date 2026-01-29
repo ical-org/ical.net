@@ -103,32 +103,4 @@ public class DocumentationExamples
             Assert.That(thanksgiving.Start.DayOfWeek == DayOfWeek.Thursday.ToIsoDayOfWeek(), Is.True);
         }
     }
-
-    [Test]
-    public void DailyExceptSunday_Test()
-    {
-        //An event that happens daily through 2016, except for Sundays
-        var vEvent = new CalendarEvent
-        {
-            DtStart = new CalDateTime(DateTime.Parse("2016-01-01T07:00", CultureInfo.InvariantCulture)),
-            DtEnd = new CalDateTime(DateTime.Parse("2016-12-31T08:00", CultureInfo.InvariantCulture)),
-            RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) },
-        };
-
-        //Define the exceptions: Sunday
-        var exceptionRule = new RecurrencePattern(FrequencyType.Weekly, 1)
-        {
-            ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Sunday) }
-        };
-        vEvent.ExceptionRules = new List<RecurrencePattern> { exceptionRule };
-
-        var calendar = new Calendar();
-        calendar.Events.Add(vEvent);
-
-        // We are essentially counting all the days that aren't Sunday in 2016, so there should be 314
-        var searchStart = new CalDateTime(2015, 12, 31).ToZonedDateTime("America/New_York");
-        var searchEnd = new CalDateTime(2017, 01, 01).ToZonedDateTime("America/New_York").ToInstant();
-        var occurrences = calendar.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
-        Assert.That(occurrences, Has.Count.EqualTo(314));
-    }
 }

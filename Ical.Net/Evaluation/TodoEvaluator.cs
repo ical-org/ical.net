@@ -36,11 +36,6 @@ public class TodoEvaluator : RecurringEvaluator
         DetermineStartingRecurrence(Todo.RecurrenceDates.GetAllDates()
             .Select(x => x.ToZonedDateTime(completedDate.Zone)), ref beginningDate);
 
-        foreach (var exrule in Todo.ExceptionRules)
-        {
-            DetermineStartingRecurrence(exrule, ref beginningDate);
-        }
-
         DetermineStartingRecurrence(Todo.ExceptionDates.GetAllDates()
             .Select(x => x.ToZonedDateTime(completedDate.Zone)), ref beginningDate);
 

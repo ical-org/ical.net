@@ -61,34 +61,6 @@ public abstract class RecurringEvaluator : Evaluator
     }
 
     /// <summary>
-    /// Evaluates the ExRule component.
-    /// </summary>
-    /// <param name="referenceDate"></param>
-    /// <param name="options"></param>
-    [Obsolete("EXRULE is marked as deprecated in RFC 5545 and will be removed in a future version")]
-    private IEnumerable<EvaluationPeriod> EvaluateExRule(CalDateTime referenceDate, DateTimeZone timeZone, EvaluationOptions? options)
-    {
-        if (!Recurrable.ExceptionRules.Any())
-            return [];
-
-        // We don't apply periodStart here. Calculating it would be complex because
-        // RDATE's may have arbitrary durations.
-        Instant? effPeriodStart = null;
-
-        var exRuleEvaluatorQueries = Recurrable.ExceptionRules.Select(exRule =>
-        {
-            var exRuleEvaluator = new RecurrencePatternEvaluator(exRule, referenceDate, timeZone, effPeriodStart, options);
-            return exRuleEvaluator.Evaluate();
-        })
-            // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
-            // the initialization code is run, including validation and error handling.
-            // This way we receive validation errors early, not only when enumeration starts.
-            .ToList(); //NOSONAR - deliberately enumerate here
-
-        return exRuleEvaluatorQueries.OrderedMergeMany();
-    }
-
-    /// <summary>
     /// Evaluates the ExDate component.
     /// </summary>
     /// <param name="periodKinds">The period kinds to be returned. Used as a filter.</param>
@@ -135,8 +107,6 @@ public abstract class RecurringEvaluator : Evaluator
                 || (p.End?.ToInstant() > periodStart.Value));
         }
 
-        var exRuleExclusions = EvaluateExRule(referenceDate, zonedReference.Zone, options);
-
         // EXDATEs could contain date-only entries while DTSTART is date-time. This case isn't clearly defined
         // by the RFC, but it seems to be used in the wild (see https://github.com/ical-org/ical.net/issues/829).
         // Different systems handle this differently, e.g. Outlook excludes any occurrences where the date portion
@@ -148,9 +118,8 @@ public abstract class RecurringEvaluator : Evaluator
         var exDateExclusionsDateTime = new SortedSet<EvaluationPeriod>(EvaluateExDate(PeriodKind.DateTime)
             .Select(x => new EvaluationPeriod(x.StartTime.ToZonedDateTime(zonedReference.Zone))));
 
-        // Exclude occurrences according to EXRULEs and EXDATEs.
+        // Exclude occurrences according to EXDATEs.
         periods = periods
-            .OrderedExclude(exRuleExclusions)
             .OrderedExclude(exDateExclusionsDateTime)
 
             // We accept date-only EXDATEs to be used with date-time DTSTARTs. In such cases we exclude those occurrences
