@@ -111,13 +111,6 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
 
     public virtual ExceptionDates ExceptionDates { get; private set; } = null!;
 
-    [Obsolete("EXRULE is marked as deprecated in RFC 5545 and will be removed in a future version")]
-    public virtual IList<RecurrencePattern> ExceptionRules
-    {
-        get => Properties.GetMany<RecurrencePattern>("EXRULE");
-        set => Properties.Set("EXRULE", value);
-    }
-
     internal IList<PeriodList> RecurrenceDatesPeriodLists
     {
         get => Properties.GetMany<PeriodList>("RDATE");

@@ -623,56 +623,6 @@ internal class RecurrenceWikiTests
         _logger.LogDebug(expectedOccurrences);
     }
 
-    [Test]
-    public void MoreRecurrenceRuleExamples()
-    {
-        // Every other Tuesday until the end of the year
-        var rrule1 = new RecurrencePattern(FrequencyType.Weekly, 2)
-        {
-            Until = new CalDateTime(2026, 1, 1)
-        };
-
-        // The 2nd day of every month for 5 occurrences
-        var rrule2 = new RecurrencePattern(FrequencyType.Monthly)
-        {
-            ByMonthDay = [2],  // Your day of the month goes here
-            Count = 5
-        };
-
-        // The 4th Thursday of November every year
-        var rrule3 = new RecurrencePattern(FrequencyType.Yearly, 1)
-        {
-            Frequency = FrequencyType.Yearly,
-            Interval = 1,
-            ByMonth = [11],
-            ByDay = [new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 }],
-        };
-
-        // Every day in 2025, except Sundays
-        var rrule4 = new RecurrencePattern(FrequencyType.Daily)
-        {
-            // Start: 2025-01-01, End: 2025-12-31
-            Until = new CalDateTime(2025, 12, 31),
-            // Exclude Sundays
-            ByDay = [
-                new WeekDay(DayOfWeek.Monday),
-                new WeekDay(DayOfWeek.Tuesday),
-                new WeekDay(DayOfWeek.Wednesday),
-                new WeekDay(DayOfWeek.Thursday),
-                new WeekDay(DayOfWeek.Friday),
-                new WeekDay(DayOfWeek.Saturday)
-            ]
-        };
-
-        Assert.That(() =>
-        {
-            _ = new CalendarEvent
-            {
-                ExceptionRules = [rrule1, rrule2, rrule3, rrule4]
-            };
-        }, Throws.Nothing);
-    }
-
     private static string RemoveIrrelevantProperties(string generatedIcs, string[]? keep = null)
         => generatedIcs
             .Split('\n')

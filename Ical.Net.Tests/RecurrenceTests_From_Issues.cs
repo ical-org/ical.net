@@ -470,46 +470,6 @@ public class RecurrenceTests_From_Issues
     #endregion
 
     [Test]
-    public void Except_Tuesday_Thursday_Saturday_Sunday()
-    {
-        // Every day for all of time, except Tuesday,Thursday,Saturday,and Sunday" Not working #298 
-
-        var vEvent = new CalendarEvent
-        {
-            Summary = "BIO CLASS",//subject
-            Description = "Details at CLASS",//description of meeting
-            Location = "Building 101",//location
-            DtStart = new CalDateTime(DateTime.Parse("2017-06-01T08:00", CultureInfo.InvariantCulture)),
-            DtEnd = new CalDateTime(DateTime.Parse("2017-06-01T09:30", CultureInfo.InvariantCulture)),
-            RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) },
-        };
-
-        //Define the exceptions: Sunday
-        var exceptionRule = new RecurrencePattern(FrequencyType.Weekly, 1)
-        {
-            ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Sunday), new WeekDay(DayOfWeek.Saturday),
-                new WeekDay(DayOfWeek.Tuesday),new WeekDay(DayOfWeek.Thursday)}
-        };
-        vEvent.ExceptionRules = new List<RecurrencePattern> { exceptionRule };
-
-        var calendar = new Calendar();
-        calendar.Events.Add(vEvent);
-
-        var occurrences = vEvent.GetOccurrences(new CalDateTime(2017, 06, 01, 00, 00, 00)).TakeWhileBefore(new CalDateTime(2017, 06, 30, 23, 59, 0)).ToList();
-        var excludedDays = new List<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday, DayOfWeek.Tuesday, DayOfWeek.Thursday };
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(occurrences.Count, Is.EqualTo(13));
-            // Assert that none of the occurrences contain a weekday from the ByDay list
-            foreach (var occurrence in occurrences)
-            {
-                Assert.That(excludedDays, Does.Not.Contain(occurrence.Start.DayOfWeek.ToDayOfWeek()));
-            }
-        }
-    }
-
-    [Test]
     public void Weekly_ByDay_ByMonth()
     {
         // Bug #879
