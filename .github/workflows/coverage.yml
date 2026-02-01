@@ -52,7 +52,7 @@ jobs:
         name: coverage-report
         path: ./Ical.Net.Tests/coverage.*.xml  # store all coverage reports
     - name: Upload coverage to Codecov  
-      uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7
+      uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de
       with:  
         # files: automatically finds all in ./Ical.Net.Tests/
         name: coverage
