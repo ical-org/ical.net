@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
@@ -13,7 +12,7 @@ using NodaTime;
 
 namespace Ical.Net.Evaluation;
 
-public abstract class RecurringEvaluator : Evaluator
+public abstract class RecurringEvaluator : IEvaluator
 {
     protected IRecurrable Recurrable { get; set; }
 
@@ -75,7 +74,16 @@ public abstract class RecurringEvaluator : Evaluator
     /// <returns>End of an occurrence</returns>
     protected abstract ZonedDateTime GetEnd(ZonedDateTime start);
 
-    public override IEnumerable<EvaluationPeriod> Evaluate(CalDateTime referenceDate, DateTimeZone timeZone, Instant? periodStart, EvaluationOptions? options)
+    public virtual IEnumerable<EvaluationPeriod> Evaluate(
+        CalDateTime referenceDate,
+        ZonedDateTime periodStart,
+        EvaluationOptions? options) => Evaluate(referenceDate, periodStart.Zone, periodStart.ToInstant(), options);
+
+    public virtual IEnumerable<EvaluationPeriod> Evaluate(
+        CalDateTime referenceDate,
+        DateTimeZone timeZone,
+        Instant? periodStart,
+        EvaluationOptions? options)
     {
         IEnumerable<EvaluationPeriod> rruleOccurrences;
 
