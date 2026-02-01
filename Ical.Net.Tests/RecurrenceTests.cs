@@ -3328,7 +3328,7 @@ END:VCALENDAR";
     public void TestFileBasedRecurrenceTestCase(RecurrenceTestCase testCase)
         => ExecuteRecurrenceTestCase(testCase);
 
-    public void ExecuteRecurrenceTestCase(RecurrenceTestCase testCase)
+    private void ExecuteRecurrenceTestCase(RecurrenceTestCase testCase, CalDateTime? deviatingDtStart = null, int instanceOffs = 0)
     {
         var cal = new Calendar();
 
@@ -3336,7 +3336,7 @@ END:VCALENDAR";
         evt.Summary = "Event summary";
 
         // Start at midnight, UTC time
-        evt.Start = testCase.DtStart!;
+        evt.Start = deviatingDtStart ?? testCase.DtStart!;
         evt.Duration = testCase.Duration;
 
         Type LoadType(string name) =>
@@ -3347,7 +3347,14 @@ END:VCALENDAR";
             ? Throws.InstanceOf(typeof(Exception))
             : Throws.InstanceOf(exceptionType);
 
-        RecurrenceRule GetRule() => new(testCase.RRule!);
+        RecurrenceRule GetRule()
+        {
+            var rrule = new RecurrenceRule(testCase.RRule!);
+            if (rrule.Count.HasValue)
+                rrule.Count -= instanceOffs;
+
+            return rrule;
+        }
 
         if (testCase.ExceptionStep == RecurrenceTestExceptionStep.Construction)
         {
@@ -3382,13 +3389,38 @@ END:VCALENDAR";
         }
 
         var occurrences = EnumerateOccurrences();
-        var expectedInstances = testCase.Instances;
+        var expectedInstances = testCase.Instances?.Skip(instanceOffs).ToList();
+
         if (testCase.StartAt != null)
             expectedInstances = expectedInstances?.Where(x => x.Value >= testCase.StartAt.Value).ToList();
 
         var startDates = occurrences.Select(x => x.Start).ToList();
         Assert.That(startDates, Is.EqualTo(expectedInstances?.Select(x => x.ToZonedDateTime(timeZone)).ToList()));
     }
+
+    private static IEnumerable<TestCaseData> GetTestFileBasedRecurrenceTestCasesWithIndividualDtStarts(RecurrenceTestCase testCase)
+    {
+        if (testCase.Instances is not { } instances)
+            yield break;
+
+        int i = 0;
+        foreach (var instance in instances)
+        {
+            yield return new TestCaseData(testCase, instance, i);
+            i++;
+        }
+    }
+
+    private static IEnumerable<TestCaseData> TestFileBasedRecurrenceTestCaseWithIndividualDtStartTestCaseSource
+        => TestFileBasedRecurrenceTestCaseSource.SelectMany(testCase => GetTestFileBasedRecurrenceTestCasesWithIndividualDtStarts(testCase));
+
+    private static IEnumerable<TestCaseData> TestLibicalTestCasesSourceWithIndividualDtStartTestCaseSource
+        => TestLibicalTestCasesSource.SelectMany(testCase => GetTestFileBasedRecurrenceTestCasesWithIndividualDtStarts(testCase));
+
+    [TestCaseSource(nameof(TestLibicalTestCasesSourceWithIndividualDtStartTestCaseSource))]
+    [TestCaseSource(nameof(TestFileBasedRecurrenceTestCaseWithIndividualDtStartTestCaseSource))]
+    public void TestFileBasedRecurrenceTestCaseWithIndividualDtStart(RecurrenceTestCase testCase, CalDateTime dtStart, int instanceOffs)
+        => ExecuteRecurrenceTestCase(testCase, dtStart, instanceOffs);
 
     [Test]
     // Reproducer from https://github.com/ical-org/ical.net/issues/629
