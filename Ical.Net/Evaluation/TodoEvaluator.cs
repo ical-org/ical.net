@@ -45,7 +45,7 @@ public class TodoEvaluator : RecurringEvaluator
         }
 
         return Evaluate(Todo.Start, beginningDate, options)
-            .TakeWhile(p => p.StartTime <= currDt);
+            .Where(p => p.Start.ToInstant() <= currDt.ToInstant());
     }
 
     private static void DetermineStartingRecurrence(IEnumerable<EvaluationPeriod> rdate, ref ZonedDateTime referenceDateTime)
