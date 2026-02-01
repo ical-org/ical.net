@@ -1,4 +1,4 @@
-﻿name: Publish Nuget Package
+name: Publish Nuget Package
 # This job builds and publishes the package to NuGet.
 # It depends on the included tests job to complete successfully.
 # This workflow finds the most recent tag that starts with 
@@ -113,7 +113,7 @@ jobs:
           --no-build
 
     - name: Store artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: ICal.Net_pkg_${{env.VERSION}}.${{github.run_number}}
         path: |
