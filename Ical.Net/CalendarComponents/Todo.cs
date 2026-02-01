@@ -95,26 +95,7 @@ public class Todo : RecurringComponent, IAlarmContainer
     public virtual string? Status
     {
         get => Properties.Get<string>(TodoStatus.Key);
-        set
-        {
-            if (string.Equals(Status, value, TodoStatus.Comparison))
-            {
-                return;
-            }
-
-            // Automatically set/unset the Completed time, once the
-            // component is fully loaded (When deserializing, it shouldn't
-            // automatically set the completed time just because the
-            // status was changed).
-            if (IsLoaded)
-            {
-                Completed = string.Equals(value, TodoStatus.Completed, TodoStatus.Comparison)
-                    ? CalDateTime.Now
-                    : null;
-            }
-
-            Properties.Set(TodoStatus.Key, value);
-        }
+        set => Properties.Set(TodoStatus.Key, value);
     }
 
     public Todo()
