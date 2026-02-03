@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NodaTime;
@@ -18,74 +17,11 @@ public class TodoEvaluator : RecurringEvaluator
 
     public TodoEvaluator(Todo todo) : base(todo) { }
 
-    internal IEnumerable<EvaluationPeriod> EvaluateToPreviousOccurrence(ZonedDateTime completedDate, ZonedDateTime currDt, EvaluationOptions? options)
-    {
-        // Cannot evaluate a todos that have no start date
-        if (Todo.Start == null)
-            return [];
-
-        var beginningDate = completedDate;
-
-        foreach (var rrule in Todo.RecurrenceRules)
-        {
-            DetermineStartingRecurrence(rrule, ref beginningDate);
-        }
-
-        DetermineStartingRecurrence(Todo.RecurrenceDates.GetAllPeriods()
-            .Select(x => new EvaluationPeriod(x.StartTime.ToZonedDateTime(completedDate.Zone), x.EndTime?.ToZonedDateTime(completedDate.Zone))), ref beginningDate);
-        DetermineStartingRecurrence(Todo.RecurrenceDates.GetAllDates()
-            .Select(x => x.ToZonedDateTime(completedDate.Zone)), ref beginningDate);
-
-        DetermineStartingRecurrence(Todo.ExceptionDates.GetAllDates()
-            .Select(x => x.ToZonedDateTime(completedDate.Zone)), ref beginningDate);
-
-        if (Todo.Start == null)
-        {
-            throw new InvalidOperationException("Todo.Start must not be null.");
-        }
-
-        return Evaluate(Todo.Start, beginningDate, options)
-            .Where(p => p.Start.ToInstant() <= currDt.ToInstant());
-    }
-
-    private static void DetermineStartingRecurrence(IEnumerable<EvaluationPeriod> rdate, ref ZonedDateTime referenceDateTime)
-    {
-        var dt2 = referenceDateTime;
-        foreach (var p in rdate.Where(p => p.Start.ToInstant() < dt2.ToInstant()))
-        {
-            referenceDateTime = p.Start;
-        }
-    }
-
-    private static void DetermineStartingRecurrence(IEnumerable<ZonedDateTime> rdate, ref ZonedDateTime referenceDateTime)
-    {
-        var dt2 = referenceDateTime;
-        foreach (var dt in rdate.Where(dt => dt.ToInstant() < dt2.ToInstant()))
-        {
-            referenceDateTime = dt;
-        }
-    }
-
-    private void DetermineStartingRecurrence(RecurrencePattern recur, ref ZonedDateTime referenceDateTime)
-    {
-        if (Todo.Start is null) return;
-
-        if (recur.Count.HasValue)
-        {
-            // Caller ensures that Start is not null
-            referenceDateTime = Todo.Start!.AsZonedOrDefault(referenceDateTime.Zone);
-        }
-        else
-        {
-            IncrementDate(ref referenceDateTime, recur, -recur.Interval);
-        }
-    }
-
     protected override EvaluationPeriod EvaluateRDate(DataTypes.Period rdate, DateTimeZone referenceTimeZone)
     {
         var start = rdate.StartTime.AsZonedOrDefault(referenceTimeZone);
 
-        ZonedDateTime? end = null;
+        ZonedDateTime? end;
         if (rdate.Duration is { } duration)
         {
             end = start.LocalDateTime
