@@ -3398,7 +3398,10 @@ END:VCALENDAR";
                     break;
 
                 case "INSTANCES":
-                    current.Instances = val.Split(',').Select(dt => new CalDateTime(dt, "UTC")).ToList();
+                    if (val.Trim() == "*** UNIMPLEMENTED: This feature has not been implemented")
+                        current = null;
+                    else
+                        current.Instances = val.Split(',').Select(dt => new CalDateTime(dt, "UTC")).ToList();
                     break;
 
                 case "EXCEPTION":
