@@ -3490,9 +3490,12 @@ END:VCALENDAR";
         }
 
         var occurrences = EnumerateOccurrences();
+        var expectedInstances = testCase.Instances;
+        if (testCase.StartAt != null)
+            expectedInstances = expectedInstances?.Where(x => x.Value >= testCase.StartAt.Value).ToList();
 
         var startDates = occurrences.Select(x => x.Start).ToList();
-        Assert.That(startDates, Is.EqualTo(testCase.Instances?.Select(x => x.ToZonedDateTime(timeZone)).ToList()));
+        Assert.That(startDates, Is.EqualTo(expectedInstances?.Select(x => x.ToZonedDateTime(timeZone)).ToList()));
     }
 
     [Test]
