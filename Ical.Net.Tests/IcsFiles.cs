@@ -165,6 +165,6 @@ internal class IcsFiles
 
     internal static string RecurrrenceTestCases => ReadStream("Ical.Net.Tests.Calendars.Recurrence.RecurrenceTestCases.txt");
 
-    internal static string LibicalIcalrecurTest => ReadStream("Ical.Net.Tests.contrib.libical.icalrecur_test.out");
+    internal static string LibicalIcalrecurTest => ReadStream("Ical.Net.Tests.contrib.libical.icalrecur_test.txt");
 
 }
