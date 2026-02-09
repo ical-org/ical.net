@@ -4,6 +4,10 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v5
 
+### 5.2.1 - (2026-02-09)
+
+Fix: Stop todo evaluation at given datetime.<br/>(If a TODO had an RRULE without COUNT or UNTIL, `IsCompleted()` threw with `ArgumentOutOfRangeException`.)
+
 ### 5.2.0 - (2025-12-24)
 
 #### Implemented `BYDAY` with offset and limiting behavior
