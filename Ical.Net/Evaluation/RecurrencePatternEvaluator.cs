@@ -407,26 +407,30 @@ internal sealed class RecurrencePatternEvaluator
     /// <returns></returns>
     private IEnumerable<ZonedDateTime> ByDay()
     {
-        if (!_rule.ByDay)
+        if (_rule.ByDay)
         {
-            if (_frequency is FrequencyType.Monthly or FrequencyType.Yearly
-                && _rule is { ByMonthDay: false, ByYearDay: false, ByWeekNo: false })
+            return _frequency switch
             {
-                // These values represent months,
-                // so they must be set to the reference day.
-                return LimitDayByReferenceDay();
-            }
+                FrequencyType.Weekly => ExpandDayFromWeekWithoutOffsets(),
+                FrequencyType.Monthly => ByDaySpecialMonthly(),
+                FrequencyType.Yearly => ByDaySpecialYearly(),
+                _ => LimitDayOfWeek()
+            };
+        }
 
+        if (_frequency < FrequencyType.Monthly
+            || _rule.ByMonthDay
+            || _rule.ByYearDay)
+        {
             return ByMonthDay();
         }
 
-        return _frequency switch
+        if (_rule.ByWeekNo)
         {
-            FrequencyType.Weekly => ExpandDayFromWeekWithoutOffsets(),
-            FrequencyType.Monthly => ByDaySpecialMonthly(),
-            FrequencyType.Yearly => ByDaySpecialYearly(),
-            _ => LimitDayOfWeek()
-        };
+            return _rule.ByMonth ? LimitWeekByMonth() : ExpandWeekNo();
+        }
+
+        return LimitMonthByReferenceDay();
     }
 
     private IEnumerable<ZonedDateTime> ByDaySpecialMonthly()
@@ -453,10 +457,24 @@ internal sealed class RecurrencePatternEvaluator
     }
 
     /// <summary>
+    /// Limits weeks by month.
+    /// </summary>
+    private IEnumerable<ZonedDateTime> LimitWeekByMonth()
+    {
+        foreach (var value in ExpandWeekNo()) // NOSONAR
+        {
+            if (_rule.Months.Contains(value.Month))
+            {
+                yield return value;
+            }
+        }
+    }
+
+    /// <summary>
     /// Limits months by reference day.
     /// </summary>
     /// <returns></returns>
-    private IEnumerable<ZonedDateTime> LimitDayByReferenceDay()
+    private IEnumerable<ZonedDateTime> LimitMonthByReferenceDay()
     {
         var referenceDay = _zonedReferenceDate.Day;
 
@@ -632,32 +650,18 @@ internal sealed class RecurrencePatternEvaluator
 
     private IEnumerable<ZonedDateTime> ExpandDayFromWeek()
     {
-        foreach (var value in ByWeekNo())
+        foreach (var value in ExpandWeekNo())
         {
-            var weekYear = _weekYearRule.GetWeekYear(value.Date);
-            var weekNo = _weekYearRule.GetWeekOfWeekYear(value.Date);
-            var start = _weekYearRule.GetLocalDate(weekYear, weekNo, _firstDayOfWeek);
+            var start = value.Date.CurrentOrPrevious(_firstDayOfWeek);
             var end = start.PlusWeeks(1);
-
-            // If BYMONTH, limit the week within the month
-            if (_rule.ByMonth)
-            {
-                if (start.Month != value.Month)
-                {
-                    // Week starts before the month and ends within the month.
-                    // Constrict start to the start of the month.
-                    start = new LocalDate(value.Year, value.Month, 1);
-                }
-                else if (end.Month != value.Month && end.Day != 1)
-                {
-                    // Week starts within the month and ends after the month.
-                    // End is exclusive, so just make sure it day 1 of the next month.
-                    end = new LocalDate(end.Year, end.Month, 1);
-                }
-            }
 
             foreach (var day in ExpandDayFromRange(start, end))
             {
+                if (_rule.ByMonth && !_rule.Months.Contains(day.Month))
+                {
+                    continue;
+                }
+
                 yield return day.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
             }
         }
@@ -878,24 +882,30 @@ internal sealed class RecurrencePatternEvaluator
     /// <returns></returns>
     private IEnumerable<ZonedDateTime> ExpandMonthDayFromWeek()
     {
-        foreach (var value in ByWeekNo())
+        foreach (var value in ExpandWeekNo())
         {
-            var monthDays = _rule.GetMonthDays(value.Year, value.Month);
-
-            var weekYear = _weekYearRule.GetWeekYear(value.Date);
-            var weekNo = _weekYearRule.GetWeekOfWeekYear(value.Date);
-
-            var result = _weekYearRule.GetLocalDate(weekYear, weekNo, _firstDayOfWeek);
+            // Start of the week
+            var result = value.Date.CurrentOrPrevious(_firstDayOfWeek);
             var end = result.PlusWeeks(1);
 
+            // Check each day for matches
             do
             {
-                if (monthDays.Contains(result.Day)
-                    // If BYMONTH, limit the month
-                    && (!_rule.ByMonth || _rule.Months.Contains(result.Month)))
+                // Get month days each time because month may be different
+                var monthDays = _rule.GetMonthDays(result.Year, result.Month);
+
+                if (!monthDays.Contains(result.Day))
                 {
-                    yield return result.At(value.TimeOfDay).InZoneLeniently(value.Zone);
+                    continue;
                 }
+
+                if(_rule.ByMonth && !_rule.Months.Contains(result.Month))
+                {
+                    continue;
+                }
+
+                yield return result.At(value.TimeOfDay).InZoneLeniently(value.Zone);
+
             } while ((result = result.PlusDays(1)) != end);
         }
     }
@@ -904,12 +914,21 @@ internal sealed class RecurrencePatternEvaluator
     {
         if (!_rule.ByYearDay)
         {
-            return ByWeekNo();
+            // BYWEEKNO should be handled by special-case
+            // routes and never reach here.
+            Debug.Assert(!_rule.ByWeekNo);
+
+            return ByMonth();
         }
 
         if (_frequency == FrequencyType.Yearly)
         {
-            return ExpandYearDay();
+            if (_rule.ByWeekNo)
+            {
+                return ExpandYearDayFromWeek();
+            }
+
+            return ExpandYearDayFromMonth();
         }
 
         if (_frequency < FrequencyType.Daily)
@@ -922,7 +941,7 @@ internal sealed class RecurrencePatternEvaluator
 
     private IEnumerable<ZonedDateTime> LimitYearDay()
     {
-        foreach (var value in ByWeekNo())
+        foreach (var value in ByMonth()) // NOSONAR
         {
             if (_rule.GetYearDays(value.Year).Contains(value.DayOfYear))
             {
@@ -931,13 +950,39 @@ internal sealed class RecurrencePatternEvaluator
         }
     }
 
-    /// <summary>
-    /// Expand by year day.
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerable<ZonedDateTime> ExpandYearDay()
+    private IEnumerable<ZonedDateTime> ExpandYearDayFromWeek()
     {
-        foreach (var value in ByWeekNo())
+        foreach (var value in ExpandWeekNo())
+        {
+            // Start of week
+            var result = value.Date.CurrentOrPrevious(_firstDayOfWeek);
+            var end = result.PlusWeeks(1);
+
+            // Check each day of the week for matches
+            do
+            {
+                // Get year days each time because year may be different
+                var yearDays = _rule.GetYearDays(result.Year);
+
+                if (!yearDays.Contains(result.DayOfYear))
+                {
+                    continue;
+                }
+
+                if (_rule.ByMonth && !_rule.Months.Contains(result.Month))
+                {
+                    continue;
+                }
+
+                yield return result.At(value.TimeOfDay).InZoneLeniently(value.Zone);
+
+            } while ((result = result.PlusDays(1)) != end);
+        }
+    }
+
+    private IEnumerable<ZonedDateTime> ExpandYearDayFromMonth()
+    {
+        foreach (var value in ByMonth())
         {
             var startOfYear = new LocalDate(value.Year, 1, 1);
 
@@ -957,36 +1002,9 @@ internal sealed class RecurrencePatternEvaluator
                     continue;
                 }
 
-                // If BYWEEKNO, limit year day to week number
-                if (_rule.ByWeekNo)
-                {
-                    var resultWeekNo = _weekYearRule.GetWeekOfWeekYear(result);
-                    var valueWeekNo = _weekYearRule.GetWeekOfWeekYear(value.Date);
-
-                    if (resultWeekNo != valueWeekNo)
-                    {
-                        continue;
-                    }
-                }
-
                 yield return result.At(value.TimeOfDay).InZoneLeniently(value.Zone);
             }
         }
-    }
-
-    private IEnumerable<ZonedDateTime> ByWeekNo()
-    {
-        if (!_rule.ByWeekNo)
-        {
-            return ByMonth();
-        }
-
-        if (_frequency == FrequencyType.Yearly)
-        {
-            return ExpandWeekNo();
-        }
-
-        throw new EvaluationException($"BYWEEKNO is invalid with frequency {_frequency}");
     }
 
     /// <summary>
@@ -995,7 +1013,15 @@ internal sealed class RecurrencePatternEvaluator
     /// <returns></returns>
     private IEnumerable<ZonedDateTime> ExpandWeekNo()
     {
-        foreach (var value in ByMonth())
+        if (_frequency != FrequencyType.Yearly)
+        {
+            throw new EvaluationException($"BYWEEKNO is invalid with frequency {_frequency}");
+        }
+
+        // Expand weeks by interval instead of possible BYMONTH
+        // so that weeks that span months/years are included.
+        // BYMONTH is handled by the callers of this method.
+        foreach (var value in Expand())
         {
             var weekYear = GetWeekYearBasedOnReferenceWeekYear(value.Date);
 
@@ -1008,15 +1034,10 @@ internal sealed class RecurrencePatternEvaluator
                     continue;
                 }
 
-                var result = _weekYearRule.GetLocalDate(weekYear, weekNo, _zonedReferenceDate.DayOfWeek);
-
-                // If BYMONTH, verify month is the same
-                if (_rule.ByMonth && value.Month != result.Month)
-                {
-                    continue;
-                }
-
-                yield return result.At(value.TimeOfDay).InZoneLeniently(value.Zone);
+                yield return _weekYearRule
+                    .GetLocalDate(weekYear, weekNo, _zonedReferenceDate.DayOfWeek)
+                    .At(value.TimeOfDay)
+                    .InZoneLeniently(value.Zone);
             }
         }
     }
