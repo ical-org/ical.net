@@ -290,17 +290,11 @@ public class RecurrenceTests_From_Issues
             Summary = "Unavailable Before Work",
             DtStart = new CalDateTime(blockDate, zone), //.ToTimeZone(zone),
             DtEnd = new CalDateTime(blockDate.Add(new TimeSpan(8, 0, 0)), zone), //.ToTimeZone(zone),
-            RecurrenceRules = new List<RecurrencePattern>
+            RecurrenceRule = new()
             {
-                new RecurrencePattern
-                {
-                    Frequency = Ical.Net.FrequencyType.Weekly,
-                    Interval = 1,
-                    ByDay = new List<WeekDay>
-                    {
-                        new WeekDay(DayOfWeek.Monday)
-                    }
-                }
+                Frequency = FrequencyType.Weekly,
+                Interval = 1,
+                ByDay = [new WeekDay(DayOfWeek.Monday)]
             }
         });
 
@@ -319,17 +313,17 @@ public class RecurrenceTests_From_Issues
         var calStart = new CalDateTime(DateTimeOffset.Parse("2023-01-14T19:21:03.700Z", CultureInfo.InvariantCulture).UtcDateTime, "UTC");
         var calFinish = new CalDateTime(DateTimeOffset.Parse("2023-03-14T18:21:03.700Z", CultureInfo.InvariantCulture).UtcDateTime, "UTC");
         var tz = "Pacific Standard Time";
-        var pattern = new RecurrencePattern(
-            "FREQ=WEEKLY;BYDAY=SU,MO,TU,WE"); //Adjust the date to today so that the times remain constant
+
+        //Adjust the date to today so that the times remain constant
         var localTzStartAdjust = (DateTime.Now.Add(TimeSpan.FromHours(2).Add(TimeSpan.FromMinutes(35))));
         var localTzFinishAdjust = DateTime.Now.Add(TimeSpan.FromHours(17));
-        var ev = new Ical.Net.CalendarComponents.CalendarEvent
+        var ev = new CalendarEvent
         {
             Class = "PUBLIC",
             Start = new CalDateTime(localTzStartAdjust, tz),
             End = new CalDateTime(localTzFinishAdjust, tz),
             Sequence = 0,
-            RecurrenceRules = new List<RecurrencePattern> { pattern }
+            RecurrenceRule = new("FREQ=WEEKLY;BYDAY=SU,MO,TU,WE")
         };
         var col = ev.GetOccurrences(calStart).TakeWhileBefore(calFinish);
 
@@ -358,7 +352,7 @@ public class RecurrenceTests_From_Issues
         {
             DtStart = new CalDateTime(startDate),
             DtEnd = new CalDateTime(endDate),
-            RecurrenceRules = new List<RecurrencePattern> { rule }
+            RecurrenceRule = rule
         };
 
         var occurrences = calendarEvent.GetOccurrences(new CalDateTime(startDate)).TakeWhileBefore(new CalDateTime(endDate));
@@ -487,7 +481,7 @@ public class RecurrenceTests_From_Issues
             Location = "Building 101",//location
             DtStart = new CalDateTime(DateTime.Parse("2017-06-01T08:00", CultureInfo.InvariantCulture)),
             DtEnd = new CalDateTime(DateTime.Parse("2017-06-01T09:30", CultureInfo.InvariantCulture)),
-            RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) },
+            RecurrenceRule = new(FrequencyType.Daily, 1),
         };
 
         //Define the exceptions: Sunday
