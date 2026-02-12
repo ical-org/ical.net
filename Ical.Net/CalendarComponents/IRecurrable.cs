@@ -27,7 +27,7 @@ public interface IRecurrable : IGetOccurrences
     [Obsolete("Use RecurrenceRule instead. Support for multiple recurrence rules will be removed in a future version.")]
     IList<RecurrencePattern> RecurrenceRules { get; set; }
 
-    RecurrencePattern? RecurrenceRule { get; set; }
+    RecurrenceRule? RecurrenceRule { get; set; }
 
     CalDateTime? RecurrenceId { get; set; }
     IEvaluator? Evaluator { get; }
