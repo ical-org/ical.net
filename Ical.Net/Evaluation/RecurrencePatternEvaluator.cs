@@ -20,8 +20,21 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     private static System.Globalization.Calendar Calendar { get; } = System.Globalization.CultureInfo.InvariantCulture.Calendar;
 
+    [Obsolete("Use Rule instead.")]
     protected RecurrencePattern Pattern { get; set; }
 
+    protected RecurrenceRule Rule
+    {
+        get => Pattern;
+        set => Pattern = new(value);
+    }
+
+    public RecurrencePatternEvaluator(RecurrenceRule rule)
+    {
+        Pattern = new(rule);
+    }
+
+    [Obsolete("Use constructor with RecurrenceRule instead.")]
     public RecurrencePatternEvaluator(RecurrencePattern pattern)
     {
         Pattern = pattern;
