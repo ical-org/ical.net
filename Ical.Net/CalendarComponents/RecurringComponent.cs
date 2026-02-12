@@ -107,10 +107,17 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
 
     public virtual RecurrenceDates RecurrenceDates { get; internal set; } = null!;
 
+    [Obsolete("Use RecurrenceRule instead. Support for multiple recurrence rules will be removed in a future version.")]
     public virtual IList<RecurrencePattern> RecurrenceRules
     {
         get => Properties.GetMany<RecurrencePattern>("RRULE");
         set => Properties.Set("RRULE", value);
+    }
+
+    public virtual RecurrencePattern? RecurrenceRule
+    {
+        get => RecurrenceRules?.FirstOrDefault();
+        set => RecurrenceRules = value is null ? [] : [value];
     }
 
     /// <summary>
