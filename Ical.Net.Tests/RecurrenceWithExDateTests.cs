@@ -34,20 +34,18 @@ public class RecurrenceWithExDateTests
             ? new CalDateTime(2024, 10, 19, 21, 0, 0, timeZoneId)
             : new CalDateTime(2024, 10, 19);
 
-        var recurrencePattern = new RecurrencePattern(FrequencyType.Hourly)
-        {
-            Count = 2,
-            Interval = 3
-        };
-
         var recurringEvent = new CalendarEvent
         {
             Summary = "My Recurring Event",
             Uid = id.ToString(),
             Start = start,
-            End = end
+            End = end,
+            RecurrenceRule = new(FrequencyType.Hourly, 3)
+            {
+                Count = 2
+            }
         };
-        recurringEvent.RecurrenceRules.Add(recurrencePattern);
+
         recurringEvent.ExceptionDates.Add(exceptionDate);
 
         var calendar = new Calendar();
