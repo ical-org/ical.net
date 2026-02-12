@@ -133,10 +133,10 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("RRULE", value);
     }
 
-    public virtual RecurrencePattern? RecurrenceRule
+    public virtual RecurrenceRule? RecurrenceRule
     {
         get => RecurrenceRules?.FirstOrDefault();
-        set => RecurrenceRules = value is null ? [] : [value];
+        set => RecurrenceRules = value is null ? [] : [new(value)];
     }
 
     /// <summary>
