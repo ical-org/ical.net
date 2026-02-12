@@ -7,7 +7,6 @@ using BenchmarkDotNet.Attributes;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Ical.Net.Benchmarks;
@@ -66,10 +65,7 @@ public class OccurencePerfTests
         {
             Start = new CalDateTime(2025, 3, 1),
             End = null,
-            RecurrenceRules = new List<RecurrencePattern>
-            {
-                new RecurrencePattern(FrequencyType.Daily, 1) { Count = 1000 }
-            }
+            RecurrenceRule = new(FrequencyType.Daily, 1) { Count = 1000 }
         };
         calendar.Events.Add(dailyEvent);
         return calendar;
@@ -96,7 +92,7 @@ public class OccurencePerfTests
                 {
                     Start = startTime.AddMinutes(5).ToTimeZone(tzid),
                     End = startTime.AddMinutes(10).ToTimeZone(tzid),
-                    RecurrenceRules = new List<RecurrencePattern> { rrule },
+                    RecurrenceRule = rrule,
                 };
                 startTime = startTime.Add(Duration.FromTimeSpanExact(interval));
                 return e;
@@ -160,7 +156,7 @@ public class OccurencePerfTests
                 {
                     Start = new CalDateTime(startTime.AddMinutes(5), tzid),
                     End = new CalDateTime(startTime.AddMinutes(10), tzid),
-                    RecurrenceRules = new List<RecurrencePattern> { rrule },
+                    RecurrenceRule = rrule,
                 };
                 startTime = startTime.Add(interval);
                 return e;

@@ -32,7 +32,7 @@ public class CalDateTimeTests
         {
             Start = new CalDateTime(_now, tzId),
             End = new CalDateTime(_later, tzId),
-            RecurrenceRules = new List<RecurrencePattern> { dailyForFiveDays },
+            RecurrenceRule = dailyForFiveDays,
             Resources = new List<string>(new[] { "Foo", "Bar", "Baz" }),
         };
         return calendarEvent;
