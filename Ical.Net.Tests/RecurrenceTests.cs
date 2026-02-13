@@ -2706,7 +2706,7 @@ public class RecurrenceTests
     {
         using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO");
         var start = new CalDateTime(2010, 11, 27, 9, 0, 0);
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         var rp = (RecurrencePattern) serializer.Deserialize(sr)!;
         var rpe = new RecurrencePatternEvaluator(rp);
         var recurringPeriods = rpe.Evaluate(start, start, null)
@@ -2752,7 +2752,7 @@ public class RecurrenceTests
     public void Bug3292737()
     {
         using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126");
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         var rp = (RecurrencePattern) serializer.Deserialize(sr)!;
 
         Assert.That(rp, Is.Not.Null);
@@ -3048,7 +3048,7 @@ public class RecurrenceTests
         recur.ByDay.Add(new WeekDay(DayOfWeek.Friday));
         evt.RecurrenceRule = recur;
 
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         Assert.That(
             string.Compare(serializer.SerializeToString(recur), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR",
                 StringComparison.Ordinal) == 0,
@@ -3991,7 +3991,7 @@ END:VCALENDAR";
     [TestCase("INTERVAL=2;UNTIL=20250430T000000Z;FREQ=DAILY")]
     public void Recurrence_RRULE_Properties_ShouldBeDeserialized_In_Any_Order(string rRule)
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         var recurrencePattern = serializer.Deserialize(new StringReader(rRule)) as RecurrencePattern;
 
         Assert.Multiple(() =>
@@ -4008,7 +4008,7 @@ END:VCALENDAR";
     [Test]
     public void Recurrence_RRULE_Without_Freq_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         Assert.That(() => serializer.Deserialize(new StringReader("INTERVAL=2;UNTIL=20250430T000000Z")),
             Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -4017,7 +4017,7 @@ END:VCALENDAR";
     [Test]
     public void Recurrence_RRULE_With_Freq_Undefined_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         Assert.That(() => serializer.Deserialize(new StringReader("FREQ=UNDEFINED;INTERVAL=2;UNTIL=20250430T000000Z")),
             Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -4026,7 +4026,7 @@ END:VCALENDAR";
     [Test]
     public void Recurrence_RRULE_With_Unsupported_Part_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         Assert.That(() => serializer.Deserialize(new StringReader("FREQ=DAILY;INTERVAL=2;FAILING=0")),
             Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -4035,7 +4035,7 @@ END:VCALENDAR";
     [Test]
     public void Preceding_Appended_and_duplicate_Semicolons_Should_Be_Ignored()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         var recurrencePattern =
             serializer.Deserialize(new StringReader(";FREQ=DAILY;INTERVAL=2;UNTIL=20250430T000000Z")) as
@@ -4053,7 +4053,7 @@ END:VCALENDAR";
     [Test]
     public void Disallowed_Recurrence_RangeChecks_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         Assert.Multiple(() =>
         {
             Assert.That(() => serializer.CheckMutuallyExclusive("a", "b", 1, CalDateTime.Now),
