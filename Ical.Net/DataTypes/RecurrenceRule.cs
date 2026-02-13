@@ -139,14 +139,14 @@ public class RecurrenceRule : EncodableDataType
         {
             return;
         }
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         if (serializer.Deserialize(new StringReader(value)) is ICopyable deserialized)
             CopyFrom(deserialized);
     }
 
     public override string? ToString()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         return serializer.SerializeToString(this);
     }
 
