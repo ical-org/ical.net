@@ -75,7 +75,7 @@ public class WeekDaySerializer : EncodableDataTypeSerializer
                 ds.Offset *= -1;
             }
         }
-        ds.DayOfWeek = RecurrencePatternSerializer.GetDayOfWeek(match.Groups[3].Value);
+        ds.DayOfWeek = RecurrenceRuleSerializer.GetDayOfWeek(match.Groups[3].Value);
         return ds;
     }
 }
