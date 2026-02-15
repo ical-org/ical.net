@@ -40,7 +40,7 @@ public class RecurrenceIdentifier : IComparable<RecurrenceIdentifier>
     public CalDateTime StartTime { get; set; }
 
     /// <summary>
-    /// Gets or sets the recurrence range that determines the scope of the recurrence pattern.
+    /// Gets or sets the recurrence range that determines the scope of the recurrence rule.
     /// </summary>
     public RecurrenceRange Range { get; set; }
 

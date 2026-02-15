@@ -259,13 +259,16 @@ public class VTimeZone : CalendarComponent
 
     private static void PopulateTimeZoneInfoRecurrenceRules(VTimeZoneInfo tzi, ZoneInterval interval)
     {
-        var recurrence = new IntervalRecurrencePattern(interval);
-        tzi.RecurrenceRules.Add(recurrence);
+        var recurrence = new IntervalRecurrenceRule(interval);
+        tzi.RecurrenceRule = recurrence;
     }
 
-    private class IntervalRecurrencePattern : RecurrencePattern
+    private class IntervalRecurrenceRule : RecurrenceRule
     {
-        public IntervalRecurrencePattern(ZoneInterval interval)
+        // Required for serializer
+        public IntervalRecurrenceRule() : base() { }
+
+        public IntervalRecurrenceRule(ZoneInterval interval)
         {
             Frequency = FrequencyType.Yearly;
             ByMonth.Add(interval.IsoLocalStart.Month);

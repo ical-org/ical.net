@@ -8,7 +8,6 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Ical.Net.Benchmarks;
@@ -83,12 +82,9 @@ public class SerializationPerfTests
         {
             Start = new CalDateTime(DateTime.Now, timeZoneId),
             End = new CalDateTime(DateTime.Now + TimeSpan.FromHours(1), timeZoneId),
-            RecurrenceRules = new List<RecurrencePattern>
+            RecurrenceRule = new(FrequencyType.Daily, 1)
             {
-                new RecurrencePattern(FrequencyType.Daily, 1)
-                {
-                    Count = 100,
-                }
+                Count = 100,
             }
         };
 

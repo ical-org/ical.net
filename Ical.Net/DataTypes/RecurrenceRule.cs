@@ -14,7 +14,7 @@ namespace Ical.Net.DataTypes;
 /// An iCalendar representation of the <c>RRULE</c> property.
 /// https://tools.ietf.org/html/rfc5545#section-3.3.10
 /// </summary>
-public class RecurrencePattern : EncodableDataType
+public class RecurrenceRule : EncodableDataType
 {
     private int? _interval;
     private FrequencyType _frequency;
@@ -78,18 +78,18 @@ public class RecurrencePattern : EncodableDataType
 
     public List<int> BySecond { get; set; } = new List<int>();
 
-    /// <summary> The ordinal minutes of the hour associated with this recurrence pattern. Valid values are 0-59. </summary>
+    /// <summary> The ordinal minutes of the hour associated with this recurrence rule. Valid values are 0-59. </summary>
     public List<int> ByMinute { get; set; } = new List<int>();
 
     public List<int> ByHour { get; set; } = new List<int>();
 
     public List<WeekDay> ByDay { get; set; } = new List<WeekDay>();
 
-    /// <summary> The ordinal days of the month associated with this recurrence pattern. Valid values are 1-31. </summary>
+    /// <summary> The ordinal days of the month associated with this recurrence rule. Valid values are 1-31. </summary>
     public List<int> ByMonthDay { get; set; } = new List<int>();
 
     /// <summary>
-    /// The ordinal days of the year associated with this recurrence pattern. Something recurring on the first day of the year would be a list containing
+    /// The ordinal days of the year associated with this recurrence rule. Something recurring on the first day of the year would be a list containing
     /// 1, and would also be New Year's Day.
     /// </summary>
     public List<int> ByYearDay { get; set; } = new List<int>();
@@ -117,34 +117,34 @@ public class RecurrencePattern : EncodableDataType
     /// Default constructor. Sets the <see cref="Frequency"/> to <see cref="FrequencyType.Yearly"/>
     /// and <see cref="Interval"/> to 1.
     /// </summary>
-    public RecurrencePattern()
+    public RecurrenceRule()
     {
         Frequency = FrequencyType.Yearly;
         Interval = 1;
     }
 
-    public RecurrencePattern(FrequencyType frequency) : this(frequency, 1) { }
+    public RecurrenceRule(FrequencyType frequency) : this(frequency, 1) { }
 
-    public RecurrencePattern(FrequencyType frequency, int interval) : this()
+    public RecurrenceRule(FrequencyType frequency, int interval) : this()
     {
         Frequency = frequency; // for proper validation don't use the backing field
         Interval = interval;
     }
 
-    public RecurrencePattern(string value) : this()
+    public RecurrenceRule(string value) : this()
     {
         if (string.IsNullOrWhiteSpace(value))
         {
             return;
         }
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         if (serializer.Deserialize(new StringReader(value)) is ICopyable deserialized)
             CopyFrom(deserialized);
     }
 
     public override string? ToString()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         return serializer.SerializeToString(this);
     }
 
@@ -152,7 +152,7 @@ public class RecurrencePattern : EncodableDataType
     public override void CopyFrom(ICopyable obj)
     {
         base.CopyFrom(obj);
-        if (obj is not RecurrencePattern r)
+        if (obj is not RecurrenceRule r)
         {
             return;
         }
