@@ -34,7 +34,7 @@ public class MatchTimeZoneTests
 
         var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
-        var until = evt.RecurrenceRules.First().Until;
+        var until = evt.RecurrenceRule!.Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 13, 00, 00, CalDateTime.UtcTzId);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
@@ -80,7 +80,7 @@ public class MatchTimeZoneTests
 
         var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
-        var until = evt.RecurrenceRules.First().Until;
+        var until = evt.RecurrenceRule!.Until;
 
         var expectedUntil = new CalDateTime(DateTime.ParseExact(inputUntil, "yyyyMMddTHHmmssZ",
             System.Globalization.CultureInfo.InvariantCulture,
@@ -130,7 +130,7 @@ public class MatchTimeZoneTests
 
         var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
-        var until = evt.RecurrenceRules.First().Until;
+        var until = evt.RecurrenceRule!.Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, CalDateTime.UtcTzId);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
@@ -163,7 +163,7 @@ public class MatchTimeZoneTests
 
         var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
-        var until = evt.RecurrenceRules.First().Until;
+        var until = evt.RecurrenceRule!.Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, null);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
@@ -197,7 +197,7 @@ public class MatchTimeZoneTests
 
         var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
-        var until = evt.RecurrenceRules.First().Until;
+        var until = evt.RecurrenceRule!.Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05, 09, 00, 00, null);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));
@@ -230,7 +230,7 @@ public class MatchTimeZoneTests
 
         var calendar = Calendar.Load(ical)!;
         var evt = calendar.Events.First();
-        var until = evt.RecurrenceRules.First().Until;
+        var until = evt.RecurrenceRule!.Until;
 
         var expectedUntil = new CalDateTime(2023, 11, 05);
         var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01)).TakeWhileBefore(new CalDateTime(2023, 11, 06));

@@ -9,7 +9,6 @@ using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -22,17 +21,15 @@ public class CalDateTimeTests
 
     private static CalendarEvent GetEventWithRecurrenceRules(string tzId)
     {
-        var dailyForFiveDays = new RecurrencePattern(FrequencyType.Daily, 1)
-        {
-            Count = 5,
-        };
-
         var calendarEvent = new CalendarEvent
         {
             Start = new CalDateTime(_now, tzId),
             End = new CalDateTime(_later, tzId),
-            RecurrenceRules = new List<RecurrencePattern> { dailyForFiveDays },
-            Resources = new List<string>(new[] { "Foo", "Bar", "Baz" }),
+            RecurrenceRule = new(FrequencyType.Daily, 1)
+            {
+                Count = 5,
+            },
+            Resources = ["Foo", "Bar", "Baz"],
         };
         return calendarEvent;
     }

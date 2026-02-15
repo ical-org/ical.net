@@ -3,8 +3,6 @@
 // Licensed under the MIT license.
 //
 
-using System;
-using System.Collections.Generic;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 
@@ -20,7 +18,10 @@ public interface IRecurrable : IGetOccurrences
     ExceptionDates ExceptionDates { get; }
 
     RecurrenceDates RecurrenceDates { get; }
-    IList<RecurrencePattern> RecurrenceRules { get; set; }
+
+    RecurrencePattern? RecurrenceRule { get; set; }
+
     CalDateTime? RecurrenceId { get; set; }
+
     IEvaluator? Evaluator { get; }
 }

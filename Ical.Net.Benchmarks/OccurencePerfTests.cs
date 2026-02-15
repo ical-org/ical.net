@@ -8,7 +8,6 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NodaTime;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Ical.Net.Benchmarks;
@@ -113,15 +112,12 @@ public class OccurencePerfTests
         {
             Start = new CalDateTime(2025, 1, 1),
             End = null,
-            RecurrenceRules =
-            [
-                new RecurrencePattern(FrequencyType.Yearly, 1)
-                {
-                    Count = 100,
-                    ByDay = [new(DayOfWeek.Monday), new(DayOfWeek.Wednesday)],
-                    BySetPosition = [1, -1, -2]
-                }
-            ]
+            RecurrenceRule = new(FrequencyType.Yearly, 1)
+            {
+                Count = 100,
+                ByDay = [new(DayOfWeek.Monday), new(DayOfWeek.Wednesday)],
+                BySetPosition = [1, -1, -2]
+            }
         };
         calendar.Events.Add(dailyEvent);
         return calendar;
@@ -141,15 +137,12 @@ public class OccurencePerfTests
         {
             Start = new CalDateTime(2025, 1, 1),
             End = null,
-            RecurrenceRules =
-            [
-                new RecurrencePattern(FrequencyType.Yearly, 1)
-                {
-                    Count = 100,
-                    ByDay = [new(DayOfWeek.Monday), new(DayOfWeek.Wednesday)],
-                    BySetPosition = [1, 2, 4]
-                }
-            ]
+            RecurrenceRule = new(FrequencyType.Yearly, 1)
+            {
+                Count = 100,
+                ByDay = [new(DayOfWeek.Monday), new(DayOfWeek.Wednesday)],
+                BySetPosition = [1, 2, 4]
+            }
         };
         calendar.Events.Add(dailyEvent);
         return calendar;
@@ -162,10 +155,7 @@ public class OccurencePerfTests
         {
             Start = new CalDateTime(2025, 3, 1),
             End = null,
-            RecurrenceRules = new List<RecurrencePattern>
-            {
-                new RecurrencePattern(FrequencyType.Daily, 1) { Count = 1000 }
-            }
+            RecurrenceRule = new(FrequencyType.Daily, 1) { Count = 1000 }
         };
         calendar.Events.Add(dailyEvent);
         return calendar;
@@ -183,16 +173,14 @@ public class OccurencePerfTests
             .Range(0, limit)
             .Select(n =>
             {
-                var rrule = new RecurrencePattern(FrequencyType.Daily, 1)
-                {
-                    Until = startTime.AddDays(10),
-                };
-
                 var e = new CalendarEvent
                 {
                     Start = startTime.AddMinutes(5).ToTimeZone(tzid),
                     End = startTime.AddMinutes(10).ToTimeZone(tzid),
-                    RecurrenceRules = new List<RecurrencePattern> { rrule },
+                    RecurrenceRule = new(FrequencyType.Daily, 1)
+                    {
+                        Until = startTime.AddDays(10),
+                    },
                 };
                 startTime = startTime.Add(DataTypes.Duration.FromTimeSpanExact(interval));
                 return e;
@@ -281,16 +269,14 @@ public class OccurencePerfTests
             .Range(0, limit)
             .Select(n =>
             {
-                var rrule = new RecurrencePattern(FrequencyType.Daily, 1)
-                {
-                    Count = 100,
-                };
-
                 var e = new CalendarEvent
                 {
                     Start = new CalDateTime(startTime.AddMinutes(5), tzid),
                     End = new CalDateTime(startTime.AddMinutes(10), tzid),
-                    RecurrenceRules = new List<RecurrencePattern> { rrule },
+                    RecurrenceRule = new(FrequencyType.Daily, 1)
+                    {
+                        Count = 100,
+                    },
                 };
                 startTime = startTime.Add(interval);
                 return e;
