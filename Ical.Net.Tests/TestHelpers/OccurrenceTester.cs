@@ -40,11 +40,6 @@ internal static class OccurrenceTester
                 Has.Count.EqualTo(expectedPeriods.Length),
                 $"There should have been {expectedPeriods.Length} occurrences; there were {occurrences.Count}");
 
-            if (evt.RecurrenceRules.Count > 0)
-            {
-                Assert.That(evt.RecurrenceRules, Has.Count.EqualTo(1));
-            }
-
             using (Assert.EnterMultipleScope())
             {
                 for (var i = 0; i < expectedPeriods.Length; i++)

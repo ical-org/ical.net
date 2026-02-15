@@ -4,13 +4,11 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NodaTime;
-using NodaTime.Extensions;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -276,24 +274,16 @@ public class RecurrenceTests_From_Issues
         // GetOccurrences does not work properly when used with TimeZones #671 
 
         var zone = "America/Los_Angeles";
-        var calendar = new Ical.Net.Calendar();
+        var calendar = new Calendar();
         var blockDate = new DateTime(2024, 12, 2, 8, 0, 0, DateTimeKind.Utc);
         calendar.Events.Add(new CalendarEvent
         {
             Summary = "Unavailable Before Work",
-            DtStart = new CalDateTime(blockDate, zone), //.ToTimeZone(zone),
-            DtEnd = new CalDateTime(blockDate.Add(new TimeSpan(8, 0, 0)), zone), //.ToTimeZone(zone),
-            RecurrenceRules = new List<RecurrencePattern>
+            DtStart = new CalDateTime(blockDate, zone),
+            DtEnd = new CalDateTime(blockDate.Add(new TimeSpan(8, 0, 0)), zone),
+            RecurrenceRule = new(FrequencyType.Weekly, 1)
             {
-                new RecurrencePattern
-                {
-                    Frequency = Ical.Net.FrequencyType.Weekly,
-                    Interval = 1,
-                    ByDay = new List<WeekDay>
-                    {
-                        new WeekDay(DayOfWeek.Monday)
-                    }
-                }
+                ByDay = [new WeekDay(DayOfWeek.Monday)]
             }
         });
 
@@ -313,18 +303,20 @@ public class RecurrenceTests_From_Issues
         var calStart = new CalDateTime(DateTimeOffset.Parse("2023-01-14T19:21:03.700Z", CultureInfo.InvariantCulture).UtcDateTime, "UTC");
         var calFinish = new CalDateTime(DateTimeOffset.Parse("2023-03-14T18:21:03.700Z", CultureInfo.InvariantCulture).UtcDateTime, "UTC");
         var tz = "Pacific Standard Time";
-        var pattern = new RecurrencePattern(
-            "FREQ=WEEKLY;BYDAY=SU,MO,TU,WE"); //Adjust the date to today so that the times remain constant
+
+        //Adjust the date to today so that the times remain constant
         var localTzStartAdjust = (DateTime.Now.Add(TimeSpan.FromHours(2).Add(TimeSpan.FromMinutes(35))));
         var localTzFinishAdjust = DateTime.Now.Add(TimeSpan.FromHours(17));
-        var ev = new Ical.Net.CalendarComponents.CalendarEvent
+
+        var ev = new CalendarEvent
         {
             Class = "PUBLIC",
             Start = new CalDateTime(localTzStartAdjust, tz),
             End = new CalDateTime(localTzFinishAdjust, tz),
             Sequence = 0,
-            RecurrenceRules = new List<RecurrencePattern> { pattern }
+            RecurrenceRule = new("FREQ=WEEKLY;BYDAY=SU,MO,TU,WE")
         };
+
         var col = ev.GetOccurrences(calStart).TakeWhileBefore(calFinish);
 
         Assert.That(col, Is.Empty);
@@ -334,25 +326,23 @@ public class RecurrenceTests_From_Issues
 
     private static void CheckDates(DateTime startDate, DateTime endDate, CalDateTime[] expectedDates)
     {
-        var rule = new RecurrencePattern(FrequencyType.Weekly, 2)
-        {
-            ByDay = new List<WeekDay>
-            {
-                new WeekDay(DayOfWeek.Monday),
-                new WeekDay(DayOfWeek.Tuesday),
-                new WeekDay(DayOfWeek.Wednesday),
-                new WeekDay(DayOfWeek.Thursday),
-                new WeekDay(DayOfWeek.Friday),
-                new WeekDay(DayOfWeek.Saturday),
-                new WeekDay(DayOfWeek.Sunday),
-            }
-        };
-
         var calendarEvent = new CalendarEvent
         {
             DtStart = new CalDateTime(startDate),
             DtEnd = new CalDateTime(endDate),
-            RecurrenceRules = new List<RecurrencePattern> { rule }
+            RecurrenceRule = new(FrequencyType.Weekly, 2)
+            {
+                ByDay =
+                [
+                    new WeekDay(DayOfWeek.Monday),
+                    new WeekDay(DayOfWeek.Tuesday),
+                    new WeekDay(DayOfWeek.Wednesday),
+                    new WeekDay(DayOfWeek.Thursday),
+                    new WeekDay(DayOfWeek.Friday),
+                    new WeekDay(DayOfWeek.Saturday),
+                    new WeekDay(DayOfWeek.Sunday),
+                ]
+            }
         };
 
         var occurrences = calendarEvent.GetOccurrences(new CalDateTime(startDate)).TakeWhileBefore(new CalDateTime(endDate));

@@ -67,7 +67,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = new CalDateTime(2025, 07, 10),
             // Add the rule to the event.
-            RecurrenceRules = [recurrence]
+            RecurrenceRule = recurrence
         };
 
         // Get all occurrences of the series.
@@ -118,7 +118,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = start,
             DtEnd = start.AddHours(1),
-            RecurrenceRules = [recurrence]
+            RecurrenceRule = recurrence
         };
 
         // Add CalendarEvent to Calendar
@@ -190,7 +190,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = start,
             DtEnd = start.AddHours(1),
-            RecurrenceRules = [recurrence]
+            RecurrenceRule = recurrence
         };
 
         // Add CalendarEvent to Calendar
@@ -266,7 +266,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = start,
             DtEnd = start.AddHours(4),
-            RecurrenceRules = [recurrence],
+            RecurrenceRule = recurrence,
         };
         // Add additional an occurrence to the series.
         calendarEvent.RecurrenceDates
@@ -341,7 +341,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = start,
             DtEnd = start.AddMinutes(15),
-            RecurrenceRules = [recurrence],
+            RecurrenceRule = recurrence,
         };
         // Add the exception date to the series.
         calendarEvent.ExceptionDates
@@ -422,7 +422,7 @@ internal class RecurrenceWikiTests
             Summary = "Walking",
             DtStart = start,
             DtEnd = start.AddHours(1),
-            RecurrenceRules = [recurrence],
+            RecurrenceRule = recurrence,
             Sequence = 0 // default value
         };
 
@@ -522,7 +522,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = start,
             DtEnd = start.AddHours(1),
-            RecurrenceRules = [recurrence]
+            RecurrenceRule = recurrence
         };
 
         // Add CalendarEvent to Calendar
@@ -586,7 +586,7 @@ internal class RecurrenceWikiTests
             Summary = "Daily event",
             Start = start,
             End = start.AddHours(1),
-            RecurrenceRules = [new RecurrencePattern(FrequencyType.Daily, interval: 1)]
+            RecurrenceRule = new RecurrencePattern(FrequencyType.Daily, interval: 1)
         });
 
         // Simple event in far future

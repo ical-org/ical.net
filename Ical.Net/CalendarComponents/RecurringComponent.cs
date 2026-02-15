@@ -101,9 +101,9 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
 
     public virtual RecurrenceDates RecurrenceDates { get; internal set; } = null!;
 
-    public virtual IList<RecurrencePattern> RecurrenceRules
+    public virtual RecurrencePattern? RecurrenceRule
     {
-        get => Properties.GetMany<RecurrencePattern>("RRULE");
+        get => Properties.Get<RecurrencePattern>("RRULE");
         set => Properties.Set("RRULE", value);
     }
 

@@ -90,7 +90,7 @@ public class TodoTest
         var todo = new Todo
         {
             Start = today,
-            RecurrenceRules = [new RecurrencePattern("FREQ=DAILY")]
+            RecurrenceRule = new("FREQ=DAILY")
         };
 
         // periodStart is in the future, so filtering the first occurrence will also require
@@ -109,7 +109,7 @@ public class TodoTest
         var todo = new Todo
         {
             Start = start,
-            RecurrenceRules = [new("FREQ=DAILY;BYDAY=TH")],
+            RecurrenceRule = new("FREQ=DAILY;BYDAY=TH"),
             Status = TodoStatus.Completed
         };
 

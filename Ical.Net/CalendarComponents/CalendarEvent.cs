@@ -209,7 +209,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer
             && IsActive == other.IsActive
             && string.Equals(Transparency, other.Transparency, TransparencyType.Comparison)
             && Attachments.SequenceEqual(other.Attachments)
-            && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules);
+            && CollectionHelpers.Equals(RecurrenceRule, other.RecurrenceRule);
 
         if (!result)
         {
