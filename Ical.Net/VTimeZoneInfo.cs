@@ -119,9 +119,9 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
 
     public virtual RecurrenceDates RecurrenceDates { get; private set; } = null!;
 
-    public virtual RecurrencePattern? RecurrenceRule
+    public virtual RecurrenceRule? RecurrenceRule
     {
-        get => Properties.Get<RecurrencePattern>("RRULE");
+        get => Properties.Get<RecurrenceRule>("RRULE");
         set => Properties.Set("RRULE", value);
     }
 

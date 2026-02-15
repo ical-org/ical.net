@@ -932,13 +932,13 @@ public class RecurrenceTests
         var start = new CalDateTime(2019, 1, 1);
         var end = new CalDateTime(2019, 12, 31);
 
-        var recurringPeriods1 = new RecurrencePattern(
+        var recurringPeriods1 = new RecurrenceRule(
             "FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53")
             .Evaluate(start, start)
             .TakeWhileBefore(end)
             .ToList();
 
-        var recurringPeriods2 = new RecurrencePattern(
+        var recurringPeriods2 = new RecurrenceRule(
             "FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=53,51,49,47,45,43,41,39,37,35,33,31,29,27,25,23,21,19,17,15,13,11,9,7,5,3,1")
             .Evaluate(start, start)
             .TakeWhileBefore(end)
@@ -2300,7 +2300,7 @@ public class RecurrenceTests
         var start = new CalDateTime(2019, 1, 1);
         var end = new CalDateTime(2019, 12, 31);
 
-        var recurringPeriods = new RecurrencePattern("FREQ=YEARLY;BYDAY=MO;BYWEEKNO=2")
+        var recurringPeriods = new RecurrenceRule("FREQ=YEARLY;BYDAY=MO;BYWEEKNO=2")
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(1));
@@ -2316,7 +2316,7 @@ public class RecurrenceTests
         var start = new CalDateTime(2020, 1, 1);
         var end = new CalDateTime(2020, 12, 31);
 
-        var recurringPeriods = new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1")
+        var recurringPeriods = new RecurrenceRule("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1")
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
@@ -2330,7 +2330,7 @@ public class RecurrenceTests
     }
 
     [Test, Category("Recurrence")]
-    public void ReccurencePattern_MaxDate_StopsOnCount()
+    public void ReccurenceRule_MaxDate_StopsOnCount()
     {
         var evt = new CalendarEvent
         {
@@ -2356,7 +2356,7 @@ public class RecurrenceTests
         var start = new CalDateTime(2020, 1, 1);
         var end = new CalDateTime(2020, 12, 31);
 
-        var recurringPeriods = new RecurrencePattern("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1")
+        var recurringPeriods = new RecurrenceRule("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1")
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
@@ -2378,8 +2378,8 @@ public class RecurrenceTests
     {
         using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO");
         var start = new CalDateTime(2010, 11, 27, 9, 0, 0);
-        var serializer = new RecurrencePatternSerializer();
-        var rp = (RecurrencePattern) serializer.Deserialize(sr)!;
+        var serializer = new RecurrenceRuleSerializer();
+        var rp = (RecurrenceRule) serializer.Deserialize(sr)!;
         var recurringPeriods = rp.Evaluate(start, start.ToZonedDateTime(_tzid))
             .TakeWhileBefore(rp.Until!).ToList();
 
@@ -2422,8 +2422,8 @@ public class RecurrenceTests
     public void Bug3292737()
     {
         using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126");
-        var serializer = new RecurrencePatternSerializer();
-        var rp = (RecurrencePattern) serializer.Deserialize(sr)!;
+        var serializer = new RecurrenceRuleSerializer();
+        var rp = (RecurrenceRule) serializer.Deserialize(sr)!;
 
         Assert.That(rp, Is.Not.Null);
         Assert.That(rp.Until, Is.EqualTo(new CalDateTime(2025, 11, 26)));
@@ -2587,11 +2587,11 @@ public class RecurrenceTests
     }
 
     [Test, Category("Recurrence")]
-    public void RecurrencePattern1()
+    public void RecurrenceRule1()
     {
         // NOTE: evaluators are not generally meant to be used directly like this.
         // However, this does make a good test to ensure they behave as they should.
-        var pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
+        var pattern = new RecurrenceRule("FREQ=SECONDLY;INTERVAL=10");
 
         var startDate = new CalDateTime(2008, 3, 30, 23, 59, 40);
         var fromDate = startDate.ToZonedDateTime(_tzid);
@@ -2612,11 +2612,11 @@ public class RecurrenceTests
     }
 
     [Test, Category("Recurrence")]
-    public void RecurrencePattern2()
+    public void RecurrenceRule2()
     {
         // NOTE: evaluators are generally not meant to be used directly like this.
         // However, this does make a good test to ensure they behave as they should.
-        var pattern = new RecurrencePattern("FREQ=MINUTELY;INTERVAL=1");
+        var pattern = new RecurrenceRule("FREQ=MINUTELY;INTERVAL=1");
 
         var us = new CultureInfo("en-US");
 
@@ -2681,11 +2681,11 @@ public class RecurrenceTests
         using (Assert.EnterMultipleScope())
         {
             // Using the constructor
-            Assert.That(() => _ = new RecurrencePattern((FrequencyType) int.MaxValue, 1),
+            Assert.That(() => _ = new RecurrenceRule((FrequencyType) int.MaxValue, 1),
                 Throws.TypeOf<ArgumentOutOfRangeException>());
 
             // Using the property
-            Assert.That(() => _ = new RecurrencePattern { Frequency = (FrequencyType) 9876543 },
+            Assert.That(() => _ = new RecurrenceRule { Frequency = (FrequencyType) 9876543 },
                 Throws.TypeOf<ArgumentOutOfRangeException>());
         }
     }
@@ -2698,7 +2698,7 @@ public class RecurrenceTests
         evt.Summary = "Event summary";
         evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc));
 
-        var recur = new RecurrencePattern();
+        var recur = new RecurrenceRule();
         recur.Frequency = FrequencyType.Daily;
         recur.Count = 3;
         recur.ByDay.Add(new WeekDay(DayOfWeek.Monday));
@@ -2706,7 +2706,7 @@ public class RecurrenceTests
         recur.ByDay.Add(new WeekDay(DayOfWeek.Friday));
         evt.RecurrenceRule = recur;
 
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         Assert.That(
             string.Compare(serializer.SerializeToString(recur), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR",
                 StringComparison.Ordinal) == 0,
@@ -2717,7 +2717,7 @@ public class RecurrenceTests
     [Test, Category("Recurrence")]
     public void Test4()
     {
-        var rpattern = new RecurrencePattern();
+        var rpattern = new RecurrenceRule();
         rpattern.ByDay.Add(new WeekDay(DayOfWeek.Saturday));
         rpattern.ByDay.Add(new WeekDay(DayOfWeek.Sunday));
 
@@ -2878,7 +2878,7 @@ UID:abab717c-1786-4efc-87dd-6859c2b48eb6
 END:VEVENT
 END:VCALENDAR";
 
-        var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
+        var rrule = new RecurrenceRule(FrequencyType.Weekly, interval: 1)
         {
             Until = new CalDateTime("20160831T070000"),
             ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday) },
@@ -3053,7 +3053,7 @@ END:VCALENDAR";
         {
             DtStart = start,
             DtEnd = end,
-            RecurrenceRule = new RecurrencePattern(FrequencyType.Daily)
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Daily)
             {
                 Until = start.AddYears(2)
             }
@@ -3152,7 +3152,7 @@ END:VCALENDAR";
     public void DisallowedUntilShouldThrow(string? tzId, bool shouldThrow)
     {
         var dt = new CalDateTime(2025, 11, 08, 10, 30, 00, tzId);
-        var recPattern = new RecurrencePattern(FrequencyType.Daily, 1);
+        var recPattern = new RecurrenceRule(FrequencyType.Daily, 1);
 
         if (shouldThrow)
         {
@@ -3341,15 +3341,15 @@ END:VCALENDAR";
             ? Throws.InstanceOf(typeof(Exception))
             : Throws.InstanceOf(exceptionType);
 
-        RecurrencePattern GetPattern() => new(testCase.RRule!);
+        RecurrenceRule GetRule() => new(testCase.RRule!);
 
         if (testCase.ExceptionStep == RecurrenceTestExceptionStep.Construction)
         {
-            Assert.That(() => GetPattern(), throwsConstraint);
+            Assert.That(() => GetRule(), throwsConstraint);
             return;
         }
 
-        evt.RecurrenceRule = GetPattern();
+        evt.RecurrenceRule = GetRule();
 
         // Evaluate all tests in UTC so that INSTANCES match
         // the local date and time of the expected values.
@@ -3555,8 +3555,8 @@ END:VCALENDAR";
     [TestCase("INTERVAL=2;UNTIL=20250430T000000Z;FREQ=DAILY")]
     public void Recurrence_RRULE_Properties_ShouldBeDeserialized_In_Any_Order(string rRule)
     {
-        var serializer = new RecurrencePatternSerializer();
-        var recurrencePattern = serializer.Deserialize(new StringReader(rRule)) as RecurrencePattern;
+        var serializer = new RecurrenceRuleSerializer();
+        var recurrencePattern = serializer.Deserialize(new StringReader(rRule)) as RecurrenceRule;
 
         using (Assert.EnterMultipleScope())
         {
@@ -3572,7 +3572,7 @@ END:VCALENDAR";
     [Test]
     public void Recurrence_RRULE_Without_Freq_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         Assert.That(() => serializer.Deserialize(new StringReader("INTERVAL=2;UNTIL=20250430T000000Z")),
             Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -3581,7 +3581,7 @@ END:VCALENDAR";
     [Test]
     public void Recurrence_RRULE_With_Freq_Undefined_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         Assert.That(() => serializer.Deserialize(new StringReader("FREQ=UNDEFINED;INTERVAL=2;UNTIL=20250430T000000Z")),
             Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -3590,7 +3590,7 @@ END:VCALENDAR";
     [Test]
     public void Recurrence_RRULE_With_Unsupported_Part_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         Assert.That(() => serializer.Deserialize(new StringReader("FREQ=DAILY;INTERVAL=2;FAILING=0")),
             Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -3599,11 +3599,11 @@ END:VCALENDAR";
     [Test]
     public void Preceding_Appended_and_duplicate_Semicolons_Should_Be_Ignored()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         var recurrencePattern =
             serializer.Deserialize(new StringReader(";FREQ=DAILY;INTERVAL=2;UNTIL=20250430T000000Z")) as
-                RecurrencePattern;
+                RecurrenceRule;
         using (Assert.EnterMultipleScope())
         {
             Assert.That(recurrencePattern, Is.Not.Null);
@@ -3617,7 +3617,7 @@ END:VCALENDAR";
     [Test]
     public void Disallowed_Recurrence_RangeChecks_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         using (Assert.EnterMultipleScope())
         {
             Assert.That(() => serializer.CheckMutuallyExclusive("a", "b", 1, CalDateTime.Now),
@@ -4004,7 +4004,7 @@ END:VCALENDAR";
     }
 
     [Test]
-    public void SkippedOccurrenceOnWeeklyPattern() // Test moved from former GetOccurrencesTests
+    public void SkippedOccurrenceOnWeeklyRule() // Test moved from former GetOccurrencesTests
     {
         const int evaluationsCount = 1000;
         var eventStart = new CalDateTime(new DateTime(2016, 1, 1, 10, 0, 0, DateTimeKind.Utc));

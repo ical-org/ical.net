@@ -32,7 +32,7 @@ public abstract class RecurringEvaluator : IEvaluator
         if (Recurrable.RecurrenceRule is null)
             return [];
 
-        var ruleEvaluator = new RecurrencePatternEvaluator(Recurrable.RecurrenceRule, referenceDate, timeZone, periodStart, options);
+        var ruleEvaluator = new RecurrenceRuleEvaluator(Recurrable.RecurrenceRule, referenceDate, timeZone, periodStart, options);
 
         return ruleEvaluator.Evaluate();
     }

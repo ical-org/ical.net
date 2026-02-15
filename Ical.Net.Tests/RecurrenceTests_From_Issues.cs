@@ -464,7 +464,7 @@ public class RecurrenceTests_From_Issues
     {
         // Bug #879
 
-        var rp = new RecurrencePattern("FREQ=WEEKLY;BYDAY=SU,MO,TU,WE,TH,FR;BYMONTH=5,6,7,8,9");
+        var rp = new RecurrenceRule("FREQ=WEEKLY;BYDAY=SU,MO,TU,WE,TH,FR;BYMONTH=5,6,7,8,9");
 
         var referenceDate = new CalDateTime(2025, 11, 07, 0, 0, 0, "Central Standard Time");
         var start = referenceDate.ToZonedDateTime();

@@ -52,7 +52,7 @@ internal static class RecurrenceUtil
             // the maximum supported date/time value, which is 9999-12-31. When evaluation recurrence rules,
             // these exceptions could basically be raised anywhere, so we handle them here centrally and
             // convert them to EvaluationOutOfRangeException, which are specified to be raised in such cases.
-            // There shouldn't be other causes for this type of exceptions, as most validations of the pattern
+            // There shouldn't be other causes for this type of exceptions, as most validations of the rrule
             // itself are already done earlier, before doing the actual enumeration.
             // Intentionally don't include the outer exception as this most likely is not a technical but a usage error.
             .Catch<T, ArgumentOutOfRangeException>(_ => throw new EvaluationOutOfRangeException("An out-of-range value was encountered while evaluating occurrences. This commonly happens when trying to enumerate an unbounded RRULE to its end. Consider applying the .TakeWhile() operator."))

@@ -60,36 +60,36 @@ internal sealed class ByRuleValues
         _bySetPos = new();
     }
 
-    private ByRuleValues(RecurrencePattern pattern)
+    private ByRuleValues(RecurrenceRule rule)
     {
-        _firstDayOfWeek = pattern.FirstDayOfWeek.ToIsoDayOfWeek();
+        _firstDayOfWeek = rule.FirstDayOfWeek.ToIsoDayOfWeek();
 
-        _normalMonths = SortValues(pattern.ByMonth);
-        _normalHours = SortValues(pattern.ByHour);
-        _normalMinutes = SortValues(pattern.ByMinute);
-        _normalSeconds = SortValues(pattern.BySecond);
+        _normalMonths = SortValues(rule.ByMonth);
+        _normalHours = SortValues(rule.ByHour);
+        _normalMinutes = SortValues(rule.ByMinute);
+        _normalSeconds = SortValues(rule.BySecond);
 
-        _byWeekNo = new(pattern.ByWeekNo);
-        _byYearDay = new(pattern.ByYearDay);
-        _byMonthDay = new(pattern.ByMonthDay);
-        _bySetPos = new(pattern.BySetPosition);
+        _byWeekNo = new(rule.ByWeekNo);
+        _byYearDay = new(rule.ByYearDay);
+        _byMonthDay = new(rule.ByMonthDay);
+        _bySetPos = new(rule.BySetPosition);
 
-        _byDay = [.. pattern.ByDay.Select(static x => new WeekDayValue(x))];
+        _byDay = [.. rule.ByDay.Select(static x => new WeekDayValue(x))];
 
         HasByDayOffsets = _byDay.Any(static x => x.Offset != null);
-        HasNegativeSetPos = pattern.BySetPosition.Any(static x => x < 0);
+        HasNegativeSetPos = rule.BySetPosition.Any(static x => x < 0);
 
-        _normalPositiveSetPos = HasNegativeSetPos || pattern.BySetPosition.Count == 0
-            ? [] : pattern.BySetPosition.OrderBy(_identityFunc).Distinct().ToArray();
+        _normalPositiveSetPos = HasNegativeSetPos || rule.BySetPosition.Count == 0
+            ? [] : rule.BySetPosition.OrderBy(_identityFunc).Distinct().ToArray();
     }
 
     /// <summary>
     /// Normalizes BY rules for evaluation. BY rule values that change
     /// based on the date are cached for repeated use.
     /// </summary>
-    /// <param name="pattern"></param>
-    public static ByRuleValues From(RecurrencePattern pattern)
-        => pattern.HasByRules() ? new(pattern) : Empty;
+    /// <param name="rule"></param>
+    public static ByRuleValues From(RecurrenceRule rule)
+        => rule.HasByRules() ? new(rule) : Empty;
 
     /// <summary>
     /// Normalized BYMONTH values.
