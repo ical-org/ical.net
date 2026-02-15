@@ -76,7 +76,7 @@ public abstract class CalendarDataType : ICalendarDataType
                 case "PERIOD":
                     return typeof(Period);
                 case "RECUR":
-                    return typeof(RecurrencePattern);
+                    return typeof(RecurrenceRule);
                 case "TEXT":
                     return typeof(string);
                 case "TIME":

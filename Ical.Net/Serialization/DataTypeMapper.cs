@@ -51,7 +51,7 @@ internal class DataTypeMapper
         AddPropertyMapping("REQUEST-STATUS", typeof(RequestStatus), false);
         AddPropertyMapping("REPEAT", typeof(int), false);
         AddPropertyMapping("RESOURCES", typeof(string), true);
-        AddPropertyMapping("RRULE", typeof(RecurrencePattern), false);
+        AddPropertyMapping("RRULE", typeof(RecurrenceRule), false);
         AddPropertyMapping("SEQUENCE", typeof(int), false);
         AddPropertyMapping("STATUS", ResolveStatusProperty, false);
         AddPropertyMapping("TRANSP", typeof(TransparencyType), false);

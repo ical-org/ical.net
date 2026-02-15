@@ -12,7 +12,7 @@ public class EvaluationOptions
     /// evaluation is stopped exceptionally. If null, the evaluation will continue indefinitely.
     /// </summary>
     /// <remarks>
-    /// This option only applies to the evaluation of RecurrencePatterns.
+    /// This option only applies to the evaluation of recurrence rules.
     /// <para/>
     /// If the specified number of increments is exceeded without finding a recurrence, an
     /// exception of type <see cref="Ical.Net.Evaluation.EvaluationLimitExceededException"/> will be thrown.

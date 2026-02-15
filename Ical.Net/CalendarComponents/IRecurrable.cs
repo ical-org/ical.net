@@ -19,7 +19,7 @@ public interface IRecurrable : IGetOccurrences
 
     RecurrenceDates RecurrenceDates { get; }
 
-    RecurrencePattern? RecurrenceRule { get; set; }
+    RecurrenceRule? RecurrenceRule { get; set; }
 
     CalDateTime? RecurrenceId { get; set; }
 

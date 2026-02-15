@@ -44,11 +44,6 @@ public class EqualityAndHashingTests
         yield return new TestCaseData(nowCalDtWithTz, new CalDateTime(_nowTime, TzId)).SetName("Now, with time zone");
     }
 
-    private static RecurrencePattern GetSimpleRecurrencePattern() => new RecurrencePattern(FrequencyType.Daily, 1)
-    {
-        Count = 5
-    };
-
     private static CalendarEvent GetSimpleEvent() => new CalendarEvent
     {
         DtStart = new CalDateTime(_nowTime),

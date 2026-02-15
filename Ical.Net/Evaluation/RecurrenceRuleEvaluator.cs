@@ -15,7 +15,7 @@ using NodaTime.Extensions;
 
 namespace Ical.Net.Evaluation;
 
-internal sealed class RecurrencePatternEvaluator
+internal sealed class RecurrenceRuleEvaluator
 {
     private readonly ByRuleValues _rule;
     private readonly CalDateTime _referenceDate;
@@ -35,8 +35,8 @@ internal sealed class RecurrencePatternEvaluator
     private ZonedDateTime _seed;
     private int _unmatchedIncrementCount;
 
-    public RecurrencePatternEvaluator(
-        RecurrencePattern pattern,
+    public RecurrenceRuleEvaluator(
+        RecurrenceRule rule,
         CalDateTime referenceDate,
         DateTimeZone timeZone,
         Instant? periodStart,
@@ -46,25 +46,25 @@ internal sealed class RecurrencePatternEvaluator
         _periodStart = periodStart;
         _options = options;
 
-        // Copy pattern values
-        _frequency = pattern.Frequency;
-        _until = pattern.Until?.ToZonedDateTime(timeZone).ToInstant();
-        _count = pattern.Count;
-        _interval = Math.Max(1, pattern.Interval);
-        _rule = ByRuleValues.From(pattern);
+        // Copy rule values
+        _frequency = rule.Frequency;
+        _until = rule.Until?.ToZonedDateTime(timeZone).ToInstant();
+        _count = rule.Count;
+        _interval = Math.Max(1, rule.Interval);
+        _rule = ByRuleValues.From(rule);
 
-        _firstDayOfWeek = pattern.FirstDayOfWeek.ToIsoDayOfWeek();
+        _firstDayOfWeek = rule.FirstDayOfWeek.ToIsoDayOfWeek();
         _weekYearRule = WeekYearRules.ForMinDaysInFirstWeek(4, _firstDayOfWeek);
         _zonedReferenceDate = referenceDate.AsZonedOrDefault(timeZone);
         _referenceWeekNo = _weekYearRule.GetWeekOfWeekYear(_zonedReferenceDate.Date);
     }
 
-    public RecurrencePatternEvaluator(
-        RecurrencePattern pattern,
+    public RecurrenceRuleEvaluator(
+        RecurrenceRule rule,
         CalDateTime referenceDate,
         ZonedDateTime periodStart,
         EvaluationOptions? options)
-        : this(pattern, referenceDate, periodStart.Zone, periodStart.ToInstant(), options) { }
+        : this(rule, referenceDate, periodStart.Zone, periodStart.ToInstant(), options) { }
 
     public IEnumerable<EvaluationPeriod> Evaluate()
     {

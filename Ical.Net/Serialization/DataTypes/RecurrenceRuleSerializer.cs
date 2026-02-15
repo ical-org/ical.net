@@ -12,11 +12,11 @@ using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
 
-public class RecurrencePatternSerializer : EncodableDataTypeSerializer
+public class RecurrenceRuleSerializer : EncodableDataTypeSerializer
 {
-    public RecurrencePatternSerializer() { }
+    public RecurrenceRuleSerializer() { }
 
-    public RecurrencePatternSerializer(SerializationContext ctx) : base(ctx) { }
+    public RecurrenceRuleSerializer(SerializationContext ctx) : base(ctx) { }
 
     public static DayOfWeek GetDayOfWeek(string value)
     {
@@ -101,17 +101,17 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         }
     }
 
-    public override Type TargetType => typeof(RecurrencePattern);
+    public override Type TargetType => typeof(RecurrenceRule);
 
     public override string? SerializeToString(object? obj)
     {
         var factory = GetService<ISerializerFactory>();
-        if (obj is not RecurrencePattern recur)
+        if (obj is not RecurrenceRule recur)
         {
             return null;
         }
 
-        // Push the recurrence pattern onto the serialization stack
+        // Push the recurrence rule onto the serialization stack
         SerializationContext.Push(recur);
         var values = new List<string>
         {
@@ -172,14 +172,14 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         SerializeByValue(values, recur.ByWeekNo, "BYWEEKNO");
         SerializeByValue(values, recur.ByYearDay, "BYYEARDAY");
 
-        // Pop the recurrence pattern off the serialization stack
+        // Pop the recurrence rule off the serialization stack
         SerializationContext.Pop();
 
         return Encode(recur, string.Join(";", values));
     }
 
     /// <summary>
-    /// Deserializes an RRULE value string into an <see cref="RecurrencePattern"/> object.
+    /// Deserializes an RRULE value string into an <see cref="RecurrenceRule"/> object.
     /// <para/>
     /// RFC5545, section 3.3.10:
     /// The RRULE value type is a structured value consisting of a
@@ -191,14 +191,14 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
     /// parts ordered in any sequence.
     /// </summary>
     /// <param name="tr"></param>
-    /// <returns>An <see cref="RecurrencePattern"/> object or <see langword="null"/> for invalid input.</returns>
+    /// <returns>An <see cref="RecurrenceRule"/> object or <see langword="null"/> for invalid input.</returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public override object? Deserialize(TextReader tr)
     {
         var value = tr.ReadToEnd();
 
         // Instantiate the data type
-        var r = CreateAndAssociate() as RecurrencePattern;
+        var r = CreateAndAssociate() as RecurrenceRule;
         var factory = GetService<ISerializerFactory>();
 
         System.Diagnostics.Debug.Assert(r != null);
@@ -208,7 +208,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         value = Decode(r, value);
         if (value == null) return null;
 
-        DeserializePattern(value, r, factory);
+        DeserializeRule(value, r, factory);
         return r;
     }
 
@@ -216,7 +216,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
     /// Deserializes the recurrence rule.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">Always throws on failure.</exception>
-    private void DeserializePattern(string value, RecurrencePattern r, ISerializerFactory factory)
+    private void DeserializeRule(string value, RecurrenceRule r, ISerializerFactory factory)
     {
         var freqPartExists = false;
         var keywordPairs = value.Split(';');
@@ -252,7 +252,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         CheckRanges(r);
     }
 
-    private void ProcessKeyValuePair(string key, string value, RecurrencePattern r, ISerializerFactory factory)
+    private void ProcessKeyValuePair(string key, string value, RecurrenceRule r, ISerializerFactory factory)
     {
         switch (key)
         {
@@ -328,7 +328,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         }
     }
 
-    private void CheckRanges(RecurrencePattern r)
+    private void CheckRanges(RecurrenceRule r)
     {
         CheckRange("INTERVAL", r.Interval, 1, int.MaxValue);
         CheckRange("COUNT", r.Count, 1, int.MaxValue);
