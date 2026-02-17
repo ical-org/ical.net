@@ -104,7 +104,18 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
         }
 
         var isUtc = match.Groups[9].Success;
-        if (isUtc) timeZoneId = "UTC";
+        if (timeZoneId != null)
+        {
+            if (isUtc)
+                throw new FormatException("A TZID mustn't be specified for a date with the 'Z' suffix.");
+
+            if (!timePart.HasValue)
+                throw new FormatException("A TZID property mustn't be present for date-only values.");
+        }
+
+        if (isUtc)
+            timeZoneId = "UTC";
+
 
         var res = timePart.HasValue
             ? new CalDateTime(datePart, timePart.Value, timeZoneId)
