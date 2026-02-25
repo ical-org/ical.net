@@ -3038,8 +3038,8 @@ END:VCALENDAR";
         Assert.That(occurrences, Has.Count.EqualTo(3));
     }
 
-    private static readonly CalDateTime _now = CalDateTime.Now;
-    private static readonly CalDateTime _later = _now.AddHours(1);
+    private static readonly CalDateTime _now = new(2026, 2, 24, 11, 30, 21);
+    private static readonly CalDateTime _later = _now.ToLocalDateTime().PlusHours(1).ToCalDateTime();
 
     private static CalendarEvent GetEventWithRecurrenceRules()
     {
@@ -3062,7 +3062,7 @@ END:VCALENDAR";
     public void ExDatesShouldGetMergedInOutput()
     {
         var start = _now.AddYears(-1);
-        var end = start.AddHours(1);
+        var end = start.ToLocalDateTime().PlusHours(1).ToCalDateTime();
         var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = start.AddYears(2) };
         var e = new CalendarEvent
         {
@@ -3606,8 +3606,13 @@ END:VCALENDAR";
         var evt = cal.Events.First();
         var ev = new EventEvaluator(evt);
 
+        var end = evt.DtStart!
+            .ToZonedDateTime()
+            .PlusMinutes(61)
+            .ToInstant();
+
         var occurrences = ev.Evaluate(evt.DtStart!, evt.DtStart!.ToZonedDateTime(tzId), null)
-            .TakeWhileBefore(evt.DtStart.AddMinutes(61).ToZonedDateTime(tzId).ToInstant());
+            .TakeWhileBefore(end);
 
         var occurrencesStartTimes = occurrences.Select(x => x.Start).Take(2).ToList();
 

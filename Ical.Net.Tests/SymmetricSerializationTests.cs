@@ -32,7 +32,7 @@ public class SymmetricSerializationTests
         if (useDtEnd)
             evt.DtEnd = new CalDateTime(_later);
         else
-            evt.Duration = (_later - _nowTime).ToDurationExact();
+            evt.Duration = Duration.FromTimeSpanExact(_later - _nowTime);
 
         return evt;
     }
