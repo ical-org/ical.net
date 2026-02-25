@@ -45,7 +45,10 @@ public struct Duration
         Seconds = seconds;
     }
 
-    public NodaTime.Period ToPeriod()
+    public static Duration FromPeriod(NodaTime.Period p)
+        => new(p.Weeks, p.Days, (int) p.Hours, (int) p.Minutes, (int) p.Seconds);
+
+    public readonly NodaTime.Period ToPeriod()
     {
         var b = new NodaTime.PeriodBuilder
         {
@@ -59,7 +62,7 @@ public struct Duration
         return b.Build();
     }
 
-    public NodaTime.Period GetNominalPart()
+    public readonly NodaTime.Period GetNominalPart()
     {
         var b = new NodaTime.PeriodBuilder
         {
@@ -70,7 +73,7 @@ public struct Duration
         return b.Build();
     }
 
-    public NodaTime.Duration GetTimePart()
+    public readonly NodaTime.Duration GetTimePart()
     {
         var b = new NodaTime.PeriodBuilder
         {
