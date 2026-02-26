@@ -464,24 +464,6 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         return new(ToZonedDateTime(otherTzId));
     }
 
-    /// <inheritdoc cref="DateTime.AddYears"/>
-    public CalDateTime AddYears(int years)
-    {
-        return new(_localDate.PlusYears(years), _localTime, _tzId);
-    }
-
-    /// <inheritdoc cref="DateTime.AddMonths"/>
-    public CalDateTime AddMonths(int months)
-    {
-        return new(_localDate.PlusMonths(months), _localTime, _tzId);
-    }
-
-    /// <inheritdoc cref="DateTime.AddDays"/>
-    public CalDateTime AddDays(int days)
-    {
-        return new(_localDate.PlusDays(days), _localTime, _tzId);
-    }
-
     /// <inheritdoc />
     public override string ToString() => ToString(null, null);
 

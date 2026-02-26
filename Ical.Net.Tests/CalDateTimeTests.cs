@@ -221,31 +221,6 @@ public class CalDateTimeTests
         Assert.That(seq1.Count(), Is.EqualTo(seq2.Count()));
     }
 
-
-    [Test, TestCaseSource(nameof(DateOnlyValidArithmeticTestCases))]
-    public (DateTime Value, bool HasTime) DateOnlyValidArithmeticTests(Func<CalDateTime, CalDateTime> operation)
-    {
-        var result = operation(new CalDateTime(2025, 1, 15));
-        return (result.Value, result.HasTime);
-    }
-
-    public static IEnumerable DateOnlyValidArithmeticTestCases()
-    {
-        var dateTime = new DateTime(2025, 1, 15);
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddYears(1)))
-            .Returns((dateTime.AddYears(1), false))
-            .SetName($"{nameof(CalDateTime.AddYears)} 1 year");
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddMonths(2)))
-            .Returns((dateTime.AddMonths(2), false))
-            .SetName($"{nameof(CalDateTime.AddMonths)} 2 months");
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddDays(7)))
-            .Returns((dateTime.AddDays(7), false))
-            .SetName($"{nameof(CalDateTime.AddDays)} 7 days");
-    }
-
     [Test]
     public void Simple_PropertyAndMethod_HasTime_Tests()
     {
