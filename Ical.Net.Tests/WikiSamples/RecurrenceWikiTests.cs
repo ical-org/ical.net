@@ -183,8 +183,11 @@ internal class RecurrenceWikiTests
         {
             Frequency = FrequencyType.Yearly,
             ByMonthDay = [10, 12],
-            // 2027-07-10 09:00:00 Europe/Zurich (07:00:00 UTC)
-            Until = start.AddYears(2).ToTimeZone("UTC")
+            Until = start.ToLocalDateTime()
+                .PlusYears(2)
+                .InZoneLeniently("Europe/Zurich")
+                .ToInstant()
+                .ToCalDateTime()
         };
 
         var calendarEvent = new CalendarEvent
@@ -439,7 +442,7 @@ internal class RecurrenceWikiTests
             DtStart = startMoved,
             DtEnd = new(startMoved.ToZonedDateTime().PlusMinutes(13)),
             // Set the original date of the occurrence (2025-07-14 09:00:00).
-            RecurrenceId = start.AddDays(4),
+            RecurrenceId = new(2025, 07, 14, 09, 00, 00, timeZoneId),
             // The first change for this RecurrenceId
             Sequence = 1
         };
