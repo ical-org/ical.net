@@ -3010,7 +3010,7 @@ END:VCALENDAR";
     {
         var searchStart = _now.AddDays(-1);
         var searchEnd = _now.AddDays(7);
-        var e = GetEventWithRecurrenceRules();
+        var e = GetEventWithRecurrenceRule();
         var occurrences = e.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(5));
 
@@ -3029,7 +3029,7 @@ END:VCALENDAR";
     private static readonly CalDateTime _now = CalDateTime.Now;
     private static readonly CalDateTime _later = _now.AddHours(1);
 
-    private static CalendarEvent GetEventWithRecurrenceRules()
+    private static CalendarEvent GetEventWithRecurrenceRule()
     {
         var calendarEvent = new CalendarEvent
         {

@@ -180,11 +180,6 @@ public class CalendarEventTest
         Uid = _uid,
     };
 
-    private static List<RecurrenceRule> GetSimpleRecurrenceList()
-        => new List<RecurrenceRule> { new RecurrenceRule(FrequencyType.Daily, 1) { Count = 5 } };
-    private static List<CalDateTime> GetExceptionDates()
-        => new List<CalDateTime> { new CalDateTime(_now.AddDays(1).Date) };
-    
     [Test]
     public void EventResourcesCanBeZeroedOut()
     {
