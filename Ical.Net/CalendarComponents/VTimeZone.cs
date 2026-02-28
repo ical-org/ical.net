@@ -250,8 +250,8 @@ public class VTimeZone : CalendarComponent
     {
         foreach (var interval in intervals)
         {
-            var time = interval.IsoLocalStart.ToDateTimeUnspecified();
-            var date = new CalDateTime(time, true).Add(delta.ToDurationExact());
+            var time = interval.IsoLocalStart.PlusSeconds((long)delta.TotalSeconds);
+            var date = new CalDateTime(time);
 
             tzi.RecurrenceDates.Add(date);
         }

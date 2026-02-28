@@ -2447,7 +2447,7 @@ public class RecurrenceTests
         var rrule = new RecurrencePattern
         {
             Frequency = FrequencyType.Daily,
-            Until = CalDateTime.Today.AddMonths(4)
+            Until = new(2019, 5, 4, 8, 0, 0, "UTC")
         };
         var vEvent = new CalendarEvent
         {
@@ -2581,7 +2581,7 @@ public class RecurrenceTests
         evt.RecurrenceRules.Add(new RecurrencePattern($"FREQ={freq};INTERVAL=10;COUNT=5"));
 
         var occurrences = evt.GetOccurrences(evt.Start.ToZonedDateTime().PlusHours(-24))
-            .TakeWhileBefore(evt.Start.AddDays(100))
+            .TakeWhileBefore(evt.Start.Date.PlusDays(100).AtMidnight().InUtc().ToInstant())
             .ToList();
 
         var startDates = occurrences.Select(x => x.Start.ToInstant()).ToList();
@@ -3020,26 +3020,26 @@ END:VCALENDAR";
     [Test]
     public void AddExDateToEventAfterGetOccurrencesShouldRecomputeResult()
     {
-        var searchStart = _now.AddDays(-1);
-        var searchEnd = _now.AddDays(7);
+        var searchStart = _now.ToLocalDateTime().PlusDays(-1).ToCalDateTime();
+        var searchEnd = _now.ToLocalDateTime().PlusDays(7).ToCalDateTime();
         var e = GetEventWithRecurrenceRules();
         var occurrences = e.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(5));
 
-        var exDate = _now.AddDays(1);
+        var exDate = _now.ToLocalDateTime().PlusDays(1).ToCalDateTime();
         e.ExceptionDates.Add(exDate);
         occurrences = e.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(4));
 
         //Specifying just a date should "black out" that date
-        var excludeTwoDaysFromNow = new CalDateTime(_now.Date).AddDays(2);
+        var excludeTwoDaysFromNow = new CalDateTime(_now.Date.PlusDays(2));
         e.ExceptionDates.Add(excludeTwoDaysFromNow);
         occurrences = e.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(3));
     }
 
-    private static readonly CalDateTime _now = CalDateTime.Now;
-    private static readonly CalDateTime _later = _now.AddHours(1);
+    private static readonly CalDateTime _now = new(2026, 2, 24, 11, 30, 21);
+    private static readonly CalDateTime _later = _now.ToLocalDateTime().PlusHours(1).ToCalDateTime();
 
     private static CalendarEvent GetEventWithRecurrenceRules()
     {
@@ -3061,9 +3061,9 @@ END:VCALENDAR";
     [Test]
     public void ExDatesShouldGetMergedInOutput()
     {
-        var start = _now.AddYears(-1);
-        var end = start.AddHours(1);
-        var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = start.AddYears(2) };
+        var start = _now.ToLocalDateTime().PlusYears(-1).ToCalDateTime();
+        var end = start.ToLocalDateTime().PlusHours(1).ToCalDateTime();
+        var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = start.ToLocalDateTime().PlusYears(2).ToCalDateTime() };
         var e = new CalendarEvent
         {
             DtStart = start,
@@ -3071,12 +3071,12 @@ END:VCALENDAR";
             RecurrenceRules = new List<RecurrencePattern> { rrule }
         };
 
-        var firstExclusion = start.AddDays(4);
+        var firstExclusion = start.ToLocalDateTime().PlusDays(4).ToCalDateTime();
         e.ExceptionDates.Add(firstExclusion);
         var serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
 
-        var secondExclusion = start.AddDays(5);
+        var secondExclusion = start.ToLocalDateTime().PlusDays(5).ToCalDateTime();
         e.ExceptionDates.Add(secondExclusion);
         serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
@@ -3097,13 +3097,13 @@ END:VCALENDAR";
             RecurrenceRules = new List<RecurrencePattern> { rrule },
         };
 
-        e.ExceptionDates.Add(new CalDateTime(_now.Date, _now.Time, tzid).AddDays(1));
+        e.ExceptionDates.Add(new CalDateTime(_now.Date.PlusDays(1), _now.Time, tzid));
 
         var serialized = SerializationHelpers.SerializeToString(e);
         const string expected = "TZID=Europe/Stockholm";
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
 
-        e.ExceptionDates.Add(new CalDateTime(_now.Date, _now.Time, tzid).AddDays(2));
+        e.ExceptionDates.Add(new CalDateTime(_now.Date.PlusDays(2), _now.Time, tzid));
         serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
     }
@@ -3117,14 +3117,20 @@ END:VCALENDAR";
             End = new CalDateTime(DateTime.Parse("2019-06-08 00:00:00", CultureInfo.InvariantCulture))
         };
 
+        var tz = DateUtil.GetZone("America/New_York");
+
         //Testing on both the first day and the next, results used to be different
         for (var i = 0; i <= 1; i++)
         {
-            var checkTime = new CalDateTime(2019, 06, 07, 00, 00, 00);
-            checkTime = checkTime.AddDays(i);
+            var checkTime = new LocalDate(2019, 6, 7)
+                .PlusDays(i)
+                .AtStartOfDayInZone(tz);
 
             //Valid if asking for a range starting at the same moment
-            var occurrences = vEvent.GetOccurrences(checkTime).TakeWhileBefore(checkTime.AddDays(1)).ToList();
+            var occurrences = vEvent.GetOccurrences(checkTime)
+                .TakeWhileBefore(checkTime.PlusHours(24).ToInstant())
+                .ToList();
+
             Assert.That(occurrences, Has.Count.EqualTo(i == 0 ? 1 : 0));
         }
     }
@@ -3606,8 +3612,13 @@ END:VCALENDAR";
         var evt = cal.Events.First();
         var ev = new EventEvaluator(evt);
 
+        var end = evt.DtStart!
+            .ToZonedDateTime()
+            .PlusMinutes(61)
+            .ToInstant();
+
         var occurrences = ev.Evaluate(evt.DtStart!, evt.DtStart!.ToZonedDateTime(tzId), null)
-            .TakeWhileBefore(evt.DtStart.AddMinutes(61).ToZonedDateTime(tzId).ToInstant());
+            .TakeWhileBefore(end);
 
         var occurrencesStartTimes = occurrences.Select(x => x.Start).Take(2).ToList();
 

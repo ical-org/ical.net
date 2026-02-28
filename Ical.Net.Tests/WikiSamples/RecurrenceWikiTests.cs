@@ -12,6 +12,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Tests.Logging;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests.WikiSamples;
@@ -117,7 +118,7 @@ internal class RecurrenceWikiTests
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = start.AddHours(1),
+            DtEnd = start.ToZonedDateTime().PlusHours(1).ToCalDateTime(),
             RecurrenceRules = [recurrence]
         };
 
@@ -182,14 +183,17 @@ internal class RecurrenceWikiTests
         {
             Frequency = FrequencyType.Yearly,
             ByMonthDay = [10, 12],
-            // 2027-07-10 09:00:00 Europe/Zurich (07:00:00 UTC)
-            Until = start.AddYears(2).ToTimeZone("UTC")
+            Until = start.ToLocalDateTime()
+                .PlusYears(2)
+                .InZoneLeniently("Europe/Zurich")
+                .ToInstant()
+                .ToCalDateTime()
         };
 
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = start.AddHours(1),
+            DtEnd = start.ToZonedDateTime().PlusHours(1).ToCalDateTime(),
             RecurrenceRules = [recurrence]
         };
 
@@ -265,7 +269,7 @@ internal class RecurrenceWikiTests
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = start.AddHours(4),
+            DtEnd = start.ToZonedDateTime().PlusHours(4).ToCalDateTime(),
             RecurrenceRules = [recurrence],
         };
         // Add additional an occurrence to the series.
@@ -334,13 +338,13 @@ internal class RecurrenceWikiTests
         var recurrence = new RecurrencePattern
         {
             Frequency = FrequencyType.Hourly,
-            Until = start.AddHours(4)
+            Until = start.ToZonedDateTime().PlusHours(4).ToCalDateTime()
         };
 
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = start.AddMinutes(15),
+            DtEnd = new(start.ToZonedDateTime().PlusMinutes(15)),
             RecurrenceRules = [recurrence],
         };
         // Add the exception date to the series.
@@ -407,7 +411,8 @@ internal class RecurrenceWikiTests
         // Wiki code start
 
         // Create the CalendarEvent
-        var start = new CalDateTime(2025, 07, 10, 09, 00, 00, "Europe/Zurich");
+        var timeZoneId = "Europe/Zurich";
+        var start = new CalDateTime(2025, 07, 10, 09, 00, 00, timeZoneId);
         var recurrence = new RecurrencePattern
         {
             Frequency = FrequencyType.Daily,
@@ -421,12 +426,12 @@ internal class RecurrenceWikiTests
             Uid = "my-custom-id",
             Summary = "Walking",
             DtStart = start,
-            DtEnd = start.AddHours(1),
+            DtEnd = start.ToZonedDateTime().PlusHours(1).ToCalDateTime(),
             RecurrenceRules = [recurrence],
             Sequence = 0 // default value
         };
 
-        var startMoved = new CalDateTime(2025, 07, 13, 13, 00, 00, "Europe/Zurich");
+        var startMoved = new CalDateTime(2025, 07, 13, 13, 00, 00, timeZoneId);
         var movedEvent = new CalendarEvent
         {
             // UID links master with child.
@@ -435,9 +440,9 @@ internal class RecurrenceWikiTests
             Summary = "Short after lunch walk",
             // Set new start and end time.
             DtStart = startMoved,
-            DtEnd = startMoved.AddMinutes(13),
+            DtEnd = new(startMoved.ToZonedDateTime().PlusMinutes(13)),
             // Set the original date of the occurrence (2025-07-14 09:00:00).
-            RecurrenceId = start.AddDays(4),
+            RecurrenceId = new(2025, 07, 14, 09, 00, 00, timeZoneId),
             // The first change for this RecurrenceId
             Sequence = 1
         };
@@ -521,7 +526,7 @@ internal class RecurrenceWikiTests
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = start.AddHours(1),
+            DtEnd = start.ToZonedDateTime().PlusHours(1).ToCalDateTime(),
             RecurrenceRules = [recurrence]
         };
 
@@ -578,14 +583,15 @@ internal class RecurrenceWikiTests
         // Wiki code start
 
         var calendar = new Calendar();
-        var start = new CalDateTime(2025, 9, 1, 10, 0, 0, CalDateTime.UtcTzId);
+
+        var start = new LocalDateTime(2025, 9, 1, 10, 0, 0);
 
         // Event that recurs daily
         calendar.Events.Add(new CalendarEvent
         {
             Summary = "Daily event",
-            Start = start,
-            End = start.AddHours(1),
+            Start = start.ToCalDateTime(CalDateTime.UtcTzId),
+            End = start.InUtc().PlusHours(1).ToCalDateTime(),
             RecurrenceRules = [new RecurrencePattern(FrequencyType.Daily, interval: 1)]
         });
 
@@ -593,8 +599,8 @@ internal class RecurrenceWikiTests
         calendar.Events.Add(new CalendarEvent
         {
             Summary = "Far future event",
-            Start = start.AddYears(10),
-            End = start.AddYears(10).AddHours(1)
+            Start = start.PlusYears(10).ToCalDateTime(CalDateTime.UtcTzId),
+            End = start.PlusYears(10).InUtc().PlusHours(1).ToCalDateTime()
         });
         
         var tz = TimeZoneResolvers.Default("UTC");
