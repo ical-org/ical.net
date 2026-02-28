@@ -82,7 +82,7 @@ public abstract class RecurringEvaluator : IEvaluator
         // Evaluate recurrence in the reference zone
         var zonedReference = referenceDate.AsZonedOrDefault(timeZone);
 
-        // Only add referenceDate if there are no RecurrenceRules defined. This is in line
+        // Only add referenceDate if there is no RecurrenceRule. This is in line
         // with RFC 5545 which requires DTSTART to match any RRULE. If it doesn't, the behaviour
         // is undefined. It seems to be good practice not to return the referenceDate in this case.
         rruleOccurrences = Recurrable.RecurrenceRule is null

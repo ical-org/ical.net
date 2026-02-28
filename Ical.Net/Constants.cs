@@ -4,7 +4,6 @@
 //
 
 using System;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace Ical.Net;
@@ -204,7 +203,7 @@ public enum FrequencyType
 /// For a YEARLY frequency, consider the following:
 ///
 /// <code>
-/// Recur r = new Recur();
+/// RecurrenceRule r = new RecurrenceRule();
 /// r.Frequency = FrequencyType.Yearly;
 /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.Second));
 /// </code>

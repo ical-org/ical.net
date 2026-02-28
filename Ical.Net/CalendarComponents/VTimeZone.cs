@@ -195,7 +195,7 @@ public class VTimeZone : CalendarComponent
 
         if (isRRule)
         {
-            PopulateTimeZoneInfoRecurrenceRules(timeZoneInfo, oldestInterval);
+            PopulateTimeZoneInfoRecurrenceRule(timeZoneInfo, oldestInterval);
         }
         else
         {
@@ -257,7 +257,7 @@ public class VTimeZone : CalendarComponent
         }
     }
 
-    private static void PopulateTimeZoneInfoRecurrenceRules(VTimeZoneInfo tzi, ZoneInterval interval)
+    private static void PopulateTimeZoneInfoRecurrenceRule(VTimeZoneInfo tzi, ZoneInterval interval)
     {
         var recurrence = new IntervalRecurrenceRule(interval);
         tzi.RecurrenceRule = recurrence;
