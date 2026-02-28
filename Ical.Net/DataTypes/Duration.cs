@@ -179,25 +179,6 @@ public struct Duration
         => new Duration(hours: NullIfZero(t.Days * 24 + t.Hours), minutes: NullIfZero(t.Minutes), seconds: NullIfZero(t.Seconds));
 
     /// <summary>
-    /// Creates an instance that represents the given time span, treating the days as nominal duration and the time part as exact.
-    /// </summary>
-    /// <remarks>
-    /// According to RFC5545 the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
-    /// </remarks>
-    internal static Duration FromTimeSpan(TimeSpan t)
-        => new Duration(days: NullIfZero(t.Days), hours: NullIfZero(t.Hours), minutes: NullIfZero(t.Minutes), seconds: NullIfZero(t.Seconds));
-
-    /// <summary>
-    /// Gets a value representing the time parts of the given instance.
-    /// </summary>
-    internal TimeSpan TimeAsTimeSpan => new(0, Hours ?? 0, Minutes ?? 0, Seconds ?? 0);
-
-    /// <summary>
-    /// Gets a value representing the date parts (days and weeks) of the given instance.
-    /// </summary>
-    internal TimeSpan DateAsTimeSpan => new((Weeks ?? 0) * 7 + (Days ?? 0), 0, 0, 0);
-
-    /// <summary>
     /// Convert the instance to a <see cref="TimeSpan"/>, ignoring potential
     /// DST changes.
     /// </summary>
@@ -209,16 +190,6 @@ public struct Duration
     /// </remarks>
     public TimeSpan ToTimeSpanUnspecified()
         => new TimeSpan((Weeks ?? 0) * 7 + (Days ?? 0), Hours ?? 0, Minutes ?? 0, Seconds ?? 0);
-
-    /// <summary>
-    /// Gets a value indicating whether the duration is zero, that is, all fields are null or 0.
-    /// </summary>
-    internal bool IsZero
-        => ((Weeks ?? 0) == 0)
-            && ((Days ?? 0) == 0)
-            && ((Hours ?? 0) == 0)
-            && ((Minutes ?? 0) == 0)
-            && ((Seconds ?? 0) == 0);
 
     /// <summary>
     /// Gets a value indicating whether the duration is empty, that is, all fields are null.
