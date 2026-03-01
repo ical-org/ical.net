@@ -26,15 +26,15 @@ internal static class TestExtensions
     public static IEnumerable<EvaluationPeriod> TakeWhileBefore(this IEnumerable<EvaluationPeriod> sequence, CalDateTime periodEnd)
         => sequence.TakeWhile(p => p.Start.ToInstant() < periodEnd.ToZonedDateTime("America/New_York").ToInstant());
 
-    public static IEnumerable<EvaluationPeriod> Evaluate(this RecurrencePattern pattern, CalDateTime referenceDate, CalDateTime periodStart, EvaluationOptions? options = null)
+    public static IEnumerable<EvaluationPeriod> Evaluate(this RecurrenceRule pattern, CalDateTime referenceDate, CalDateTime periodStart, EvaluationOptions? options = null)
     {
         var zonedStart = periodStart.ToZonedDateTime("America/New_York");
         return pattern.Evaluate(referenceDate, zonedStart, options);
     }
 
-    public static IEnumerable<EvaluationPeriod> Evaluate(this RecurrencePattern pattern, CalDateTime referenceDate, ZonedDateTime periodStart, EvaluationOptions? options = null)
+    public static IEnumerable<EvaluationPeriod> Evaluate(this RecurrenceRule pattern, CalDateTime referenceDate, ZonedDateTime periodStart, EvaluationOptions? options = null)
     {
-        return new RecurrencePatternEvaluator(pattern, referenceDate, periodStart, options).Evaluate();
+        return new RecurrenceRuleEvaluator(pattern, referenceDate, periodStart, options).Evaluate();
     }
 
     public static ZonedDateTime InZoneLeniently(this LocalDateTime value, string zoneId)

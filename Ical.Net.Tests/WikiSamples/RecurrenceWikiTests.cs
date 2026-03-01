@@ -55,7 +55,7 @@ internal class RecurrenceWikiTests
     {
         // Wiki code start
 
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Daily,
             Interval = 2,
@@ -67,7 +67,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = new CalDateTime(2025, 07, 10),
             // Add the rule to the event.
-            RecurrenceRules = [recurrence]
+            RecurrenceRule = recurrence
         };
 
         // Get all occurrences of the series.
@@ -107,7 +107,7 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 07, 10, 09, 00, 00, "Europe/Zurich");
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Daily,
             Interval = 2,
@@ -118,7 +118,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = start,
             DtEnd = start.AddHours(1),
-            RecurrenceRules = [recurrence]
+            RecurrenceRule = recurrence
         };
 
         // Add CalendarEvent to Calendar
@@ -178,7 +178,7 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 07, 10, 09, 00, 00, "Europe/Zurich");
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Yearly,
             ByMonthDay = [10, 12],
@@ -190,7 +190,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = start,
             DtEnd = start.AddHours(1),
-            RecurrenceRules = [recurrence]
+            RecurrenceRule = recurrence
         };
 
         // Add CalendarEvent to Calendar
@@ -255,7 +255,7 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 06, 29, 16, 00, 00, "Europe/Zurich");
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Monthly,
             ByDay = [new(DayOfWeek.Sunday, FrequencyOccurrence.Last)],
@@ -266,7 +266,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = start,
             DtEnd = start.AddHours(4),
-            RecurrenceRules = [recurrence],
+            RecurrenceRule = recurrence,
         };
         // Add additional an occurrence to the series.
         calendarEvent.RecurrenceDates
@@ -331,7 +331,7 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 07, 10, 20, 00, 00, "UTC");
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Hourly,
             Until = start.AddHours(4)
@@ -341,7 +341,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = start,
             DtEnd = start.AddMinutes(15),
-            RecurrenceRules = [recurrence],
+            RecurrenceRule = recurrence,
         };
         // Add the exception date to the series.
         calendarEvent.ExceptionDates
@@ -408,7 +408,7 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 07, 10, 09, 00, 00, "Europe/Zurich");
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Daily,
             Interval = 2,
@@ -422,7 +422,7 @@ internal class RecurrenceWikiTests
             Summary = "Walking",
             DtStart = start,
             DtEnd = start.AddHours(1),
-            RecurrenceRules = [recurrence],
+            RecurrenceRule = recurrence,
             Sequence = 0 // default value
         };
 
@@ -512,7 +512,7 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 03, 24, 09, 00, 00, "Europe/Zurich"); // Before DST starts
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Weekly,
             Count = 3 // Three Mondays: before, on, and after DST change
@@ -522,7 +522,7 @@ internal class RecurrenceWikiTests
         {
             DtStart = start,
             DtEnd = start.AddHours(1),
-            RecurrenceRules = [recurrence]
+            RecurrenceRule = recurrence
         };
 
         // Add CalendarEvent to Calendar
@@ -586,7 +586,7 @@ internal class RecurrenceWikiTests
             Summary = "Daily event",
             Start = start,
             End = start.AddHours(1),
-            RecurrenceRules = [new RecurrencePattern(FrequencyType.Daily, interval: 1)]
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Daily, interval: 1)
         });
 
         // Simple event in far future

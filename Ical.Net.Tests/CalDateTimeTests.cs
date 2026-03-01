@@ -9,7 +9,6 @@ using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -20,19 +19,17 @@ public class CalDateTimeTests
     private static readonly DateTime _now = DateTime.Now;
     private static readonly DateTime _later = _now.AddHours(1);
 
-    private static CalendarEvent GetEventWithRecurrenceRules(string tzId)
+    private static CalendarEvent GetEventWithRecurrenceRule(string tzId)
     {
-        var dailyForFiveDays = new RecurrencePattern(FrequencyType.Daily, 1)
-        {
-            Count = 5,
-        };
-
         var calendarEvent = new CalendarEvent
         {
             Start = new CalDateTime(_now, tzId),
             End = new CalDateTime(_later, tzId),
-            RecurrenceRules = new List<RecurrencePattern> { dailyForFiveDays },
-            Resources = new List<string>(new[] { "Foo", "Bar", "Baz" }),
+            RecurrenceRule = new(FrequencyType.Daily, 1)
+            {
+                Count = 5,
+            },
+            Resources = ["Foo", "Bar", "Baz"],
         };
         return calendarEvent;
     }
@@ -67,19 +64,19 @@ public class CalDateTimeTests
     {
         const string bclCst = "Central Standard Time";
         const string bclEastern = "Eastern Standard Time";
-        var bclEvent = GetEventWithRecurrenceRules(bclCst);
+        var bclEvent = GetEventWithRecurrenceRule(bclCst);
         yield return new TestCaseData(bclEvent, bclEastern)
             .SetName($"BCL to BCL: {bclCst} to {bclEastern}");
 
         const string ianaNy = "America/New_York";
         const string ianaRome = "Europe/Rome";
-        var ianaEvent = GetEventWithRecurrenceRules(ianaNy);
+        var ianaEvent = GetEventWithRecurrenceRule(ianaNy);
 
         yield return new TestCaseData(ianaEvent, ianaRome)
             .SetName($"IANA to IANA: {ianaNy} to {ianaRome}");
 
         const string utc = "UTC";
-        var utcEvent = GetEventWithRecurrenceRules(utc);
+        var utcEvent = GetEventWithRecurrenceRule(utc);
         yield return new TestCaseData(utcEvent, utc)
             .SetName("UTC to UTC");
 

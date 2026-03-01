@@ -9,7 +9,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
-using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -209,7 +208,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer
             && IsActive == other.IsActive
             && string.Equals(Transparency, other.Transparency, TransparencyType.Comparison)
             && Attachments.SequenceEqual(other.Attachments)
-            && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules);
+            && Equals(RecurrenceRule, other.RecurrenceRule);
 
         if (!result)
         {
