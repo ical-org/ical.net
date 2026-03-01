@@ -47,7 +47,7 @@ jobs:
       run: dotnet test --no-build --configuration Release --verbosity normal /p:AltCover=true /p:AltCoverXmlReport="coverage.xml" /p:AltCoverStrongNameKey="../IcalNetStrongnameKey.snk" /p:AltCoverAssemblyExcludeFilter="Ical.Net.Tests|NUnit3.TestAdapter|AltCover" /p:AltCoverAttributeFilter="ExcludeFromCodeCoverage" /p:AltCoverLineCover="false"
 
     - name: Store coverage report as artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: coverage-report
         path: ./Ical.Net.Tests/coverage.*.xml  # store all coverage reports
