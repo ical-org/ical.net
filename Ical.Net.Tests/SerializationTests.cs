@@ -471,16 +471,15 @@ public class SerializationTests
     [Test]
     public void TestRRuleUntilSerialization()
     {
-        var rrule = new RecurrencePattern(FrequencyType.Daily)
-        {
-            Until = new CalDateTime(_nowTime.AddDays(7)),
-        };
         const string someTz = "Europe/Volgograd";
         var e = new CalendarEvent
         {
             Start = _nowTime.ToTimeZone(someTz),
             End = _nowTime.AddHours(1).ToTimeZone(someTz),
-            RecurrenceRules = new List<RecurrencePattern> { rrule },
+            RecurrenceRule = new(FrequencyType.Daily)
+            {
+                Until = new CalDateTime(_nowTime.AddDays(7)),
+            },
         };
         var c = new Calendar
         {

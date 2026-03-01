@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -125,10 +126,17 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
 
     public virtual RecurrenceDates RecurrenceDates { get; private set; } = null!;
 
+    [Obsolete("Use RecurrenceRule instead. Support for multiple recurrence rules will be removed in a future version.")]
     public virtual IList<RecurrencePattern> RecurrenceRules
     {
         get => Properties.GetMany<RecurrencePattern>("RRULE");
         set => Properties.Set("RRULE", value);
+    }
+
+    public virtual RecurrenceRule? RecurrenceRule
+    {
+        get => RecurrenceRules?.FirstOrDefault();
+        set => RecurrenceRules = value is null ? [] : [new(value)];
     }
 
     /// <summary>

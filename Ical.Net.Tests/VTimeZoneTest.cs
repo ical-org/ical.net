@@ -4,7 +4,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
@@ -318,7 +317,7 @@ public class VTimeZoneTest
             Description = "Test Recurring Event",
             Start = new CalDateTime(DateTime.Now, tzId),
             End = new CalDateTime(DateTime.Now.AddHours(1), tzId),
-            RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily) }
+            RecurrenceRule = new(FrequencyType.Daily)
         };
         iCal.Events.Add(calEvent);
 
@@ -327,7 +326,7 @@ public class VTimeZoneTest
             Description = "Test Recurring Event 2",
             Start = new CalDateTime(DateTime.Now.AddHours(2), tzId),
             End = new CalDateTime(DateTime.Now.AddHours(3), tzId),
-            RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily) }
+            RecurrenceRule = new(FrequencyType.Daily)
         };
         iCal.Events.Add(calEvent2);
         return iCal;

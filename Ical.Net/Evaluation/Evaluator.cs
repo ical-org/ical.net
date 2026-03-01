@@ -12,6 +12,13 @@ namespace Ical.Net.Evaluation;
 
 public abstract class Evaluator : IEvaluator
 {
+
+    protected void IncrementDate(ref CalDateTime dt, RecurrenceRule rule, int interval)
+    {
+        IncrementDate(ref dt, new RecurrencePattern(rule), interval);
+    }
+
+    [Obsolete("Use overload with RecurrenceRule instead.")]
     protected void IncrementDate(ref CalDateTime dt, RecurrencePattern pattern, int interval)
     {
         if (interval == 0)

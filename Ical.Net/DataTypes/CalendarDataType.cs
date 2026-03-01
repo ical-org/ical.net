@@ -144,6 +144,13 @@ public abstract class CalendarDataType : ICalendarDataType
         _proxy.SetProxiedObject(dt.Parameters);
     }
 
+    protected internal void CopyDataType(CalendarDataType other)
+    {
+        _proxy = other._proxy;
+        _parameters = other._parameters;
+        _associatedObject = other._associatedObject;
+    }
+
     /// <summary>
     /// Creates a deep copy of the <see cref="T"/> object.
     /// </summary>
