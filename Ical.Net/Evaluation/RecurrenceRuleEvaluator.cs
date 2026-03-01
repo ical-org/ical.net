@@ -199,6 +199,7 @@ internal sealed class RecurrenceRuleEvaluator
     /// <summary>
     /// Limit by set position. This supports positive and negative values.
     /// </summary>
+#pragma warning disable S2190 // SONAR - Loop will end when enumeration stops or exception is thrown
     private IEnumerable<ZonedDateTime> LimitSetPosition()
     {
         var recurrenceSet = StartByRules();
@@ -224,11 +225,13 @@ internal sealed class RecurrenceRuleEvaluator
             IncrementSeed();
         }
     }
+#pragma warning restore S2190
 
     /// <summary>
     /// Limit by set position with positive values only. Ignoring negative
     /// set positions allows enumeration to end early once a set is finished.
     /// </summary>
+#pragma warning disable S2190 // SONAR - Loop will end when enumeration stops or exception is thrown
     private IEnumerable<ZonedDateTime> LimitSetPositionPositiveOnly()
     {
         var recurrenceSet = StartByRules();
@@ -274,6 +277,7 @@ internal sealed class RecurrenceRuleEvaluator
             }
         }
     }
+#pragma warning restore S2190
 
     /// <summary>
     /// Returns the BY rule to start at.
