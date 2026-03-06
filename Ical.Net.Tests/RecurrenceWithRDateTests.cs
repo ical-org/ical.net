@@ -10,6 +10,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
+using NodaTime;
 using NUnit.Framework;
 using Duration = Ical.Net.DataTypes.Duration;
 using Period = Ical.Net.DataTypes.Period;
@@ -314,16 +315,16 @@ public class RecurrenceWithRDateTests
     public void RDate_LargeNumberOfDates_ShouldBeLineFolded()
     {
         var cal = new Calendar();
-        var eventStart = new CalDateTime(2023, 10, 1, 10, 0, 0);
+        var eventStart = new LocalDateTime(2023, 10, 1, 10, 0, 0);
         var recurrenceDates = new PeriodList();
         for (var i = 1; i <= 100; i++) // Adjusted to create 100 dates
         {
-            recurrenceDates.Add(new Period(eventStart.AddDays(i)));
+            recurrenceDates.Add(new Period(eventStart.PlusDays(i).ToCalDateTime()));
         }
 
         var calendarEvent = new CalendarEvent
         {
-            Start = eventStart,
+            Start = new(eventStart),
             Duration = new Duration(hours: 1),
         };
         calendarEvent.RecurrenceDates.AddRange(recurrenceDates);
@@ -332,14 +333,16 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal);
 
-        var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
+        var tz = DateUtil.GetZone("America/New_York");
+        var occurrences = calendarEvent.GetOccurrences(tz).ToList();
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(occurrences, Has.Count.EqualTo(101)); // Including the original event
             for (var i = 0; i < 101; i++)
             {
-                Assert.That(occurrences[i].Start, Is.EqualTo(eventStart.AddDays(i).ToZonedDateTime("America/New_York")));
+                var expectedStart = eventStart.PlusDays(i).InZoneLeniently(tz);
+                Assert.That(occurrences[i].Start, Is.EqualTo(expectedStart));
             }
             // First folded line is 75 characters long
             Assert.That(ics, Does.Contain("RDATE:20231002T100000,20231003T100000,20231004T100000,20231005T100000,2023"));

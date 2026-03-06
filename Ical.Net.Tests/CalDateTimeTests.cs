@@ -177,30 +177,6 @@ public class CalDateTimeTests
             .SetName("Date only with 'IT' CultureInfo and default format arg");
     }
 
-    [Test, TestCaseSource(nameof(DateTimeArithmeticTestCases))]
-    public DateTime DateTimeArithmeticTests(Func<CalDateTime, CalDateTime> operation)
-    {
-        var result = operation(new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId));
-        return result.Value;
-    }
-
-    public static IEnumerable DateTimeArithmeticTestCases()
-    {
-        var dateTime = new DateTime(2025, 1, 15, 10, 20, 30);
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddHours(1)))
-            .Returns(dateTime.AddHours(1))
-            .SetName($"{nameof(CalDateTime.AddHours)} 1 hour");
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(Duration.FromSeconds(30))))
-            .Returns(dateTime.Add(TimeSpan.FromSeconds(30)))
-            .SetName($"{nameof(CalDateTime.Add)} 30 seconds");
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddMinutes(70)))
-            .Returns(dateTime.AddMinutes(70))
-            .SetName($"{nameof(CalDateTime.AddMinutes)} 70 minutes");
-    }
-
     [Test, TestCaseSource(nameof(EqualityTestCases))]
     public bool EqualityTests(Func<CalDateTime, bool> operation)
     {
@@ -245,57 +221,6 @@ public class CalDateTimeTests
         Assert.That(seq1.Count(), Is.EqualTo(seq2.Count()));
     }
 
-
-    [Test, TestCaseSource(nameof(DateOnlyValidArithmeticTestCases))]
-    public (DateTime Value, bool HasTime) DateOnlyValidArithmeticTests(Func<CalDateTime, CalDateTime> operation)
-    {
-        var result = operation(new CalDateTime(2025, 1, 15));
-        return (result.Value, result.HasTime);
-    }
-
-    public static IEnumerable DateOnlyValidArithmeticTestCases()
-    {
-        var dateTime = new DateTime(2025, 1, 15);
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(-Duration.FromDays(1))))
-            .Returns((dateTime.AddDays(-1), false))
-            .SetName($"{nameof(CalDateTime.Add)} -1 day TimeSpan");
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddYears(1)))
-            .Returns((dateTime.AddYears(1), false))
-            .SetName($"{nameof(CalDateTime.AddYears)} 1 year");
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddMonths(2)))
-            .Returns((dateTime.AddMonths(2), false))
-            .SetName($"{nameof(CalDateTime.AddMonths)} 2 months");
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddDays(7)))
-            .Returns((dateTime.AddDays(7), false))
-            .SetName($"{nameof(CalDateTime.AddDays)} 7 days");
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(Duration.FromDays(1))))
-            .Returns((dateTime.Add(TimeSpan.FromDays(1)), false))
-            .SetName($"{nameof(CalDateTime.Add)} 1 day TimeSpan");
-
-        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(Duration.Zero)))
-            .Returns((dateTime.Add(TimeSpan.Zero), false))
-            .SetName($"{nameof(CalDateTime.Add)} TimeSpan.Zero");
-    }
-
-    [Test]
-    public void DateOnlyInvalidArithmeticTests()
-    {
-        var dt = new CalDateTime(2025, 1, 15);
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(() => dt.Add(Duration.FromHours(1)), Throws.TypeOf<InvalidOperationException>());
-            Assert.That(() => dt.AddHours(2), Throws.TypeOf<InvalidOperationException>());
-            Assert.That(() => dt.AddMinutes(3), Throws.TypeOf<InvalidOperationException>());
-            Assert.That(() => dt.AddSeconds(4), Throws.TypeOf<InvalidOperationException>());
-        }
-    }
-
     [Test]
     public void Simple_PropertyAndMethod_HasTime_Tests()
     {
@@ -316,7 +241,6 @@ public class CalDateTimeTests
             Assert.That(CalDateTime.Today.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
             Assert.That(c.Time, Is.EqualTo(NodaTime.LocalDateTime.FromDateTime(dt).TimeOfDay));
-            Assert.That(c.Add(-Duration.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));
             Assert.That(c.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture), Is.EqualTo("02.01.2025 Europe/Berlin"));
         }
     }
