@@ -84,4 +84,22 @@ internal static class NodaTimeExtensions
 
         return value.Next(targetDayOfWeek);
     }
+
+    /// <summary>
+    /// Returns the same date if the day of week is already
+    /// the target day of week, else the previous date matching
+    /// the target day of week.
+    /// </summary>
+    /// <param name="value">Start date</param>
+    /// <param name="targetDayOfWeek">Target day of week</param>
+    /// <returns></returns>
+    internal static LocalDate CurrentOrPrevious(this LocalDate value, IsoDayOfWeek targetDayOfWeek)
+    {
+        if (value.DayOfWeek == targetDayOfWeek)
+        {
+            return value;
+        }
+
+        return value.Previous(targetDayOfWeek);
+    }
 }
