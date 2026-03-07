@@ -109,7 +109,7 @@ public class TodoTest
         var todo = new Todo
         {
             Start = start,
-            RecurrenceRules = [new("FREQ=DAILY;BYDAY=TH")],
+            RecurrenceRule = new("FREQ=DAILY;BYDAY=TH"),
             Status = TodoStatus.Completed
         };
 
