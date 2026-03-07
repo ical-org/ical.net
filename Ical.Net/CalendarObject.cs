@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.Serialization;
 using Ical.Net.Collections;
+using NodaTime;
 
 namespace Ical.Net;
 
@@ -119,6 +120,13 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
         }
         protected set => throw new NotSupportedException();
     }
+
+    /// <summary>
+    /// The TimeZoneResolver of the associated Calendar, OR the default TimeZoneResolver
+    /// if there is no associated Calendar.
+    /// </summary>
+    internal IDateTimeZoneProvider CalendarTimeZoneProvider
+        => Calendar?.TimeZoneProvider ?? CalendarTimeZoneProviders.TzdbWithAliases;
 
     public virtual int Line { get; set; }
 

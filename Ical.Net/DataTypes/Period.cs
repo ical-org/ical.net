@@ -83,17 +83,9 @@ public class Period : EncodableDataType
 
         if (end != null)
         {
-            bool isEndBeforeStart;
-            if (end.IsFloating)
-            {
-                // Both are floating, compare local times
-                isEndBeforeStart = end.ToLocalDateTime() < start.ToLocalDateTime();
-            }
-            else
-            {
-                // Both are zoned, so compare instants
-                isEndBeforeStart = end.ToZonedOrDefault(DateTimeZone.Utc).ToInstant() < start.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
-            }
+            // Both values are either floating or in the same time zone
+            // so only the local time needs to be compared
+            var isEndBeforeStart = end.ToLocalDateTime() < start.ToLocalDateTime();
 
             if (isEndBeforeStart)
                 throw new ArgumentException($"End time ({end}) must be greater than or equal to start time ({start}).", nameof(end));

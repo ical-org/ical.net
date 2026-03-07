@@ -34,7 +34,7 @@ internal static class TestExtensions
 
     public static IEnumerable<ZonedDateTime> Evaluate(this RecurrenceRule pattern, CalDateTime referenceDate, ZonedDateTime periodStart, EvaluationOptions? options = null)
     {
-        return new RecurrenceRuleEvaluator(pattern, referenceDate, periodStart, options).Evaluate();
+        return new RecurrenceRuleEvaluator(pattern, referenceDate, periodStart, CalendarTimeZoneProviders.TzdbWithAliases, options).Evaluate();
     }
 
     public static ZonedDateTime InZoneLeniently(this LocalDateTime value, string zoneId)
@@ -45,6 +45,16 @@ internal static class TestExtensions
     public static ZonedDateTime ToZonedDateTime(this CalDateTime value, string zoneId)
     {
         var tz = DateUtil.GetZone(zoneId);
-        return value.ToZonedOrDefault(tz).WithZone(tz);
+        return value.ToZonedOrDefault(tz, CalendarTimeZoneProviders.TzdbWithAliases).WithZone(tz);
+    }
+
+    public static ZonedDateTime ToZonedDateTime(this CalDateTime value)
+    {
+        return value.ToZonedDateTime(CalendarTimeZoneProviders.TzdbWithAliases);
+    }
+
+    public static ZonedDateTime ToZonedOrDefault(this CalDateTime value, DateTimeZone timeZone)
+    {
+        return value.ToZonedOrDefault(timeZone, CalendarTimeZoneProviders.TzdbWithAliases);
     }
 }

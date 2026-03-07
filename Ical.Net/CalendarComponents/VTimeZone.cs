@@ -4,6 +4,7 @@
 //
 
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 using Ical.Net.Proxies;
 using Ical.Net.Utility;
 using NodaTime;
@@ -367,4 +368,123 @@ public class VTimeZone : CalendarComponent
     }
 
     public ICalendarObjectList<VTimeZoneInfo> TimeZoneInfos => new CalendarObjectListProxy<VTimeZoneInfo>(Children);
+
+    internal DateTimeZone ToDateTimeZone() => CalendarDateTimeZone.From(this);
+
+    private sealed class CalendarDateTimeZone : DateTimeZone
+    {
+        private readonly List<VTimeZoneInfo> intervals;
+
+        public static CalendarDateTimeZone From(VTimeZone data)
+        {
+            if (data.TzId == null)
+            {
+                throw new Exception("Time zone ID must be set");
+            }
+
+            var info = data.TimeZoneInfos
+                .Select(x => x.Copy<VTimeZoneInfo>()!)
+                .ToList();
+
+            var min = Offset.Zero;
+            var max = Offset.Zero;
+
+            void CheckMinMax(UtcOffset? utcOffset)
+            {
+                if (utcOffset != null)
+                {
+                    var from = Offset.FromTimeSpan(utcOffset.Offset);
+                    if (from < min)
+                    {
+                        min = from;
+                    }
+
+                    if (from > max)
+                    {
+                        max = from;
+                    }
+                }
+            }
+
+            foreach (var x in info)
+            {
+                CheckMinMax(x.OffsetFrom);
+                CheckMinMax(x.OffsetTo);
+            }
+
+            var tz = new CalendarDateTimeZone(data.TzId, false, min, max, info);
+
+            return tz;
+        }
+
+        private CalendarDateTimeZone(string id, bool isFixed, Offset minOffset, Offset maxOffset, List<VTimeZoneInfo> intervals)
+            : base(id, isFixed, minOffset, maxOffset)
+        {
+            this.intervals = intervals;
+        }
+
+        public override ZoneInterval GetZoneInterval(Instant instant)
+        {
+            Instant? start = null;
+            Instant? end = null;
+            VTimeZoneInfo? info = null;
+
+            var previousYear = instant.InUtc()
+                .LocalDateTime
+                .PlusYears(-1)
+                .InUtc()
+                .ToInstant();
+
+            var timeZoneChanges = CollectionHelpers.OrderedMergeMany(
+                intervals.Select(x => x.GetOccurrences(Utc, previousYear)));
+
+            foreach (var occurrence in timeZoneChanges)
+            {
+                var changeInstant = occurrence.Start.ToInstant();
+
+                if (changeInstant > instant)
+                {
+                    end = changeInstant;
+                    break;
+                }
+                else
+                {
+                    info = (VTimeZoneInfo) occurrence.Source;
+                    start = changeInstant;
+                }
+            }
+
+            if (info == null)
+            {
+                // Fixed offset time zone
+                var maxStart = Instant.MinValue;
+                var fixedTimeZones = intervals.Where(x => x.RecurrenceRule == null);
+
+                foreach (var tz in fixedTimeZones)
+                {
+                    var tzStart = tz.Start!.ToLocalDateTime().InUtc().ToInstant();
+                    if (tzStart > maxStart && tzStart <= instant)
+                    {
+                        maxStart = tzStart;
+                        info = tz;
+                    }
+                }
+            }
+
+            if (info == null)
+            {
+                throw new Exception("Could not find zone interval");
+            }
+
+            var name = info.TimeZoneName ?? "Unknown";
+
+            var wallOffset = Offset.FromTimeSpan(info.OffsetTo!.Offset);
+
+            var savings = info.Name == Components.Standard
+                ? Offset.Zero
+                : Offset.FromTimeSpan(info.OffsetTo!.Offset) - wallOffset;
+
+            return new ZoneInterval(name, start, end, wallOffset, savings);
+        }
+    }
 }

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using Ical.Net.DataTypes;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -49,24 +50,26 @@ public class ProgramTest
         var evt1 = iCal1.Events.First();
         var evt2 = iCal1.Events.Skip(1).First();
 
+        var tz = iCal1.TimeZoneProvider[_tzid];
+
         // Get occurrences for the first event
         var occurrences = evt1.GetOccurrences(
-            new CalDateTime(1996, 1, 1).ToZonedDateTime(_tzid))
-            .TakeWhileBefore(new CalDateTime(2000, 1, 1).ToZonedDateTime(_tzid).ToInstant()).ToList();
+            new LocalDate(1996, 1, 1).AtStartOfDayInZone(tz))
+            .TakeWhileBefore(new LocalDate(2000, 1, 1).AtStartOfDayInZone(tz).ToInstant()).ToList();
 
-        var dateTimes = new[]
+        var dateTimes = new LocalDate[]
         {
-            new CalDateTime(1997, 9, 10, 9, 0, 0, _tzid).ToZonedDateTime(),
-            new CalDateTime(1997, 9, 11, 9, 0, 0, _tzid).ToZonedDateTime(),
-            new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid).ToZonedDateTime(),
-            new CalDateTime(1997, 9, 13, 9, 0, 0, _tzid).ToZonedDateTime(),
-            new CalDateTime(1997, 9, 14, 9, 0, 0, _tzid).ToZonedDateTime(),
-            new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid).ToZonedDateTime(),
-            new CalDateTime(1999, 3, 10, 9, 0, 0, _tzid).ToZonedDateTime(),
-            new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid).ToZonedDateTime(),
-            new CalDateTime(1999, 3, 12, 9, 0, 0, _tzid).ToZonedDateTime(),
-            new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid).ToZonedDateTime(),
-        };
+            new(1997, 9, 10),
+            new(1997, 9, 11),
+            new(1997, 9, 12),
+            new(1997, 9, 13),
+            new(1997, 9, 14),
+            new(1997, 9, 15),
+            new(1999, 3, 10),
+            new(1999, 3, 11),
+            new(1999, 3, 12),
+            new(1999, 3, 13),
+        }.Select(x => x.At(new LocalTime(9, 0)).InZoneStrictly(tz)).ToArray();
 
         for (var i = 0; i < dateTimes.Length; i++)
         {
@@ -79,30 +82,30 @@ public class ProgramTest
 
         // Get occurrences for the 2nd event
         occurrences = evt2.GetOccurrences(
-            new CalDateTime(1996, 1, 1).ToZonedDateTime(_tzid))
-            .TakeWhileBefore(new CalDateTime(1998, 4, 1).ToZonedDateTime(_tzid).ToInstant()).ToList();
+            new LocalDate(1996, 1, 1).AtStartOfDayInZone(tz))
+            .TakeWhileBefore(new LocalDate(1998, 4, 1).AtStartOfDayInZone(tz).ToInstant()).ToList();
 
-        var dateTimes1 = new[]
+        var dateTimes1 = new LocalDate[]
         {
-            new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 9, 23, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 11, 4, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 11, 11, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 11, 18, 9, 0, 0, _tzid),
-            new CalDateTime(1997, 11, 25, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 1, 6, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 1, 13, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 1, 20, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 1, 27, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 3, 3, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 3, 10, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 3, 17, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 3, 24, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 3, 31, 9, 0, 0, _tzid)
-        }.Select(x => x.ToZonedDateTime()).ToArray();
+            new (1997, 9, 2),
+            new (1997, 9, 9),
+            new (1997, 9, 16),
+            new (1997, 9, 23),
+            new (1997, 9, 30),
+            new (1997, 11, 4),
+            new (1997, 11, 11),
+            new (1997, 11, 18),
+            new (1997, 11, 25),
+            new (1998, 1, 6),
+            new (1998, 1, 13),
+            new (1998, 1, 20),
+            new (1998, 1, 27),
+            new (1998, 3, 3),
+            new (1998, 3, 10),
+            new (1998, 3, 17),
+            new (1998, 3, 24),
+            new (1998, 3, 31)
+        }.Select(x => x.At(new LocalTime(9, 0)).InZoneStrictly(tz)).ToArray();
 
         using (Assert.EnterMultipleScope())
         {

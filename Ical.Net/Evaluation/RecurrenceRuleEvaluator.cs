@@ -40,6 +40,7 @@ internal sealed class RecurrenceRuleEvaluator
         CalDateTime referenceDate,
         DateTimeZone timeZone,
         Instant? periodStart,
+        IDateTimeZoneProvider timeZoneProvider,
         EvaluationOptions? options)
     {
         _referenceDate = referenceDate;
@@ -48,14 +49,14 @@ internal sealed class RecurrenceRuleEvaluator
 
         // Copy rule values
         _frequency = rule.Frequency;
-        _until = rule.Until?.ToZonedOrDefault(timeZone).ToInstant();
+        _until = rule.Until?.ToZonedOrDefault(timeZone, timeZoneProvider).ToInstant();
         _count = rule.Count;
         _interval = Math.Max(1, rule.Interval);
         _rule = ByRuleValues.From(rule);
 
         _firstDayOfWeek = rule.FirstDayOfWeek.ToIsoDayOfWeek();
         _weekYearRule = WeekYearRules.ForMinDaysInFirstWeek(4, _firstDayOfWeek);
-        _zonedReferenceDate = referenceDate.ToZonedOrDefault(timeZone);
+        _zonedReferenceDate = referenceDate.ToZonedOrDefault(timeZone, timeZoneProvider);
         _referenceWeekNo = _weekYearRule.GetWeekOfWeekYear(_zonedReferenceDate.Date);
     }
 
@@ -63,8 +64,9 @@ internal sealed class RecurrenceRuleEvaluator
         RecurrenceRule rule,
         CalDateTime referenceDate,
         ZonedDateTime periodStart,
+        IDateTimeZoneProvider timeZoneProvider,
         EvaluationOptions? options)
-        : this(rule, referenceDate, periodStart.Zone, periodStart.ToInstant(), options) { }
+        : this(rule, referenceDate, periodStart.Zone, periodStart.ToInstant(), timeZoneProvider, options) { }
 
     public IEnumerable<ZonedDateTime> Evaluate()
     {

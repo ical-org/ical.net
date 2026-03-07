@@ -34,20 +34,10 @@ public class Occurrence : IComparable<Occurrence>
     /// <summary>
     /// Checks if the given date time is contained within the period.
     /// </summary>
-    public bool Contains(CalDateTime? value)
+    public bool Contains(Instant value)
     {
-        if (value is null)
-        {
-            return false;
-        }
-
-        // Use floating time from the occurrence's time zone
-        var valueInstant = value
-            .ToZonedOrDefault(Start.Zone)
-            .ToInstant();
-
-        return Start.ToInstant() <= valueInstant
-            && End.ToInstant() > valueInstant;
+        return Start.ToInstant() <= value
+            && End.ToInstant() > value;
     }
 
     public bool Equals(Occurrence other)

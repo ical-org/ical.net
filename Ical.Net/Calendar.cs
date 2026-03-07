@@ -16,6 +16,7 @@ using Ical.Net.Proxies;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
 using NodaTime;
+using NodaTime.TimeZones;
 
 namespace Ical.Net;
 
@@ -233,7 +234,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <para/>
     /// This is used to identify the *latest* modification for each recurring instance.
     /// </summary>
-    private static Dictionary<(string Uid, Instant RecurrenceId), IUniqueComponent> GetRecurrenceIdsAndUids(
+    private Dictionary<(string Uid, Instant RecurrenceId), IUniqueComponent> GetRecurrenceIdsAndUids(
         DateTimeZone timeZone,
         IEnumerable<ICalendarObject> children)
     {
@@ -275,7 +276,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// Checks if an occurrence has not been replaced/overridden by a more
     /// recent modification (based on UID and RecurrenceId).
     /// </summary>
-    private static bool IsUnmodifiedOccurrence(
+    private bool IsUnmodifiedOccurrence(
         DateTimeZone timeZone,
         Occurrence occurrence,
         Dictionary<(string Uid, Instant RecurrenceId), IUniqueComponent> recurrenceIdsAndUids)
@@ -304,7 +305,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         return !recurrenceIdsAndUids.ContainsKey((uc.Uid, occurrence.Start.ToInstant()));
     }
 
-    private static (string, Instant) GetOccurrenceKey(DateTimeZone timeZone, string uid, RecurrenceIdentifier rid)
+    private (string, Instant) GetOccurrenceKey(DateTimeZone timeZone, string uid, RecurrenceIdentifier rid)
     {
         // Evaluate the RECURRENCE-ID start time as an Instant to identify the
         // exact occurrence, using the evaluation time zone for floating values.
@@ -319,7 +320,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         // means that the RECURRENCE-ID could identify different occurrences
         // depending on the evaluation time zone.
         var startTime = rid.StartTime
-            .ToZonedOrDefault(timeZone)
+            .ToZonedOrDefault(timeZone, TimeZoneProvider)
             .ToInstant();
 
         return (uid, startTime);
@@ -433,5 +434,24 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         var tz = VTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
         this.AddChild(tz);
         return tz;
+    }
+
+    public IDateTimeZoneProvider TimeZoneProvider
+        => field ??= CalendarTimeZoneProviders.FromCalendar(this, CalendarTimeZoneProviders.TzdbWithAliases);
+
+    internal IDateTimeZoneSource TimeZoneSource => field ??= new CalendarDateTimeZoneSource(this);
+
+    private sealed class CalendarDateTimeZoneSource(
+        Calendar calendar) : IDateTimeZoneSource
+    {
+        public string VersionId => Components.Calendar;
+
+        public DateTimeZone ForId(string id)
+            => calendar._mTimeZones.FirstOrDefault(x => x.TzId == id)?.ToDateTimeZone()
+            ?? throw new ArgumentException("Time zone ID not found");
+
+        public IEnumerable<string> GetIds() => calendar._mTimeZones.Select(x => x.TzId!);
+
+        public string? GetSystemDefaultId() => null;
     }
 }

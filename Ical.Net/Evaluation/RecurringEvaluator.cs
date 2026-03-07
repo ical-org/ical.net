@@ -32,7 +32,7 @@ public abstract class RecurringEvaluator : IEvaluator
         if (Recurrable.RecurrenceRule is null)
             return [];
 
-        var ruleEvaluator = new RecurrenceRuleEvaluator(Recurrable.RecurrenceRule, referenceDate, timeZone, periodStart, options);
+        var ruleEvaluator = new RecurrenceRuleEvaluator(Recurrable.RecurrenceRule, referenceDate, timeZone, periodStart, TimeZoneProvider, options);
 
         return ruleEvaluator.Evaluate();
     }
@@ -66,6 +66,8 @@ public abstract class RecurringEvaluator : IEvaluator
     /// <returns>End of an occurrence</returns>
     protected abstract ZonedDateTime GetEnd(ZonedDateTime start);
 
+    protected abstract IDateTimeZoneProvider TimeZoneProvider { get; }
+
     public virtual IEnumerable<EvaluationPeriod> Evaluate(
         CalDateTime referenceDate,
         ZonedDateTime periodStart,
@@ -78,7 +80,7 @@ public abstract class RecurringEvaluator : IEvaluator
         EvaluationOptions? options)
     {
         // Evaluate recurrence in the reference zone
-        var zonedReference = referenceDate.ToZonedOrDefault(timeZone);
+        var zonedReference = referenceDate.ToZonedOrDefault(timeZone, TimeZoneProvider);
 
         // Only add referenceDate if there is no RecurrenceRule. This is in line
         // with RFC 5545 which requires DTSTART to match any RRULE. If it doesn't, the behaviour
@@ -113,7 +115,7 @@ public abstract class RecurringEvaluator : IEvaluator
         {
             // Exclude occurrences according to EXDATEs.
             var exDateExclusionsDateTime = new HashSet<Instant>(EvaluateExDate(PeriodKind.DateTime)
-                .Select(x => x.StartTime.ToZonedOrDefault(zonedReference.Zone).ToInstant()));
+                .Select(x => x.StartTime.ToZonedOrDefault(zonedReference.Zone, TimeZoneProvider).ToInstant()));
 
             if (exDateExclusionsDateTime.Count > 0)
             {

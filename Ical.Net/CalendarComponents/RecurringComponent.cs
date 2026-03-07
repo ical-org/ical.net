@@ -332,7 +332,7 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
         var absoluteOccurrences = new List<AlarmOccurrence>();
         foreach (var alarm in absoluteAlarms)
         {
-            var baseFireTime = alarm.Trigger!.DateTime!.ToZonedDateTime();
+            var baseFireTime = alarm.Trigger!.DateTime!.ToZonedDateTime(CalendarTimeZoneProvider);
 
             foreach (var start in alarm.GetFireTimes(baseFireTime))
             {

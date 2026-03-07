@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.Serialization;
 using Ical.Net.Proxies;
+using NodaTime;
 
 namespace Ical.Net.DataTypes;
 
@@ -124,6 +125,13 @@ public abstract class CalendarDataType : ICalendarDataType
     }
 
     public virtual Calendar? Calendar => _associatedObject?.Calendar;
+
+    /// <summary>
+    /// The time zone provider of the associated Calendar, OR the default ical.net
+    /// provider if there is no associated Calendar.
+    /// </summary>
+    internal IDateTimeZoneProvider CalendarTimeZoneProvider
+        => Calendar?.TimeZoneProvider ?? CalendarTimeZoneProviders.TzdbWithAliases;
 
     public virtual string? Language
     {
