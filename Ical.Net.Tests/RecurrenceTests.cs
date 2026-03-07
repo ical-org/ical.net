@@ -932,13 +932,13 @@ public class RecurrenceTests
         var start = new CalDateTime(2019, 1, 1);
         var end = new CalDateTime(2019, 12, 31);
 
-        var recurringPeriods1 = new RecurrencePattern(
+        var recurringPeriods1 = new RecurrenceRule(
             "FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53")
             .Evaluate(start, start)
             .TakeWhileBefore(end)
             .ToList();
 
-        var recurringPeriods2 = new RecurrencePattern(
+        var recurringPeriods2 = new RecurrenceRule(
             "FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=53,51,49,47,45,43,41,39,37,35,33,31,29,27,25,23,21,19,17,15,13,11,9,7,5,3,1")
             .Evaluate(start, start)
             .TakeWhileBefore(end)
@@ -2300,7 +2300,7 @@ public class RecurrenceTests
         var start = new CalDateTime(2019, 1, 1);
         var end = new CalDateTime(2019, 12, 31);
 
-        var recurringPeriods = new RecurrencePattern("FREQ=YEARLY;BYDAY=MO;BYWEEKNO=2")
+        var recurringPeriods = new RecurrenceRule("FREQ=YEARLY;BYDAY=MO;BYWEEKNO=2")
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(1));
@@ -2316,7 +2316,7 @@ public class RecurrenceTests
         var start = new CalDateTime(2020, 1, 1);
         var end = new CalDateTime(2020, 12, 31);
 
-        var recurringPeriods = new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1")
+        var recurringPeriods = new RecurrenceRule("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1")
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
@@ -2330,21 +2330,17 @@ public class RecurrenceTests
     }
 
     [Test, Category("Recurrence")]
-    public void ReccurencePattern_MaxDate_StopsOnCount()
+    public void ReccurenceRule_MaxDate_StopsOnCount()
     {
         var evt = new CalendarEvent
         {
             Start = new CalDateTime(2018, 1, 1, 12, 0, 0),
-            Duration = Duration.FromHours(1)
+            Duration = Duration.FromHours(1),
+            RecurrenceRule = new(FrequencyType.Daily)
+            {
+                Count = 10
+            }
         };
-
-        var pattern = new RecurrencePattern
-        {
-            Frequency = FrequencyType.Daily,
-            Count = 10
-        };
-
-        evt.RecurrenceRules.Add(pattern);
 
         var occurrences = evt.GetOccurrences(new CalDateTime(2018, 1, 1))
             .TakeWhileBefore(new CalDateTime(DateTime.MaxValue, false)).ToList();
@@ -2360,7 +2356,7 @@ public class RecurrenceTests
         var start = new CalDateTime(2020, 1, 1);
         var end = new CalDateTime(2020, 12, 31);
 
-        var recurringPeriods = new RecurrencePattern("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1")
+        var recurringPeriods = new RecurrenceRule("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1")
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
@@ -2382,8 +2378,8 @@ public class RecurrenceTests
     {
         using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO");
         var start = new CalDateTime(2010, 11, 27, 9, 0, 0);
-        var serializer = new RecurrencePatternSerializer();
-        var rp = (RecurrencePattern) serializer.Deserialize(sr)!;
+        var serializer = new RecurrenceRuleSerializer();
+        var rp = (RecurrenceRule) serializer.Deserialize(sr)!;
         var recurringPeriods = rp.Evaluate(start, start.ToZonedDateTime(_tzid))
             .TakeWhileBefore(rp.Until!).ToList();
 
@@ -2403,18 +2399,14 @@ public class RecurrenceTests
         {
             Start = new CalDateTime(2011, 1, 29, 11, 0, 0),
             Duration = Duration.FromMinutes(90),
-            Summary = "29th February Test"
+            Summary = "29th February Test",
+            RecurrenceRule = new(FrequencyType.Monthly)
+            {
+                Until = new CalDateTime(2011, 12, 25, 0, 0, 0, CalDateTime.UtcTzId),
+                FirstDayOfWeek = DayOfWeek.Sunday,
+                ByMonthDay = [29]
+            }
         };
-
-        var pattern = new RecurrencePattern
-        {
-            Frequency = FrequencyType.Monthly,
-            Until = new CalDateTime(2011, 12, 25, 0, 0, 0, CalDateTime.UtcTzId),
-            FirstDayOfWeek = DayOfWeek.Sunday,
-            ByMonthDay = new List<int>(new[] { 29 })
-        };
-
-        evt.RecurrenceRules.Add(pattern);
 
         var occurrences = evt.GetOccurrences(new CalDateTime(2011, 1, 1)).TakeWhileBefore(new CalDateTime(2012, 1, 1))
             .ToList();
@@ -2430,8 +2422,8 @@ public class RecurrenceTests
     public void Bug3292737()
     {
         using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126");
-        var serializer = new RecurrencePatternSerializer();
-        var rp = (RecurrencePattern) serializer.Deserialize(sr)!;
+        var serializer = new RecurrenceRuleSerializer();
+        var rp = (RecurrenceRule) serializer.Deserialize(sr)!;
 
         Assert.That(rp, Is.Not.Null);
         Assert.That(rp.Until, Is.EqualTo(new CalDateTime(2025, 11, 26)));
@@ -2444,18 +2436,14 @@ public class RecurrenceTests
     [Test, Category("Recurrence")]
     public void Issue432()
     {
-        var rrule = new RecurrencePattern
-        {
-            Frequency = FrequencyType.Daily,
-            Until = CalDateTime.Today.AddMonths(4)
-        };
         var vEvent = new CalendarEvent
         {
-            Start =
-                new CalDateTime(DateTime.Parse("2019-01-04T08:00Z", CultureInfo.InvariantCulture).ToUniversalTime()),
+            Start = new CalDateTime(2019, 1, 4, 8, 0, 0, "UTC"),
+            RecurrenceRule = new(FrequencyType.Daily)
+            {
+                Until = CalDateTime.Today.AddMonths(4)
+            }
         };
-
-        vEvent.RecurrenceRules.Add(rrule);
 
         //Testing on both the first day and the next, results used to be different
         for (var i = 0; i <= 1; i++)
@@ -2578,7 +2566,7 @@ public class RecurrenceTests
 
         // This case (DTSTART of type DATE and FREQ=MINUTELY) is undefined in RFC 5545.
         // ical.net handles the case by pretending DTSTART has the time set to midnight.
-        evt.RecurrenceRules.Add(new RecurrencePattern($"FREQ={freq};INTERVAL=10;COUNT=5"));
+        evt.RecurrenceRule = new($"FREQ={freq};INTERVAL=10;COUNT=5");
 
         var occurrences = evt.GetOccurrences(evt.Start.ToZonedDateTime().PlusHours(-24))
             .TakeWhileBefore(evt.Start.AddDays(100))
@@ -2599,11 +2587,11 @@ public class RecurrenceTests
     }
 
     [Test, Category("Recurrence")]
-    public void RecurrencePattern1()
+    public void RecurrenceRule1()
     {
         // NOTE: evaluators are not generally meant to be used directly like this.
         // However, this does make a good test to ensure they behave as they should.
-        var pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
+        var pattern = new RecurrenceRule("FREQ=SECONDLY;INTERVAL=10");
 
         var startDate = new CalDateTime(2008, 3, 30, 23, 59, 40);
         var fromDate = startDate.ToZonedDateTime(_tzid);
@@ -2624,11 +2612,11 @@ public class RecurrenceTests
     }
 
     [Test, Category("Recurrence")]
-    public void RecurrencePattern2()
+    public void RecurrenceRule2()
     {
         // NOTE: evaluators are generally not meant to be used directly like this.
         // However, this does make a good test to ensure they behave as they should.
-        var pattern = new RecurrencePattern("FREQ=MINUTELY;INTERVAL=1");
+        var pattern = new RecurrenceRule("FREQ=MINUTELY;INTERVAL=1");
 
         var us = new CultureInfo("en-US");
 
@@ -2649,7 +2637,7 @@ public class RecurrenceTests
         var evt = cal.Create<CalendarEvent>();
         evt.Start = new CalDateTime(2009, 11, 18, 5, 0, 0);
         evt.End = new CalDateTime(2009, 11, 18, 5, 10, 0);
-        evt.RecurrenceRules.Add(new RecurrencePattern(FrequencyType.Daily));
+        evt.RecurrenceRule = new(FrequencyType.Daily);
         evt.Summary = "xxxxxxxxxxxxx";
 
         var previousDateAndTime = new CalDateTime(2009, 11, 17, 0, 15, 0);
@@ -2671,8 +2659,8 @@ public class RecurrenceTests
         Assert.That(occurrences, Has.Count.EqualTo(3));
 
         // Add ByHour "9" and "12"            
-        evt.RecurrenceRules[0].ByHour.Add(9);
-        evt.RecurrenceRules[0].ByHour.Add(12);
+        evt.RecurrenceRule.ByHour.Add(9);
+        evt.RecurrenceRule.ByHour.Add(12);
 
         occurrences = evt.GetOccurrences(previousDateAndTime).TakeWhileBefore(end).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(10));
@@ -2693,11 +2681,11 @@ public class RecurrenceTests
         using (Assert.EnterMultipleScope())
         {
             // Using the constructor
-            Assert.That(() => _ = new RecurrencePattern((FrequencyType) int.MaxValue, 1),
+            Assert.That(() => _ = new RecurrenceRule((FrequencyType) int.MaxValue, 1),
                 Throws.TypeOf<ArgumentOutOfRangeException>());
 
             // Using the property
-            Assert.That(() => _ = new RecurrencePattern { Frequency = (FrequencyType) 9876543 },
+            Assert.That(() => _ = new RecurrenceRule { Frequency = (FrequencyType) 9876543 },
                 Throws.TypeOf<ArgumentOutOfRangeException>());
         }
     }
@@ -2710,15 +2698,15 @@ public class RecurrenceTests
         evt.Summary = "Event summary";
         evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc));
 
-        var recur = new RecurrencePattern();
+        var recur = new RecurrenceRule();
         recur.Frequency = FrequencyType.Daily;
         recur.Count = 3;
         recur.ByDay.Add(new WeekDay(DayOfWeek.Monday));
         recur.ByDay.Add(new WeekDay(DayOfWeek.Wednesday));
         recur.ByDay.Add(new WeekDay(DayOfWeek.Friday));
-        evt.RecurrenceRules.Add(recur);
+        evt.RecurrenceRule = recur;
 
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         Assert.That(
             string.Compare(serializer.SerializeToString(recur), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR",
                 StringComparison.Ordinal) == 0,
@@ -2729,7 +2717,7 @@ public class RecurrenceTests
     [Test, Category("Recurrence")]
     public void Test4()
     {
-        var rpattern = new RecurrencePattern();
+        var rpattern = new RecurrenceRule();
         rpattern.ByDay.Add(new WeekDay(DayOfWeek.Saturday));
         rpattern.ByDay.Add(new WeekDay(DayOfWeek.Sunday));
 
@@ -2890,7 +2878,7 @@ UID:abab717c-1786-4efc-87dd-6859c2b48eb6
 END:VEVENT
 END:VCALENDAR";
 
-        var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
+        var rrule = new RecurrenceRule(FrequencyType.Weekly, interval: 1)
         {
             Until = new CalDateTime("20160831T070000"),
             ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday) },
@@ -2902,7 +2890,7 @@ END:VCALENDAR";
         {
             DtStart = new CalDateTime(start, "UTC"),
             DtEnd = new CalDateTime(end, "UTC"),
-            RecurrenceRules = new List<RecurrencePattern> { rrule },
+            RecurrenceRule = rrule,
             Summary = "This is an event",
             Uid = "abab717c-1786-4efc-87dd-6859c2b48eb6",
         };
@@ -3022,7 +3010,7 @@ END:VCALENDAR";
     {
         var searchStart = _now.AddDays(-1);
         var searchEnd = _now.AddDays(7);
-        var e = GetEventWithRecurrenceRules();
+        var e = GetEventWithRecurrenceRule();
         var occurrences = e.GetOccurrences(searchStart).TakeWhileBefore(searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(5));
 
@@ -3041,19 +3029,17 @@ END:VCALENDAR";
     private static readonly CalDateTime _now = CalDateTime.Now;
     private static readonly CalDateTime _later = _now.AddHours(1);
 
-    private static CalendarEvent GetEventWithRecurrenceRules()
+    private static CalendarEvent GetEventWithRecurrenceRule()
     {
-        var dailyForFiveDays = new RecurrencePattern(FrequencyType.Daily, 1)
-        {
-            Count = 5,
-        };
-
         var calendarEvent = new CalendarEvent
         {
             Start = _now,
             End = _later,
-            RecurrenceRules = new List<RecurrencePattern> { dailyForFiveDays },
-            Resources = new List<string>(new[] { "Foo", "Bar", "Baz" }),
+            RecurrenceRule = new(FrequencyType.Daily, 1)
+            {
+                Count = 5,
+            },
+            Resources = ["Foo", "Bar", "Baz"],
         };
         return calendarEvent;
     }
@@ -3063,12 +3049,14 @@ END:VCALENDAR";
     {
         var start = _now.AddYears(-1);
         var end = start.AddHours(1);
-        var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = start.AddYears(2) };
         var e = new CalendarEvent
         {
             DtStart = start,
             DtEnd = end,
-            RecurrenceRules = new List<RecurrencePattern> { rrule }
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Daily)
+            {
+                Until = start.AddYears(2)
+            }
         };
 
         var firstExclusion = start.AddDays(4);
@@ -3087,14 +3075,14 @@ END:VCALENDAR";
     {
         const string tzid = "Europe/Stockholm";
 
-        //Repeat daily for 10 days
-        var rrule = GetSimpleRecurrencePattern(10);
-
         var e = new CalendarEvent
         {
             DtStart = new CalDateTime(_now.Date, _now.Time, tzid),
             DtEnd = new CalDateTime(_later.Date, _later.Time, tzid),
-            RecurrenceRules = new List<RecurrencePattern> { rrule },
+            RecurrenceRule = new(FrequencyType.Daily, 1)
+            {
+                Count = 10
+            }
         };
 
         e.ExceptionDates.Add(new CalDateTime(_now.Date, _now.Time, tzid).AddDays(1));
@@ -3132,17 +3120,12 @@ END:VCALENDAR";
     [Test, Category("Recurrence")]
     public void SpecificMinute()
     {
-        var rrule = new RecurrencePattern
-        {
-            Frequency = FrequencyType.Daily
-        };
         var vEvent = new CalendarEvent
         {
             Start = new CalDateTime(DateTime.Parse("2009-01-01 09:00:00", CultureInfo.InvariantCulture)),
-            End = new CalDateTime(DateTime.Parse("2009-01-01 17:00:00", CultureInfo.InvariantCulture))
+            End = new CalDateTime(DateTime.Parse("2009-01-01 17:00:00", CultureInfo.InvariantCulture)),
+            RecurrenceRule = new(FrequencyType.Daily)
         };
-
-        vEvent.RecurrenceRules.Add(rrule);
 
         // Exactly on start time
         var testingTime = new CalDateTime(2019, 6, 7, 9, 0, 0).ToZonedDateTime(_tzid);
@@ -3163,110 +3146,13 @@ END:VCALENDAR";
         Assert.That(occurrences.Count, Is.EqualTo(0));
     }
 
-    private static RecurrencePattern GetSimpleRecurrencePattern(int count) =>
-        new RecurrencePattern(FrequencyType.Daily, 1) { Count = count, };
-
-    private static CalendarEvent GetSimpleEvent()
-    {
-        var e = new CalendarEvent
-        {
-            DtStart = new CalDateTime(_now.Date, _now.Time, _tzid),
-            DtEnd = new CalDateTime(_later.Date, _later.Time, _tzid),
-        };
-        return e;
-    }
-
-    [Test]
-    public void RecurrenceRuleTests()
-    {
-        var five = GetSimpleRecurrencePattern(5);
-        var ten = GetSimpleRecurrencePattern(10);
-        Assert.That(ten, Is.Not.EqualTo(five));
-        var eventA = GetSimpleEvent();
-        eventA.RecurrenceRules.Add(five);
-        eventA.RecurrenceRules.Add(ten);
-
-        var eventB = GetSimpleEvent();
-        eventB.RecurrenceRules.Add(ten);
-        eventB.RecurrenceRules.Add(five);
-
-        const string aString =
-            """
-            BEGIN:VCALENDAR
-            PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
-            VERSION:2.0
-            BEGIN:VEVENT
-            DTEND;TZID=UTC:20170228T140000
-            DTSTAMP;TZID=UTC:20170413T135927
-            DTSTART;TZID=UTC:20170228T060000
-            EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
-             60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
-             70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
-             000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
-             329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
-             0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
-             2T060000,20170413T060000,20170417T060000
-            IMPORTANCE:None
-            RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
-            UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
-            END:VEVENT
-            END:VCALENDAR
-            """;
-
-        const string bString =
-            """
-            BEGIN:VCALENDAR
-            PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
-            VERSION:2.0
-            BEGIN:VEVENT
-            DTEND;TZID=UTC:20170228T140000
-            DTSTAMP:20170428T171444Z
-            DTSTART;TZID=UTC:20170228T060000
-            EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T060000,
-             20170308T060000,20170309T060000,20170310T060000,20170313T060000,20170314T060000,
-             20170317T060000,20170320T060000,20170321T060000,20170322T060000,20170323T060000,
-             20170324T060000,20170327T060000,20170328T060000,20170329T060000,20170330T060000,
-             20170331T060000,20170403T060000,20170405T060000,20170406T060000,20170407T060000,
-             20170410T060000,20170411T060000,20170412T060000,20170413T060000,20170417T060000
-            IMPORTANCE:None
-            RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
-            UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
-            END:VEVENT
-            END:VCALENDAR
-            """;
-
-        var simpleA = Calendar.Load(aString)!;
-        var normalA = Calendar.Load(aString)!;
-        var simpleB = Calendar.Load(bString)!;
-        var normalB = Calendar.Load(bString)!;
-
-        var calendarList = new List<Calendar> { simpleA, normalA, simpleB, normalB };
-        var eventList = new List<CalendarEvent>
-        {
-            simpleA.Events.Single(),
-            normalA.Events.Single(),
-            simpleB.Events.Single(),
-            normalB.Events.Single(),
-        };
-
-        //GetHashCode tests also tests Equals()
-        var calendarSet = new HashSet<Calendar>(calendarList);
-        Assert.That(calendarSet, Has.Count.EqualTo(1));
-        var eventSet = new HashSet<CalendarEvent>(eventList);
-        Assert.That(eventSet, Has.Count.EqualTo(1));
-
-        var newEventList = new HashSet<CalendarEvent>();
-        newEventList.UnionWith(eventList);
-        Assert.That(newEventList, Has.Count.EqualTo(1));
-    }
-
     [TestCase(null, false)]
     [TestCase(CalDateTime.UtcTzId, false)]
     [TestCase("America/New_York", true)]
     public void DisallowedUntilShouldThrow(string? tzId, bool shouldThrow)
     {
         var dt = new CalDateTime(2025, 11, 08, 10, 30, 00, tzId);
-        var recPattern = new RecurrencePattern(FrequencyType.Daily, 1);
+        var recPattern = new RecurrenceRule(FrequencyType.Daily, 1);
 
         if (shouldThrow)
         {
@@ -3455,15 +3341,15 @@ END:VCALENDAR";
             ? Throws.InstanceOf(typeof(Exception))
             : Throws.InstanceOf(exceptionType);
 
-        RecurrencePattern GetPattern() => new RecurrencePattern(testCase.RRule!);
+        RecurrenceRule GetRule() => new(testCase.RRule!);
 
         if (testCase.ExceptionStep == RecurrenceTestExceptionStep.Construction)
         {
-            Assert.That(() => GetPattern(), throwsConstraint);
+            Assert.That(() => GetRule(), throwsConstraint);
             return;
         }
 
-        evt.RecurrenceRules.Add(GetPattern());
+        evt.RecurrenceRule = GetRule();
 
         // Evaluate all tests in UTC so that INSTANCES match
         // the local date and time of the expected values.
@@ -3509,7 +3395,7 @@ END:VCALENDAR";
         {
             Start = new CalDateTime(2024, 04, 15),
             End = new CalDateTime(2024, 04, 15),
-            RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Yearly, 1) },
+            RecurrenceRule = new(FrequencyType.Yearly, 1),
         };
 
         var calendar = new Calendar();
@@ -3521,8 +3407,7 @@ END:VCALENDAR";
 
         springAdminEvent.Start = new CalDateTime(2024, 04, 16);
         springAdminEvent.End = new CalDateTime(2024, 04, 16);
-        springAdminEvent.RecurrenceRules = new List<RecurrencePattern>
-            { new RecurrencePattern(FrequencyType.Yearly, 1) };
+        springAdminEvent.RecurrenceRule = new(FrequencyType.Yearly, 1);
 
         searchStart = new CalDateTime(2024, 04, 16);
         searchEnd = new CalDateTime(2050, 05, 31);
@@ -3670,8 +3555,8 @@ END:VCALENDAR";
     [TestCase("INTERVAL=2;UNTIL=20250430T000000Z;FREQ=DAILY")]
     public void Recurrence_RRULE_Properties_ShouldBeDeserialized_In_Any_Order(string rRule)
     {
-        var serializer = new RecurrencePatternSerializer();
-        var recurrencePattern = serializer.Deserialize(new StringReader(rRule)) as RecurrencePattern;
+        var serializer = new RecurrenceRuleSerializer();
+        var recurrencePattern = serializer.Deserialize(new StringReader(rRule)) as RecurrenceRule;
 
         using (Assert.EnterMultipleScope())
         {
@@ -3687,7 +3572,7 @@ END:VCALENDAR";
     [Test]
     public void Recurrence_RRULE_Without_Freq_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         Assert.That(() => serializer.Deserialize(new StringReader("INTERVAL=2;UNTIL=20250430T000000Z")),
             Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -3696,7 +3581,7 @@ END:VCALENDAR";
     [Test]
     public void Recurrence_RRULE_With_Freq_Undefined_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         Assert.That(() => serializer.Deserialize(new StringReader("FREQ=UNDEFINED;INTERVAL=2;UNTIL=20250430T000000Z")),
             Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -3705,7 +3590,7 @@ END:VCALENDAR";
     [Test]
     public void Recurrence_RRULE_With_Unsupported_Part_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         Assert.That(() => serializer.Deserialize(new StringReader("FREQ=DAILY;INTERVAL=2;FAILING=0")),
             Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -3714,11 +3599,11 @@ END:VCALENDAR";
     [Test]
     public void Preceding_Appended_and_duplicate_Semicolons_Should_Be_Ignored()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
 
         var recurrencePattern =
             serializer.Deserialize(new StringReader(";FREQ=DAILY;INTERVAL=2;UNTIL=20250430T000000Z")) as
-                RecurrencePattern;
+                RecurrenceRule;
         using (Assert.EnterMultipleScope())
         {
             Assert.That(recurrencePattern, Is.Not.Null);
@@ -3732,7 +3617,7 @@ END:VCALENDAR";
     [Test]
     public void Disallowed_Recurrence_RangeChecks_Should_Throw()
     {
-        var serializer = new RecurrencePatternSerializer();
+        var serializer = new RecurrenceRuleSerializer();
         using (Assert.EnterMultipleScope())
         {
             Assert.That(() => serializer.CheckMutuallyExclusive("a", "b", 1, CalDateTime.Now),
@@ -3789,7 +3674,7 @@ END:VCALENDAR";
         {
             Start = new CalDateTime("20250101T100000"),
             End = new CalDateTime("20250101T200000"),
-            RecurrenceRules = [new RecurrencePattern("FREQ=DAILY")],
+            RecurrenceRule = new("FREQ=DAILY"),
         };
 
         cal.ExceptionDates.Add(new CalDateTime("20250102"));
@@ -3815,9 +3700,8 @@ END:VCALENDAR";
         {
             Start = new CalDateTime("20250702T100000"),
             End = new CalDateTime("20250702T200000"),
-            RecurrenceRules = [new RecurrencePattern("FREQ=DAILY")],
+            RecurrenceRule = new("FREQ=DAILY"),
         };
-
 
         // Should be considered only at the exact time
         cal.ExceptionDates.Add(new CalDateTime("20250703T000000"));
@@ -3947,7 +3831,7 @@ END:VCALENDAR";
         string periodStartStr, string? periodStartTzId)
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new RecurrencePattern(FrequencyType.Yearly, 1) { Count = 3 });
+        evt.RecurrenceRule = new(FrequencyType.Yearly, 1) { Count = 3 };
         evt.Start = new CalDateTime(dtStartStr, dtStartTzId);
 
         var cal = new Calendar();
@@ -4120,7 +4004,7 @@ END:VCALENDAR";
     }
 
     [Test]
-    public void SkippedOccurrenceOnWeeklyPattern() // Test moved from former GetOccurrencesTests
+    public void SkippedOccurrenceOnWeeklyRule() // Test moved from former GetOccurrencesTests
     {
         const int evaluationsCount = 1000;
         var eventStart = new CalDateTime(new DateTime(2016, 1, 1, 10, 0, 0, DateTimeKind.Utc));
@@ -4129,14 +4013,12 @@ END:VCALENDAR";
         {
             DtStart = eventStart,
             DtEnd = eventEnd,
+            RecurrenceRule = new(FrequencyType.Weekly)
+            {
+                ByDay = [new WeekDay(DayOfWeek.Friday)]
+            }
         };
 
-        var pattern = new RecurrencePattern
-        {
-            Frequency = FrequencyType.Weekly,
-            ByDay = [new WeekDay(DayOfWeek.Friday)]
-        };
-        vEvent.RecurrenceRules.Add(pattern);
         var calendar = new Calendar();
         calendar.Events.Add(vEvent);
 
@@ -4470,7 +4352,7 @@ END:VCALENDAR";
     public void GetOccurrences_BackwardsDaylightSaving_25Hours(string start, string? tzId, string rrule)
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new(rrule));
+        evt.RecurrenceRule = new(rrule);
         evt.Start = new(start, tzId);
         evt.Duration = Duration.FromHours(1);
 
@@ -4497,7 +4379,7 @@ END:VCALENDAR";
     public void GetOccurrences_BackwardsDaylightSaving_25Hours_Shifted(string start, string? tzId)
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=MINUTELY;INTERVAL=10"));
+        evt.RecurrenceRule = new("FREQ=MINUTELY;INTERVAL=10");
         evt.Start = new(start, tzId);
         evt.Duration = Duration.FromMinutes(10);
 
@@ -4524,7 +4406,7 @@ END:VCALENDAR";
     public void GetOccurrences_BackwardsDaylightSaving_25Hours_NoDuration(string start, string? tzId)
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=MINUTELY;INTERVAL=10"));
+        evt.RecurrenceRule = new("FREQ=MINUTELY;INTERVAL=10");
         evt.Start = new(start, tzId);
         evt.End = evt.Start;
 
@@ -4551,7 +4433,7 @@ END:VCALENDAR";
     public void GetOccurrences_BackwardsDaylightSaving_SpanFirstHour(string start, string? tzId)
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=MINUTELY;INTERVAL=10"));
+        evt.RecurrenceRule = new("FREQ=MINUTELY;INTERVAL=10");
         evt.Start = new(start, tzId);
         evt.Duration = Duration.FromMinutes(90);
 
@@ -4576,7 +4458,7 @@ END:VCALENDAR";
     public void YearlyByMonthByDay_AroundForwardDaylightSaving_ShiftsHourOnlyOnTransitionDay()
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=YEARLY;BYMONTH=3;BYDAY=2SA,2SU;COUNT=4"));
+        evt.RecurrenceRule = new("FREQ=YEARLY;BYMONTH=3;BYDAY=2SA,2SU;COUNT=4");
         evt.Start = new("20250308T020000", "America/New_York");
         evt.Duration = Duration.FromMinutes(90);
 
@@ -4605,7 +4487,7 @@ END:VCALENDAR";
     public void Monthly_OnForwardDaylightSaving_ShiftsHourOnlyOnTransitionDay()
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=MONTHLY;BYDAY=2SU;COUNT=4"));
+        evt.RecurrenceRule = new("FREQ=MONTHLY;BYDAY=2SU;COUNT=4");
         evt.Start = new("20250112T020000", "America/New_York");
         evt.Duration = Duration.FromMinutes(90);
 
@@ -4634,7 +4516,7 @@ END:VCALENDAR";
     public void MonthlyUtcEvent_OnForwardDaylightSaving_HourShiftsAfterTransition()
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=MONTHLY;BYDAY=2SU;COUNT=4"));
+        evt.RecurrenceRule = new("FREQ=MONTHLY;BYDAY=2SU;COUNT=4");
         evt.Start = new("20250112T070000", "UTC");
         evt.Duration = Duration.FromMinutes(90);
 
@@ -4663,7 +4545,7 @@ END:VCALENDAR";
     public void MonthlyByDayByHour_AroundForwardDaylightSaving_CountIsCorrect()
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=MONTHLY;BYDAY=2SU;BYHOUR=1,2,3;COUNT=5"));
+        evt.RecurrenceRule = new("FREQ=MONTHLY;BYDAY=2SU;BYHOUR=1,2,3;COUNT=5");
         evt.Start = new("20250309T010000", "America/New_York");
         evt.Duration = Duration.FromMinutes(90);
 
@@ -4692,7 +4574,7 @@ END:VCALENDAR";
     public void MonthlyByDayByHourByMinute_AroundForwardDaylightSaving_CountIsCorrect()
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=MONTHLY;BYDAY=2SU;BYHOUR=1,2,3;BYMINUTE=0,3;COUNT=10"));
+        evt.RecurrenceRule = new("FREQ=MONTHLY;BYDAY=2SU;BYHOUR=1,2,3;BYMINUTE=0,3;COUNT=10");
         evt.Start = new("20250309T010000", "America/New_York");
         evt.Duration = Duration.FromMinutes(90);
 
@@ -4726,7 +4608,7 @@ END:VCALENDAR";
     public void MonthlyByDayByHour_AroundBackwardDaylightSaving_CountIsCorrect()
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=MONTHLY;BYDAY=1SU;BYHOUR=1,2,3;COUNT=6"));
+        evt.RecurrenceRule = new("FREQ=MONTHLY;BYDAY=1SU;BYHOUR=1,2,3;COUNT=6");
         evt.Start = new("20251102T010000", "America/New_York");
         evt.Duration = Duration.FromMinutes(90);
 
@@ -4755,7 +4637,7 @@ END:VCALENDAR";
     public void Hourly_BackwardDaylightSaving_CountIsCorrect()
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=HOURLY;COUNT=6"));
+        evt.RecurrenceRule = new("FREQ=HOURLY;COUNT=6");
         evt.Start = new("20251102T000000", "America/New_York");
         evt.Duration = Duration.FromMinutes(1);
 
@@ -4787,7 +4669,7 @@ END:VCALENDAR";
     public void Hourly_BackwardDaylightSaving_StartAtTransition_CountIsCorrect()
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=HOURLY;COUNT=6"));
+        evt.RecurrenceRule = new("FREQ=HOURLY;COUNT=6");
         evt.Start = new("20251102T000000", "America/New_York");
         evt.Duration = Duration.FromMinutes(1);
 
@@ -4819,7 +4701,7 @@ END:VCALENDAR";
     public void StartingAfterCount_ProducesNoValues()
     {
         var evt = new CalendarEvent();
-        evt.RecurrenceRules.Add(new("FREQ=DAILY;COUNT=3"));
+        evt.RecurrenceRule = new("FREQ=DAILY;COUNT=3");
         evt.Start = new("20250101");
         evt.Duration = Duration.FromMinutes(90);
 

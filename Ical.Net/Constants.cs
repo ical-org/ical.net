@@ -4,7 +4,6 @@
 //
 
 using System;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace Ical.Net;
@@ -191,9 +190,11 @@ public enum FrequencyType
 /// MONTHLY or YEARLY recurrence frequency. For example, within
 /// a MONTHLY frequency, consider the following:
 ///
-/// RecurrencePattern r = new RecurrencePattern();
+/// <code>
+/// RecurrenceRule r = new RecurrenceRule();
 /// r.Frequency = FrequencyType.Monthly;
 /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.First));
+/// </code>
 ///
 /// The above example represents the first Monday within the month,
 /// whereas if FrequencyOccurrence.Last were specified, it would
@@ -201,14 +202,18 @@ public enum FrequencyType
 ///
 /// For a YEARLY frequency, consider the following:
 ///
-/// Recur r = new Recur();
+/// <code>
+/// RecurrenceRule r = new RecurrenceRule();
 /// r.Frequency = FrequencyType.Yearly;
 /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.Second));
+/// </code>
 ///
 /// The above example represents the second Monday of the year.  This can
 /// also be represented with the following code:
 ///
+/// <code>
 /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, 2));
+/// </code>
 /// </summary>
 public enum FrequencyOccurrence
 {

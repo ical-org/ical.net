@@ -29,20 +29,12 @@ public abstract class RecurringEvaluator : IEvaluator
     /// <param name="options"></param>
     protected IEnumerable<EvaluationPeriod> EvaluateRRule(CalDateTime referenceDate, DateTimeZone timeZone, Instant? periodStart, EvaluationOptions? options)
     {
-        if (!Recurrable.RecurrenceRules.Any())
+        if (Recurrable.RecurrenceRule is null)
             return [];
 
-        var periodsQueries = Recurrable.RecurrenceRules.Select(rule =>
-        {
-            var ruleEvaluator = new RecurrencePatternEvaluator(rule, referenceDate, timeZone, periodStart, options);
-            return ruleEvaluator.Evaluate();
-        })
-            // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
-            // the initialization code is run, including validation and error handling.
-            // This way we receive validation errors early, not only when enumeration starts.
-            .ToList(); //NOSONAR - deliberately enumerate here
+        var ruleEvaluator = new RecurrenceRuleEvaluator(Recurrable.RecurrenceRule, referenceDate, timeZone, periodStart, options);
 
-        return periodsQueries.OrderedMergeMany();
+        return ruleEvaluator.Evaluate();
     }
 
     protected abstract EvaluationPeriod EvaluateRDate(DataTypes.Period rdate, DateTimeZone referenceTimeZone);
@@ -90,10 +82,10 @@ public abstract class RecurringEvaluator : IEvaluator
         // Evaluate recurrence in the reference zone
         var zonedReference = referenceDate.AsZonedOrDefault(timeZone);
 
-        // Only add referenceDate if there are no RecurrenceRules defined. This is in line
+        // Only add referenceDate if there is no RecurrenceRule. This is in line
         // with RFC 5545 which requires DTSTART to match any RRULE. If it doesn't, the behaviour
         // is undefined. It seems to be good practice not to return the referenceDate in this case.
-        rruleOccurrences = !Recurrable.RecurrenceRules.Any()
+        rruleOccurrences = Recurrable.RecurrenceRule is null
             ? [new EvaluationPeriod(zonedReference)]
             : EvaluateRRule(referenceDate, zonedReference.Zone, periodStart, options);
 
