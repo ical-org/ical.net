@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.Extensions;
 using NodaTime.Text;
@@ -311,17 +310,6 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     public static CalDateTime FromDateTimeDate(DateTime value) => new(LocalDate.FromDateTime(value));
 
     /// <summary>
-    /// Converts this value to <see cref="DateTime"/> with <see cref="DateTimeKind.Utc"/>.
-    /// <para/>
-    /// DATE values will default to <see cref="LocalTime.Midnight"/>.
-    /// <para/>
-    /// Values with a time zone will be converted to the UTC time zone.
-    /// Values without a time zone (<see cref="IsFloating"/>) will have the same local time.
-    /// </summary>
-    /// <returns>A <see cref="DateTime"/> value representing this value converted to the UTC time zone.</returns>
-    public DateTime ToDateTimeUtc() => ToZonedOrDefault(DateTimeZone.Utc).ToDateTimeUtc();
-
-    /// <summary>
     /// Returns the local date and time as a <see cref="DateTime"/> with <see cref="DateTimeKind.Unspecified"/>.
     /// <para/>
     /// DATE values will default to <see cref="LocalTime.Midnight"/>.
@@ -359,14 +347,14 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// </summary>
     /// <returns>A zoned date time representing this value as close as possible.</returns>
     /// <exception cref="InvalidOperationException">Time zone is null</exception>
-    public ZonedDateTime ToZonedDateTime()
+    public ZonedDateTime ToZonedDateTime(IDateTimeZoneProvider dateTimeZoneProvider)
     {
         if (_tzId is null)
         {
             throw new InvalidOperationException("CalDateTime must have a time zone to convert to ZonedDateTime");
         }
 
-        return DateUtil.GetZone(_tzId).AtLeniently(ToLocalDateTime());
+        return dateTimeZoneProvider[_tzId].AtLeniently(ToLocalDateTime());
     }
 
     /// <summary>
@@ -379,14 +367,14 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// </summary>
     /// <param name="defaultZone">The time zone to use if this value has no time zone.</param>
     /// <returns>A zoned date time representing this value in its own time zone or the specified time zone.</returns>
-    public ZonedDateTime ToZonedOrDefault(DateTimeZone defaultZone)
+    public ZonedDateTime ToZonedOrDefault(DateTimeZone defaultZone, IDateTimeZoneProvider dateTimeZoneProvider)
     {
         if (_tzId is null)
         {
             return ToLocalDateTime().InZoneLeniently(defaultZone);
         }
 
-        return DateUtil.GetZone(_tzId).AtLeniently(ToLocalDateTime());
+        return dateTimeZoneProvider[_tzId].AtLeniently(ToLocalDateTime());
     }
 
     /// <inheritdoc />

@@ -285,18 +285,20 @@ public class RecurrenceTests
         ProgramTest.TestCal(iCal);
         var evt = iCal.Events.First();
 
+        var tz = iCal.TimeZoneProvider[_tzid];
+
         var occurrences = evt.GetOccurrences(
-            new CalDateTime(1998, 1, 1).ToZonedDateTime(_tzid))
-            .TakeWhileBefore(new CalDateTime(2000, 12, 31).ToZonedDateTime(_tzid).ToInstant())
+            new LocalDate(1998, 1, 1).AtStartOfDayInZone(tz))
+            .TakeWhileBefore(new LocalDate(2000, 12, 31).AtStartOfDayInZone(tz).ToInstant())
             .ToList();
 
-        var dt = new CalDateTime(1998, 1, 1, 9, 0, 0, _tzid).ToZonedDateTime();
+        var dt = new LocalDateTime(1998, 1, 1, 9, 0).InZoneStrictly(tz);
         var i = 0;
         while (dt.Year < 2001)
         {
-            if (dt.ToInstant() >= evt.Start!.ToZonedDateTime(_tzid).ToInstant() &&
+            if (dt.ToInstant() >= evt.Start!.ToZonedOrDefault(tz, iCal.TimeZoneProvider).ToInstant() &&
                 dt.Month == 1 &&
-                dt.ToInstant() <= new CalDateTime(2000, 1, 31, 9, 0, 0, _tzid).ToZonedDateTime().ToInstant())
+                dt.ToInstant() <= new LocalDateTime(2000, 1, 31, 9, 0).InZoneStrictly(tz).ToInstant())
             {
                 Assert.That(occurrences[i].Start, Is.EqualTo(dt), "Event should occur at " + dt);
                 i++;
@@ -304,7 +306,7 @@ public class RecurrenceTests
 
             dt = dt.LocalDateTime
                 .PlusDays(1)
-                .InZoneLeniently(_tzid);
+                .InZoneLeniently(tz);
         }
     }
 
@@ -2015,7 +2017,8 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2009, 12, 9, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2009, 12, 10, 2, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            0
+            0,
+            "America/New_York"
         );
 
         // Weekly with UNTIL value
@@ -2027,7 +2030,8 @@ public class RecurrenceTests
             {
                 new Period(new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            1
+            1,
+            "America/New_York"
         );
 
         // Weekly with COUNT=2
@@ -2040,7 +2044,8 @@ public class RecurrenceTests
                 new Period(new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
                 new Period(new CalDateTime(2009, 12, 11, 2, 00, 00, localTzid), Duration.FromMinutes(30))
             },
-            2
+            2,
+            "America/New_York"
         );
     }
 
@@ -2594,7 +2599,7 @@ public class RecurrenceTests
         var pattern = new RecurrenceRule("FREQ=SECONDLY;INTERVAL=10");
 
         var startDate = new CalDateTime(2008, 3, 30, 23, 59, 40);
-        var fromDate = startDate.ToZonedDateTime(_tzid);
+        var fromDate = startDate.ToZonedDateTime("US/Eastern");
         var toDate = new CalDateTime(2008, 3, 31, 0, 0, 11);
 
         var occurrences = pattern.Evaluate(startDate, fromDate)
@@ -2984,20 +2989,22 @@ END:VCALENDAR";
 
         var calendar = Calendar.Load(ical)!;
 
-        var orderedOccurrences = calendar.GetOccurrences(DateUtil.GetZone("Europe/Bucharest"))
+        var tz = calendar.TimeZoneProvider["Europe/Bucharest"];
+
+        var orderedOccurrences = calendar.GetOccurrences(tz)
             .Take(10)
             .ToList();
 
-        var expectedSept1Start = CalDateTime.FromDateTime(DateTime.Parse("2016-09-01T16:30:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
-        var expectedSept1End = CalDateTime.FromDateTime(DateTime.Parse("2016-09-01T22:00:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
+        var expectedSept1Start = new LocalDateTime(2016, 9, 1, 16, 30).InZoneStrictly(tz);
+        var expectedSept1End = new LocalDateTime(2016, 9 ,1, 22, 0).InZoneStrictly(tz);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(orderedOccurrences[3].Start, Is.EqualTo(expectedSept1Start));
             Assert.That(orderedOccurrences[3].End, Is.EqualTo(expectedSept1End));
         }
 
-        var expectedSept3Start = CalDateTime.FromDateTime(DateTime.Parse("2016-09-03T07:00:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
-        var expectedSept3End = CalDateTime.FromDateTime(DateTime.Parse("2016-09-03T12:30:00", CultureInfo.InvariantCulture), "Europe/Bucharest").ToZonedDateTime();
+        var expectedSept3Start = new LocalDateTime(2016, 9, 3, 7, 0).InZoneStrictly(tz);
+        var expectedSept3End = new LocalDateTime(2016, 9, 3, 12, 30).InZoneStrictly(tz);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(orderedOccurrences[5].Start, Is.EqualTo(expectedSept3Start));
@@ -3198,6 +3205,7 @@ END:VCALENDAR";
             END:VCALENDAR
             """;
         const string timeZoneId = @"Eastern Standard Time";
+        DateUtil.GetZone(timeZoneId);
         var calendar = Calendar.Load(icalText)!;
         var firstEvent = calendar.Events.First();
         var startSearch =
@@ -4190,10 +4198,10 @@ END:VCALENDAR";
                             END:VCALENDAR
                             """;
 
-        var tz = DateUtil.GetZone("W. Europe Standard Time");
 
         var collection = Calendar.Load(ical)!;
-        var startCheck = new CalDateTime(2016, 11, 11).ToZonedOrDefault(tz);
+        var tz = collection.TimeZoneProvider["W. Europe Standard Time"];
+        var startCheck = new LocalDate(2016, 11, 11).AtStartOfDayInZone(tz);
         var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck)
             .TakeWhileBefore(startCheck.LocalDateTime.PlusMonths(1).InZoneLeniently(tz).ToInstant()).ToList();
 
@@ -4207,7 +4215,7 @@ END:VCALENDAR";
             new("20161128T120100", "W. Europe Standard Time"),
             new("20161205T000100", "W. Europe Standard Time"),
             new("20161205T120100", "W. Europe Standard Time")
-        }.Select(x => x.ToZonedDateTime()).ToList();
+        }.Select(x => x.ToZonedDateTime(collection.TimeZoneProvider)).ToList();
 
         // Specify end time that is between the original occurrence at 20161128T0001 and the overridden one at 20161128T0030.
         // The overridden one shouldn't be returned, because it was replaced and the other one is in the future.
@@ -4587,8 +4595,8 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
-        var result = cal.GetOccurrences(evt.Start.ToZonedDateTime())
+        var tz = cal.TimeZoneProvider["America/New_York"];
+        var result = cal.GetOccurrences(evt.Start.ToZonedDateTime(cal.TimeZoneProvider))
             .Select(x => x.Start)
             .ToList();
 
@@ -4616,8 +4624,8 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
-        var result = cal.GetOccurrences(evt.Start.ToZonedDateTime())
+        var tz = cal.TimeZoneProvider["America/New_York"];
+        var result = cal.GetOccurrences(evt.Start.ToZonedDateTime(cal.TimeZoneProvider))
             .Select(x => x.Start)
             .ToList();
 

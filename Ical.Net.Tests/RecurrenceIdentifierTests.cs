@@ -103,19 +103,5 @@ internal class RecurrenceIdentifierTests
         }
     }
 
-    [TestCase("20250831", RecurrenceRange.ThisInstance, 1)]  // other earlier
-    [TestCase("20250901", RecurrenceRange.ThisInstance, 0)]  // same date, same range
-    [TestCase("20250901", RecurrenceRange.ThisAndFuture, -1)] // same date, higher range
-    [TestCase("20250902", RecurrenceRange.ThisInstance, -1)] // other later
-    [TestCase("20250902", RecurrenceRange.ThisAndFuture, -1)] // other later, higher range
-    public void CompareToTests(string dt, RecurrenceRange range, int expected)
-    {
-        var self = new RecurrenceIdentifier(new CalDateTime("20250901"), RecurrenceRange.ThisInstance);
-        var other = new RecurrenceIdentifier(new CalDateTime(dt), range);
-
-        Assert.That(self.CompareTo(other), Is.EqualTo(expected));
-        Assert.That(self.CompareTo(null), Is.EqualTo(1));
-    }
-
 #pragma warning restore CS0618 // Type or member is obsolete
 }

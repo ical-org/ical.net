@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -18,6 +18,9 @@ public class TimeZoneInfoEvaluator : RecurringEvaluator
     }
 
     protected override NodaTime.ZonedDateTime GetEnd(NodaTime.ZonedDateTime start) => start;
+
+    protected override NodaTime.IDateTimeZoneProvider TimeZoneProvider => CalendarTimeZoneProviders.TzdbWithAliases;
+
     protected override EvaluationPeriod EvaluateRDate(Period rdate, NodaTime.DateTimeZone referenceTimeZone)
         => throw new NotImplementedException();
 

@@ -19,7 +19,7 @@ namespace Ical.Net.DataTypes;
 /// This class is used to uniquely identify a particular occurrence within a recurring series. The
 /// identifier consists of a date and a recurrence range, which together specify the instance.
 /// </remarks>
-public class RecurrenceIdentifier : IComparable<RecurrenceIdentifier>
+public class RecurrenceIdentifier
 {
     /// <summary>
     /// Initializes a new instance with the specified start time and recurrence range.
@@ -44,38 +44,6 @@ public class RecurrenceIdentifier : IComparable<RecurrenceIdentifier>
     /// Gets or sets the recurrence range that determines the scope of the recurrence rule.
     /// </summary>
     public RecurrenceRange Range { get; set; }
-
-    /// <summary>
-    /// Compares the current instance with another <see cref="RecurrenceIdentifier"/>
-    /// object and returns an integer that indicates whether the current
-    /// instance precedes, follows, or occurs in the same position in the
-    /// sort order as the other object.
-    /// </summary>
-    /// <remarks>
-    /// The comparison is performed first by the <see cref="StartTime"/> property. If the <see
-    /// cref="StartTime"/> values are equal, the <see cref="Range"/> property is used as a tiebreaker.
-    /// </remarks>
-    /// <param name="other">
-    /// The <see cref="RecurrenceIdentifier"/> to compare with the current instance.
-    /// Can be <see langword="null"/>.
-    /// </param>
-    public int CompareTo(RecurrenceIdentifier? other)
-    {
-        if (other is null)
-        {
-            return 1;
-        }
-
-        var startComparison = StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant()
-            .CompareTo(other.StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant());
-
-        if (startComparison != 0)
-        {
-            return startComparison;
-        }
-
-        return Range.CompareTo(other.Range);
-    }
 }
 
 /// <summary>
