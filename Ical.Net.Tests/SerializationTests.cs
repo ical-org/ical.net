@@ -23,12 +23,21 @@ namespace Ical.Net.Tests;
 [TestFixture]
 public class SerializationTests
 {
-    private static readonly CalDateTime _nowTime = CalDateTime.Now;
-    private static readonly CalDateTime _later = _nowTime.AddHours(1);
-    private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
+    private static readonly CalDateTime _nowTime = new(2026, 2, 24, 11, 30, 21);
+
+    private static readonly CalDateTime _later = _nowTime.ToLocalDateTime().PlusHours(1).ToCalDateTime();
+    private static CalendarSerializer GetNewSerializer() => new();
+
     private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c)!;
+
     private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
-    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = _nowTime, Duration = (_later.Value - _nowTime.Value).ToDurationExact() };
+
+    private static CalendarEvent GetSimpleEvent() => new()
+    {
+        DtStart = _nowTime,
+        Duration = Duration.FromPeriod(_later.ToLocalDateTime() - _nowTime.ToLocalDateTime())
+    };
+
     private static Calendar DeserializeCalendar(string s) => Calendar.Load(s)!;
 
     internal static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
@@ -457,11 +466,11 @@ public class SerializationTests
         var e = new CalendarEvent
         {
             Start = _nowTime.ToTimeZone(someTz),
-            End = _nowTime.AddHours(1).ToTimeZone(someTz),
+            End = _nowTime.ToLocalDateTime().PlusHours(1).ToCalDateTime().ToTimeZone(someTz),
             RecurrenceRule = new(FrequencyType.Daily)
             {
-                Until = _nowTime.AddDays(7),
-            },
+                Until = _nowTime.ToLocalDateTime().PlusDays(7).ToCalDateTime(),
+            }
         };
         var c = new Calendar
         {

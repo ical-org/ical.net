@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -95,7 +96,9 @@ public class TodoTest
 
         // periodStart is in the future, so filtering the first occurrence will also require
         // looking at the todo's duration, which is unset/null. It must therefore be ignored.
-        var firstOccurrence = todo.GetOccurrences(today.AddDays(2).ToZonedDateTime("America/New_York")).FirstOrDefault();
+        var tz = DateUtil.GetZone("America/New_York");
+        var start = today.Date.PlusDays(2).AtStartOfDayInZone(tz);
+        var firstOccurrence = todo.GetOccurrences(start).FirstOrDefault();
 
         Assert.That(firstOccurrence, Is.Not.Null);
         Assert.That(firstOccurrence.Start, Is.EqualTo(firstOccurrence.End));
