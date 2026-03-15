@@ -19,9 +19,6 @@ public interface IRecurrable : IGetOccurrences
 
     ExceptionDates ExceptionDates { get; }
 
-    [Obsolete("EXRULE is marked as deprecated in RFC 5545 and will be removed in a future version")]
-    IList<RecurrencePattern> ExceptionRules { get; set; }
-
     RecurrenceDates RecurrenceDates { get; }
 
     [Obsolete("Use RecurrenceRule instead. Support for multiple recurrence rules will be removed in a future version.")]

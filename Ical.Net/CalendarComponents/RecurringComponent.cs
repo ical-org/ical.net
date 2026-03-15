@@ -19,7 +19,7 @@ namespace Ical.Net.CalendarComponents;
 /// </summary>
 /// <remarks>
 /// This component automatically handles
-/// RRULEs, RDATE, EXRULEs, and EXDATEs, as well as the DTSTART
+/// RRULEs, RDATE, and EXDATEs, as well as the DTSTART
 /// for the recurring item (all recurring items must have a DTSTART).
 /// </remarks>
 public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
@@ -80,13 +80,6 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
     }
 
     public virtual ExceptionDates ExceptionDates { get; internal set; } = null!;
-
-    [Obsolete("EXRULE is marked as deprecated in RFC 5545 and will be removed in a future version")]
-    public virtual IList<RecurrencePattern> ExceptionRules
-    {
-        get => Properties.GetMany<RecurrencePattern>("EXRULE");
-        set => Properties.Set("EXRULE", value);
-    }
 
     public virtual CalDateTime? LastModified
     {

@@ -39,7 +39,6 @@ internal class DataTypeMapper
         AddPropertyMapping("DUE", typeof(CalDateTime), false);
         AddPropertyMapping("DURATION", typeof(Duration), false);
         AddPropertyMapping("EXDATE", typeof(PeriodList), false);
-        AddPropertyMapping("EXRULE", typeof(RecurrencePattern), false);
         AddPropertyMapping("FREEBUSY", typeof(FreeBusyEntry), true);
         AddPropertyMapping("GEO", typeof(GeographicLocation), false);
         AddPropertyMapping("LAST-MODIFIED", typeof(CalDateTime), false);
