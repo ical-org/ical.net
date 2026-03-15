@@ -166,8 +166,7 @@ public class OccurencePerfTests
         const string tzid = "America/New_York";
         const int limit = 4;
 
-        var startTime = CalDateTime.Now.AddDays(-1);
-        var interval = TimeSpan.FromDays(1);
+        var startTime = new LocalDate(2026, 02, 21).AtMidnight();
 
         var events = Enumerable
             .Range(0, limit)
@@ -175,14 +174,14 @@ public class OccurencePerfTests
             {
                 var e = new CalendarEvent
                 {
-                    Start = startTime.AddMinutes(5).ToTimeZone(tzid),
-                    End = startTime.AddMinutes(10).ToTimeZone(tzid),
+                    Start = new(startTime.PlusMinutes(5), tzid),
+                    End = new(startTime.PlusMinutes(10), tzid),
                     RecurrenceRule = new(FrequencyType.Daily, 1)
                     {
-                        Until = startTime.AddDays(10),
+                        Until = new(startTime.PlusDays(10).InUtc().ToInstant()),
                     },
                 };
-                startTime = startTime.Add(DataTypes.Duration.FromTimeSpanExact(interval));
+                startTime = startTime.PlusDays(1);
                 return e;
             });
 

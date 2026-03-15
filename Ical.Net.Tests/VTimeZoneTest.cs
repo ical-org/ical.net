@@ -277,7 +277,7 @@ public class VTimeZoneTest
 
         iCal = CreateTestCalendar("America/Detroit");
         var tzInfo2 = iCal.TimeZones.First().TimeZoneInfos.First();
-        tzInfo2.RecurrenceId = dt.AddDays(1);
+        tzInfo2.RecurrenceId = dt.Date.PlusDays(1).ToCalDateTime();
 
         iCal = CreateTestCalendar("America/Detroit");
         var tzInfo3 = iCal.TimeZones.First().TimeZoneInfos.First();
@@ -290,8 +290,8 @@ public class VTimeZoneTest
 
             Assert.That(tzInfo1.TzId, Is.EqualTo("America/Detroit"));
 
-            Assert.That(tzInfo2.RecurrenceIdentifier!.StartTime, Is.EqualTo(dt.AddDays(1)));
-            Assert.That(tzInfo2.RecurrenceId, Is.EqualTo(dt.AddDays(1)));
+            Assert.That(tzInfo2.RecurrenceIdentifier!.StartTime, Is.EqualTo(dt.Date.PlusDays(1).ToCalDateTime()));
+            Assert.That(tzInfo2.RecurrenceId, Is.EqualTo(dt.Date.PlusDays(1).ToCalDateTime()));
             Assert.That(tzInfo2.RecurrenceIdentifier.Range, Is.EqualTo(RecurrenceRange.ThisInstance));
 
             // RecurrenceId only supports ThisInstance implicitly,

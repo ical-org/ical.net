@@ -4,13 +4,22 @@
 //
 
 using System;
+using Ical.Net.DataTypes;
 using NodaTime;
 using NodaTime.TimeZones;
 
 namespace Ical.Net;
 
-internal static class NodaTimeExtensions
+public static class NodaTimeExtensions
 {
+    public static CalDateTime ToCalDateTime(this ZonedDateTime value) => new(value);
+
+    public static CalDateTime ToCalDateTime(this LocalDateTime value, string? timeZone = null) => new(value, timeZone);
+
+    public static CalDateTime ToCalDateTime(this LocalDate value, string? timeZone = null) => new(value, timeZone);
+
+    public static CalDateTime ToCalDateTime(this Instant value) => new(value);
+
     /// <summary>
     /// Returns a ZonedDateTime that matches the time zone and
     /// offset of the start value, or shifts forward if the local
