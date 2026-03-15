@@ -82,7 +82,7 @@ public class PeriodListWrapperTests
         var dateTime = new CalDateTime(2025, 1, 1, 10, 11, 12, "Europe/Berlin");
 
         exDates.Add(dateOnly);
-        exDates.Add(dateOnly.AddDays(1));
+        exDates.Add(dateOnly.Date.PlusDays(1).ToCalDateTime());
         exDates.Add(dateTime);
 
         var dateTimeSuccess = exDates.Remove(dateTime);
@@ -234,7 +234,7 @@ public class PeriodListWrapperTests
         var period2 = new Period(new CalDateTime(2025, 1, 1, 10, 0, 0, "Europe/Berlin"), Duration.FromHours(6));
 
         recDates.Add(period1).Add(period2);
-        recDates.Add(new Period(period1.StartTime.AddDays(1), Duration.FromDays(5)));
+        recDates.Add(new Period(period1.StartTime.Date.PlusDays(1).ToCalDateTime(), Duration.FromDays(5)));
 
         var period1Success = recDates.Remove(period1);
         var period2Success = recDates.Remove(period2);
@@ -281,8 +281,11 @@ public class PeriodListWrapperTests
         
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(recDates.Contains(new Period(period1.StartTime.AddDays(1), Duration.FromDays(5))), Is.False);
-            Assert.That(recDates.Contains(new Period(period2.StartTime.AddDays(1), Duration.FromHours(6))), Is.False);
+            var start1 = period1.StartTime.Date.PlusDays(1).ToCalDateTime();
+            Assert.That(recDates.Contains(new Period(start1, Duration.FromDays(5))), Is.False);
+
+            var start2 = period2.StartTime.ToLocalDateTime().PlusDays(1).ToCalDateTime("Europe/Berlin");
+            Assert.That(recDates.Contains(new Period(start2, Duration.FromHours(6))), Is.False);
         }
     }
 
@@ -336,8 +339,8 @@ public class PeriodListWrapperTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(exDates.Contains(dateOnly.AddDays(1)), Is.False);
-            Assert.That(exDates.Contains(dateTime.AddDays(1)), Is.False);
+            Assert.That(exDates.Contains(new CalDateTime(2025, 1, 2)), Is.False);
+            Assert.That(exDates.Contains(new CalDateTime(2025, 1, 2, 10, 11, 12, "Europe/Berlin")), Is.False);
         }
     }
 
