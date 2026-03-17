@@ -16,7 +16,7 @@ public static class NodaTimeExtensions
 
     public static CalDateTime ToCalDateTime(this LocalDateTime value, string? timeZone = null) => new(value, timeZone);
 
-    public static CalDateTime ToCalDateTime(this LocalDate value, string? timeZone = null) => new(value, timeZone);
+    public static CalDateTime ToCalDateTime(this LocalDate value) => new(value);
 
     public static CalDateTime ToCalDateTime(this Instant value) => new(value);
 

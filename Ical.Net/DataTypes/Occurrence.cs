@@ -53,7 +53,7 @@ public class Occurrence : IComparable<Occurrence>
 
             return dtStart.HasTime
                 ? new(start.LocalDateTime, tzid)
-                : new(start.Date, tzid);
+                : new(start.Date);
         }
     }
 

@@ -142,12 +142,25 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// <param name="month"></param>
     /// <param name="day"></param>
     public CalDateTime(int year, int month, int day)
-        : this(new LocalDate(year, month, day), null, null)
+        : this(new LocalDate(year, month, day))
     { }
 
-    public CalDateTime(LocalDate value, string? tzId = null)
-        : this(value, null, tzId)
-    { }
+    public CalDateTime(LocalDate date)
+    {
+        // NodaTime supports year values <1 (BCE). Make sure these
+        // years are considered invalid.
+        if (date.Year < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(date), "Year must be a positive value");
+        }
+
+        _localDate = date;
+        _localTime = null;
+
+        // RFC 5545, Section 3.2.19
+        // The "TZID" property parameter MUST NOT be applied to DATE properties
+        _tzId = null;
+    }
 
     public CalDateTime(LocalDateTime value, string? tzId = null)
         : this(value.Date, value.TimeOfDay, tzId)
@@ -229,7 +242,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     }
 
 #if NET6_0_OR_GREATER
-    public CalDateTime(DateOnly date) : this(date, null, null) { }
+    public CalDateTime(DateOnly date) : this(date.ToLocalDate()) { }
 
     public CalDateTime(DateOnly date, TimeOnly? time, string? tzId = null)
         : this(date.ToLocalDate(), time?.ToLocalTime(), tzId) { }
