@@ -9,7 +9,7 @@
 *.msg text
 *.txt text
 *.yml text
-*.cs text diff=csharp
+*.cs text=auto eol=lf diff=csharp
 *.md text diff=markdown
 *.editorconfig text
 *.json text
