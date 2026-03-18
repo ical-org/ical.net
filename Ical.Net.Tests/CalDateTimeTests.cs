@@ -246,7 +246,7 @@ public class CalDateTimeTests
         [
             new TestCaseData(DateTimeKind.Unspecified, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50, null))),
             new TestCaseData(DateTimeKind.Utc, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50, "UTC"))),
-            new TestCaseData(DateTimeKind.Local, Throws.ArgumentException),
+            new TestCaseData(DateTimeKind.Local, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50))),
         ];
 
     [Test, TestCaseSource(nameof(CalDateTime_FromDateTime_HandlesKindCorrectlyTestCases))]

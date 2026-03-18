@@ -44,19 +44,26 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// Creates a new instance of the <see cref="CalDateTime"/> class
     /// with the current date/time and sets the <see cref="TzId"/> to <see langword="null"/>.
     /// </summary>
-    public static CalDateTime Now => new CalDateTime(DateTime.Now, null, true);
+    public static CalDateTime Now => new(DateTime.Now);
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class
     /// with the current date and sets the <see cref="TzId"/> to <see langword="null"/>.
     /// </summary>
-    public static CalDateTime Today => new CalDateTime(DateTime.Today, null, false);
+    public static CalDateTime Today => FromDate(DateTime.Today);
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class
     /// with the current date/time in the Coordinated Universal Time (UTC) timezone.
     /// </summary>
-    public static CalDateTime UtcNow => new CalDateTime(DateTime.UtcNow, UtcTzId, true);
+    public static CalDateTime UtcNow => new(DateTime.UtcNow);
+
+    /// <summary>
+    /// Creates a DATE value without time or time zone.
+    /// </summary>
+    /// <param name="value">The value to copy the DATE from.</param>
+    /// <returns>A new <see cref="CalDateTime"/> with same date as the specified <see cref="DateTime"/>.</returns>
+    public static CalDateTime FromDate(DateTime value) => new(LocalDate.FromDateTime(value));
 
     /// <summary>
     /// This constructor is required for the SerializerFactory to work.
@@ -83,36 +90,13 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
     /// </param>
     /// <exception cref="System.ArgumentException">If the specified value's kind is <see cref="DateTimeKind.Local"/></exception>
-    public CalDateTime(DateTime value, bool hasTime = true) : this(
-        value,
-        value.Kind switch
+    public CalDateTime(DateTime value, string? tzId = null) : this(
+        LocalDateTime.FromDateTime(value),
+        tzId ?? value.Kind switch
         {
             DateTimeKind.Utc => UtcTzId,
-            DateTimeKind.Unspecified => null,
-            _ => throw new ArgumentException($"An instance of {nameof(CalDateTime)} can only be initialized from a {nameof(DateTime)} of kind {nameof(DateTimeKind.Utc)} or {nameof(DateTimeKind.Unspecified)}.")
-        },
-        hasTime)
-    { }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class.
-    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
-    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
-    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
-    /// </summary>
-    /// <param name="value">The <see cref="DateTime"/> value. Its <see cref="DateTimeKind"/> will be ignored.</param>
-    /// <param name="tzId">A timezone of <see langword="null"/> represents
-    /// a floating date/time, which is the same in all timezones. (<seealso cref="UtcTzId"/>) represents the Coordinated Universal Time.
-    /// Other values determine the timezone of the date/time.
-    /// </param>
-    /// <param name="hasTime">
-    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
-    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
-    /// </param>
-    public CalDateTime(DateTime value, string? tzId, bool hasTime = true) : this(
-        LocalDate.FromDateTime(value),
-        hasTime ? LocalDateTime.FromDateTime(value).TimeOfDay : null,
-        tzId)
+            _ => null
+        })
     { }
 
     /// <summary>
@@ -189,7 +173,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// </param>
     /// <param name="date"></param>
     /// <param name="time"></param>
-    public CalDateTime(LocalDate date, LocalTime? time, string? tzId = null)
+    public CalDateTime(LocalDate date, LocalTime time, string? tzId = null)
     {
         // NodaTime supports year values <1 (BCE). Make sure these
         // years are considered invalid.
@@ -199,13 +183,11 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         }
 
         _localDate = date;
-        _localTime = TruncateTimeToSeconds(time);
 
-        _tzId = tzId switch
-        {
-            _ when !time.HasValue => null,
-            _ => tzId // can also be UtcTzId
-        };
+        // RFC 5545, Section 3.3.5 does not allow for fractional seconds.
+        _localTime = TimeAdjusters.TruncateToSecond(time);
+
+        _tzId = tzId;
     }
 
     /// <summary>
@@ -244,8 +226,8 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
 #if NET6_0_OR_GREATER
     public CalDateTime(DateOnly date) : this(date.ToLocalDate()) { }
 
-    public CalDateTime(DateOnly date, TimeOnly? time, string? tzId = null)
-        : this(date.ToLocalDate(), time?.ToLocalTime(), tzId) { }
+    public CalDateTime(DateOnly date, TimeOnly time, string? tzId = null)
+        : this(date.ToLocalDate(), time.ToLocalTime(), tzId) { }
 #endif
 
     public bool Equals(CalDateTime? other) => this == other;
@@ -397,20 +379,6 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     public TimeOnly? ToTimeOnly() => _localTime?.ToTimeOnly();
 #endif
 
-    /// <summary>
-    /// Any <see cref="Time"/> values are truncated to seconds, because
-    /// RFC 5545, Section 3.3.5 does not allow for fractional seconds.
-    /// </summary>
-    private static LocalTime? TruncateTimeToSeconds(LocalTime? time)
-    {
-        if (time is null)
-        {
-            return null;
-        }
-
-        return TimeAdjusters.TruncateToSecond(time.Value);
-    }
-
     public LocalDateTime ToLocalDateTime()
         => _localDate.At(_localTime ?? LocalTime.Midnight);
 
@@ -471,7 +439,12 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     {
         if (otherTzId is null)
         {
-            return new(_localDate, _localTime);
+            if (_localTime.HasValue)
+            {
+                return new(_localDate, _localTime.Value);
+            }
+
+            return new(_localDate);
         }
 
         return new(ToZonedDateTime(otherTzId));
