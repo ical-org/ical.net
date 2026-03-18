@@ -2343,7 +2343,7 @@ public class RecurrenceTests
         };
 
         var occurrences = evt.GetOccurrences(new CalDateTime(2018, 1, 1))
-            .TakeWhileBefore(new CalDateTime(DateTime.MaxValue, false)).ToList();
+            .TakeWhileBefore(CalDateTime.FromDate(DateTime.MaxValue)).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(10), "There should be 10 occurrences of this event.");
     }
 
@@ -2562,7 +2562,7 @@ public class RecurrenceTests
         evt.Summary = "Event summary";
 
         // Start at midnight, UTC time
-        evt.Start = new CalDateTime(DateTime.UtcNow.Date, false);
+        evt.Start = CalDateTime.FromDate(DateTime.UtcNow);
 
         // This case (DTSTART of type DATE and FREQ=MINUTELY) is undefined in RFC 5545.
         // ical.net handles the case by pretending DTSTART has the time set to midnight.
@@ -3075,23 +3075,26 @@ END:VCALENDAR";
     {
         const string tzid = "Europe/Stockholm";
 
+        var now = _now.ToLocalDateTime();
+        var later = _later.ToLocalDateTime();
+
         var e = new CalendarEvent
         {
-            DtStart = new CalDateTime(_now.Date, _now.Time, tzid),
-            DtEnd = new CalDateTime(_later.Date, _later.Time, tzid),
+            DtStart = new CalDateTime(now.Date, now.TimeOfDay, tzid),
+            DtEnd = new CalDateTime(later.Date, later.TimeOfDay, tzid),
             RecurrenceRule = new(FrequencyType.Daily, 1)
             {
                 Count = 10
             }
         };
 
-        e.ExceptionDates.Add(new CalDateTime(_now.Date.PlusDays(1), _now.Time, tzid));
+        e.ExceptionDates.Add(new CalDateTime(now.Date.PlusDays(1), now.TimeOfDay, tzid));
 
         var serialized = SerializationHelpers.SerializeToString(e);
         const string expected = "TZID=Europe/Stockholm";
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
 
-        e.ExceptionDates.Add(new CalDateTime(_now.Date.PlusDays(2), _now.Time, tzid));
+        e.ExceptionDates.Add(new CalDateTime(now.Date.PlusDays(2), now.TimeOfDay, tzid));
         serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
     }
