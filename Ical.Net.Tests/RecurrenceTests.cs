@@ -86,8 +86,8 @@ public class RecurrenceTests
             .Select(p => (Period) periodSerializer.Deserialize(new StringReader(p))!)
             .Select(p =>
                 p.Duration is null
-                    ? new Period(p.StartTime.ToTimeZone(tzid), p.EndTime)
-                    : new Period(p.StartTime.ToTimeZone(tzid), p.Duration.Value))
+                    ? new Period(p.StartTime.ToLocalDateTime().ToCalDateTime(tzid), p.EndTime)
+                    : new Period(p.StartTime.ToLocalDateTime().ToCalDateTime(tzid), p.Duration.Value))
             .ToArray();
 
         EventOccurrenceTest(cal, null, null, periods, 0);
@@ -691,8 +691,8 @@ public class RecurrenceTests
         var iCal = Calendar.Load(IcsFiles.ByMonthDay1)!;
         EventOccurrenceTest(
             iCal,
-            new CalDateTime(1996, 1, 1).ToTimeZone(_tzid),
-            new CalDateTime(1998, 3, 1).ToTimeZone(_tzid),
+            new CalDateTime(1996, 1, 1, 0, 0, 0, _tzid),
+            new CalDateTime(1998, 3, 1, 0, 0, 0, _tzid),
             new[]
             {
                 new Period(new CalDateTime(1997, 9, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
@@ -2021,8 +2021,8 @@ public class RecurrenceTests
         // Weekly with UNTIL value
         EventOccurrenceTest(
             iCal,
-            new CalDateTime(2009, 12, 4).ToTimeZone(localTzid),
-            new CalDateTime(2009, 12, 10).ToTimeZone(localTzid),
+            new CalDateTime(2009, 12, 4, 0, 0, 0, localTzid),
+            new CalDateTime(2009, 12, 10, 0, 0, 0, localTzid),
             new[]
             {
                 new Period(new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid), Duration.FromMinutes(30))
@@ -2033,8 +2033,8 @@ public class RecurrenceTests
         // Weekly with COUNT=2
         EventOccurrenceTest(
             iCal,
-            new CalDateTime(2009, 12, 4).ToTimeZone(localTzid),
-            new CalDateTime(2009, 12, 12).ToTimeZone(localTzid),
+            new CalDateTime(2009, 12, 4, 0, 0, 0, localTzid),
+            new CalDateTime(2009, 12, 12, 0, 0, 0, localTzid),
             new[]
             {
                 new Period(new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
@@ -2266,11 +2266,11 @@ public class RecurrenceTests
         for (var index = 0; index < expectedPeriods.Length; index++)
         {
             var p = expectedPeriods[index];
-            var newStart = p.StartTime.ToTimeZone(start!.TzId);
+            var newStart = p.StartTime.ToLocalDateTime().ToCalDateTime(start!.TzId);
 
             if (p.EndTime is not null)
             {
-                expectedPeriods[index] = new Period(newStart, p.EndTime.ToTimeZone(start!.TzId));
+                expectedPeriods[index] = new Period(newStart, p.EndTime.ToLocalDateTime().ToCalDateTime(start!.TzId));
             }
             else
             {
