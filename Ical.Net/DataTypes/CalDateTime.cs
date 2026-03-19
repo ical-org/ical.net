@@ -390,10 +390,8 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         {
             return ToLocalDateTime().InUtc();
         }
-        else
-        {
-            return DateUtil.GetZone(_tzId).AtLeniently(ToLocalDateTime());
-        }
+
+        return DateUtil.GetZone(_tzId).AtLeniently(ToLocalDateTime());
     }
 
     public ZonedDateTime ToZonedDateTime(DateTimeZone timeZone)
@@ -402,18 +400,14 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         {
             return ToLocalDateTime().InZoneLeniently(timeZone);
         }
-        else
-        {
-            return DateUtil.GetZone(_tzId)
-                .AtLeniently(ToLocalDateTime())
-                .WithZone(timeZone);
-        }
+
+        return DateUtil.GetZone(_tzId)
+            .AtLeniently(ToLocalDateTime())
+            .WithZone(timeZone);
     }
 
     public ZonedDateTime ToZonedDateTime(string zoneId)
-    {
-        return ToZonedDateTime(DateUtil.GetZone(zoneId));
-    }
+        => ToZonedDateTime(DateUtil.GetZone(zoneId));
 
     public ZonedDateTime AsZonedOrDefault(DateTimeZone timeZone)
     {
@@ -421,10 +415,8 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         {
             return ToLocalDateTime().InZoneLeniently(timeZone);
         }
-        else
-        {
-            return DateUtil.GetZone(_tzId).AtLeniently(ToLocalDateTime());
-        }
+
+        return DateUtil.GetZone(_tzId).AtLeniently(ToLocalDateTime());
     }
 
     /// <inheritdoc />
