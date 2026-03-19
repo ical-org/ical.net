@@ -38,13 +38,13 @@ public class FreeBusyTest
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 7, 59, 59).ToTimeZone("America/New_York")),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 7, 59, 59, "America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Free));
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 0, 0).ToTimeZone("America/New_York")),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 0, 0, "America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Busy));
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 59, 59).ToTimeZone("America/New_York")),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 59, 59, "America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Busy));
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 9, 0, 0).ToTimeZone("America/New_York")),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 9, 0, 0, "America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Free));
         }
     }

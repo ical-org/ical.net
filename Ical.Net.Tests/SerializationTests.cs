@@ -465,8 +465,8 @@ public class SerializationTests
         const string someTz = "Europe/Volgograd";
         var e = new CalendarEvent
         {
-            Start = _nowTime.ToTimeZone(someTz),
-            End = _nowTime.ToLocalDateTime().PlusHours(1).ToCalDateTime().ToTimeZone(someTz),
+            Start = _nowTime.ToLocalDateTime().ToCalDateTime(someTz),
+            End = _nowTime.ToLocalDateTime().PlusHours(1).ToCalDateTime(someTz),
             RecurrenceRule = new(FrequencyType.Daily)
             {
                 Until = _nowTime.ToLocalDateTime().PlusDays(7).ToCalDateTime(),
