@@ -427,29 +427,6 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         }
     }
 
-    /// <summary>
-    /// Converts the <see cref="Value"/> to a date/time
-    /// within the specified <see paramref="otherTzId"/> timezone.
-    /// <para/>
-    /// If <see cref="IsFloating"/>==<see langword="true"/>
-    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
-    /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
-    /// </summary>
-    public CalDateTime ToTimeZone(string? otherTzId)
-    {
-        if (otherTzId is null)
-        {
-            if (_localTime.HasValue)
-            {
-                return new(_localDate, _localTime.Value);
-            }
-
-            return new(_localDate);
-        }
-
-        return new(ToZonedDateTime(otherTzId));
-    }
-
     /// <inheritdoc />
     public override string ToString() => ToString(null, null);
 
