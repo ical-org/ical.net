@@ -263,7 +263,7 @@ public class FreeBusyTest
         {
             Assert.That(freeBusy.Entries, Has.Count.EqualTo(1));
             Assert.That(freeBusy.Entries[0].Status, Is.EqualTo(FreeBusyStatus.Busy));
-            Assert.That(freeBusy.Entries[0].StartTime.AsUtc, Is.EqualTo(busyEvent.Start.AsUtc));
+            Assert.That(freeBusy.Entries[0].StartTime.ToDateTimeUtc(), Is.EqualTo(busyEvent.Start.ToDateTimeUtc()));
         }
     }
 
