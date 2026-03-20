@@ -262,13 +262,12 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     }
 
     /// <summary>
-    /// Converts the date/time to UTC (Coordinated Universal Time)
-    /// If <see cref="IsFloating"/>==<see langword="true"/>
-    /// it means that the value is considered as local time for every timezone:
-    /// The returned value is unchanged, but with <see cref="DateTimeKind.Utc"/>.
+    /// Converts this value to <see cref="DateTime"/> with <see cref="DateTimeKind.Utc"/>.
+    /// <para/>
+    /// Values with a time zone will be converted to the UTC time zone.
+    /// Values without a time zone (<see cref="IsFloating"/>) will have the same local time.
     /// </summary>
-    ///
-    public DateTime AsUtc => ToInstant().ToDateTimeUtc();
+    public DateTime ToDateTimeUtc() => ToInstant().ToDateTimeUtc();
 
     /// <summary>
     /// Returns the local date and time as a <see cref="DateTime"/> with <see cref="DateTimeKind.Unspecified"/>.
