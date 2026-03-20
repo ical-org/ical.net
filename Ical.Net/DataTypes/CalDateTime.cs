@@ -271,14 +271,11 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     public DateTime AsUtc => ToInstant().ToDateTimeUtc();
 
     /// <summary>
-    /// Gets the date and time value in the ISO calendar as a <see cref="DateTime"/> type with <see cref="DateTimeKind.Unspecified"/>.
-    /// The value has no associated timezone.<br/>
-    /// The precision of the time part is up to seconds.
+    /// Returns the local date and time as a <see cref="DateTime"/> with <see cref="DateTimeKind.Unspecified"/>.
     /// <para/>
-    /// Use <see cref="IsUtc"/> along with <see cref="TzId"/> and <see cref="IsFloating"/>
-    /// to control how this date/time is handled.
+    /// For DATE values, time will be midnight. The value has no associated timezone.
     /// </summary>
-    public DateTime Value => ToLocalDateTime().ToDateTimeUnspecified();
+    public DateTime ToDateTime() => ToLocalDateTime().ToDateTimeUnspecified();
 
     /// <summary>
     /// Returns <see langword="true"/>, if the date/time value is floating.
@@ -299,7 +296,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     public bool IsUtc => string.Equals(_tzId, UtcTzId, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
-    /// <see langword="true"/> if the underlying <see cref="DateTime"/> <see cref="Value"/> has a 'time' part (hour, minute, second).
+    /// <see langword="true"/> if <see cref="Time"/> is not null.
     /// </summary>
     public bool HasTime => _localTime.HasValue;
 

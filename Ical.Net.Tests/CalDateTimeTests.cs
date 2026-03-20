@@ -32,9 +32,9 @@ public class CalDateTimeTests
 
     [Test, TestCaseSource(nameof(DateTimeKindOverrideTestCases)), Description("DateTimeKind of values is always DateTimeKind.Unspecified")]
     public DateTimeKind DateTimeKindOverrideTests(DateTime dateTime, string tzId)
-        => new CalDateTime(dateTime, tzId).Value.Kind;
+        => new CalDateTime(dateTime, tzId).ToDateTime().Kind;
 
-    public static IEnumerable DateTimeKindOverrideTestCases()
+    private static IEnumerable DateTimeKindOverrideTestCases()
     {
         const string localTz = "America/New_York";
         var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33", CultureInfo.InvariantCulture), DateTimeKind.Unspecified);
@@ -161,10 +161,10 @@ public class CalDateTimeTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(c2.Value, Is.EqualTo(c3.Value));
+            Assert.That(c2.ToDateTime(), Is.EqualTo(c3.ToDateTime()));
             Assert.That(c2.TzId, Is.EqualTo(c3.TzId));
-            Assert.That(CalDateTime.UtcNow.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
-            Assert.That(CalDateTime.Today.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
+            Assert.That(CalDateTime.UtcNow.ToDateTime().Kind, Is.EqualTo(DateTimeKind.Unspecified));
+            Assert.That(CalDateTime.Today.ToDateTime().Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
             Assert.That(c.Time, Is.EqualTo(NodaTime.LocalDateTime.FromDateTime(dt).TimeOfDay));
             Assert.That(c.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture), Is.EqualTo("02.01.2025 Europe/Berlin"));
@@ -195,7 +195,7 @@ public class CalDateTimeTests
         var dt = new CalDateTime(value, tzId);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(dt.Value, Is.EqualTo(new DateTime(2025, 7, 3, 6, 0, 0, DateTimeKind.Utc)));
+            Assert.That(dt.ToDateTime(), Is.EqualTo(new DateTime(2025, 7, 3, 6, 0, 0, DateTimeKind.Utc)));
 #pragma warning disable CA1305
             Assert.That(dt.ToString("yyyy-MM-dd HH:mm:ss"), Is.EqualTo("2025-07-03 06:00:00 UTC"));
 #pragma warning restore CA1305
