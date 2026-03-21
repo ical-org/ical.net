@@ -260,21 +260,6 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     }
 
     /// <summary>
-    /// Converts this value to <see cref="DateTime"/> with <see cref="DateTimeKind.Utc"/>.
-    /// <para/>
-    /// Values with a time zone will be converted to the UTC time zone.
-    /// Values without a time zone (<see cref="IsFloating"/>) will have the same local time.
-    /// </summary>
-    public DateTime ToDateTimeUtc() => ToInstant().ToDateTimeUtc();
-
-    /// <summary>
-    /// Returns the local date and time as a <see cref="DateTime"/> with <see cref="DateTimeKind.Unspecified"/>.
-    /// <para/>
-    /// For DATE values, time will be midnight. The value has no associated time zone.
-    /// </summary>
-    public DateTime ToDateTime() => ToLocalDateTime().ToDateTimeUnspecified();
-
-    /// <summary>
     /// Returns <see langword="true"/> if the date/time value is floating.
     /// <para/>
     /// A floating date/time value does not include a time zone ID or UTC offset,
@@ -371,6 +356,25 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// </summary>
     public TimeOnly? ToTimeOnly() => _localTime?.ToTimeOnly();
 #endif
+
+    /// <summary>
+    /// Converts this value to <see cref="DateTime"/> with <see cref="DateTimeKind.Utc"/>.
+    /// <para/>
+    /// DATE values will default to <see cref="LocalTime.Midnight"/>.
+    /// <para/>
+    /// Values with a time zone will be converted to the UTC time zone.
+    /// Values without a time zone (<see cref="IsFloating"/>) will have the same local time.
+    /// </summary>
+    /// <returns>A <see cref="DateTime"/> value representing this value converted to the UTC time zone.</returns>
+    public DateTime ToDateTimeUtc() => ToInstant().ToDateTimeUtc();
+
+    /// <summary>
+    /// Returns the local date and time as a <see cref="DateTime"/> with <see cref="DateTimeKind.Unspecified"/>.
+    /// <para/>
+    /// DATE values will default to <see cref="LocalTime.Midnight"/>.
+    /// </summary>
+    /// <returns>A <see cref="DateTime"/> value with the same date and time (or midnight) as this value.</returns>
+    public DateTime ToDateTimeUnspecified() => ToLocalDateTime().ToDateTimeUnspecified();
 
     /// <summary>
     /// Constructs a <see cref="LocalDateTime"/> from this value's date and time.

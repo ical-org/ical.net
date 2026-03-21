@@ -237,7 +237,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     {
         return children.OfType<IRecurrable>()
             .Where(r => r.RecurrenceIdentifier != null && r.RecurrenceIdentifier.Range == RecurrenceRange.ThisInstance)
-            .Select(r => (Component: r as IUniqueComponent, Uid: (r as IUniqueComponent)?.Uid, RecurrenceId: r.RecurrenceIdentifier!.StartTime.ToDateTime()))
+            .Select(r => (Component: r as IUniqueComponent, Uid: (r as IUniqueComponent)?.Uid, RecurrenceId: r.RecurrenceIdentifier!.StartTime.ToDateTimeUnspecified()))
             .Where(x => x is { Uid: not null, Component: not null })
             // Assure we have only one component per (UID, RECURRENCE-ID) pair
             .GroupBy(x => (x.Uid, x.RecurrenceId))
@@ -268,14 +268,14 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             IUniqueComponent { Uid: not null } uc
                 // Filter by range of ThisInstance because ThisAndFuture is not supported yet
                 when r.Source.RecurrenceIdentifier != null && r.Source.RecurrenceIdentifier.Range == RecurrenceRange.ThisInstance =>
-                recurrenceIdsAndUids.TryGetValue((uc.Uid, r.Source.RecurrenceIdentifier.StartTime.ToDateTime()),
+                recurrenceIdsAndUids.TryGetValue((uc.Uid, r.Source.RecurrenceIdentifier.StartTime.ToDateTimeUnspecified()),
                     out var lastComponent) && ReferenceEquals(lastComponent, r.Source),
 
             // If not a modified occurrence, keep if:
             // - It is not a unique component, or
             // - There is no replacement for this UID/StartTime in recurrenceIdsAndUids
             IUniqueComponent uc =>
-                !recurrenceIdsAndUids.ContainsKey((uc.Uid, r.DtStart?.ToDateTime() ?? default)),
+                !recurrenceIdsAndUids.ContainsKey((uc.Uid, r.DtStart?.ToDateTimeUnspecified() ?? default)),
 
             // If not a unique component, always keep
             _ => true
