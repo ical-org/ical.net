@@ -16,52 +16,47 @@ using NodaTime.Text;
 namespace Ical.Net.DataTypes;
 
 /// <summary>
-/// The iCalendar equivalent of the .NET <see cref="DateTime"/> class.
-/// <remarks>
-/// In addition to the features of the <see cref="DateTime"/> class, the <see cref="CalDateTime"/>
-/// class handles timezones, floating date/times and integrates seamlessly into the iCalendar framework.
+/// Represents a DATE, DATE-TIME, or DATE-TIME with a time zone.
 /// <para/>
-/// Any <see cref="Time"/> values are always rounded to the nearest second.
-/// This is because RFC 5545, Section 3.3.5, does not allow for fractional seconds.
-/// </remarks>
+/// <see cref="Time"/> values are rounded to the nearest second.
+/// Time zone offset is <i>not</i> stored.
+/// <para/>
+/// See RFC 5545, Section 3.3.4 and 3.3.5.
 /// </summary>
 public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
 {
-    // The date part that is used to return the Value property.
     private readonly LocalDate _localDate;
-    // The time part that is used to return the Value property.
     private readonly LocalTime? _localTime;
-
     private readonly string? _tzId;
 
 
     /// <summary>
-    /// The timezone ID for Universal Coordinated Time (UTC).
+    /// The time zone ID for Universal Coordinated Time (UTC).
     /// </summary>
     public const string UtcTzId = "UTC";
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class
-    /// with the current date/time and sets the <see cref="TzId"/> to <see langword="null"/>.
+    /// Creates a <see cref="CalDateTime"/>
+    /// with the current local date/time and no time zone.
     /// </summary>
     public static CalDateTime Now => new(DateTime.Now);
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class
-    /// with the current date and sets the <see cref="TzId"/> to <see langword="null"/>.
+    /// Creates a <see cref="CalDateTime"/>
+    /// with the current local date and no time or time zone.
     /// </summary>
     public static CalDateTime Today => FromDate(DateTime.Today);
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class
-    /// with the current date/time in the Coordinated Universal Time (UTC) timezone.
+    /// Creates a <see cref="CalDateTime"/>
+    /// with the current date/time in the UTC time zone.
     /// </summary>
     public static CalDateTime UtcNow => new(DateTime.UtcNow);
 
     /// <summary>
-    /// Creates a DATE value without time or time zone.
+    /// Creates a <see cref="CalDateTime"/> representing a DATE value.
     /// </summary>
-    /// <param name="value">The value to copy the DATE from.</param>
+    /// <param name="value">The value to copy the local date from.</param>
     /// <returns>A new <see cref="CalDateTime"/> with same date as the specified <see cref="DateTime"/>.</returns>
     public static CalDateTime FromDate(DateTime value) => new(LocalDate.FromDateTime(value));
 
@@ -75,21 +70,14 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class.
-    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
-    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
+    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// with an optional time zone.
     /// <para/>
-    /// The <see cref="TzId"/> will be set to "UTC" if the <paramref name="value"/>
-    /// has kind <see cref="DateTimeKind.Utc"/> and <paramref name="hasTime"/> is <see langword="true"/>.
-    /// It will be set to <see langword="null"/> if the kind is kind <see cref="DateTimeKind.Unspecified"/>
-    /// and will throw otherwise.
+    /// Time zone will be UTC if <paramref name="tzId"/> is <see langword="null"/> and
+    /// <paramref name="value"/> kind is <see cref="DateTimeKind.Utc"/>.
     /// </summary>
-    /// <param name="value">The <see cref="DateTime"/> value. Its <see cref="DateTimeKind"/> will be ignored.</param>
-    /// <param name="hasTime">
-    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
-    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
-    /// </param>
-    /// <exception cref="System.ArgumentException">If the specified value's kind is <see cref="DateTimeKind.Local"/></exception>
+    /// <param name="value">The value to copy the local date and time from.</param>
+    /// <param name="tzId">The time zone ID.</param>
     public CalDateTime(DateTime value, string? tzId = null) : this(
         LocalDateTime.FromDateTime(value),
         tzId ?? value.Kind switch
@@ -100,27 +88,22 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     { }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
-    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value.
+    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// with an optional time zone.
     /// </summary>
-    /// <param name="tzId">A timezone of <see langword="null"/> represents
-    /// a floating date/time, which is the same in all timezones. (<seealso cref="UtcTzId"/>) represents the Coordinated Universal Time.
-    /// Other values determine the timezone of the date/time.
-    /// </param>
     /// <param name="year"></param>
     /// <param name="month"></param>
     /// <param name="day"></param>
     /// <param name="hour"></param>
     /// <param name="minute"></param>
     /// <param name="second"></param>
+    /// <param name="tzId">The time zone ID.</param>
     public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId = null) //NOSONAR - must keep this signature
         : this(new LocalDate(year, month, day), new LocalTime(hour, minute, second), tzId)
     { }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class with <see cref="TzId"/> set to <see langword="null"/>.
-    /// The instance will represent an RFC 5545, Section 3.3.4, DATE value,
-    /// and thus it cannot have a timezone.
+    /// Creates a <see cref="CalDateTime"/> representing a DATE value.
     /// </summary>
     /// <param name="year"></param>
     /// <param name="month"></param>
@@ -129,6 +112,42 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         : this(new LocalDate(year, month, day))
     { }
 
+    /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// with an optional time zone.
+    /// </summary>
+    /// <param name="value">The local date and time.</param>
+    /// <param name="tzId">The time zone ID.</param>
+    public CalDateTime(LocalDateTime value, string? tzId = null)
+        : this(value.Date, value.TimeOfDay, tzId)
+    { }
+
+    /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// with a time zone.
+    /// <para/>
+    /// The time zone offset from the <see cref="ZonedDateTime"/> is ignored,
+    /// so converting back to <see cref="ZonedDateTime"/> may produce a
+    /// different value.
+    /// </summary>
+    /// <param name="value">The value to copy the date, time, and time zone ID from.</param>
+    public CalDateTime(ZonedDateTime value)
+        : this(value.LocalDateTime, value.Zone.Id)
+    { }
+
+    /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// in the UTC time zone.
+    /// </summary>
+    /// <param name="instant"></param>
+    public CalDateTime(Instant instant) : this(instant.InUtc())
+    { }
+
+    /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE value.
+    /// </summary>
+    /// <param name="date">The local date.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Year must be a positive number.</exception>
     public CalDateTime(LocalDate date)
     {
         // NodaTime supports year values <1 (BCE). Make sure these
@@ -139,51 +158,18 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         }
 
         _localDate = date;
-        _localTime = null;
-
-        // RFC 5545, Section 3.2.19
-        // The "TZID" property parameter MUST NOT be applied to DATE properties
-        _tzId = null;
     }
 
-    public CalDateTime(LocalDateTime value, string? tzId = null)
-        : this(value.Date, value.TimeOfDay, tzId)
-    { }
-
     /// <summary>
-    /// Note that this drops the time zone offset,
-    /// so the value is not always exactly the same
-    /// when converting back to ZonedDateTime.
+    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// with an optional time zone.
     /// </summary>
-    /// <param name="value"></param>
-    internal CalDateTime(ZonedDateTime value)
-        : this(value.LocalDateTime, value.Zone.Id)
-    { }
-
-    public CalDateTime(Instant instant) : this(instant.InUtc())
-    { }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
-    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value.
-    /// </summary>
-    /// <param name="tzId">A timezone of <see langword="null"/> represents
-    /// a floating date/time, which is the same in all timezones. (<seealso cref="UtcTzId"/>) represents the Coordinated Universal Time.
-    /// Other values determine the timezone of the date/time.
-    /// </param>
-    /// <param name="date"></param>
-    /// <param name="time"></param>
+    /// <param name="date">The local date.</param>
+    /// <param name="time">The local time.</param>
+    /// <param name="tzId">The time zone ID.</param>
     public CalDateTime(LocalDate date, LocalTime time, string? tzId = null)
+        : this(date)
     {
-        // NodaTime supports year values <1 (BCE). Make sure these
-        // years are considered invalid.
-        if (date.Year < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(date), "Year must be a positive value");
-        }
-
-        _localDate = date;
-
         // RFC 5545, Section 3.3.5 does not allow for fractional seconds.
         _localTime = TimeAdjusters.TruncateToSecond(time);
 
@@ -191,20 +177,17 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class by parsing <paramref name="value"/>
+    /// Creates a <see cref="CalDateTime"/> by parsing <paramref name="value"/>
     /// using the <see cref="DateTimeSerializer"/>.
     /// </summary>
     /// <param name="value">An iCalendar-compatible date or date-time string.
     /// <para/>
     /// If the parsed string represents an RFC 5545, Section 3.3.4, DATE value,
-    /// it cannot have a timezone, and the <see paramref="tzId"/> will be ignored.
+    /// it cannot have a time zone, and the <see paramref="tzId"/> will be ignored.
     /// <para/>
     /// If the parsed string represents an RFC 5545, DATE-TIME value, the <see paramref="tzId"/> will be used.
     /// </param>
-    /// <param name="tzId">A timezone of <see langword="null"/> represents
-    /// a floating date/time, which is the same in all timezones. (<seealso cref="UtcTzId"/>) represents the Coordinated Universal Time.
-    /// Other values determine the timezone of the date/time.
-    /// </param>
+    /// <param name="tzId">The time zone ID.</param>
     public CalDateTime(string value, string? tzId = null)
     {
         var serializer = new DateTimeSerializer();
@@ -224,10 +207,25 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     }
 
 #if NET6_0_OR_GREATER
-    public CalDateTime(DateOnly date) : this(date.ToLocalDate()) { }
 
+    /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE value.
+    /// </summary>
+    /// <param name="date">The local date.</param>
+    public CalDateTime(DateOnly date) : this(date.ToLocalDate())
+    { }
+
+    /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// with an optional time zone.
+    /// </summary>
+    /// <param name="date">The local date.</param>
+    /// <param name="time">The local time.</param>
+    /// <param name="tzId">The time zone ID.</param>
     public CalDateTime(DateOnly date, TimeOnly time, string? tzId = null)
-        : this(date.ToLocalDate(), time.ToLocalTime(), tzId) { }
+        : this(date.ToLocalDate(), time.ToLocalTime(), tzId)
+    { }
+
 #endif
 
     public bool Equals(CalDateTime? other) => this == other;
@@ -272,42 +270,41 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// <summary>
     /// Returns the local date and time as a <see cref="DateTime"/> with <see cref="DateTimeKind.Unspecified"/>.
     /// <para/>
-    /// For DATE values, time will be midnight. The value has no associated timezone.
+    /// For DATE values, time will be midnight. The value has no associated time zone.
     /// </summary>
     public DateTime ToDateTime() => ToLocalDateTime().ToDateTimeUnspecified();
 
     /// <summary>
-    /// Returns <see langword="true"/>, if the date/time value is floating.
+    /// Returns <see langword="true"/> if the date/time value is floating.
     /// <para/>
-    /// A floating date/time value does not include a timezone identifier or UTC offset,
+    /// A floating date/time value does not include a time zone ID or UTC offset,
     /// so it is interpreted as local time in the context where it is used.
     /// <para/>
-    /// A floating date/time value is useful when the exact timezone is not
-    /// known or when the event should be interpreted in the local timezone of
+    /// A floating date/time value is useful when the exact time zone is not
+    /// known or when the event should be interpreted in the local time zone of
     /// the user or system processing the calendar data.
     /// </summary>
     public bool IsFloating => _tzId is null;
 
     /// <summary>
-    /// Gets/sets whether the Value of this date/time represents
-    /// a universal time.
+    /// Returns <see langword="true"/> if the time zone is UTC.
     /// </summary>
     public bool IsUtc => string.Equals(_tzId, UtcTzId, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
-    /// <see langword="true"/> if <see cref="Time"/> is not null.
+    /// Returns <see langword="true"/> if <see cref="Time"/> is not null.
     /// </summary>
     public bool HasTime => _localTime.HasValue;
 
     /// <summary>
-    /// Gets the timezone ID of this <see cref="CalDateTime"/> instance.
-    /// It can be <see cref="UtcTzId"/> for Coordinated Universal Time,
-    /// or <see langword="null"/> for a floating date/time, or a value for a specific timezone.
+    /// Gets the time zone ID.
+    /// A <see langword="null"/> value indicates a floating date/time.
     /// </summary>
     public string? TzId => _tzId;
 
     /// <summary>
-    /// Gets the timezone name this time is in, if it references a timezone.
+    /// Gets the time zone ID.
+    /// A <see langword="null"/> value indicates a floating date/time.
     /// </summary>
     /// <remarks>This is an alias for <see cref="TzId"/></remarks>
     public string? TimeZoneName => TzId;
@@ -328,17 +325,17 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     public int Day => _localDate.Day;
 
     /// <summary>
-    /// Gets the hour.
+    /// Gets the hour. Defaults to 0 for DATE values.
     /// </summary>
     public int Hour => _localTime?.Hour ?? 0;
 
     /// <summary>
-    /// Gets the minute.
+    /// Gets the minute. Defaults to 0 for DATE values.
     /// </summary>
     public int Minute => _localTime?.Minute ?? 0;
 
     /// <summary>
-    /// Gets the second.
+    /// Gets the second. Defaults to 0 for DATE values.
     /// </summary>
     public int Second => _localTime?.Second ?? 0;
 
@@ -365,7 +362,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
 #if NET6_0_OR_GREATER
 
     /// <summary>
-    /// Gets the date..
+    /// Gets the date.
     /// </summary>
     public DateOnly ToDateOnly() => _localDate.ToDateOnly();
 
@@ -375,11 +372,35 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     public TimeOnly? ToTimeOnly() => _localTime?.ToTimeOnly();
 #endif
 
+    /// <summary>
+    /// Constructs a <see cref="LocalDateTime"/> from this value's date and time.
+    /// <para/>
+    /// DATE values will default to <see cref="LocalTime.Midnight"/>.
+    /// </summary>
+    /// <returns>A local date time with the same date and time (or midnight) as this value.</returns>
     public LocalDateTime ToLocalDateTime()
         => _localDate.At(_localTime ?? LocalTime.Midnight);
 
+    /// <summary>
+    /// Converts this value to <see cref="Instant"/>.
+    /// <para/>
+    /// DATE values will default to <see cref="LocalTime.Midnight"/>.
+    /// <para/>
+    /// Values without a time zone will be treated as being in the UTC time zone.
+    /// If the local date and time is ambiguous due to the time zone, it will be resolved using <see cref="NodaTime.TimeZones.Resolvers.LenientResolver"/>.
+    /// </summary>
+    /// <returns>An instant representing the point in time of this value.</returns>
     public Instant ToInstant() => ToZonedDateTime().ToInstant();
 
+    /// <summary>
+    /// Converts this value to <see cref="ZonedDateTime"/>.
+    /// <para/>
+    /// DATE values will default to <see cref="LocalTime.Midnight"/>.
+    /// <para/>
+    /// Values without a time zone will be treated as being in the UTC time zone.
+    /// If the local date and time is ambiguous due to the time zone, it will be resolved using <see cref="NodaTime.TimeZones.Resolvers.LenientResolver"/>.
+    /// </summary>
+    /// <returns>A zoned date time representing this value as close as possible.</returns>
     public ZonedDateTime ToZonedDateTime()
     {
         if (_tzId is null)
@@ -390,26 +411,56 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         return DateUtil.GetZone(_tzId).AtLeniently(ToLocalDateTime());
     }
 
-    public ZonedDateTime ToZonedDateTime(DateTimeZone timeZone)
+    /// <summary>
+    /// Converts this value to <see cref="ZonedDateTime"/> in the specified time zone.
+    /// <para/>
+    /// DATE values will default to <see cref="LocalTime.Midnight"/>.
+    /// <para/>
+    /// Values without a time zone will be treated as being in the specified time zone.
+    /// If the local date and time is ambiguous due to the time zone, it will be resolved using <see cref="NodaTime.TimeZones.Resolvers.LenientResolver"/>.
+    /// </summary>
+    /// <param name="targetZone">The time zone to convert to.</param>
+    /// <returns>A zoned date time representing this value as close as possible, but in the specified time zone.</returns>
+    public ZonedDateTime ToZonedDateTime(DateTimeZone targetZone)
     {
         if (_tzId is null)
         {
-            return ToLocalDateTime().InZoneLeniently(timeZone);
+            return ToLocalDateTime().InZoneLeniently(targetZone);
         }
 
         return DateUtil.GetZone(_tzId)
             .AtLeniently(ToLocalDateTime())
-            .WithZone(timeZone);
+            .WithZone(targetZone);
     }
 
+    /// <summary>
+    /// Converts this value to <see cref="ZonedDateTime"/> in the specified time zone.
+    /// <para/>
+    /// DATE values will default to <see cref="LocalTime.Midnight"/>.
+    /// <para/>
+    /// Values without a time zone will be treated as being in the specified time zone.
+    /// If the local date and time is ambiguous due to the time zone, it will be resolved using <see cref="NodaTime.TimeZones.Resolvers.LenientResolver"/>.
+    /// </summary>
+    /// <param name="zoneId">The time zone ID to convert to.</param>
+    /// <returns>A zoned date time representing this value as close as possible, but in the specified time zone.</returns>
     public ZonedDateTime ToZonedDateTime(string zoneId)
         => ToZonedDateTime(DateUtil.GetZone(zoneId));
 
-    public ZonedDateTime AsZonedOrDefault(DateTimeZone timeZone)
+    /// <summary>
+    /// Converts this value to <see cref="ZonedDateTime"/>.
+    /// <para/>
+    /// DATE values will default to <see cref="LocalTime.Midnight"/>.
+    /// <para/>
+    /// Values without a time zone will be treated as being in the specified time zone.
+    /// If the local date and time is ambiguous due to the time zone, it will be resolved using <see cref="NodaTime.TimeZones.Resolvers.LenientResolver"/>.
+    /// </summary>
+    /// <param name="defaultZone">The time zone to use if this value has no time zone.</param>
+    /// <returns>A zoned date time representing this value in same time zone or the specified time zone.</returns>
+    public ZonedDateTime AsZonedOrDefault(DateTimeZone defaultZone)
     {
         if (_tzId is null)
         {
-            return ToLocalDateTime().InZoneLeniently(timeZone);
+            return ToLocalDateTime().InZoneLeniently(defaultZone);
         }
 
         return DateUtil.GetZone(_tzId).AtLeniently(ToLocalDateTime());
