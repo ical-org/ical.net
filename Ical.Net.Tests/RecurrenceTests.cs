@@ -2914,7 +2914,7 @@ END:VCALENDAR";
         Assert.That(occurrences.Last().Start.Equals(lastExpected), Is.False);
 
         //Create 1 second of overlap
-        endSearch = new CalDateTime(endSearch.ToDateTime().AddSeconds(1), "UTC");
+        endSearch = new CalDateTime(endSearch.ToDateTimeUnspecified().AddSeconds(1), "UTC");
         occurrences = firstEvent.GetOccurrences(startSearch.ToZonedDateTime()).TakeWhileBefore(endSearch.ToZonedDateTime().ToInstant())
             .Select(o => o.Period)
             .ToList();
@@ -3395,7 +3395,7 @@ END:VCALENDAR";
         var expectedInstances = testCase.Instances?.Skip(instanceOffs).ToList();
 
         if (testCase.StartAt != null)
-            expectedInstances = expectedInstances?.Where(x => x.ToDateTime() >= testCase.StartAt.ToDateTime()).ToList();
+            expectedInstances = expectedInstances?.Where(x => x.ToDateTimeUnspecified() >= testCase.StartAt.ToDateTimeUnspecified()).ToList();
 
         var startDates = occurrences.Select(x => x.Start).ToList();
         Assert.That(startDates, Is.EqualTo(expectedInstances?.Select(x => x.ToZonedDateTime(timeZone)).ToList()));

@@ -28,7 +28,7 @@ public class EqualityAndHashingTests
     {
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(expectedDt.ToDateTime(), Is.EqualTo(incomingDt.ToDateTime()));
+            Assert.That(expectedDt.ToDateTimeUnspecified(), Is.EqualTo(incomingDt.ToDateTimeUnspecified()));
             Assert.That(expectedDt.GetHashCode(), Is.EqualTo(incomingDt.GetHashCode()));
             Assert.That(expectedDt.TzId, Is.EqualTo(incomingDt.TzId));
             Assert.That(incomingDt.Equals(expectedDt), Is.True);
