@@ -183,9 +183,9 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// <param name="value">An iCalendar-compatible date or date-time string.
     /// <para/>
     /// If the parsed string represents an RFC 5545, Section 3.3.4, DATE value,
-    /// it cannot have a time zone, and the <see paramref="tzId"/> will be ignored.
+    /// it cannot have a time zone, and the <paramref name="tzId"/> will be ignored.
     /// <para/>
-    /// If the parsed string represents an RFC 5545, DATE-TIME value, the <see paramref="tzId"/> will be used.
+    /// If the parsed string represents an RFC 5545, DATE-TIME value, the <paramref name="tzId"/> will be used.
     /// </param>
     /// <param name="tzId">The time zone ID.</param>
     public CalDateTime(string value, string? tzId = null)
