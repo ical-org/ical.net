@@ -98,7 +98,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// <param name="minute"></param>
     /// <param name="second"></param>
     /// <param name="tzId">The time zone ID.</param>
-    public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId = null) //NOSONAR - must keep this signature
+    public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId = null)
         : this(new LocalDate(year, month, day), new LocalTime(hour, minute, second), tzId)
     { }
 
