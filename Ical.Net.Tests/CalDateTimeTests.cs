@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -156,8 +156,7 @@ public class CalDateTimeTests
         var c = new CalDateTime(dt, tzId: "Europe/Berlin");
 
         var c2 = new CalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, c.TzId);
-        var c3 = new CalDateTime(new NodaTime.LocalDate(dt.Year, dt.Month, dt.Day),
-            new NodaTime.LocalTime(dt.Hour, dt.Minute, dt.Second), c.TzId);
+        var c3 = new CalDateTime(new NodaTime.LocalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second), c.TzId);
 
         using (Assert.EnterMultipleScope())
         {

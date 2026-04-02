@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -1586,11 +1586,11 @@ public class RecurrenceTests
         var periods = new List<Period>();
         for (var dt = start; dt.ToInstant() < end.ToInstant(); dt = dt.PlusSeconds(1))
         {
-            periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
+            periods.Add(new Period(CalDateTime.FromZonedDateTime(dt), Duration.FromHours(9)));
         }
 
-        var calStart = new CalDateTime(start);
-        var calEnd = new CalDateTime(end); // End period is exclusive, not inclusive.
+        var calStart = CalDateTime.FromZonedDateTime(start);
+        var calEnd = CalDateTime.FromZonedDateTime(end); // End period is exclusive, not inclusive.
 
         EventOccurrenceTest(iCal, calStart, calEnd, periods.ToArray());
     }
@@ -1607,11 +1607,11 @@ public class RecurrenceTests
         var periods = new List<Period>();
         for (var dt = start; dt.ToInstant() < end.ToInstant(); dt = dt.PlusMinutes(1))
         {
-            periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
+            periods.Add(new Period(CalDateTime.FromZonedDateTime(dt), Duration.FromHours(9)));
         }
 
-        var calStart = new CalDateTime(start);
-        var calEnd = new CalDateTime(end);
+        var calStart = CalDateTime.FromZonedDateTime(start);
+        var calEnd = CalDateTime.FromZonedDateTime(end);
 
         EventOccurrenceTest(iCal, calStart, calEnd, periods.ToArray());
     }
@@ -1628,11 +1628,11 @@ public class RecurrenceTests
         var periods = new List<Period>();
         for (var dt = start; dt.ToInstant() < end.ToInstant(); dt = dt.PlusHours(1))
         {
-            periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
+            periods.Add(new Period(CalDateTime.FromZonedDateTime(dt), Duration.FromHours(9)));
         }
 
-        var calStart = new CalDateTime(start);
-        var calEnd = new CalDateTime(end);
+        var calStart = CalDateTime.FromZonedDateTime(start);
+        var calEnd = CalDateTime.FromZonedDateTime(end);
 
         EventOccurrenceTest(iCal, calStart, calEnd, periods.ToArray());
     }
@@ -2343,7 +2343,7 @@ public class RecurrenceTests
         };
 
         var occurrences = evt.GetOccurrences(new CalDateTime(2018, 1, 1))
-            .TakeWhileBefore(CalDateTime.FromDate(DateTime.MaxValue)).ToList();
+            .TakeWhileBefore(CalDateTime.FromDateTimeDate(DateTime.MaxValue)).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(10), "There should be 10 occurrences of this event.");
     }
 
@@ -2562,7 +2562,7 @@ public class RecurrenceTests
         evt.Summary = "Event summary";
 
         // Start at midnight, UTC time
-        evt.Start = CalDateTime.FromDate(DateTime.UtcNow);
+        evt.Start = CalDateTime.FromDateTimeDate(DateTime.UtcNow);
 
         // This case (DTSTART of type DATE and FREQ=MINUTELY) is undefined in RFC 5545.
         // ical.net handles the case by pretending DTSTART has the time set to midnight.
@@ -3080,21 +3080,21 @@ END:VCALENDAR";
 
         var e = new CalendarEvent
         {
-            DtStart = new CalDateTime(now.Date, now.TimeOfDay, tzid),
-            DtEnd = new CalDateTime(later.Date, later.TimeOfDay, tzid),
+            DtStart = new CalDateTime(now, tzid),
+            DtEnd = new CalDateTime(later, tzid),
             RecurrenceRule = new(FrequencyType.Daily, 1)
             {
                 Count = 10
             }
         };
 
-        e.ExceptionDates.Add(new CalDateTime(now.Date.PlusDays(1), now.TimeOfDay, tzid));
+        e.ExceptionDates.Add(new CalDateTime(now.PlusDays(1), tzid));
 
         var serialized = SerializationHelpers.SerializeToString(e);
         const string expected = "TZID=Europe/Stockholm";
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
 
-        e.ExceptionDates.Add(new CalDateTime(now.Date.PlusDays(2), now.TimeOfDay, tzid));
+        e.ExceptionDates.Add(new CalDateTime(now.PlusDays(2), tzid));
         serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
     }

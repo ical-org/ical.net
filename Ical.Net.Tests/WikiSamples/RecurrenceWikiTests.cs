@@ -344,7 +344,7 @@ internal class RecurrenceWikiTests
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = new(start.ToZonedDateTime().PlusMinutes(15)),
+            DtEnd = start.ToZonedDateTime().PlusMinutes(15).ToCalDateTime(),
             RecurrenceRule = recurrence
         };
         // Add the exception date to the series.
@@ -440,7 +440,7 @@ internal class RecurrenceWikiTests
             Summary = "Short after lunch walk",
             // Set new start and end time.
             DtStart = startMoved,
-            DtEnd = new(startMoved.ToZonedDateTime().PlusMinutes(13)),
+            DtEnd = startMoved.ToZonedDateTime().PlusMinutes(13).ToCalDateTime(),
             // Set the original date of the occurrence (2025-07-14 09:00:00).
             RecurrenceId = new(2025, 07, 14, 09, 00, 00, timeZoneId),
             // The first change for this RecurrenceId

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -178,7 +178,7 @@ public class OccurencePerfTests
                     End = new(startTime.PlusMinutes(10), tzid),
                     RecurrenceRule = new(FrequencyType.Daily, 1)
                     {
-                        Until = new(startTime.PlusDays(10).InUtc().ToInstant()),
+                        Until = CalDateTime.FromZonedDateTime(startTime.PlusDays(10).InUtc()),
                     },
                 };
                 startTime = startTime.PlusDays(1);
