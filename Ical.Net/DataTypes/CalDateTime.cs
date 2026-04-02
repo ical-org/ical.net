@@ -45,20 +45,13 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// Creates a <see cref="CalDateTime"/>
     /// with the current local date and no time or time zone.
     /// </summary>
-    public static CalDateTime Today => FromDate(DateTime.Today);
+    public static CalDateTime Today => FromDateTimeDate(DateTime.Today);
 
     /// <summary>
     /// Creates a <see cref="CalDateTime"/>
     /// with the current date/time in the UTC time zone.
     /// </summary>
     public static CalDateTime UtcNow => new(DateTime.UtcNow);
-
-    /// <summary>
-    /// Creates a <see cref="CalDateTime"/> representing a DATE value.
-    /// </summary>
-    /// <param name="value">The value to copy the local date from.</param>
-    /// <returns>A new <see cref="CalDateTime"/> with same date as the specified <see cref="DateTime"/>.</returns>
-    public static CalDateTime FromDate(DateTime value) => new(LocalDate.FromDateTime(value));
 
     /// <summary>
     /// This constructor is required for the SerializerFactory to work.
@@ -123,27 +116,6 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     { }
 
     /// <summary>
-    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
-    /// with a time zone.
-    /// <para/>
-    /// The time zone offset from the <see cref="ZonedDateTime"/> is ignored,
-    /// so converting back to <see cref="ZonedDateTime"/> may produce a
-    /// different value.
-    /// </summary>
-    /// <param name="value">The value to copy the date, time, and time zone ID from.</param>
-    public CalDateTime(ZonedDateTime value)
-        : this(value.LocalDateTime, value.Zone.Id)
-    { }
-
-    /// <summary>
-    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
-    /// in the UTC time zone.
-    /// </summary>
-    /// <param name="instant"></param>
-    public CalDateTime(Instant instant) : this(instant.InUtc())
-    { }
-
-    /// <summary>
     /// Creates a <see cref="CalDateTime"/> representing a DATE value.
     /// </summary>
     /// <param name="date">The local date.</param>
@@ -167,7 +139,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// <param name="date">The local date.</param>
     /// <param name="time">The local time.</param>
     /// <param name="tzId">The time zone ID.</param>
-    public CalDateTime(LocalDate date, LocalTime time, string? tzId = null)
+    private CalDateTime(LocalDate date, LocalTime time, string? tzId = null)
         : this(date)
     {
         // RFC 5545, Section 3.3.5 does not allow for fractional seconds.
@@ -205,28 +177,6 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
                 nameof(tzId));
         }
     }
-
-#if NET6_0_OR_GREATER
-
-    /// <summary>
-    /// Creates a <see cref="CalDateTime"/> representing a DATE value.
-    /// </summary>
-    /// <param name="date">The local date.</param>
-    public CalDateTime(DateOnly date) : this(date.ToLocalDate())
-    { }
-
-    /// <summary>
-    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
-    /// with an optional time zone.
-    /// </summary>
-    /// <param name="date">The local date.</param>
-    /// <param name="time">The local time.</param>
-    /// <param name="tzId">The time zone ID.</param>
-    public CalDateTime(DateOnly date, TimeOnly time, string? tzId = null)
-        : this(date.ToLocalDate(), time.ToLocalTime(), tzId)
-    { }
-
-#endif
 
     public bool Equals(CalDateTime? other) => this == other;
 
@@ -347,6 +297,12 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
 #if NET6_0_OR_GREATER
 
     /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE value.
+    /// </summary>
+    /// <param name="date">The local date.</param>
+    public static CalDateTime FromDateOnly(DateOnly date) => new(date.ToLocalDate());
+
+    /// <summary>
     /// Gets the date.
     /// </summary>
     public DateOnly ToDateOnly() => _localDate.ToDateOnly();
@@ -356,6 +312,13 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// </summary>
     public TimeOnly? ToTimeOnly() => _localTime?.ToTimeOnly();
 #endif
+
+    /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE value.
+    /// </summary>
+    /// <param name="value">The value to copy the local date from.</param>
+    /// <returns>A new <see cref="CalDateTime"/> with same date as the specified <see cref="DateTime"/>.</returns>
+    public static CalDateTime FromDateTimeDate(DateTime value) => new(LocalDate.FromDateTime(value));
 
     /// <summary>
     /// Converts this value to <see cref="DateTime"/> with <see cref="DateTimeKind.Utc"/>.
@@ -385,6 +348,15 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     public LocalDateTime ToLocalDateTime()
         => _localDate.At(_localTime ?? LocalTime.Midnight);
 
+
+
+    /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// in the UTC time zone.
+    /// </summary>
+    /// <param name="instant"></param>
+    public static CalDateTime FromInstant(Instant instant) => FromZonedDateTime(instant.InUtc());
+
     /// <summary>
     /// Converts this value to <see cref="Instant"/>.
     /// <para/>
@@ -395,6 +367,19 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// </summary>
     /// <returns>An instant representing the point in time of this value.</returns>
     public Instant ToInstant() => ToZonedDateTime().ToInstant();
+
+
+
+    /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// with a time zone.
+    /// <para/>
+    /// The time zone offset from the <see cref="ZonedDateTime"/> is ignored,
+    /// so converting back to <see cref="ZonedDateTime"/> may produce a
+    /// different value.
+    /// </summary>
+    /// <param name="value">The value to copy the date, time, and time zone ID from.</param>
+    public static CalDateTime FromZonedDateTime(ZonedDateTime value) => new(value.LocalDateTime, value.Zone.Id);
 
     /// <summary>
     /// Converts this value to <see cref="ZonedDateTime"/>.

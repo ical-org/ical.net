@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -111,7 +111,7 @@ public class EventEvaluator : RecurringEvaluator
             // Assume a floating end is in the time zone of the event.
             if (dtStart.TzId != null && dtEnd.TzId == null && dtEnd.Time != null)
             {
-                dtEnd = new(dtEnd.Date, dtEnd.Time.Value, dtStart.TzId);
+                dtEnd = new(dtEnd.ToLocalDateTime(), dtStart.TzId);
             }
 
             var exactDuration = dtEnd.ToInstant() - dtStart.ToInstant();

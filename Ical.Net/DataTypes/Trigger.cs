@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -35,7 +35,7 @@ public class Trigger : EncodableDataType
             // Ensure date/time has a time part
             if (!_mDateTime.HasTime)
             {
-                _mDateTime = new CalDateTime(_mDateTime.Date, new NodaTime.LocalTime(), _mDateTime.TzId);
+                _mDateTime = new CalDateTime(_mDateTime.Date.AtMidnight(), _mDateTime.TzId);
             }
         }
     }
