@@ -115,7 +115,7 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
         if (isUtc) timeZoneId = "UTC";
 
         var res = timePart.HasValue
-            ? new CalDateTime(datePart, timePart.Value, timeZoneId)
+            ? new CalDateTime(datePart.At(timePart.Value), timeZoneId)
             : new CalDateTime(datePart);
 
         return res;
