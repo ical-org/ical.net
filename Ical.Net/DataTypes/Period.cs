@@ -92,7 +92,7 @@ public class Period : EncodableDataType
             else
             {
                 // Both are zoned, so compare instants
-                isEndBeforeStart = end.AsZonedOrDefault(DateTimeZone.Utc).ToInstant() < start.AsZonedOrDefault(DateTimeZone.Utc).ToInstant();
+                isEndBeforeStart = end.ToZonedOrDefault(DateTimeZone.Utc).ToInstant() < start.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
             }
 
             if (isEndBeforeStart)

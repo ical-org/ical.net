@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -27,11 +27,11 @@ internal static class OccurrenceTester
         var evt = cal.Events.Skip(eventIndex).First();
 
         var tz = DateUtil.GetZone(timeZone ?? _tzid);
-        var start = fromDate?.ToZonedDateTime(tz).ToInstant();
+        var start = fromDate?.ToZonedOrDefault(tz).ToInstant();
 
         var occurrences = toDate == null
             ? evt.GetOccurrences(tz, start).ToList()
-            : evt.GetOccurrences(tz, start).TakeWhileBefore(toDate.ToZonedDateTime(tz).ToInstant()).ToList();
+            : evt.GetOccurrences(tz, start).TakeWhileBefore(toDate.ToZonedOrDefault(tz).ToInstant()).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -44,7 +44,7 @@ internal static class OccurrenceTester
             {
                 for (var i = 0; i < expectedPeriods.Length; i++)
                 {
-                    var start2 = expectedPeriods[i].StartTime.ToZonedDateTime(tz);
+                    var start2 = expectedPeriods[i].StartTime.ToZonedOrDefault(tz).WithZone(tz);
 
                     ZonedDateTime end;
 
@@ -57,7 +57,7 @@ internal static class OccurrenceTester
                     }
                     else if (expectedPeriods[i].EndTime is { } periodEnd)
                     {
-                        end = periodEnd.ToZonedDateTime(tz);
+                        end = periodEnd.ToZonedOrDefault(tz).WithZone(tz);
                     }
                     else
                     {

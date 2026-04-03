@@ -40,13 +40,13 @@ public class OccurencePerfTests
     public void MultipleEventsWithUntilOccurrencesSearchingByWholeCalendar()
     {
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(-1)
             .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .InZoneLeniently(tz)
@@ -59,13 +59,13 @@ public class OccurencePerfTests
     public void MultipleEventsWithUntilOccurrences()
     {
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(-1)
             .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .InZoneLeniently(tz)
@@ -80,13 +80,13 @@ public class OccurencePerfTests
     public void MultipleEventsWithUntilOccurrencesEventsAsParallel()
     {
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(-1)
             .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .PlusDays(10)
@@ -195,13 +195,13 @@ public class OccurencePerfTests
     {
         var calendar = GetFourCalendarEventsWithCountRule();
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(-1)
             .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .InZoneLeniently(tz)
@@ -215,13 +215,13 @@ public class OccurencePerfTests
     {
         var calendar = GetFourCalendarEventsWithCountRule();
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-             .ToZonedDateTime(tz)
+             .ToZonedOrDefault(tz)
              .LocalDateTime
              .PlusYears(-1)
              .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .InZoneLeniently(tz)
@@ -237,13 +237,13 @@ public class OccurencePerfTests
     {
         var calendar = GetFourCalendarEventsWithCountRule();
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(-1)
             .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .PlusDays(10)

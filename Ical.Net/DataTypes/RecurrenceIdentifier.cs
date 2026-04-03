@@ -66,8 +66,8 @@ public class RecurrenceIdentifier : IComparable<RecurrenceIdentifier>
             return 1;
         }
 
-        var startComparison = StartTime.AsZonedOrDefault(DateTimeZone.Utc).ToInstant()
-            .CompareTo(other.StartTime.AsZonedOrDefault(DateTimeZone.Utc).ToInstant());
+        var startComparison = StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant()
+            .CompareTo(other.StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant());
 
         if (startComparison != 0)
         {

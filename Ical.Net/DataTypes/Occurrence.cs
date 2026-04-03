@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -69,7 +69,7 @@ public class Occurrence : IComparable<Occurrence>
 
         // Use floating time from the occurrence's time zone
         var valueInstant = value
-            .ToZonedDateTime(Start.Zone)
+            .ToZonedOrDefault(Start.Zone)
             .ToInstant();
 
         return Start.ToInstant() <= valueInstant

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -40,5 +40,11 @@ internal static class TestExtensions
     public static ZonedDateTime InZoneLeniently(this LocalDateTime value, string zoneId)
     {
         return value.InZoneLeniently(DateUtil.GetZone(zoneId));
+    }
+
+    public static ZonedDateTime ToZonedDateTime(this CalDateTime value, string zoneId)
+    {
+        var tz = DateUtil.GetZone(zoneId);
+        return value.ToZonedOrDefault(tz).WithZone(tz);
     }
 }
