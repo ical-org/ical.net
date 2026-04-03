@@ -18,8 +18,6 @@ public static class NodaTimeExtensions
 
     public static CalDateTime ToCalDateTime(this LocalDate value) => new(value);
 
-    public static CalDateTime ToCalDateTime(this Instant value) => CalDateTime.FromInstant(value);
-
     /// <summary>
     /// Returns a ZonedDateTime that matches the time zone and
     /// offset of the start value, or shifts forward if the local

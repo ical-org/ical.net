@@ -4212,7 +4212,7 @@ END:VCALENDAR";
         // Specify end time that is between the original occurrence at 20161128T0001 and the overridden one at 20161128T0030.
         // The overridden one shouldn't be returned, because it was replaced and the other one is in the future.
         var occurrences2 = collection.GetOccurrences<CalendarEvent>(startCheck)
-            .TakeWhileBefore(new CalDateTime("20161128T002000", "W. Europe Standard Time").ToInstant())
+            .TakeWhileBefore(tz.AtStrictly(new(2016, 11, 28, 0, 20)).ToInstant())
             .ToList();
 
         using (Assert.EnterMultipleScope())
@@ -4570,7 +4570,7 @@ END:VCALENDAR";
         cal.Events.Add(evt);
 
         var tz = DateUtil.GetZone("America/New_York");
-        var result = cal.GetOccurrences(tz, evt.Start.ToInstant())
+        var result = cal.GetOccurrences(tz, evt.Start.AsZoned().ToInstant())
             .Select(x => x.Start)
             .ToList();
 
@@ -4599,7 +4599,7 @@ END:VCALENDAR";
         cal.Events.Add(evt);
 
         var tz = DateUtil.GetZone("America/New_York");
-        var result = cal.GetOccurrences(tz, evt.Start.ToInstant())
+        var result = cal.GetOccurrences(tz, evt.Start.AsZoned().ToInstant())
             .Select(x => x.Start)
             .ToList();
 
@@ -4628,7 +4628,7 @@ END:VCALENDAR";
         cal.Events.Add(evt);
 
         var tz = DateUtil.GetZone("America/New_York");
-        var result = cal.GetOccurrences(tz, evt.Start.ToInstant())
+        var result = cal.GetOccurrences(tz, evt.Start.AsZoned().ToInstant())
             .Select(x => x.Start)
             .ToList();
 
@@ -4662,7 +4662,7 @@ END:VCALENDAR";
         cal.Events.Add(evt);
 
         var tz = DateUtil.GetZone("America/New_York");
-        var result = cal.GetOccurrences(tz, evt.Start.ToInstant())
+        var result = cal.GetOccurrences(tz, evt.Start.AsZoned().ToInstant())
             .Select(x => x.Start)
             .ToList();
 
