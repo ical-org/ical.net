@@ -3,14 +3,13 @@
 // Licensed under the MIT license.
 //
 
-using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
 using System.Globalization;
 using System.Linq;
+using Ical.Net.DataTypes;
+using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace Ical.Net.Tests;
 
@@ -22,11 +21,11 @@ public class CalDateTimeTests
         var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00", CultureInfo.InvariantCulture);
 
         var someDt = new CalDateTime(someTime.DateTime, "America/New_York");
-        var firstUtc = someDt.ToInstant();
-        Assert.That(firstUtc, Is.EqualTo(NodaTime.Instant.FromDateTimeOffset(someTime)));
+        var firstUtc = someDt.AsZoned().ToDateTimeOffset();
+        Assert.That(firstUtc, Is.EqualTo(someTime));
 
         someDt = new CalDateTime(someTime.DateTime, "Europe/Berlin");
-        var berlinUtc = someDt.ToInstant();
+        var berlinUtc = someDt.AsZoned().ToDateTimeOffset();
         Assert.That(berlinUtc, Is.Not.EqualTo(firstUtc));
     }
 

@@ -103,7 +103,7 @@ public class FreeBusyTest
         var dtAfter = start.InUtc().PlusHours(1).PlusSeconds(1).ToInstant();
 
         // Period with duration: effective end time = start + 1 hour (exclusive)
-        var periodWithDuration = new FreeBusyEntry(new(CalDateTime.FromInstant(start), Duration.FromHours(1)), FreeBusyStatus.Free);
+        var periodWithDuration = new FreeBusyEntry(new(start.InUtc().ToCalDateTime(), Duration.FromHours(1)), FreeBusyStatus.Free);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(periodWithDuration.Contains(null), Is.False, "Contains should return false for null dt.");

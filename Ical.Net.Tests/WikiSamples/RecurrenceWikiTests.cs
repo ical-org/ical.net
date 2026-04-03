@@ -186,7 +186,7 @@ internal class RecurrenceWikiTests
             Until = start.ToLocalDateTime()
                 .PlusYears(2)
                 .InZoneLeniently("Europe/Zurich")
-                .ToInstant()
+                .WithZone(DateTimeZone.Utc)
                 .ToCalDateTime()
         };
 
