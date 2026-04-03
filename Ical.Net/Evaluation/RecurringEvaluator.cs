@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -80,7 +80,7 @@ public abstract class RecurringEvaluator : IEvaluator
         IEnumerable<EvaluationPeriod> rruleOccurrences;
 
         // Evaluate recurrence in the reference zone
-        var zonedReference = referenceDate.AsZonedOrDefault(timeZone);
+        var zonedReference = referenceDate.ToZonedOrDefault(timeZone);
 
         // Only add referenceDate if there is no RecurrenceRule. This is in line
         // with RFC 5545 which requires DTSTART to match any RRULE. If it doesn't, the behaviour
@@ -116,7 +116,7 @@ public abstract class RecurringEvaluator : IEvaluator
             .Select(x => x.StartTime.ToLocalDateTime().Date));
 
         var exDateExclusionsDateTime = new SortedSet<EvaluationPeriod>(EvaluateExDate(PeriodKind.DateTime)
-            .Select(x => new EvaluationPeriod(x.StartTime.ToZonedDateTime(zonedReference.Zone))));
+            .Select(x => new EvaluationPeriod(x.StartTime.ToZonedOrDefault(zonedReference.Zone).WithZone(zonedReference.Zone))));
 
         // Exclude occurrences according to EXDATEs.
         periods = periods

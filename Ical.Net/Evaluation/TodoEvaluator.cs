@@ -19,7 +19,7 @@ public class TodoEvaluator : RecurringEvaluator
 
     protected override EvaluationPeriod EvaluateRDate(DataTypes.Period rdate, DateTimeZone referenceTimeZone)
     {
-        var start = rdate.StartTime.AsZonedOrDefault(referenceTimeZone);
+        var start = rdate.StartTime.ToZonedOrDefault(referenceTimeZone);
 
         ZonedDateTime? end;
         if (rdate.Duration is { } duration)
@@ -31,7 +31,7 @@ public class TodoEvaluator : RecurringEvaluator
         }
         else if (rdate.EndTime is { } dtEnd)
         {
-            var exactDuration = dtEnd.AsZonedOrDefault(referenceTimeZone).ToInstant() - start.ToInstant();
+            var exactDuration = dtEnd.ToZonedOrDefault(referenceTimeZone).ToInstant() - start.ToInstant();
 
             if (exactDuration < NodaTime.Duration.Zero)
             {
@@ -70,7 +70,7 @@ public class TodoEvaluator : RecurringEvaluator
 
         if (Todo.Due is { } due && dtStart is not null)
         {
-            var exactDuration = due.AsZonedOrDefault(start.Zone).ToInstant() - dtStart.AsZonedOrDefault(start.Zone).ToInstant();
+            var exactDuration = due.ToZonedOrDefault(start.Zone).ToInstant() - dtStart.ToZonedOrDefault(start.Zone).ToInstant();
             return start.Plus(exactDuration);
         }
 

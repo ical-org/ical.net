@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -348,7 +348,7 @@ public class RecurrenceTests_From_Issues
         var occurrences = calendarEvent.GetOccurrences(new CalDateTime(startDate)).TakeWhileBefore(new CalDateTime(endDate));
         var occurrencesDates = occurrences.Select(o => o.Start.Date).ToList();
 
-        var sortedExpectedDates = expectedDates.Select(x => x.ToZonedDateTime().Date).ToList();
+        var sortedExpectedDates = expectedDates.Select(x => x.Date).ToList();
 
         Assert.That(occurrencesDates, Is.EquivalentTo(sortedExpectedDates));
     }

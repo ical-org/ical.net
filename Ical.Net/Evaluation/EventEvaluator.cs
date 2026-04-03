@@ -24,7 +24,7 @@ public class EventEvaluator : RecurringEvaluator
 
     protected override EvaluationPeriod EvaluateRDate(DataTypes.Period rdate, DateTimeZone referenceTimeZone)
 	{
-		var start = rdate.StartTime.AsZonedOrDefault(referenceTimeZone);
+		var start = rdate.StartTime.ToZonedOrDefault(referenceTimeZone);
 
 		ZonedDateTime? end;
 		if (rdate.Duration is { } duration)
@@ -41,7 +41,7 @@ public class EventEvaluator : RecurringEvaluator
 		}
 		else if (rdate.EndTime is { } dtEnd)
 		{
-			var exactDuration = dtEnd.AsZonedOrDefault(referenceTimeZone).ToInstant() - start.ToInstant();
+			var exactDuration = dtEnd.ToZonedOrDefault(referenceTimeZone).ToInstant() - start.ToInstant();
 
 			if (exactDuration < Duration.Zero)
 			{
@@ -114,7 +114,7 @@ public class EventEvaluator : RecurringEvaluator
                 dtEnd = new(dtEnd.ToLocalDateTime(), dtStart.TzId);
             }
 
-            var exactDuration = dtEnd.AsZonedOrDefault(start.Zone).ToInstant() - dtStart.AsZonedOrDefault(start.Zone).ToInstant();
+            var exactDuration = dtEnd.ToZonedOrDefault(start.Zone).ToInstant() - dtStart.ToZonedOrDefault(start.Zone).ToInstant();
 
             if (exactDuration < Duration.Zero)
             {

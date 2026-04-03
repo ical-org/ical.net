@@ -24,11 +24,11 @@ public class FreeBusy : UniqueComponent, IMergeable
         }
 
         var startInstant = freeBusyRequest.Start?
-            .AsZonedOrDefault(timeZone)
+            .ToZonedOrDefault(timeZone)
             .ToInstant();
 
         var endInstant = freeBusyRequest.End?
-            .AsZonedOrDefault(timeZone)
+            .ToZonedOrDefault(timeZone)
             .ToInstant();
 
         var occurrences = occ.GetOccurrences<CalendarEvent>(timeZone, startInstant, options)
@@ -199,7 +199,7 @@ public class FreeBusy : UniqueComponent, IMergeable
     /// <returns></returns>
     public virtual FreeBusyStatus GetFreeBusyStatus(CalDateTime? dt)
     {
-        return GetFreeBusyStatus(dt?.AsZonedOrDefault(DateTimeZone.Utc).ToInstant());
+        return GetFreeBusyStatus(dt?.ToZonedOrDefault(DateTimeZone.Utc).ToInstant());
     }
 
     public virtual FreeBusyStatus GetFreeBusyStatus(Instant? dt)

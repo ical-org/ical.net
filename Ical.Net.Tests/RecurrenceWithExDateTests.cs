@@ -119,7 +119,7 @@ public class RecurrenceWithExDateTests
                     o => !cal
                         .Events[0]!
                         .ExceptionDates.GetAllDates()
-                        .Any(ex => ex.AsZonedOrDefault(DateTimeZone.Utc).ToInstant().Equals(o.Start.ToInstant()))), Is.True);
+                        .Any(ex => ex.ToZonedOrDefault(DateTimeZone.Utc).ToInstant().Equals(o.Start.ToInstant()))), Is.True);
             Assert.That(ics, Does.Contain("EXDATE:20241019T190000Z"));
         }
     }
@@ -178,7 +178,7 @@ public class RecurrenceWithExDateTests
                     o => !cal
                         .Events[0]!
                         .ExceptionDates.GetAllDates()
-                        .Any(ex => ex.AsZonedOrDefault(DateTimeZone.Utc).ToInstant().Equals(o.Start.ToInstant()))), Is.True);
+                        .Any(ex => ex.ToZonedOrDefault(DateTimeZone.Utc).ToInstant().Equals(o.Start.ToInstant()))), Is.True);
             Assert.That(ics, Does.Contain("EXDATE;TZID=Europe/Berlin:20231029T090000,20231105T090000,20231112T090000"));
         }
     }
@@ -231,7 +231,7 @@ public class RecurrenceWithExDateTests
                     o => !cal
                         .Events[0]!
                         .ExceptionDates.GetAllDates()
-                        .Any(ex => ex.AsZonedOrDefault(DateTimeZone.Utc).ToInstant().Equals(o.Start.ToInstant()))), Is.True);
+                        .Any(ex => ex.ToZonedOrDefault(DateTimeZone.Utc).ToInstant().Equals(o.Start.ToInstant()))), Is.True);
         }
     }
 }

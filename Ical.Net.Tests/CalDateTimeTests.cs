@@ -21,11 +21,11 @@ public class CalDateTimeTests
         var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00", CultureInfo.InvariantCulture);
 
         var someDt = new CalDateTime(someTime.DateTime, "America/New_York");
-        var firstUtc = someDt.AsZoned().ToDateTimeOffset();
+        var firstUtc = someDt.ToZonedDateTime().ToDateTimeOffset();
         Assert.That(firstUtc, Is.EqualTo(someTime));
 
         someDt = new CalDateTime(someTime.DateTime, "Europe/Berlin");
-        var berlinUtc = someDt.AsZoned().ToDateTimeOffset();
+        var berlinUtc = someDt.ToZonedDateTime().ToDateTimeOffset();
         Assert.That(berlinUtc, Is.Not.EqualTo(firstUtc));
     }
 
