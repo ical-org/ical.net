@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -31,7 +31,7 @@ public class TodoEvaluator : RecurringEvaluator
         }
         else if (rdate.EndTime is { } dtEnd)
         {
-            var exactDuration = dtEnd.ToInstant() - rdate.StartTime.ToInstant();
+            var exactDuration = dtEnd.AsZonedOrDefault(referenceTimeZone).ToInstant() - start.ToInstant();
 
             if (exactDuration < NodaTime.Duration.Zero)
             {
@@ -70,7 +70,7 @@ public class TodoEvaluator : RecurringEvaluator
 
         if (Todo.Due is { } due && dtStart is not null)
         {
-            var exactDuration = due.ToInstant() - dtStart.ToInstant();
+            var exactDuration = due.AsZonedOrDefault(start.Zone).ToInstant() - dtStart.AsZonedOrDefault(start.Zone).ToInstant();
             return start.Plus(exactDuration);
         }
 

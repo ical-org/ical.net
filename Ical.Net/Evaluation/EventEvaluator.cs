@@ -26,7 +26,7 @@ public class EventEvaluator : RecurringEvaluator
 	{
 		var start = rdate.StartTime.AsZonedOrDefault(referenceTimeZone);
 
-		ZonedDateTime? end = null;
+		ZonedDateTime? end;
 		if (rdate.Duration is { } duration)
 		{
 			if (!rdate.StartTime.HasTime && duration.HasTime)
@@ -41,7 +41,7 @@ public class EventEvaluator : RecurringEvaluator
 		}
 		else if (rdate.EndTime is { } dtEnd)
 		{
-			var exactDuration = dtEnd.ToInstant() - rdate.StartTime.ToInstant();
+			var exactDuration = dtEnd.AsZonedOrDefault(referenceTimeZone).ToInstant() - start.ToInstant();
 
 			if (exactDuration < Duration.Zero)
 			{
@@ -114,7 +114,7 @@ public class EventEvaluator : RecurringEvaluator
                 dtEnd = new(dtEnd.ToLocalDateTime(), dtStart.TzId);
             }
 
-            var exactDuration = dtEnd.ToInstant() - dtStart.ToInstant();
+            var exactDuration = dtEnd.AsZonedOrDefault(start.Zone).ToInstant() - dtStart.AsZonedOrDefault(start.Zone).ToInstant();
 
             if (exactDuration < Duration.Zero)
             {
