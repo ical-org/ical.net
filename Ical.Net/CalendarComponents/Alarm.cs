@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -74,6 +74,18 @@ public class Alarm : CalendarComponent
     /// that occur at or after <paramref name="fromDate"/>.
     /// </summary>
     public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, CalDateTime? fromDate, EvaluationOptions? options)
+        => GetOccurrences(rc, fromDate, null, options);
+
+
+    /// <summary>
+    /// Gets a list of alarm occurrences for the given recurring component.
+    /// </summary>
+    /// <param name="rc">The recurring component that this alarm belongs to.</param>
+    /// <param name="fromDate">The date to start checking for alarm occurrences. The component start date is used if this value is null.</param>
+    /// <param name="endDate">The date to stop checking for occurrences.</param>
+    /// <param name="options">Options for evaluating recurring component occurrences.</param>
+    /// <returns>List of alarm occurrences.</returns>
+    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, CalDateTime? fromDate, CalDateTime? endDate, EvaluationOptions? options)
     {
         if (Trigger == null)
         {
@@ -93,30 +105,20 @@ public class Alarm : CalendarComponent
                 fromDate = rc.Start?.Copy();
             }
 
-            Duration? duration = null;
-            foreach (var o in rc.GetOccurrences(fromDate, options))
+            var componentOccurrences = rc.GetOccurrences(fromDate, options);
+            if (endDate != null)
+            {
+                componentOccurrences = componentOccurrences.TakeWhileBefore(endDate);
+            }
+
+            foreach (var o in componentOccurrences)
             {
                 var dt = o.Period.StartTime;
+
                 if (string.Equals(Trigger.Related, TriggerRelation.End, TriggerRelation.Comparison))
                 {
-                    if (o.Period.EndTime != null)
-                    {
-                        dt = o.Period.EndTime;
-                        if (duration == null)
-                        {
-                            duration = o.Period.EffectiveDuration;
-                        }
-                    }
-                    // Use the "last-found" duration as a reference point
-                    else if (duration != null)
-                    {
-                        dt = o.Period.StartTime.Add(duration.Value);
-                    }
-                    else
-                    {
-                        throw new ArgumentException(
-                            "Alarm trigger is relative to the START of the occurrence; however, the occurence has no discernible end.");
-                    }
+                    dt = o.Period.EffectiveEndTime ?? throw new ArgumentException(
+                        "Alarm trigger is relative to the END of the occurrence; however, the occurrence has no discernible end.");
                 }
 
                 occurrences.Add(new AlarmOccurrence(this, dt.Add(Trigger.Duration!.Value), rc));
@@ -147,6 +149,18 @@ public class Alarm : CalendarComponent
     /// <param name="options"></param>
     /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
     public virtual IList<AlarmOccurrence> Poll(CalDateTime? start, EvaluationOptions? options = null)
+        => Poll(start, null, options);
+
+    /// <summary>
+    /// Polls the <see cref="Alarm"/> component for alarms that have been triggered
+    /// since the provided <paramref name="start"/> date/time and before the provided <paramref name="end"/> date/time.
+    /// If <paramref name="start"/> is null, all triggered alarms will be returned.
+    /// </summary>
+    /// <param name="start">The earliest date/time to poll triggered alarms for.</param>
+    /// <param name="end">The date/time to stop checking for triggered alarms.</param>
+    /// <param name="options"></param>
+    /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
+    public virtual IList<AlarmOccurrence> Poll(CalDateTime? start, CalDateTime? end, EvaluationOptions? options = null)
     {
         var results = new List<AlarmOccurrence>();
 
@@ -156,7 +170,7 @@ public class Alarm : CalendarComponent
             return results;
         }
 
-        results.AddRange(GetOccurrences(rc, start, options));
+        results.AddRange(GetOccurrences(rc, start, end, options));
         return results;
     }
 
