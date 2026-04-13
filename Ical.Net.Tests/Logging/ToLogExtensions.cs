@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -37,14 +37,14 @@ internal static class ToLogExtensions
             return "No occurrences found.";
         }
 
-        sb.Append(occurrenceList.Count).AppendLine(" occurrences:");
+        sb.Append(occurrenceList.Count).Append(" occurrences:\n");
 
         foreach (var occurrence in occurrenceList)
         {
-            sb.AppendLine(occurrence.ToLog());
+            sb.Append(occurrence.ToLog()).Append('\n');
         }
 
-        return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+        return sb.ToString().TrimEnd('\n');
     }
 
     public static string ToLog(this Occurrence occurrence)
