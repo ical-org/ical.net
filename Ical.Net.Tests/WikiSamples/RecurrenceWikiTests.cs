@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -704,7 +704,7 @@ internal class RecurrenceWikiTests
             .Where(e => !e.StartsWith("DTSTAMP"))
             .Where(e => !(e.StartsWith("UID") && keep?.Contains("UID") != true))
             .Where(e => !(e.StartsWith("SEQUENCE") && keep?.Contains("SEQUENCE") != true))
-            .Aggregate(new StringBuilder(), (acc, e) => acc.AppendLine(e), e => e.ToString().TrimEnd());
+            .Aggregate(new StringBuilder(), (acc, e) => acc.Append(e).Append('\n'), e => e.ToString().TrimEnd());
 
     private static string ToWikiPeriodString(IEnumerable<Occurrence> occurrences)
         => occurrences.ToLog();
