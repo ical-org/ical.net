@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -273,6 +273,125 @@ internal static class CollectionHelpers
             }
 
             yield return enumerator.Current;
+        }
+    }
+
+    private readonly struct DictKey<T>(T value, long idx)
+    {
+        public readonly T Value = value;
+
+        /// <summary>
+        /// The index is there, because the key of a SortedDictionary or SortedList must be unique.
+        /// </summary>
+        public readonly long Idx = idx;
+    }
+
+    /// <summary>
+    /// Merge the given ordered sequence of ordered sequences into a single ordered sequence.
+    /// </summary>
+    /// <remarks>
+    /// The inner as well as the outer sequences must be ordered according to the type's default comparer.
+    /// The outer sequence must be ordered by the first item of the inner sequences.
+    ///
+    /// The method operates in a streaming manner on both, the outer as well as the inner sequences,
+    /// meaning it only enumerates the input sequences while the output sequence is being enumerated.
+    /// Both, the outer as well as the inner sequences may therefore be unbounded.
+    ///
+    /// The behavior is similar to that of <see cref="OrderedMergeMany{T}(IEnumerable{IEnumerable{T}}, IComparer{T})"/>,
+    /// with following differences:
+    /// * Additionally to the inner sequences, also the outer sequences must be ordered. They must be ordered
+    ///   by the head of the inner sequence according to the given comparer.
+    /// * The outer sequence is enumerated in a streaming manner, only as far as the outer is enumerated.
+    /// </remarks>
+    public static IEnumerable<T> OrderedNestedMergeMany<T>(this IEnumerable<IEnumerable<T>> sequences)
+        => OrderedNestedMergeMany(sequences, Comparer<T>.Default);
+
+    /// <summary>
+    /// Merge the given ordered sequence of ordered sequences into a single ordered sequence.
+    /// </summary>
+    /// <remarks>
+    /// The inner as well as the outer sequences must be ordered according to the given comparer.
+    /// The outer sequence must be ordered by the first item of the inner sequences.
+    ///
+    /// The method operates in a streaming manner on both, the outer as well as the inner sequences,
+    /// meaning it only enumerates the input sequences while the output sequence is being enumerated.
+    /// Both, the outer as well as the inner sequences may therefore be unbounded.
+    ///
+    /// The behavior is similar to that of <see cref="OrderedMergeMany{T}(IEnumerable{IEnumerable{T}}, IComparer{T})"/>,
+    /// with following differences:
+    /// * Additionally to the inner sequences, also the outer sequences must be ordered. They must be ordered
+    ///   by the head of the inner sequence according to the given comparer.
+    /// * The outer sequence is enumerated in a streaming manner, only as far as the outer is enumerated.
+    /// </remarks>
+    public static IEnumerable<T> OrderedNestedMergeMany<T>(this IEnumerable<IEnumerable<T>> sequences, IComparer<T> comparer)
+    {
+        using var outer = sequences.GetEnumerator();
+        var keyComparer = Comparer<DictKey<T>>.Create((a, b) =>
+        {
+            var res = comparer.Compare(a.Value, b.Value);
+            if (res != 0) return res;
+            return a.Idx.CompareTo(b.Idx);
+        });
+
+        var active = new SortedDictionary<DictKey<T>, IEnumerator<T>>(keyComparer);
+
+        var pending = NextNonEmpty();
+        if (pending == null)
+            yield break;
+
+        try
+        {
+            long uniqueIdx = 0;
+            while ((active.Count > 0) || (pending != null))
+            {
+                KeyValuePair<DictKey<T>, IEnumerator<T>> first;
+                if (active.Count == 0)
+                {
+                    first = new(new(pending!.Current, uniqueIdx++), pending);
+                    active.Add(first.Key, first.Value);
+                    pending = NextNonEmpty();
+                }
+                else
+                {
+                    first = active.First();
+
+                    if ((pending != null) && (comparer.Compare(pending.Current, first.Value.Current) < 0))
+                    {
+                        first = new(new(pending.Current, uniqueIdx++), pending);
+                        active.Add(first.Key, first.Value);
+                        pending = NextNonEmpty();
+                    }
+                }
+
+                yield return first.Key.Value;
+
+                active.Remove(first.Key);
+                if (first.Value.MoveNext())
+                    active.Add(new(first.Value.Current, uniqueIdx++), first.Value);
+                else
+                    first.Value.Dispose();
+            }
+        }
+        finally
+        {
+            foreach (var enumerator in active.Values)
+                enumerator.Dispose();
+
+            pending?.Dispose();
+        }
+
+        IEnumerator<T>? NextNonEmpty()
+        {
+            while (outer.MoveNext())
+            {
+                var enumerator = outer.Current?.GetEnumerator();
+                if (enumerator?.MoveNext() == true)
+                    return enumerator;
+
+                enumerator?.Dispose();
+            }
+
+            return null;
         }
     }
 }

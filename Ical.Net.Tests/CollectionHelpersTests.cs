@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -93,5 +93,86 @@ internal class CollectionHelpersTests
     {
         var result = new[] { 1, 2, 2, 3 }.OrderedDistinct();
         Assert.That(result, Is.EqualTo(new[] { 1, 2, 3 }));
+    }
+
+    [Test]
+    public void TestOrderedNestedMergeMany()
+    {
+        var result = new[]
+        {
+            new[] { 1, 4, 7 },
+            new[] { 2, 5, 8 },
+            new[] { 3, 6, 9 },
+        }.OrderedNestedMergeMany(Comparer<int>.Default);
+
+        Assert.That(result, Is.EqualTo(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
+    }
+
+    [Test]
+    public void TestOrderedNestedMergeMany_AllowsDuplicates()
+    {
+        var result = new[]
+        {
+            new[] { 1, 2, 2, 4 },
+            new[] { 1, 2, 3, 4 },
+        }.OrderedNestedMergeMany(Comparer<int>.Default);
+
+        Assert.That(result, Is.EqualTo(new[] { 1, 1, 2, 2, 2, 3, 4, 4 }));
+    }
+
+    [Test]
+    public void TestOrderedNestedMergeMany_HandlesEmptyInnerSequences()
+    {
+        IEnumerable<IEnumerable<int>> withEmpty =
+        [
+            [],
+            [1, 3],
+            [2],
+        ];
+
+        var result = withEmpty
+            .OrderedNestedMergeMany(Comparer<int>.Default)
+            .ToList();
+
+        Assert.That(result, Is.EqualTo(new[] { 1, 2, 3 }));
+    }
+
+    [Test]
+    [TestCase(false, false)]
+    [TestCase(true, false)]
+    [TestCase(false, true)]
+    [TestCase(true, true)]
+    public void TestOrderedNestedMergeMany_StreamsOuterSequence(bool increasingOuter, bool increasingInner)
+    {
+        IEnumerable<int> GetIndefiniteSequence(int start)
+        {
+            var i = start;
+            while (true)
+            {
+                yield return i;
+                i += increasingInner ? 1 : 0;
+            }
+        }
+
+        IEnumerable<IEnumerable<int>> GetOrderedInnerSequences()
+        {
+            var i = 0;
+            while (true)
+            {
+                yield return GetIndefiniteSequence(i);
+                i += increasingOuter ? 1 : 0;
+            }
+        }
+
+        var result = GetOrderedInnerSequences()
+            .OrderedNestedMergeMany(Comparer<int>.Default)
+            .Take(10)
+            .ToList();
+
+        var expected = increasingOuter && increasingInner
+            ? new[] { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }
+            : new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+        Assert.That(result, Is.EqualTo(expected));
     }
 }
