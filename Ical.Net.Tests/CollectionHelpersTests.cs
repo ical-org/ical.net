@@ -175,4 +175,71 @@ internal class CollectionHelpersTests
 
         Assert.That(result, Is.EqualTo(expected));
     }
+
+    [Test]
+    public void TestOrderedNestedMergeMany_PrefersVerticalOverHorizontalEnumeration()
+    {
+        IEnumerable<int> Seq1()
+        {
+            yield return 0;
+            while (true) yield return 1;
+        }
+
+        IEnumerable<int> Seq2()
+        {
+            // This will be returned in the final sequence, as it is less than the indefinite sequence of 1s.
+            yield return 0;
+
+            // This value will be returned by this sequence but not to the final sequence, as
+            // iteration of should go into the depth first, so returning all the (indefinite) 1s from
+            // the first sequence first before continuing there.
+            // It is relevant that the iteration first happens into the depth and only then into the breadth,
+            // because otherwise the operator would have to maintain more IEnumerators than needed,
+            // which would increase memory pressure.
+            yield return 1;
+            Assert.Fail();
+        }
+
+        IEnumerable<int> Seq3()
+        {
+            // This item will be queried but the sequence will not be considered active as long as the first
+            // value is not returned in the final sequence, which will never happen.
+            yield return 1;
+            Assert.Fail();
+        }
+
+        IEnumerable<int> Seq4()
+        {
+            // The final sequence shouldn't be queried at all, because no values are
+            // being returned from the previous.
+            Assert.Fail();
+            yield break;
+        }
+
+        var result =
+            new[] { Seq1(), Seq2(), Seq3(), Seq4() }
+            .OrderedNestedMergeMany()
+            .Take(10)
+            .ToList();
+
+        Assert.That(result, Is.EqualTo(new[] { 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 }));
+    }
+
+    [Test]
+    public void TestOrderedNestedMergeMany_SubsequenceOnlyEnumeratedWhenNeeded()
+    {
+        IEnumerable<int> FailingSeq()
+        {
+            Assert.Fail();
+            yield break;
+        }
+
+        var result =
+            new[] { [1], FailingSeq() }
+            .OrderedNestedMergeMany()
+            .Take(1)
+            .ToList();
+
+        Assert.That(result, Is.EqualTo(new[] { 1 }));
+    }
 }

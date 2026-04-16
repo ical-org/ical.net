@@ -276,6 +276,26 @@ internal static class CollectionHelpers
         }
     }
 
+    /// <summary>
+    /// Merge the given ordered sequence of ordered sequences into a single ordered sequence.
+    /// </summary>
+    /// <remarks>
+    /// The inner as well as the outer sequences must be ordered according to the default comparer.
+    /// The outer sequence must be ordered by the first item of the inner sequences.
+    ///
+    /// The method operates in a streaming manner on both, the outer as well as the inner sequences,
+    /// meaning it only enumerates the input sequences while the output sequence is being enumerated.
+    /// Both, the outer as well as the inner sequences may therefore be unbounded.
+    ///
+    /// The behavior is similar to that of <see cref="OrderedMergeMany{T}(IEnumerable{IEnumerable{T}}, IComparer{T})"/>,
+    /// with following differences:
+    /// * Additionally to the inner sequences, also the outer sequences must be ordered. They must be ordered
+    ///   by the head of the inner sequence according to the default comparer.
+    /// * The outer sequence is enumerated in a streaming manner, only as far as the outer is enumerated.
+    /// </remarks>
+    public static IEnumerable<T> OrderedNestedMergeMany<T>(this IEnumerable<IEnumerable<T>> sequences)
+        => OrderedNestedMergeMany(sequences, Comparer<T>.Default);
+
     private readonly struct DictKey<T>(T value, long idx)
     {
         public readonly T Value = value;
@@ -290,29 +310,9 @@ internal static class CollectionHelpers
     /// Merge the given ordered sequence of ordered sequences into a single ordered sequence.
     /// </summary>
     /// <remarks>
-    /// The inner as well as the outer sequences must be ordered according to the type's default comparer.
-    /// The outer sequence must be ordered by the first item of the inner sequences.
-    ///
-    /// The method operates in a streaming manner on both, the outer as well as the inner sequences,
-    /// meaning it only enumerates the input sequences while the output sequence is being enumerated.
-    /// Both, the outer as well as the inner sequences may therefore be unbounded.
-    ///
-    /// The behavior is similar to that of <see cref="OrderedMergeMany{T}(IEnumerable{IEnumerable{T}}, IComparer{T})"/>,
-    /// with following differences:
-    /// * Additionally to the inner sequences, also the outer sequences must be ordered. They must be ordered
-    ///   by the head of the inner sequence according to the given comparer.
-    /// * The outer sequence is enumerated in a streaming manner, only as far as the outer is enumerated.
-    /// </remarks>
-    public static IEnumerable<T> OrderedNestedMergeMany<T>(this IEnumerable<IEnumerable<T>> sequences)
-        => OrderedNestedMergeMany(sequences, Comparer<T>.Default);
-
-    /// <summary>
-    /// Merge the given ordered sequence of ordered sequences into a single ordered sequence.
-    /// </summary>
-    /// <remarks>
     /// The inner as well as the outer sequences must be ordered according to the given comparer.
     /// The outer sequence must be ordered by the first item of the inner sequences.
-    ///
+    /// 
     /// The method operates in a streaming manner on both, the outer as well as the inner sequences,
     /// meaning it only enumerates the input sequences while the output sequence is being enumerated.
     /// Both, the outer as well as the inner sequences may therefore be unbounded.
@@ -325,51 +325,66 @@ internal static class CollectionHelpers
     /// </remarks>
     public static IEnumerable<T> OrderedNestedMergeMany<T>(this IEnumerable<IEnumerable<T>> sequences, IComparer<T> comparer)
     {
-        using var outer = sequences.GetEnumerator();
-        var keyComparer = Comparer<DictKey<T>>.Create((a, b) =>
-        {
-            var res = comparer.Compare(a.Value, b.Value);
-            if (res != 0) return res;
-            return a.Idx.CompareTo(b.Idx);
-        });
-
-        var active = new SortedDictionary<DictKey<T>, IEnumerator<T>>(keyComparer);
+        using var outer = GetNonEmptyEnumerators().GetEnumerator();
 
         var pending = NextNonEmpty();
         if (pending == null)
             yield break;
 
+        var active = new SortedDictionary<DictKey<T>, IEnumerator<T>>(Comparer<DictKey<T>>.Create((a, b) =>
+        {
+            var res = comparer.Compare(a.Value, b.Value);
+            if (res != 0) return res;
+
+            return a.Idx.CompareTo(b.Idx);
+        }));
+
         try
         {
-            long uniqueIdx = 0;
-            while ((active.Count > 0) || (pending != null))
+            while (true)
             {
                 KeyValuePair<DictKey<T>, IEnumerator<T>> first;
-                if (active.Count == 0)
+                using var activeIt = active.GetEnumerator();
+                if (!activeIt.MoveNext())
                 {
-                    first = new(new(pending!.Current, uniqueIdx++), pending);
-                    active.Add(first.Key, first.Value);
-                    pending = NextNonEmpty();
+                    pending ??= NextNonEmpty();
+                    if (pending == null)
+                        break;
+
+                    first = new(new(pending.Value.it.Current, pending.Value.idx), pending.Value.it);
+                    pending = null;
                 }
                 else
                 {
-                    first = active.First();
-
-                    if ((pending != null) && (comparer.Compare(pending.Current, first.Value.Current) < 0))
+                    first = activeIt.Current;
+                    pending ??= NextNonEmpty();
+                    if ((pending != null) && (comparer.Compare(pending.Value.it.Current, first.Value.Current) < 0))
                     {
-                        first = new(new(pending.Current, uniqueIdx++), pending);
-                        active.Add(first.Key, first.Value);
-                        pending = NextNonEmpty();
+                        first = new(new(pending.Value.it.Current, pending.Value.idx), pending.Value.it);
+                        pending = null;
+                    }
+                    else
+                    {
+                        if (!active.Remove(first.Key))
+                            throw new InvalidOperationException();
                     }
                 }
 
-                yield return first.Key.Value;
+                IDisposable? disposeFinally = first.Value;
+                try
+                {
+                    yield return first.Key.Value;
 
-                active.Remove(first.Key);
-                if (first.Value.MoveNext())
-                    active.Add(new(first.Value.Current, uniqueIdx++), first.Value);
-                else
-                    first.Value.Dispose();
+                    if (first.Value.MoveNext())
+                    {
+                        active.Add(new(first.Value.Current, first.Key.Idx), first.Value);
+                        disposeFinally = null;
+                    }
+                }
+                finally
+                {
+                    disposeFinally?.Dispose();
+                }
             }
         }
         finally
@@ -377,21 +392,22 @@ internal static class CollectionHelpers
             foreach (var enumerator in active.Values)
                 enumerator.Dispose();
 
-            pending?.Dispose();
+            pending?.it.Dispose();
         }
 
-        IEnumerator<T>? NextNonEmpty()
+        IEnumerable<(IEnumerator<T> it, long idx)> GetNonEmptyEnumerators()
         {
-            while (outer.MoveNext())
+            long idx = 0;
+            foreach (var sequence in sequences)
             {
-                var enumerator = outer.Current?.GetEnumerator();
+                var enumerator = sequence?.GetEnumerator();
                 if (enumerator?.MoveNext() == true)
-                    return enumerator;
-
-                enumerator?.Dispose();
+                    yield return (enumerator, idx++);
+                else
+                    enumerator?.Dispose();
             }
-
-            return null;
         }
+
+        (IEnumerator<T> it, long idx)? NextNonEmpty() => outer.MoveNext() ? outer.Current : null;
     }
 }
