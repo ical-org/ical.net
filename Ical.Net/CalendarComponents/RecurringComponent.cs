@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Proxies;
+using Ical.Net.Utility;
 using NodaTime;
 
 namespace Ical.Net.CalendarComponents;
@@ -209,8 +210,72 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
         return RecurrenceUtil.GetOccurrences(this, timeZone, startTime, options);
     }
 
-    public virtual IList<AlarmOccurrence> PollAlarms(DateTimeZone timeZone) => PollAlarms(timeZone, null, null);
+    /// <summary>
+    /// Gets a streaming sequence of <see cref="AlarmOccurrence"/>s for all <see cref="Alarms"/>
+    /// on this component, with fire times in the range [<paramref name="startTime"/>, <paramref name="endTime"/>).
+    /// </summary>
+    /// <param name="timeZone">The time zone used to evaluate component occurrences.</param>
+    /// <param name="startTime">Lower bound (inclusive) on alarm fire times, or <c>null</c> for no lower bound.</param>
+    /// <param name="endTime">Upper bound (exclusive) on alarm fire times, or <c>null</c> for no upper bound.</param>
+    /// <remarks>
+    /// Component occurrences are evaluated once and shared across all alarms.
+    /// When <paramref name="endTime"/> is <c>null</c> and the component has an unbounded recurrence rule,
+    /// evaluation will continue indefinitely; callers must apply their own termination condition.
+    /// </remarks>
+    public virtual IEnumerable<AlarmOccurrence> GetAlarmOccurrences(DateTimeZone timeZone, Instant? startTime = null, Instant? endTime = null, EvaluationOptions? options = null)
+    {
+        if (!Alarms.Any()) return [];
 
-    public virtual IList<AlarmOccurrence> PollAlarms(DateTimeZone timeZone, Instant? startTime, Instant? endTime)
-        => Alarms.SelectMany(a => a.Poll(timeZone, startTime).TakeWhile(p => (endTime == null) || (p.Start.ToInstant() < endTime))).ToList();
+        var rawOccurrences = GetOccurrences(timeZone, startTime, options);
+        // materialize the component occurrences once and share the list across all alarms
+        var occurrences = endTime == null
+            ? rawOccurrences.ToList()
+            : rawOccurrences.TakeWhile(o => o.Start.ToInstant() <= endTime).ToList();
+
+        return Alarms
+            .Select(a => GetAlarmOccurrenceStream(a, occurrences))
+            .OrderedMergeMany()
+            .SkipWhile(ao => startTime != null && ao.Start.ToInstant() < startTime)
+            .TakeWhile(ao => endTime == null || ao.Start.ToInstant() < endTime);
+    }
+
+    private IEnumerable<AlarmOccurrence> GetAlarmOccurrenceStream(Alarm alarm, IList<Occurrence> occurrences)
+    {
+        if (alarm.Trigger == null) return [];
+
+        if (alarm.Trigger.IsRelative)
+        {
+            var period = alarm.Trigger.Duration!.Value.ToPeriod();
+
+            if (string.Equals(alarm.Trigger.Related, TriggerRelation.End, TriggerRelation.Comparison))
+            {
+                // Occurrences are ordered by start, but END-relative fire times may not follow the same
+                // order when occurrence durations differ (e.g. PERIOD RDATEs). Sort explicitly.
+                // This is safe because occurrences is always a materialized list.
+                return occurrences
+                    .SelectMany(o =>
+                    {
+                        var baseFireTime = o.End.LocalDateTime.Plus(period).InZoneLeniently(o.End.Zone);
+                        return alarm.GetFireTimes(baseFireTime)
+                            .Select(ft => new AlarmOccurrence(alarm, ft, this));
+                    })
+                    .OrderBy(ao => ao.Start.ToInstant());
+            }
+
+            return occurrences
+                .Select(o =>
+                {
+                    var baseFireTime = o.Start.LocalDateTime.Plus(period).InZoneLeniently(o.Start.Zone);
+                    return alarm.GetFireTimes(baseFireTime)
+                        .Select(ft => new AlarmOccurrence(alarm, ft, this));
+                })
+                .OrderedNestedMergeMany();
+        }
+
+        // else the trigger is absolute, so we ignore the component occurrences
+        var dt = alarm.Trigger.DateTime?.ToZonedDateTime();
+        if (dt == null) return [];
+        return alarm.GetFireTimes(dt.Value)
+            .Select(ft => new AlarmOccurrence(alarm, ft, this));
+    }
 }
