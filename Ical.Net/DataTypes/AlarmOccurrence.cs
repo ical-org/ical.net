@@ -1,8 +1,9 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
+using System;
 using Ical.Net.CalendarComponents;
 using NodaTime;
 
@@ -16,7 +17,7 @@ namespace Ical.Net.DataTypes;
 /// the alarm occurs, the <see cref="Alarm"/> that fired, and the
 /// component on which the alarm fired.
 /// </remarks>
-public class AlarmOccurrence
+public class AlarmOccurrence : IComparable<AlarmOccurrence>
 {
     public ZonedDateTime Start { get; private set; }
 
@@ -36,5 +37,11 @@ public class AlarmOccurrence
         Alarm = a;
         Start = start;
         Component = rc;
+    }
+
+    public int CompareTo(AlarmOccurrence? other)
+    {
+        if (other is null) return 1;
+        return Start.ToInstant().CompareTo(other.Start.ToInstant());
     }
 }
