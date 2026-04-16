@@ -311,6 +311,37 @@ public class AlarmTests
     }
 
     [Test]
+    public void RecurringAlarm_RelatedEnd_Indefinite()
+    {
+        CalendarEvent e = new()
+        {
+            Start = new CalDateTime(2026, 4, 7, 9, 0, 0, CalDateTime.UtcTzId),
+            Duration = new Duration(hours: 1),
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Daily)
+        };
+
+        e.Alarms.Add(new Alarm
+        {
+            Trigger = new Trigger(new Duration(minutes: -30))
+            {
+                Related = TriggerRelation.End
+            }
+        });
+
+        var results = e.GetAlarmOccurrences(DateTimeZone.Utc)
+            .Select(x => x.Start.ToInstant())
+            .Take(3)
+            .ToList();
+
+        Assert.That(results, Is.EqualTo(new[]
+        {
+            Instant.FromUtc(2026, 4,  7, 9, 30, 0),
+            Instant.FromUtc(2026, 4, 14, 9, 30, 0),
+            Instant.FromUtc(2026, 4, 21, 9, 30, 0),
+        }));
+    }
+
+    [Test]
     public void AlarmWithRepeatButNoDuration_ShouldNotProduceDuplicates()
     {
         // RFC 5545 §3.8.6.2: REPEAT and DURATION must appear together.
