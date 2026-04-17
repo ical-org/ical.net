@@ -3,10 +3,13 @@
 // Licensed under the MIT license.
 //
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using NodaTime;
 using NUnit.Framework;
@@ -446,6 +449,142 @@ public class AlarmTests
             Instant.FromUtc(2026, 4,  7, 7, 0, 0),
             Instant.FromUtc(2026, 4, 10, 7, 0, 0),
         }));
+    }
+
+    [Test]
+    public void AbsoluteTrigger_RecurringEventWithoutEnd_ProducesSingleAlarm()
+    {
+        CalendarEvent e = new()
+        {
+            Start = new CalDateTime(2026, 4, 7, 9, 0, 0, "UTC"),
+            RecurrenceRule = new(FrequencyType.Weekly)
+        };
+
+        e.Alarms.Add(new Alarm
+        {
+            Trigger = new Trigger()
+            {
+                DateTime = new CalDateTime(2026, 4, 6, 9, 0, 0, "UTC")
+            }
+        });
+
+        var results = e.GetAlarmOccurrences(
+                DateTimeZone.Utc,
+                Instant.FromUtc(2026, 4, 5, 9, 0),
+                Instant.FromUtc(2026, 5, 5, 9, 0))
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        var expectedAlarms = new[]
+        {
+            Instant.FromUtc(2026, 4, 6, 9, 0)
+        };
+
+        Assert.That(results, Is.EquivalentTo(expectedAlarms));
+    }
+
+    [Test]
+    public void AbsoluteTrigger_RecurringEventWithoutEnd_IsEmptyAfterTriggerDate()
+    {
+        CalendarEvent e = new()
+        {
+            Start = new CalDateTime(2026, 4, 7, 9, 0, 0, "UTC"),
+            RecurrenceRule = new(FrequencyType.Weekly)
+        };
+
+        e.Alarms.Add(new Alarm
+        {
+            Trigger = new Trigger()
+            {
+                DateTime = new CalDateTime(2026, 4, 6, 9, 0, 0, "UTC")
+            }
+        });
+
+        var results = e.GetAlarmOccurrences(
+                DateTimeZone.Utc,
+                Instant.FromUtc(2026, 4, 7, 9, 0),
+                Instant.FromUtc(2026, 4, 8, 9, 0))
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        Assert.That(results, Is.Empty);
+    }
+
+    [Test]
+    public void MultipleRelativeAlarmsWithRecurringEvent()
+    {
+        CalendarEvent e = new()
+        {
+            Start = new CalDateTime(2026, 4, 7),
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Daily, 2)
+        };
+
+        e.Alarms.Add(new Alarm
+        {
+            Trigger = new Trigger(new Duration(days: -1))
+        });
+
+        e.Alarms.Add(new Alarm
+        {
+            Trigger = new Trigger(new Duration(days: 2))
+        });
+
+        var results = e.GetAlarmOccurrences(
+                DateTimeZone.Utc,
+                Instant.FromUtc(2026, 4, 7, 0, 0),
+                Instant.FromUtc(2026, 4, 12, 0, 0))
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        var expectedAlarms = new[]
+        {
+            Instant.FromUtc(2026, 4, 8, 0, 0),
+            Instant.FromUtc(2026, 4, 9, 0, 0),
+            Instant.FromUtc(2026, 4, 10, 0, 0),
+            Instant.FromUtc(2026, 4, 11, 0, 0),
+        };
+
+        Assert.That(results, Is.EquivalentTo(expectedAlarms));
+    }
+
+    [Test]
+    public void RelativeAndAbsoluteAlarmsWithRecurringEvent()
+    {
+        CalendarEvent e = new()
+        {
+            Start = new CalDateTime(2026, 4, 7, 9, 0, 0, "UTC"),
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Weekly)
+        };
+
+        e.Alarms.Add(new Alarm
+        {
+            Trigger = new Trigger(new Duration(days: -1))
+        });
+
+        e.Alarms.Add(new Alarm
+        {
+            Trigger = new Trigger()
+            {
+                DateTime = new CalDateTime(2026, 4, 15, 9, 0, 0, "UTC")
+            }
+        });
+
+        var results = e.GetAlarmOccurrences(
+                DateTimeZone.Utc,
+                Instant.FromUtc(2026, 4, 6, 9, 0),
+                Instant.FromUtc(2026, 4, 21, 9, 0))
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        var expectedAlarms = new[]
+        {
+            Instant.FromUtc(2026, 4, 6, 9, 0),
+            Instant.FromUtc(2026, 4, 13, 9, 0),
+            Instant.FromUtc(2026, 4, 15, 9, 0),
+            Instant.FromUtc(2026, 4, 20, 9, 0),
+        };
+
+        Assert.That(results, Is.EquivalentTo(expectedAlarms));
     }
 
     #endregion
