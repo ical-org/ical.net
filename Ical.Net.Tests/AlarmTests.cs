@@ -320,7 +320,7 @@ public class AlarmTests
         {
             Start = new CalDateTime(2026, 4, 7, 9, 0, 0, CalDateTime.UtcTzId),
             Duration = new Duration(hours: 1),
-            RecurrenceRule = new RecurrenceRule(FrequencyType.Daily)
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Weekly)
         };
 
         e.Alarms.Add(new Alarm
