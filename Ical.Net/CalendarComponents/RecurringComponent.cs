@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
@@ -224,58 +225,135 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
     /// </remarks>
     public virtual IEnumerable<AlarmOccurrence> GetAlarmOccurrences(DateTimeZone timeZone, Instant? startTime = null, Instant? endTime = null, EvaluationOptions? options = null)
     {
-        if (!Alarms.Any()) return [];
-
-        var rawOccurrences = GetOccurrences(timeZone, startTime, options);
-        // materialize the component occurrences once and share the list across all alarms
-        var occurrences = endTime == null
-            ? rawOccurrences.ToList()
-            : rawOccurrences.TakeWhile(o => o.Start.ToInstant() <= endTime).ToList();
-
-        return Alarms
-            .Select(a => GetAlarmOccurrenceStream(a, occurrences))
-            .OrderedMergeMany()
-            .SkipWhile(ao => startTime != null && ao.Start.ToInstant() < startTime)
-            .TakeWhile(ao => endTime == null || ao.Start.ToInstant() < endTime);
-    }
-
-    private IEnumerable<AlarmOccurrence> GetAlarmOccurrenceStream(Alarm alarm, IList<Occurrence> occurrences)
-    {
-        if (alarm.Trigger == null) return [];
-
-        if (alarm.Trigger.IsRelative)
+        if (Alarms.Count == 0)
         {
-            var period = alarm.Trigger.Duration!.Value.ToPeriod();
-
-            if (string.Equals(alarm.Trigger.Related, TriggerRelation.End, TriggerRelation.Comparison))
-            {
-                // Occurrences are ordered by start, but END-relative fire times may not follow the same
-                // order when occurrence durations differ (e.g. PERIOD RDATEs). Sort explicitly.
-                // This is safe because occurrences is always a materialized list.
-                return occurrences
-                    .SelectMany(o =>
-                    {
-                        var baseFireTime = o.End.LocalDateTime.Plus(period).InZoneLeniently(o.End.Zone);
-                        return alarm.GetFireTimes(baseFireTime)
-                            .Select(ft => new AlarmOccurrence(alarm, ft, this));
-                    })
-                    .OrderBy(ao => ao.Start.ToInstant());
-            }
-
-            return occurrences
-                .Select(o =>
-                {
-                    var baseFireTime = o.Start.LocalDateTime.Plus(period).InZoneLeniently(o.Start.Zone);
-                    return alarm.GetFireTimes(baseFireTime)
-                        .Select(ft => new AlarmOccurrence(alarm, ft, this));
-                })
-                .OrderedNestedMergeMany();
+            yield break;
         }
 
-        // else the trigger is absolute, so we ignore the component occurrences
-        var dt = alarm.Trigger.DateTime?.ToZonedDateTime();
-        if (dt == null) return [];
-        return alarm.GetFireTimes(dt.Value)
-            .Select(ft => new AlarmOccurrence(alarm, ft, this));
+        // Handle absolute and relative alarms separately because
+        // absolute alarms do not require event evaluation.
+        var absoluteAlarms = new List<Alarm>();
+        var relativeAlarms = new List<Alarm>();
+
+        foreach (var alarm in Alarms)
+        {
+            if (alarm.Trigger == null)
+            {
+                continue;
+            }
+
+            if (alarm.Trigger.DateTime != null)
+            {
+                absoluteAlarms.Add(alarm);
+            }
+            else if (alarm.Trigger.Duration != null)
+            {
+                relativeAlarms.Add(alarm);
+            }
+        }
+
+        // If all alarms are invalid then quit
+        if (absoluteAlarms.Count == 0 && relativeAlarms.Count == 0)
+        {
+            yield break;
+        }
+
+        // Generate all absolute alarm occurrences
+        var absoluteOccurrences = new List<AlarmOccurrence>();
+        foreach (var alarm in absoluteAlarms)
+        {
+            var baseFireTime = alarm.Trigger!.DateTime!.ToZonedDateTime();
+
+            foreach (var start in alarm.GetFireTimes(baseFireTime))
+            {
+                var alarmStart = start.ToInstant();
+
+                if ((startTime == null || startTime <= alarmStart)
+                    && (endTime == null || endTime > alarmStart))
+                {
+                    absoluteOccurrences.Add(new AlarmOccurrence(alarm, start, this));
+                }
+            }
+        }
+
+        absoluteOccurrences.Sort();
+
+        // If there are no relative alarms, yield all absolute alarms and quit
+        if (relativeAlarms.Count == 0)
+        {
+            foreach (var alarm in absoluteOccurrences)
+            {
+                yield return alarm;
+            }
+
+            yield break;
+        }
+
+        // Queue absolute alarms so they can be merged with relative alarms
+        var alarmQueue = new Queue<AlarmOccurrence>(absoluteOccurrences);
+
+        foreach (var occurrence in GetOccurrences(timeZone, startTime, options))
+        {
+            var alarms = relativeAlarms
+                .SelectMany(alarm => GetRelativeAlarmStart(alarm, occurrence)
+                    .Where(start =>
+                    {
+                        var alarmStart = start.ToInstant();
+
+                        return (startTime == null || startTime <= alarmStart)
+                            && (endTime == null || endTime > alarmStart); 
+                    })
+                    .Select(start => new AlarmOccurrence(alarm, start, this)))
+                .ToList();
+
+            // If there are no more alarms, then there is nothing more to merge
+            if (alarms.Count == 0)
+            {
+                break;
+            }
+
+            // Output alarm times until the next set of alarms starts overlapping
+            while (alarmQueue.Count > 0 && alarmQueue.Peek().CompareTo(alarms[0]) <= 0)
+            {
+                yield return alarmQueue.Dequeue();
+            }
+
+            // Queue the next set of alarms, merging with queue if needed
+            if (alarmQueue.Count == 0)
+            {
+                foreach (var alarm in alarms)
+                {
+                    alarmQueue.Enqueue(alarm);
+                }
+            }
+            else
+            {
+                alarmQueue = new(alarmQueue.OrderedMerge(alarms));
+            }
+        }
+
+        // Output the remaining alarm occurrences
+        while (alarmQueue.Count > 0)
+        {
+            yield return alarmQueue.Dequeue();
+        }
+    }
+
+    private static IEnumerable<ZonedDateTime> GetRelativeAlarmStart(Alarm alarm, Occurrence occurrence)
+    {
+        Debug.Assert(alarm.Trigger != null);
+        Debug.Assert(alarm.Trigger.Duration != null);
+
+        var duration = alarm.Trigger.Duration!.Value;
+
+        var relatedTime = string.Equals(alarm.Trigger.Related, TriggerRelation.End, TriggerRelation.Comparison)
+            ? occurrence.End : occurrence.Start;
+
+        var triggerTime = relatedTime.LocalDateTime
+            .Plus(duration.GetNominalPart())
+            .InZoneLeniently(relatedTime.Zone)
+            .Plus(duration.GetTimePart());
+
+        return alarm.GetFireTimes(triggerTime);
     }
 }
