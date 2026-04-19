@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -17,7 +17,7 @@ internal class CollectionHelpersTests
     private static readonly DateTime _now = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
 
     private static List<PeriodList> GetExceptionDates()
-        => new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now.AddDays(1).Date)) } };
+        => new List<PeriodList> { new PeriodList { new Period(CalDateTime.FromDateTime(_now.AddDays(1).Date)) } };
 
     [Test]
     public void ExDateTests()
@@ -29,7 +29,7 @@ internal class CollectionHelpersTests
         }
 
         var changedPeriod = GetExceptionDates();
-        changedPeriod[0][0] = new Period(new CalDateTime(_now.AddHours(-1)), changedPeriod[0][0].EndTime);
+        changedPeriod[0][0] = new Period(CalDateTime.FromDateTime(_now.AddHours(-1)), changedPeriod[0][0].EndTime);
 
         Assert.That(changedPeriod, Is.Not.EqualTo(GetExceptionDates()));
     }

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -40,8 +40,8 @@ public class CalendarPropertiesTest
         var end = start.AddHours(1);
         var @event = new CalendarEvent
         {
-            Start = new CalDateTime(start),
-            End = new CalDateTime(end),
+            Start = CalDateTime.FromDateTime(start),
+            End = CalDateTime.FromDateTime(end),
             Description = "This is a description",
         };
         var property = new CalendarProperty("X-ALT-DESC", propValue);

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -17,8 +17,8 @@ public class CalDateTimePerfTests
     public CalDateTime EmptyTzid() => CalDateTime.Now;
 
     [Benchmark]
-    public CalDateTime SpecifiedTzid() => new CalDateTime(DateTime.Now, _aTzid);
+    public CalDateTime SpecifiedTzid() => CalDateTime.FromDateTime(DateTime.Now, _aTzid);
 
     [Benchmark]
-    public CalDateTime UtcDateTime() => new CalDateTime(DateTime.UtcNow);
+    public CalDateTime UtcDateTime() => CalDateTime.FromDateTime(DateTime.UtcNow);
 }

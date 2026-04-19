@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -80,8 +80,8 @@ public class SerializationPerfTests
         var simpleCalendar = new Calendar();
         var calendarEvent = new CalendarEvent
         {
-            Start = new CalDateTime(DateTime.Now, timeZoneId),
-            End = new CalDateTime(DateTime.Now + TimeSpan.FromHours(1), timeZoneId),
+            Start = CalDateTime.FromDateTime(DateTime.Now, timeZoneId),
+            End = CalDateTime.FromDateTime(DateTime.Now + TimeSpan.FromHours(1), timeZoneId),
             RecurrenceRule = new(FrequencyType.Daily, 1)
             {
                 Count = 100,
