@@ -167,7 +167,10 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         => obj is CalDateTime other && this == other;
 
     /// <inheritdoc/>
-    public override int GetHashCode() => HashCode.Combine(_localDate, _localTime, _tzId);
+    public override int GetHashCode() => HashCode.Combine(
+        _localDate,
+        _localTime,
+        _tzId == null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(_tzId));
 
     public static bool operator ==(CalDateTime? left, CalDateTime? right)
     {
