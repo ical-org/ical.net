@@ -20,18 +20,18 @@ public class CalDateTimeTests
     {
         var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00", CultureInfo.InvariantCulture);
 
-        var someDt = new CalDateTime(someTime.DateTime, "America/New_York");
+        var someDt = CalDateTime.FromDateTime(someTime.DateTime, "America/New_York");
         var firstUtc = someDt.ToZonedDateTime().ToDateTimeOffset();
         Assert.That(firstUtc, Is.EqualTo(someTime));
 
-        someDt = new CalDateTime(someTime.DateTime, "Europe/Berlin");
+        someDt = CalDateTime.FromDateTime(someTime.DateTime, "Europe/Berlin");
         var berlinUtc = someDt.ToZonedDateTime().ToDateTimeOffset();
         Assert.That(berlinUtc, Is.Not.EqualTo(firstUtc));
     }
 
     [Test, TestCaseSource(nameof(DateTimeKindOverrideTestCases)), Description("DateTimeKind of values is always DateTimeKind.Unspecified")]
     public DateTimeKind DateTimeKindOverrideTests(DateTime dateTime, string tzId)
-        => new CalDateTime(dateTime, tzId).ToDateTimeUnspecified().Kind;
+        => CalDateTime.FromDateTime(dateTime, tzId).ToDateTimeUnspecified().Kind;
 
     private static IEnumerable DateTimeKindOverrideTestCases()
     {
@@ -152,7 +152,7 @@ public class CalDateTimeTests
         // A collection of tests that are not covered elsewhere
 
         var dt = new DateTime(2025, 1, 2, 10, 20, 30, DateTimeKind.Utc);
-        var c = new CalDateTime(dt, tzId: "Europe/Berlin");
+        var c = CalDateTime.FromDateTime(dt, tzId: "Europe/Berlin");
 
         var c2 = new CalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, c.TzId);
         var c3 = new CalDateTime(new NodaTime.LocalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second), c.TzId);
@@ -183,7 +183,7 @@ public class CalDateTimeTests
     {
         var dt = new DateTime(2024, 12, 30, 10, 44, 50, kind);
 
-        Assert.That(() => new CalDateTime(dt), constraint);
+        Assert.That(() => CalDateTime.FromDateTime(dt), constraint);
     }
 
     [TestCase("20250703T060000Z", null)]
