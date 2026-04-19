@@ -270,8 +270,8 @@ public class OccurencePerfTests
             {
                 var e = new CalendarEvent
                 {
-                    Start = new CalDateTime(startTime.AddMinutes(5), tzid),
-                    End = new CalDateTime(startTime.AddMinutes(10), tzid),
+                    Start = CalDateTime.FromDateTime(startTime.AddMinutes(5), tzid),
+                    End = CalDateTime.FromDateTime(startTime.AddMinutes(10), tzid),
                     RecurrenceRule = new(FrequencyType.Daily, 1)
                     {
                         Count = 100,

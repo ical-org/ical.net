@@ -39,7 +39,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// Creates a <see cref="CalDateTime"/>
     /// with the current local date/time and no time zone.
     /// </summary>
-    public static CalDateTime Now => new(DateTime.Now);
+    public static CalDateTime Now => FromDateTime(DateTime.Now);
 
     /// <summary>
     /// Creates a <see cref="CalDateTime"/>
@@ -51,7 +51,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// Creates a <see cref="CalDateTime"/>
     /// with the current date/time in the UTC time zone.
     /// </summary>
-    public static CalDateTime UtcNow => new(DateTime.UtcNow);
+    public static CalDateTime UtcNow => FromDateTime(DateTime.UtcNow);
 
     /// <summary>
     /// This constructor is required for the SerializerFactory to work.
@@ -61,24 +61,6 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     {
         // required for the SerializerFactory to work
     }
-
-    /// <summary>
-    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
-    /// with an optional time zone.
-    /// <para/>
-    /// Time zone will be UTC if <paramref name="tzId"/> is <see langword="null"/> and
-    /// <paramref name="value"/> kind is <see cref="DateTimeKind.Utc"/>.
-    /// </summary>
-    /// <param name="value">The value to copy the local date and time from.</param>
-    /// <param name="tzId">The time zone ID.</param>
-    public CalDateTime(DateTime value, string? tzId = null) : this(
-        LocalDateTime.FromDateTime(value),
-        tzId ?? value.Kind switch
-        {
-            DateTimeKind.Utc => UtcTzId,
-            _ => null
-        })
-    { }
 
     /// <summary>
     /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
@@ -312,6 +294,26 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// </summary>
     public TimeOnly? ToTimeOnly() => _localTime?.ToTimeOnly();
 #endif
+
+    /// <summary>
+    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// with an optional time zone.
+    /// <para/>
+    /// Time zone will be UTC if <paramref name="tzId"/> is <see langword="null"/> and
+    /// <paramref name="value"/> kind is <see cref="DateTimeKind.Utc"/>.
+    /// </summary>
+    /// <param name="value">The value to copy the local date and time from.</param>
+    /// <param name="tzId">The time zone ID.</param>
+    public static CalDateTime FromDateTime(DateTime value, string? tzId = null)
+    {
+        tzId ??= value.Kind switch
+        {
+            DateTimeKind.Utc => UtcTzId,
+            _ => null
+        };
+
+        return new CalDateTime(LocalDateTime.FromDateTime(value), tzId);
+    }
 
     /// <summary>
     /// Creates a <see cref="CalDateTime"/> representing a DATE value.

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -28,9 +28,9 @@ public class SymmetricSerializationTests
     private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c)!;
     private static CalendarEvent GetSimpleEvent(bool useDtEnd = true)
     {
-        var evt = new CalendarEvent { DtStart = new CalDateTime(_nowTime) };
+        var evt = new CalendarEvent { DtStart = CalDateTime.FromDateTime(_nowTime) };
         if (useDtEnd)
-            evt.DtEnd = new CalDateTime(_later);
+            evt.DtEnd = CalDateTime.FromDateTime(_later);
         else
             evt.Duration = Duration.FromTimeSpanExact(_later - _nowTime);
 

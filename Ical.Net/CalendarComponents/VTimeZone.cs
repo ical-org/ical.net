@@ -191,7 +191,7 @@ public class VTimeZone : CalendarComponent
         timeZoneInfo.TimeZoneName = oldestInterval.Name;
 
         var start = oldestInterval.IsoLocalStart.ToDateTimeUnspecified() + delta;
-        timeZoneInfo.Start = new CalDateTime(start);
+        timeZoneInfo.Start = CalDateTime.FromDateTime(start);
 
         if (isRRule)
         {

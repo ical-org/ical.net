@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -165,7 +165,7 @@ public class CalendarEventTest
         var explicitDtStampCalendar = new Calendar();
         var explicitDtStampEvent = new CalendarEvent
         {
-            DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc))
+            DtStamp = CalDateTime.FromDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc))
         };
         explicitDtStampCalendar.Events.Add(explicitDtStampEvent);
         yield return new TestCaseData(serializer.SerializeToString(explicitDtStampCalendar))
@@ -175,8 +175,8 @@ public class CalendarEventTest
 
     private static CalendarEvent GetSimpleEvent() => new CalendarEvent
     {
-        DtStart = new CalDateTime(_now),
-        DtEnd = new CalDateTime(_later),
+        DtStart = CalDateTime.FromDateTime(_now),
+        DtEnd = CalDateTime.FromDateTime(_later),
         Uid = _uid,
     };
 
