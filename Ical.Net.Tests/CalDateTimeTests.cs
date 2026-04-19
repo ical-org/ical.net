@@ -8,6 +8,7 @@ using System.Collections;
 using System.Globalization;
 using System.Linq;
 using Ical.Net.DataTypes;
+using NodaTime;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
@@ -204,4 +205,105 @@ public class CalDateTimeTests
     [Test]
     public void ConstructorWithIso8601UtcString_ButDifferentTzId_ShouldThrow()
         => Assert.That(() => _ = new CalDateTime("20250703T060000Z", "CEST"), Throws.ArgumentException);
+
+    [Test]
+    public void ThrowsWhenDateYearIsInvalid()
+    {
+        var d = new LocalDate(0, 1, 1);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+        {
+            new CalDateTime(d);
+        });
+    }
+
+    [Test]
+    public void ThrowsWhenStringValueIsInvalid()
+    {
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            new CalDateTime("invalid");
+        });
+    }
+
+#if NET6_0_OR_GREATER
+    [Test]
+    public void ConvertsToAndFromDateOnly()
+    {
+        var d = new DateOnly(2026, 4, 19);
+        var c = CalDateTime.FromDateOnly(d);
+
+        Assert.That(c.ToDateOnly(), Is.EqualTo(d));
+    }
+
+    [Test]
+    public void ConvertsToAndFromTimeOnly()
+    {
+        var t = new TimeOnly(6, 30, 2);
+        var d = new DateOnly(2026, 4, 19).ToDateTime(t);
+
+        var c = CalDateTime.FromDateTime(d);
+
+        Assert.That(c.ToTimeOnly(), Is.EqualTo(t));
+    }
+
+    [Test]
+    public void TimeOnlyIsNullForDateValues()
+    {
+        var d = new DateOnly(2026, 4, 19);
+        var c = CalDateTime.FromDateOnly(d);
+
+        Assert.That(c.ToTimeOnly(), Is.Null);
+    }
+#endif
+
+    [Test]
+    public void ThrowsWhenConvertingToZonedDateTimeWithoutTimeZone()
+    {
+        var c = new CalDateTime(2026, 4, 19, 5, 0, 0);
+
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            c.ToZonedDateTime();
+        });
+    }
+
+    [Test]
+    public void DayOfWeekIsCorrect()
+    {
+        var c = new CalDateTime(2026, 4, 19, 5, 0, 0);
+        Assert.That(c.DayOfWeek, Is.EqualTo(DayOfWeek.Sunday));
+    }
+
+    [Test]
+    public void TimeValuesAreZeroForDateValues()
+    {
+        var c = new CalDateTime(2026, 4, 19);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(c.Hour, Is.Zero);
+            Assert.That(c.Minute, Is.Zero);
+            Assert.That(c.Second, Is.Zero);
+        }
+    }
+
+    [Test]
+    public void OtherTypeIsNotEqual()
+    {
+        var d = new CalDateTime(2026, 4, 19);
+
+        var isEqual = Equals(d, new DateTime(2026, 4, 19));
+
+        Assert.That(isEqual, Is.False);
+    }
+
+    [Test]
+    public void DateValueDoesNotEqualDateTimeAtMidnight()
+    {
+        var a = new CalDateTime(2026, 4, 19, 0, 0, 0);
+        var b = new CalDateTime(2026, 4, 19);
+
+        Assert.That(a, Is.Not.EqualTo(b));
+    }
 }
