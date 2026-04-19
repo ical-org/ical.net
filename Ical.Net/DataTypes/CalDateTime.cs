@@ -279,7 +279,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
 #if NET6_0_OR_GREATER
 
     /// <summary>
-    /// Creates a <see cref="CalDateTime"/> representing a DATE value.
+    /// Converts a <see cref="DateOnly"/> to a <see cref="CalDateTime"/> representing a DATE value.
     /// </summary>
     /// <param name="date">The local date.</param>
     public static CalDateTime FromDateOnly(DateOnly date) => new(date.ToLocalDate());
@@ -296,8 +296,8 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
 #endif
 
     /// <summary>
-    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
-    /// with an optional time zone.
+    /// Converts a <see cref="DateTime"/> of any kind to a <see cref="CalDateTime"/>
+    /// representing a DATE-TIME value with an optional time zone.
     /// <para/>
     /// Time zone will be UTC if <paramref name="tzId"/> is <see langword="null"/> and
     /// <paramref name="value"/> kind is <see cref="DateTimeKind.Utc"/>.
@@ -316,7 +316,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     }
 
     /// <summary>
-    /// Creates a <see cref="CalDateTime"/> representing a DATE value.
+    /// Converts a <see cref="DateTime"/> of any kind to a <see cref="CalDateTime"/> representing a DATE value.
     /// </summary>
     /// <param name="value">The value to copy the local date from.</param>
     /// <returns>A new <see cref="CalDateTime"/> with same date as the specified <see cref="DateTime"/>.</returns>
@@ -351,7 +351,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         => _localDate.At(_localTime ?? LocalTime.Midnight);
 
     /// <summary>
-    /// Creates a <see cref="CalDateTime"/> representing a DATE-TIME value
+    /// Converts a <see cref="ZonedDateTime"/> to a <see cref="CalDateTime"/> representing a DATE-TIME value
     /// with a time zone.
     /// <para/>
     /// The time zone offset from the <see cref="ZonedDateTime"/> is ignored,
@@ -367,7 +367,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// Values without a time zone will throw an <see cref="InvalidOperationException"/>.
     /// Use <see cref="ToZonedOrDefault(DateTimeZone)"/> to handle floating values.
     /// <para/>
-    /// If the local date and time is ambiguous due to the time zone, it will be resolved using <see cref="NodaTime.TimeZones.Resolvers.LenientResolver"/>.
+    /// Ambiguous local time will return the earlier time and skipped local time will be shifted foward.
     /// </summary>
     /// <returns>A zoned date time representing this value as close as possible.</returns>
     /// <exception cref="InvalidOperationException">Time zone is null</exception>
@@ -387,7 +387,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// DATE values will default to <see cref="LocalTime.Midnight"/>.
     /// <para/>
     /// Values without a time zone will be treated as being in the specified time zone.
-    /// If the local date and time is ambiguous due to the time zone, it will be resolved using <see cref="NodaTime.TimeZones.Resolvers.LenientResolver"/>.
+    /// Ambiguous local time will return the earlier time and skipped local time will be shifted foward.
     /// </summary>
     /// <param name="defaultZone">The time zone to use if this value has no time zone.</param>
     /// <returns>A zoned date time representing this value in its own time zone or the specified time zone.</returns>
