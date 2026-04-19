@@ -178,8 +178,6 @@ public class CalDateTimeTests
         ];
 
     [Test, TestCaseSource(nameof(CalDateTime_FromDateTime_HandlesKindCorrectlyTestCases))]
-
-
     public void CalDateTime_FromDateTime_HandlesKindCorrectly(DateTimeKind kind, IResolveConstraint constraint)
     {
         var dt = new DateTime(2024, 12, 30, 10, 44, 50, kind);
@@ -305,5 +303,18 @@ public class CalDateTimeTests
         var b = new CalDateTime(2026, 4, 19);
 
         Assert.That(a, Is.Not.EqualTo(b));
+    }
+
+    [Test]
+    public void CaseInsensitiveTzIdHasSameHashCode()
+    {
+        var a = new CalDateTime(2026, 4, 19, 3, 0, 0, "Utc");
+        var b = new CalDateTime(2026, 4, 19, 3, 0, 0, "UTC");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(a, Is.EqualTo(b));
+            Assert.That(a.GetHashCode(), Is.EqualTo(b.GetHashCode()));
+        }
     }
 }
