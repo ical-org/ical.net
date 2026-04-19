@@ -45,7 +45,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// Creates a <see cref="CalDateTime"/>
     /// with the current local date and no time or time zone.
     /// </summary>
-    public static CalDateTime Today => FromDateTimeDate(DateTime.Today);
+    public static CalDateTime Today => FromDateTimeDate(DateTime.Now);
 
     /// <summary>
     /// Creates a <see cref="CalDateTime"/>
