@@ -245,21 +245,6 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     public int Day => _localDate.Day;
 
     /// <summary>
-    /// Gets the hour. Defaults to 0 for DATE values.
-    /// </summary>
-    public int Hour => _localTime?.Hour ?? 0;
-
-    /// <summary>
-    /// Gets the minute. Defaults to 0 for DATE values.
-    /// </summary>
-    public int Minute => _localTime?.Minute ?? 0;
-
-    /// <summary>
-    /// Gets the second. Defaults to 0 for DATE values.
-    /// </summary>
-    public int Second => _localTime?.Second ?? 0;
-
-    /// <summary>
     /// Gets the DayOfWeek.
     /// </summary>
     public DayOfWeek DayOfWeek => _localDate.DayOfWeek.ToDayOfWeek();

@@ -274,19 +274,6 @@ public class CalDateTimeTests
     }
 
     [Test]
-    public void TimeValuesAreZeroForDateValues()
-    {
-        var c = new CalDateTime(2026, 4, 19);
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(c.Hour, Is.Zero);
-            Assert.That(c.Minute, Is.Zero);
-            Assert.That(c.Second, Is.Zero);
-        }
-    }
-
-    [Test]
     public void OtherTypeIsNotEqual()
     {
         var d = new CalDateTime(2026, 4, 19);
