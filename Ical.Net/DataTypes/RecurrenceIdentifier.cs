@@ -1,9 +1,10 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
 using System;
+using NodaTime;
 
 namespace Ical.Net.DataTypes;
 
@@ -52,7 +53,7 @@ public class RecurrenceIdentifier : IComparable<RecurrenceIdentifier>
     /// </summary>
     /// <remarks>
     /// The comparison is performed first by the <see cref="StartTime"/> property. If the <see
-    /// cref="StartTime"/> values  are equal, the <see cref="Range"/> property is used as a tiebreaker.
+    /// cref="StartTime"/> values are equal, the <see cref="Range"/> property is used as a tiebreaker.
     /// </remarks>
     /// <param name="other">
     /// The <see cref="RecurrenceIdentifier"/> to compare with the current instance.
@@ -65,7 +66,9 @@ public class RecurrenceIdentifier : IComparable<RecurrenceIdentifier>
             return 1;
         }
 
-        var startComparison = StartTime.ToInstant().CompareTo(other.StartTime.ToInstant());
+        var startComparison = StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant()
+            .CompareTo(other.StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant());
+
         if (startComparison != 0)
         {
             return startComparison;

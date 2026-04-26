@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -48,7 +48,7 @@ public class FreeBusyEntry : Period
     /// <returns></returns>
     public bool Contains(CalDateTime? dt)
     {
-        return dt is not null && Contains(dt.ToInstant());
+        return dt is not null && Contains(dt.ToZonedOrDefault(DateTimeZone.Utc).ToInstant());
     }
 
     /// <summary>
@@ -58,7 +58,7 @@ public class FreeBusyEntry : Period
     /// </summary>
     public bool Contains(Instant value)
     {
-        var startInstant = StartTime.ToInstant();
+        var startInstant = StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
         if (startInstant > value)
         {
             return false;
@@ -67,7 +67,7 @@ public class FreeBusyEntry : Period
         Instant end;
         if (EndTime is { } endTime)
         {
-            end = endTime.ToInstant();
+            end = endTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
         }
         else if (Duration is { } duration)
         {
@@ -102,11 +102,11 @@ public class FreeBusyEntry : Period
             throw new ArgumentException("Period start time must be in UTC");
         }
 
-        var start = StartTime.ToInstant();
+        var start = StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
         Instant end;
         if (EndTime is { } endTime)
         {
-            end = endTime.ToInstant();
+            end = endTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
         }
         else if (Duration is { } duration)
         {
@@ -120,7 +120,7 @@ public class FreeBusyEntry : Period
             return false;
         }
 
-        var otherStart = period.StartTime.ToInstant();
+        var otherStart = period.StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
         Instant otherEnd;
         if (period.EndTime is { } periodEndTime)
         {
@@ -129,7 +129,7 @@ public class FreeBusyEntry : Period
                 throw new ArgumentException("Period end time must be in UTC");
             }
 
-            otherEnd = periodEndTime.ToInstant();
+            otherEnd = periodEndTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
         }
         else if (period.Duration is { } periodDuration)
         {

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -375,7 +375,7 @@ public class DeserializationTests
             new CalDateTime(1997, 12, 25) 
         };
 
-        var expectedEndTime = new CalDateTime(new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc));
+        var expectedEndTime = CalDateTime.FromDateTime(new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc));
 
         var actualStartTimes = iCal.Events[0]!.RecurrenceDates.GetAllPeriods()
             .Select(p => p.StartTime)

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -90,7 +90,7 @@ public class Alarm : CalendarComponent
             // Ensure that "FromDate" has already been set
             if (fromDate == null)
             {
-                fromDate = rc.Start?.ToZonedDateTime(timeZone).ToInstant();
+                fromDate = rc.Start?.ToZonedOrDefault(timeZone).ToInstant();
             }
 
             var triggerDuration = Trigger.Duration!.Value.ToPeriod();
@@ -112,7 +112,7 @@ public class Alarm : CalendarComponent
         }
         else
         {
-            var dt = Trigger?.DateTime?.ToZonedDateTime();
+            var dt = Trigger?.DateTime?.ToZonedOrDefault(timeZone);
             if (dt != null)
             {
                 occurrences.Add(new AlarmOccurrence(this, dt.Value, rc));

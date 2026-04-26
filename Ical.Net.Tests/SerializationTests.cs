@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -105,22 +105,6 @@ public class SerializationTests
         }
 
         return searchRegion;
-    }
-
-    //3 formats - UTC, local time as defined in vTimeZone, and floating,
-    //at some point it would be great to independently unit test string serialization of an CalDateTime object, into its 3 forms
-    //http://www.kanzaki.com/docs/ical/dateTime.html
-    private static string CalDateString(CalDateTime cdt)
-    {
-        var returnVar = $"{cdt.Year}{cdt.Month:D2}{cdt.Day:D2}T{cdt.Hour:D2}{cdt.Minute:D2}{cdt.Second:D2}";
-        if (cdt.IsUtc)
-        {
-            return returnVar + 'Z';
-        }
-
-        return string.IsNullOrEmpty(cdt.TzId)
-            ? returnVar
-            : $"TZID={cdt.TzId}:{returnVar}";
     }
 
     //This method needs renaming
@@ -232,11 +216,17 @@ public class SerializationTests
 
         InspectSerializedSection(serializedCalendar, "VEVENT",
         [
-            "CLASS:" + evt.Class, "CREATED:" + CalDateString(evt.Created), "DTSTAMP:" + CalDateString(evt.DtStamp),
-            "LAST-MODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid,
+            "CLASS:" + evt.Class,
+            "CREATED:20250325T125335",
+            "DTSTAMP:20250325T125335",
+            "LAST-MODIFIED:20250327T135335",
+            "SEQUENCE:" + evt.Sequence,
+            "UID:" + evt.Uid,
             "PRIORITY:" + evt.Priority,
-            "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart),
-            "DTEND:" + CalDateString(evt.DtEnd),
+            "LOCATION:" + evt.Location,
+            "SUMMARY:" + evt.Summary,
+            "DTSTART:20250325T125000",
+            "DTEND:20250325T131000",
             "TRANSP:" + TransparencyType.Opaque.ToUpperInvariant(),
             "STATUS:" + EventStatus.Confirmed.ToUpperInvariant()
         ]);
@@ -465,8 +455,8 @@ public class SerializationTests
         const string someTz = "Europe/Volgograd";
         var e = new CalendarEvent
         {
-            Start = _nowTime.ToTimeZone(someTz),
-            End = _nowTime.ToLocalDateTime().PlusHours(1).ToCalDateTime().ToTimeZone(someTz),
+            Start = _nowTime.ToLocalDateTime().ToCalDateTime(someTz),
+            End = _nowTime.ToLocalDateTime().PlusHours(1).ToCalDateTime(someTz),
             RecurrenceRule = new(FrequencyType.Daily)
             {
                 Until = _nowTime.ToLocalDateTime().PlusDays(7).ToCalDateTime(),

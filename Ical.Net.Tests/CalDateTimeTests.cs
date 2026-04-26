@@ -1,111 +1,40 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
-using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
 using System.Globalization;
 using System.Linq;
+using Ical.Net.DataTypes;
+using NodaTime;
+using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace Ical.Net.Tests;
 
 public class CalDateTimeTests
 {
-    private static readonly DateTime _now = DateTime.Now;
-    private static readonly DateTime _later = _now.AddHours(1);
-
-    private static CalendarEvent GetEventWithRecurrenceRule(string tzId)
-    {
-        var calendarEvent = new CalendarEvent
-        {
-            Start = new CalDateTime(_now, tzId),
-            End = new CalDateTime(_later, tzId),
-            RecurrenceRule = new(FrequencyType.Daily, 1)
-            {
-                Count = 5,
-            },
-            Resources = ["Foo", "Bar", "Baz"],
-        };
-        return calendarEvent;
-    }
-
-    [Test]
-    public void ToTimeZoneFloating()
-    {
-        var dt = new CalDateTime(2024, 12, 28, 17, 45, 05, "Europe/Vienna");
-        var floating = dt.ToTimeZone(null);
-        var dt2 = floating.ToTimeZone("Europe/Vienna");
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(dt, Is.EqualTo(dt2));
-            Assert.That(floating.TzId, Is.Null);
-            Assert.That(floating.Value, Is.EqualTo(dt.Value));
-        }
-    }
-
-    [Test, TestCaseSource(nameof(ToTimeZoneTestCases))]
-    public void ToTimeZoneTests(CalendarEvent calendarEvent, string targetTimeZone)
-    {
-        var startAsUtc = calendarEvent.Start!.ToInstant();
-
-        var convertedStart = calendarEvent.Start.ToTimeZone(targetTimeZone);
-        var convertedAsUtc = convertedStart.ToInstant();
-
-        Assert.That(convertedAsUtc, Is.EqualTo(startAsUtc));
-    }
-
-    public static IEnumerable ToTimeZoneTestCases()
-    {
-        const string bclCst = "Central Standard Time";
-        const string bclEastern = "Eastern Standard Time";
-        var bclEvent = GetEventWithRecurrenceRule(bclCst);
-        yield return new TestCaseData(bclEvent, bclEastern)
-            .SetName($"BCL to BCL: {bclCst} to {bclEastern}");
-
-        const string ianaNy = "America/New_York";
-        const string ianaRome = "Europe/Rome";
-        var ianaEvent = GetEventWithRecurrenceRule(ianaNy);
-
-        yield return new TestCaseData(ianaEvent, ianaRome)
-            .SetName($"IANA to IANA: {ianaNy} to {ianaRome}");
-
-        const string utc = "UTC";
-        var utcEvent = GetEventWithRecurrenceRule(utc);
-        yield return new TestCaseData(utcEvent, utc)
-            .SetName("UTC to UTC");
-
-        yield return new TestCaseData(bclEvent, ianaRome)
-            .SetName($"BCL to IANA: {bclCst} to {ianaRome}");
-
-        yield return new TestCaseData(ianaEvent, bclCst)
-            .SetName($"IANA to BCL: {ianaNy} to {bclCst}");
-    }
-
     [Test(Description = "A certain date/time value applied to different timezones should return the same UTC date/time")]
     public void SameDateTimeWithDifferentTzIdShouldReturnSameUtc()
     {
         var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00", CultureInfo.InvariantCulture);
 
-        var someDt = new CalDateTime(someTime.DateTime, "America/New_York");
-        var firstUtc = someDt.ToInstant();
-        Assert.That(firstUtc, Is.EqualTo(NodaTime.Instant.FromDateTimeOffset(someTime)));
+        var someDt = CalDateTime.FromDateTime(someTime.DateTime, "America/New_York");
+        var firstUtc = someDt.ToZonedDateTime().ToDateTimeOffset();
+        Assert.That(firstUtc, Is.EqualTo(someTime));
 
-        someDt = new CalDateTime(someTime.DateTime, "Europe/Berlin");
-        var berlinUtc = someDt.ToInstant();
+        someDt = CalDateTime.FromDateTime(someTime.DateTime, "Europe/Berlin");
+        var berlinUtc = someDt.ToZonedDateTime().ToDateTimeOffset();
         Assert.That(berlinUtc, Is.Not.EqualTo(firstUtc));
     }
 
     [Test, TestCaseSource(nameof(DateTimeKindOverrideTestCases)), Description("DateTimeKind of values is always DateTimeKind.Unspecified")]
     public DateTimeKind DateTimeKindOverrideTests(DateTime dateTime, string tzId)
-        => new CalDateTime(dateTime, tzId).Value.Kind;
+        => CalDateTime.FromDateTime(dateTime, tzId).ToDateTimeUnspecified().Kind;
 
-    public static IEnumerable DateTimeKindOverrideTestCases()
+    private static IEnumerable DateTimeKindOverrideTestCases()
     {
         const string localTz = "America/New_York";
         var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33", CultureInfo.InvariantCulture), DateTimeKind.Unspecified);
@@ -224,18 +153,17 @@ public class CalDateTimeTests
         // A collection of tests that are not covered elsewhere
 
         var dt = new DateTime(2025, 1, 2, 10, 20, 30, DateTimeKind.Utc);
-        var c = new CalDateTime(dt, tzId: "Europe/Berlin");
+        var c = CalDateTime.FromDateTime(dt, tzId: "Europe/Berlin");
 
         var c2 = new CalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, c.TzId);
-        var c3 = new CalDateTime(new NodaTime.LocalDate(dt.Year, dt.Month, dt.Day),
-            new NodaTime.LocalTime(dt.Hour, dt.Minute, dt.Second), c.TzId);
+        var c3 = new CalDateTime(new NodaTime.LocalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second), c.TzId);
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(c2.Value, Is.EqualTo(c3.Value));
+            Assert.That(c2.ToDateTimeUnspecified(), Is.EqualTo(c3.ToDateTimeUnspecified()));
             Assert.That(c2.TzId, Is.EqualTo(c3.TzId));
-            Assert.That(CalDateTime.UtcNow.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
-            Assert.That(CalDateTime.Today.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
+            Assert.That(CalDateTime.UtcNow.ToDateTimeUnspecified().Kind, Is.EqualTo(DateTimeKind.Unspecified));
+            Assert.That(CalDateTime.Today.ToDateTimeUnspecified().Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
             Assert.That(c.Time, Is.EqualTo(NodaTime.LocalDateTime.FromDateTime(dt).TimeOfDay));
             Assert.That(c.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture), Is.EqualTo("02.01.2025 Europe/Berlin"));
@@ -246,17 +174,15 @@ public class CalDateTimeTests
         [
             new TestCaseData(DateTimeKind.Unspecified, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50, null))),
             new TestCaseData(DateTimeKind.Utc, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50, "UTC"))),
-            new TestCaseData(DateTimeKind.Local, Throws.ArgumentException),
+            new TestCaseData(DateTimeKind.Local, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50))),
         ];
 
     [Test, TestCaseSource(nameof(CalDateTime_FromDateTime_HandlesKindCorrectlyTestCases))]
-
-
     public void CalDateTime_FromDateTime_HandlesKindCorrectly(DateTimeKind kind, IResolveConstraint constraint)
     {
         var dt = new DateTime(2024, 12, 30, 10, 44, 50, kind);
 
-        Assert.That(() => new CalDateTime(dt), constraint);
+        Assert.That(() => CalDateTime.FromDateTime(dt), constraint);
     }
 
     [TestCase("20250703T060000Z", null)]
@@ -266,7 +192,7 @@ public class CalDateTimeTests
         var dt = new CalDateTime(value, tzId);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(dt.Value, Is.EqualTo(new DateTime(2025, 7, 3, 6, 0, 0, DateTimeKind.Utc)));
+            Assert.That(dt.ToDateTimeUnspecified(), Is.EqualTo(new DateTime(2025, 7, 3, 6, 0, 0, DateTimeKind.Utc)));
 #pragma warning disable CA1305
             Assert.That(dt.ToString("yyyy-MM-dd HH:mm:ss"), Is.EqualTo("2025-07-03 06:00:00 UTC"));
 #pragma warning restore CA1305
@@ -277,4 +203,105 @@ public class CalDateTimeTests
     [Test]
     public void ConstructorWithIso8601UtcString_ButDifferentTzId_ShouldThrow()
         => Assert.That(() => _ = new CalDateTime("20250703T060000Z", "CEST"), Throws.ArgumentException);
+
+    [Test]
+    public void ThrowsWhenDateYearIsInvalid()
+    {
+        var d = new LocalDate(0, 1, 1);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+        {
+            new CalDateTime(d);
+        });
+    }
+
+    [Test]
+    public void ThrowsWhenStringValueIsInvalid()
+    {
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            new CalDateTime("invalid");
+        });
+    }
+
+#if NET6_0_OR_GREATER
+    [Test]
+    public void ConvertsToAndFromDateOnly()
+    {
+        var d = new DateOnly(2026, 4, 19);
+        var c = CalDateTime.FromDateOnly(d);
+
+        Assert.That(c.ToDateOnly(), Is.EqualTo(d));
+    }
+
+    [Test]
+    public void ConvertsToAndFromTimeOnly()
+    {
+        var t = new TimeOnly(6, 30, 2);
+        var d = new DateOnly(2026, 4, 19).ToDateTime(t);
+
+        var c = CalDateTime.FromDateTime(d);
+
+        Assert.That(c.ToTimeOnly(), Is.EqualTo(t));
+    }
+
+    [Test]
+    public void TimeOnlyIsNullForDateValues()
+    {
+        var d = new DateOnly(2026, 4, 19);
+        var c = CalDateTime.FromDateOnly(d);
+
+        Assert.That(c.ToTimeOnly(), Is.Null);
+    }
+#endif
+
+    [Test]
+    public void ThrowsWhenConvertingToZonedDateTimeWithoutTimeZone()
+    {
+        var c = new CalDateTime(2026, 4, 19, 5, 0, 0);
+
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            c.ToZonedDateTime();
+        });
+    }
+
+    [Test]
+    public void DayOfWeekIsCorrect()
+    {
+        var c = new CalDateTime(2026, 4, 19, 5, 0, 0);
+        Assert.That(c.DayOfWeek, Is.EqualTo(DayOfWeek.Sunday));
+    }
+
+    [Test]
+    public void OtherTypeIsNotEqual()
+    {
+        var d = new CalDateTime(2026, 4, 19);
+
+        var isEqual = Equals(d, new DateTime(2026, 4, 19));
+
+        Assert.That(isEqual, Is.False);
+    }
+
+    [Test]
+    public void DateValueDoesNotEqualDateTimeAtMidnight()
+    {
+        var a = new CalDateTime(2026, 4, 19, 0, 0, 0);
+        var b = new CalDateTime(2026, 4, 19);
+
+        Assert.That(a, Is.Not.EqualTo(b));
+    }
+
+    [Test]
+    public void CaseInsensitiveTzIdHasSameHashCode()
+    {
+        var a = new CalDateTime(2026, 4, 19, 3, 0, 0, "Utc");
+        var b = new CalDateTime(2026, 4, 19, 3, 0, 0, "UTC");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(a, Is.EqualTo(b));
+            Assert.That(a.GetHashCode(), Is.EqualTo(b.GetHashCode()));
+        }
+    }
 }

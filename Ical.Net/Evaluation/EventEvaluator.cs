@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -24,9 +24,9 @@ public class EventEvaluator : RecurringEvaluator
 
     protected override EvaluationPeriod EvaluateRDate(DataTypes.Period rdate, DateTimeZone referenceTimeZone)
 	{
-		var start = rdate.StartTime.AsZonedOrDefault(referenceTimeZone);
+		var start = rdate.StartTime.ToZonedOrDefault(referenceTimeZone);
 
-		ZonedDateTime? end = null;
+		ZonedDateTime? end;
 		if (rdate.Duration is { } duration)
 		{
 			if (!rdate.StartTime.HasTime && duration.HasTime)
@@ -41,7 +41,7 @@ public class EventEvaluator : RecurringEvaluator
 		}
 		else if (rdate.EndTime is { } dtEnd)
 		{
-			var exactDuration = dtEnd.ToInstant() - rdate.StartTime.ToInstant();
+			var exactDuration = dtEnd.ToZonedOrDefault(referenceTimeZone).ToInstant() - start.ToInstant();
 
 			if (exactDuration < Duration.Zero)
 			{
@@ -85,32 +85,36 @@ public class EventEvaluator : RecurringEvaluator
 
         if (CalendarEvent.DtEnd is { } dtEnd)
         {
-            // The spec says DtEnd MUST be the same type as DtStart.
-            // Some cases can be reasonably handled though.
-
-            // Assume a floating end is in the time zone of the event.
-            if (dtEnd.IsFloating && !dtStart.IsFloating)
-            {
-                dtEnd = dtEnd.ToTimeZone(dtStart.TimeZoneName);
-            }
-
             // The spec says specifying DTEND results in exact time,
             // but tests say that all day events should be treated
             // as a nominal duration.
             if (!dtStart.HasTime && !dtEnd.HasTime)
             {
                 // Calculate nominal duration between dates
-                var nominalDuration = dtEnd.ToTimeZone(dtStart.TimeZoneName)
-                    .ToZonedDateTime()
-                    .Date
-                    .Minus(dtStart.ToZonedDateTime().Date);
+                var nominalDuration = dtEnd.Date.Minus(dtStart.Date);
 
-                return start.LocalDateTime
+                var end = start.LocalDateTime
                     .Plus(nominalDuration)
                     .InZoneRelativeTo(start);
+
+                if (end.LocalDateTime < start.LocalDateTime)
+                {
+                    throw new InvalidOperationException("DtEnd is before DtStart");
+                }
+
+                return end;
             }
 
-            var exactDuration = dtEnd.ToInstant() - dtStart.ToInstant();
+            // The spec says DtEnd MUST be the same type as DtStart.
+            // Some cases can be reasonably handled though.
+
+            // Assume a floating end is in the time zone of the event.
+            if (dtStart.TzId != null && dtEnd.TzId == null && dtEnd.Time != null)
+            {
+                dtEnd = new(dtEnd.ToLocalDateTime(), dtStart.TzId);
+            }
+
+            var exactDuration = dtEnd.ToZonedOrDefault(start.Zone).ToInstant() - dtStart.ToZonedOrDefault(start.Zone).ToInstant();
 
             if (exactDuration < Duration.Zero)
             {

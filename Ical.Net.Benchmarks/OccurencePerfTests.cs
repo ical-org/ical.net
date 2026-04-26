@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -40,13 +40,13 @@ public class OccurencePerfTests
     public void MultipleEventsWithUntilOccurrencesSearchingByWholeCalendar()
     {
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(-1)
             .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .InZoneLeniently(tz)
@@ -59,13 +59,13 @@ public class OccurencePerfTests
     public void MultipleEventsWithUntilOccurrences()
     {
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(-1)
             .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .InZoneLeniently(tz)
@@ -80,13 +80,13 @@ public class OccurencePerfTests
     public void MultipleEventsWithUntilOccurrencesEventsAsParallel()
     {
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(-1)
             .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .PlusDays(10)
@@ -178,7 +178,7 @@ public class OccurencePerfTests
                     End = new(startTime.PlusMinutes(10), tzid),
                     RecurrenceRule = new(FrequencyType.Daily, 1)
                     {
-                        Until = new(startTime.PlusDays(10).InUtc().ToInstant()),
+                        Until = CalDateTime.FromZonedDateTime(startTime.PlusDays(10).InUtc()),
                     },
                 };
                 startTime = startTime.PlusDays(1);
@@ -195,13 +195,13 @@ public class OccurencePerfTests
     {
         var calendar = GetFourCalendarEventsWithCountRule();
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(-1)
             .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .InZoneLeniently(tz)
@@ -215,13 +215,13 @@ public class OccurencePerfTests
     {
         var calendar = GetFourCalendarEventsWithCountRule();
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-             .ToZonedDateTime(tz)
+             .ToZonedOrDefault(tz)
              .LocalDateTime
              .PlusYears(-1)
              .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .InZoneLeniently(tz)
@@ -237,13 +237,13 @@ public class OccurencePerfTests
     {
         var calendar = GetFourCalendarEventsWithCountRule();
         var searchStart = _calendarFourEvents.Events.First().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(-1)
             .InZoneLeniently(tz);
 
         var searchEnd = _calendarFourEvents.Events.Last().DtStart!
-            .ToZonedDateTime(tz)
+            .ToZonedOrDefault(tz)
             .LocalDateTime
             .PlusYears(1)
             .PlusDays(10)
@@ -270,8 +270,8 @@ public class OccurencePerfTests
             {
                 var e = new CalendarEvent
                 {
-                    Start = new CalDateTime(startTime.AddMinutes(5), tzid),
-                    End = new CalDateTime(startTime.AddMinutes(10), tzid),
+                    Start = CalDateTime.FromDateTime(startTime.AddMinutes(5), tzid),
+                    End = CalDateTime.FromDateTime(startTime.AddMinutes(10), tzid),
                     RecurrenceRule = new(FrequencyType.Daily, 1)
                     {
                         Count = 100,

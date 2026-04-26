@@ -1,11 +1,10 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
@@ -24,8 +23,16 @@ public class FreeBusy : UniqueComponent, IMergeable
             return null;
         }
 
-        var occurrences = occ.GetOccurrences<CalendarEvent>(timeZone, freeBusyRequest.Start?.ToZonedDateTime(timeZone).ToInstant(), options)
-            .TakeWhile(p => (freeBusyRequest.End == null) || (p.Start.ToInstant() < freeBusyRequest.End.ToInstant()));
+        var startInstant = freeBusyRequest.Start?
+            .ToZonedOrDefault(timeZone)
+            .ToInstant();
+
+        var endInstant = freeBusyRequest.End?
+            .ToZonedOrDefault(timeZone)
+            .ToInstant();
+
+        var occurrences = occ.GetOccurrences<CalendarEvent>(timeZone, startInstant, options)
+            .TakeWhile(p => endInstant == null || p.Start.ToInstant() < endInstant);
 
         var attendeeContacts = BuildAttendeeContacts(freeBusyRequest);
         var isFilteredByAttendees = attendeeContacts.Count > 0;
@@ -192,7 +199,7 @@ public class FreeBusy : UniqueComponent, IMergeable
     /// <returns></returns>
     public virtual FreeBusyStatus GetFreeBusyStatus(CalDateTime? dt)
     {
-        return GetFreeBusyStatus(dt?.ToInstant());
+        return GetFreeBusyStatus(dt?.ToZonedOrDefault(DateTimeZone.Utc).ToInstant());
     }
 
     public virtual FreeBusyStatus GetFreeBusyStatus(Instant? dt)

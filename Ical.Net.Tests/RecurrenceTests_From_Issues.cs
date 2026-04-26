@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -279,8 +279,8 @@ public class RecurrenceTests_From_Issues
         calendar.Events.Add(new CalendarEvent
         {
             Summary = "Unavailable Before Work",
-            DtStart = new CalDateTime(blockDate, zone),
-            DtEnd = new CalDateTime(blockDate.Add(new TimeSpan(8, 0, 0)), zone),
+            DtStart = CalDateTime.FromDateTime(blockDate, zone),
+            DtEnd = CalDateTime.FromDateTime(blockDate.Add(new TimeSpan(8, 0, 0)), zone),
             RecurrenceRule = new(FrequencyType.Weekly, 1)
             {
                 ByDay = [new WeekDay(DayOfWeek.Monday)]
@@ -300,8 +300,8 @@ public class RecurrenceTests_From_Issues
     {
         //  GetOccurrences Creates event with invalid time due to Daylight Savings changes #567 
 
-        var calStart = new CalDateTime(DateTimeOffset.Parse("2023-01-14T19:21:03.700Z", CultureInfo.InvariantCulture).UtcDateTime, "UTC");
-        var calFinish = new CalDateTime(DateTimeOffset.Parse("2023-03-14T18:21:03.700Z", CultureInfo.InvariantCulture).UtcDateTime, "UTC");
+        var calStart = CalDateTime.FromDateTime(DateTimeOffset.Parse("2023-01-14T19:21:03.700Z", CultureInfo.InvariantCulture).UtcDateTime, "UTC");
+        var calFinish = CalDateTime.FromDateTime(DateTimeOffset.Parse("2023-03-14T18:21:03.700Z", CultureInfo.InvariantCulture).UtcDateTime, "UTC");
         var tz = "Pacific Standard Time";
 
         //Adjust the date to today so that the times remain constant
@@ -311,8 +311,8 @@ public class RecurrenceTests_From_Issues
         var ev = new CalendarEvent
         {
             Class = "PUBLIC",
-            Start = new CalDateTime(localTzStartAdjust, tz),
-            End = new CalDateTime(localTzFinishAdjust, tz),
+            Start = CalDateTime.FromDateTime(localTzStartAdjust, tz),
+            End = CalDateTime.FromDateTime(localTzFinishAdjust, tz),
             Sequence = 0,
             RecurrenceRule = new("FREQ=WEEKLY;BYDAY=SU,MO,TU,WE")
         };
@@ -328,8 +328,8 @@ public class RecurrenceTests_From_Issues
     {
         var calendarEvent = new CalendarEvent
         {
-            DtStart = new CalDateTime(startDate),
-            DtEnd = new CalDateTime(endDate),
+            DtStart = CalDateTime.FromDateTime(startDate),
+            DtEnd = CalDateTime.FromDateTime(endDate),
             RecurrenceRule = new(FrequencyType.Weekly, 2)
             {
                 ByDay =
@@ -345,10 +345,10 @@ public class RecurrenceTests_From_Issues
             }
         };
 
-        var occurrences = calendarEvent.GetOccurrences(new CalDateTime(startDate)).TakeWhileBefore(new CalDateTime(endDate));
+        var occurrences = calendarEvent.GetOccurrences(CalDateTime.FromDateTime(startDate)).TakeWhileBefore(CalDateTime.FromDateTime(endDate));
         var occurrencesDates = occurrences.Select(o => o.Start.Date).ToList();
 
-        var sortedExpectedDates = expectedDates.Select(x => x.ToZonedDateTime().Date).ToList();
+        var sortedExpectedDates = expectedDates.Select(x => x.Date).ToList();
 
         Assert.That(occurrencesDates, Is.EquivalentTo(sortedExpectedDates));
     }

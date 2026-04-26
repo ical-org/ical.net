@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -12,13 +12,11 @@ namespace Ical.Net;
 
 public static class NodaTimeExtensions
 {
-    public static CalDateTime ToCalDateTime(this ZonedDateTime value) => new(value);
+    public static CalDateTime ToCalDateTime(this ZonedDateTime value) => CalDateTime.FromZonedDateTime(value);
 
     public static CalDateTime ToCalDateTime(this LocalDateTime value, string? timeZone = null) => new(value, timeZone);
 
-    public static CalDateTime ToCalDateTime(this LocalDate value, string? timeZone = null) => new(value, timeZone);
-
-    public static CalDateTime ToCalDateTime(this Instant value) => new(value);
+    public static CalDateTime ToCalDateTime(this LocalDate value) => new(value);
 
     /// <summary>
     /// Returns a ZonedDateTime that matches the time zone and
