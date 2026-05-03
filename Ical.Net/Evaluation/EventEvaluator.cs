@@ -26,7 +26,7 @@ public class EventEvaluator : RecurringEvaluator
 	{
 		var start = rdate.StartTime.ToZonedOrDefault(referenceTimeZone);
 
-		ZonedDateTime? end;
+		ZonedDateTime end;
 		if (rdate.Duration is { } duration)
 		{
 			if (!rdate.StartTime.HasTime && duration.HasTime)

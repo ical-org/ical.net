@@ -66,7 +66,7 @@ internal sealed class RecurrenceRuleEvaluator
         EvaluationOptions? options)
         : this(rule, referenceDate, periodStart.Zone, periodStart.ToInstant(), options) { }
 
-    public IEnumerable<EvaluationPeriod> Evaluate()
+    public IEnumerable<ZonedDateTime> Evaluate()
     {
         var evaluatedValuesCount = 0;
 
@@ -96,7 +96,7 @@ internal sealed class RecurrenceRuleEvaluator
                 continue;
             }
 
-            yield return new(value);
+            yield return value;
 
             // Update threshold to prevent duplicate values
             // caused by daylight saving transitions.
