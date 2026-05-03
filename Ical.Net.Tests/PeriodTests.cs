@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -87,15 +87,18 @@ public class PeriodTests
         var dt = new CalDateTime(2025, 6, 1, 0, 0, 0, "Europe/Vienna")
             .ToZonedDateTime();
 
+        var end = new CalDateTime(2025, 6, 2, 0, 0, 0, "Europe/Vienna")
+            .ToZonedDateTime();
+
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(new EvaluationPeriod(dt).CompareTo(null),
+            Assert.That(new EvaluationPeriod(dt, end).CompareTo(null),
                 Is.EqualTo(1));
-            Assert.That(new EvaluationPeriod(dt).CompareTo(new EvaluationPeriod(dt)),
+            Assert.That(new EvaluationPeriod(dt, end).CompareTo(new EvaluationPeriod(dt, end)),
                 Is.EqualTo(0));
-            Assert.That(new EvaluationPeriod(dt).CompareTo(new EvaluationPeriod(dt.PlusHours(-1))),
+            Assert.That(new EvaluationPeriod(dt, end).CompareTo(new EvaluationPeriod(dt.PlusHours(-1), end)),
                 Is.EqualTo(1));
-            Assert.That(new EvaluationPeriod(dt).CompareTo(new EvaluationPeriod(dt.PlusHours(1))),
+            Assert.That(new EvaluationPeriod(dt, end).CompareTo(new EvaluationPeriod(dt.PlusHours(1), end)),
                 Is.EqualTo(-1));
         }
     }

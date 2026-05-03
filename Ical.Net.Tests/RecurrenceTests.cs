@@ -2300,11 +2300,11 @@ public class RecurrenceTests
         var start = new CalDateTime(2019, 1, 1);
         var end = new CalDateTime(2019, 12, 31);
 
-        var recurringPeriods = new RecurrenceRule("FREQ=YEARLY;BYDAY=MO;BYWEEKNO=2")
+        var occurrences = new RecurrenceRule("FREQ=YEARLY;BYDAY=MO;BYWEEKNO=2")
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
-        Assert.That(recurringPeriods, Has.Count.EqualTo(1));
-        Assert.That(recurringPeriods.First().Start, Is.EqualTo(new CalDateTime(2019, 1, 7).ToZonedDateTime(_tzid)));
+        Assert.That(occurrences, Has.Count.EqualTo(1));
+        Assert.That(occurrences.First(), Is.EqualTo(new CalDateTime(2019, 1, 7).ToZonedDateTime(_tzid)));
     }
 
     /// <summary>
@@ -2316,16 +2316,16 @@ public class RecurrenceTests
         var start = new CalDateTime(2020, 1, 1);
         var end = new CalDateTime(2020, 12, 31);
 
-        var recurringPeriods = new RecurrenceRule("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1")
+        var occurrences = new RecurrenceRule("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1")
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
-        Assert.That(recurringPeriods, Has.Count.EqualTo(4));
+        Assert.That(occurrences, Has.Count.EqualTo(4));
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(recurringPeriods[0].Start, Is.EqualTo(new CalDateTime(2020, 1, 6).ToZonedDateTime(_tzid)));
-            Assert.That(recurringPeriods[1].Start, Is.EqualTo(new CalDateTime(2020, 1, 13).ToZonedDateTime(_tzid)));
-            Assert.That(recurringPeriods[2].Start, Is.EqualTo(new CalDateTime(2020, 1, 20).ToZonedDateTime(_tzid)));
-            Assert.That(recurringPeriods[3].Start, Is.EqualTo(new CalDateTime(2020, 1, 27).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[0], Is.EqualTo(new CalDateTime(2020, 1, 6).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[1], Is.EqualTo(new CalDateTime(2020, 1, 13).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[2], Is.EqualTo(new CalDateTime(2020, 1, 20).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[3], Is.EqualTo(new CalDateTime(2020, 1, 27).ToZonedDateTime(_tzid)));
         }
     }
 
@@ -2356,16 +2356,16 @@ public class RecurrenceTests
         var start = new CalDateTime(2020, 1, 1);
         var end = new CalDateTime(2020, 12, 31);
 
-        var recurringPeriods = new RecurrenceRule("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1")
+        var occurrences = new RecurrenceRule("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1")
             .Evaluate(start, start.ToZonedDateTime(_tzid)).TakeWhileBefore(end).ToList();
 
-        Assert.That(recurringPeriods, Has.Count.EqualTo(4));
+        Assert.That(occurrences, Has.Count.EqualTo(4));
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(recurringPeriods[0].Start, Is.EqualTo(new CalDateTime(2020, 1, 6).ToZonedDateTime(_tzid)));
-            Assert.That(recurringPeriods[1].Start, Is.EqualTo(new CalDateTime(2020, 1, 13).ToZonedDateTime(_tzid)));
-            Assert.That(recurringPeriods[2].Start, Is.EqualTo(new CalDateTime(2020, 1, 20).ToZonedDateTime(_tzid)));
-            Assert.That(recurringPeriods[3].Start, Is.EqualTo(new CalDateTime(2020, 1, 27).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[0], Is.EqualTo(new CalDateTime(2020, 1, 6).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[1], Is.EqualTo(new CalDateTime(2020, 1, 13).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[2], Is.EqualTo(new CalDateTime(2020, 1, 20).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[3], Is.EqualTo(new CalDateTime(2020, 1, 27).ToZonedDateTime(_tzid)));
         }
     }
 
@@ -2380,12 +2380,12 @@ public class RecurrenceTests
         var start = new CalDateTime(2010, 11, 27, 9, 0, 0);
         var serializer = new RecurrenceRuleSerializer();
         var rp = (RecurrenceRule) serializer.Deserialize(sr)!;
-        var recurringPeriods = rp.Evaluate(start, start.ToZonedDateTime(_tzid))
-            .TakeWhileBefore(rp.Until!).ToList();
 
-        var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
+        var lastOccurrence = rp.Evaluate(start, start.ToZonedDateTime(_tzid))
+            .TakeWhileBefore(rp.Until!)
+            .Last();
 
-        Assert.That(period.Start, Is.EqualTo(new CalDateTime(2025, 11, 24, 9, 0, 0).ToZonedDateTime(_tzid)));
+        Assert.That(lastOccurrence, Is.EqualTo(new CalDateTime(2025, 11, 24, 9, 0, 0).ToZonedDateTime(_tzid)));
     }
 
     /// <summary>
@@ -2604,10 +2604,10 @@ public class RecurrenceTests
         Assert.That(occurrences, Has.Count.EqualTo(4));
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(occurrences[0].Start, Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 40).ToZonedDateTime(_tzid)));
-            Assert.That(occurrences[1].Start, Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 50).ToZonedDateTime(_tzid)));
-            Assert.That(occurrences[2].Start, Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 00).ToZonedDateTime(_tzid)));
-            Assert.That(occurrences[3].Start, Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 10).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[0], Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 40).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[1], Is.EqualTo(new CalDateTime(2008, 3, 30, 23, 59, 50).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[2], Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 00).ToZonedDateTime(_tzid)));
+            Assert.That(occurrences[3], Is.EqualTo(new CalDateTime(2008, 3, 31, 00, 00, 10).ToZonedDateTime(_tzid)));
         }
     }
 
@@ -2727,23 +2727,23 @@ public class RecurrenceTests
         var evtEnd = new CalDateTime(2007, 1, 1);
 
         // Add the exception dates
-        var periods = rpattern.Evaluate(evtStart, evtStart)
+        var occurrences = rpattern.Evaluate(evtStart, evtStart)
             .TakeWhileBefore(evtEnd)
             .ToList();
 
-        Assert.That(periods, Has.Count.EqualTo(10));
+        Assert.That(occurrences, Has.Count.EqualTo(10));
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(periods[0].Start.Day, Is.EqualTo(2));
-            Assert.That(periods[1].Start.Day, Is.EqualTo(3));
-            Assert.That(periods[2].Start.Day, Is.EqualTo(9));
-            Assert.That(periods[3].Start.Day, Is.EqualTo(10));
-            Assert.That(periods[4].Start.Day, Is.EqualTo(16));
-            Assert.That(periods[5].Start.Day, Is.EqualTo(17));
-            Assert.That(periods[6].Start.Day, Is.EqualTo(23));
-            Assert.That(periods[7].Start.Day, Is.EqualTo(24));
-            Assert.That(periods[8].Start.Day, Is.EqualTo(30));
-            Assert.That(periods[9].Start.Day, Is.EqualTo(31));
+            Assert.That(occurrences[0].Day, Is.EqualTo(2));
+            Assert.That(occurrences[1].Day, Is.EqualTo(3));
+            Assert.That(occurrences[2].Day, Is.EqualTo(9));
+            Assert.That(occurrences[3].Day, Is.EqualTo(10));
+            Assert.That(occurrences[4].Day, Is.EqualTo(16));
+            Assert.That(occurrences[5].Day, Is.EqualTo(17));
+            Assert.That(occurrences[6].Day, Is.EqualTo(23));
+            Assert.That(occurrences[7].Day, Is.EqualTo(24));
+            Assert.That(occurrences[8].Day, Is.EqualTo(30));
+            Assert.That(occurrences[9].Day, Is.EqualTo(31));
         }
     }
 

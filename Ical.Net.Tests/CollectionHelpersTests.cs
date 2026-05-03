@@ -47,17 +47,6 @@ internal class CollectionHelpersTests
         Assert.That(result, Is.EqualTo(expected));
     }
 
-    [TestCase(new int[] { }, new int[] { }, new int[] { })]
-    [TestCase(new int[] { }, new[] { 2, 4, 6 }, new int[] { })]
-    [TestCase(new[] { 2, 4, 6 }, new int[] { }, new[] { 2, 4, 6 })]
-    [TestCase(new[] { 1, 2, 3, 5, 6, 7 }, new[] { 2, 4, 6 }, new[] { 1, 3, 5, 7 })]
-    public void TestMergeExclude(IList<int> seq, IList<int> exclude, IList<int> expected)
-    {
-        var result = seq.OrderedExclude(exclude).ToList();
-
-        Assert.That(result, Is.EqualTo(expected));
-    }
-
     private static IEnumerable<int> GetNaturalNumbers()
     {
         var i = 1;
@@ -71,14 +60,6 @@ internal class CollectionHelpersTests
         var result = GetNaturalNumbers().Select(x => x * 3).OrderedMerge(GetNaturalNumbers().Select(x => x * 2))
             .Take(7);
         Assert.That(result, Is.EqualTo(new[] { 2, 3, 4, 6, 6, 8, 9 }));
-    }
-
-    [Test]
-    public void TestMergeExcludeIndefinite()
-    {
-        var result = GetNaturalNumbers().Select(x => x * 3).OrderedExclude(GetNaturalNumbers().Select(x => x * 2))
-            .Take(4);
-        Assert.That(result, Is.EqualTo(new[] { 3, 9, 15, 21 }));
     }
 
     [Test]
