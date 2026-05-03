@@ -21,7 +21,7 @@ public class TodoEvaluator : RecurringEvaluator
     {
         var start = rdate.StartTime.ToZonedOrDefault(referenceTimeZone);
 
-        ZonedDateTime? end;
+        ZonedDateTime end;
         if (rdate.Duration is { } duration)
         {
             end = start.LocalDateTime

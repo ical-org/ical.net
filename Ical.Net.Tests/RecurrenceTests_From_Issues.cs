@@ -470,7 +470,7 @@ public class RecurrenceTests_From_Issues
         var start = referenceDate.ToZonedDateTime();
         var recurringPeriods = rp.Evaluate(referenceDate, start);
 
-        var result = recurringPeriods.FirstOrDefault()?.Start;
+        var result = recurringPeriods.FirstOrDefault();
 
         var expected = new LocalDate(2026, 05, 01).AtStartOfDayInZone(start.Zone);
         Assert.That(result, Is.EqualTo(expected));
