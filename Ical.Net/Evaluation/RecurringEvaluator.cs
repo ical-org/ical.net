@@ -87,12 +87,18 @@ public abstract class RecurringEvaluator : IEvaluator
             ? [zonedReference]
             : EvaluateRRule(referenceDate, zonedReference.Zone, periodStart, options);
 
-        var rdateOccurrences = EvaluateRDate(zonedReference.Zone);
-
         var periods = rruleOccurrences
-            .Select(start => new EvaluationPeriod(start, GetEnd(start)))
-            .OrderedMerge(rdateOccurrences)
-            .OrderedDistinct();
+            .Select(start => new EvaluationPeriod(start, GetEnd(start)));
+
+        // Merge with recurrence dates if there are any
+        if (!Recurrable.RecurrenceDates.IsEmpty())
+        {
+            var rdateOccurrences = EvaluateRDate(zonedReference.Zone);
+
+            periods = periods
+                .OrderedMerge(rdateOccurrences)
+                .OrderedDistinct();
+        }
 
         // Filter by periodStart
         if (periodStart is not null)
@@ -102,33 +108,32 @@ public abstract class RecurringEvaluator : IEvaluator
                 || (p.End.ToInstant() > periodStart.Value));
         }
 
-        // EXDATEs could contain date-only entries while DTSTART is date-time. This case isn't clearly defined
-        // by the RFC, but it seems to be used in the wild (see https://github.com/ical-org/ical.net/issues/829).
-        // Different systems handle this differently, e.g. Outlook excludes any occurrences where the date portion
-        // matches an date-only EXDATE, while Google Calendar ignores such EXDATEs completely, if DTSTART is date-time.
-        // In Ical.Net we follow the Outlook approach, which requires us to handle date-only EXDATEs separately.
-        var exDateExclusionsDateOnly = new HashSet<LocalDate>(EvaluateExDate(PeriodKind.DateOnly)
-            .Select(x => x.StartTime.ToLocalDateTime().Date));
-
-        var exDateExclusionsDateTime = new HashSet<Instant>(EvaluateExDate(PeriodKind.DateTime)
-            .Select(x => x.StartTime.ToZonedOrDefault(zonedReference.Zone).ToInstant()));
-
-        // Exclude occurrences according to EXDATEs.
-        if (exDateExclusionsDateTime.Count > 0)
+        // Filter out exception dates if there are any
+        if (!Recurrable.ExceptionDates.IsEmpty())
         {
-            periods = periods.Where(x => !exDateExclusionsDateTime.Contains(x.Start.ToInstant()));
-        }
+            // Exclude occurrences according to EXDATEs.
+            var exDateExclusionsDateTime = new HashSet<Instant>(EvaluateExDate(PeriodKind.DateTime)
+                .Select(x => x.StartTime.ToZonedOrDefault(zonedReference.Zone).ToInstant()));
 
-        // We accept date-only EXDATEs to be used with date-time DTSTARTs. In such cases we exclude those occurrences
-        // that, in their respective time zone, have a date component that matches an EXDATE.
-        // See https://github.com/ical-org/ical.net/pull/830 for more information.
-        //
-        // The order of dates in the EXDATEs doesn't necessarily match the order of dates returned by RDATEs
-        // due to RDATEs could have different time zones. We therefore use a regular `.Where()` to look up
-        // the EXDATEs in the HashSet rather than using `.OrderedExclude()`, which would require correct ordering.
-        if (exDateExclusionsDateOnly.Count > 0)
-        {
-            periods = periods.Where(dt => !exDateExclusionsDateOnly.Contains(dt.Start.Date));
+            if (exDateExclusionsDateTime.Count > 0)
+            {
+                periods = periods.Where(x => !exDateExclusionsDateTime.Contains(x.Start.ToInstant()));
+            }
+
+            // EXDATEs could contain date-only entries while DTSTART is date-time. This case isn't clearly defined
+            // by the RFC, but it seems to be used in the wild (see https://github.com/ical-org/ical.net/issues/829).
+            // Different systems handle this differently, e.g. Outlook excludes any occurrences where the date portion
+            // matches an date-only EXDATE, while Google Calendar ignores such EXDATEs completely, if DTSTART is date-time.
+            // In Ical.Net we follow the Outlook approach, which requires us to handle date-only EXDATEs separately.
+            // In such cases we exclude those occurrences that, in their respective time zone, have a date component
+            // that matches an EXDATE.
+            var exDateExclusionsDateOnly = new HashSet<LocalDate>(EvaluateExDate(PeriodKind.DateOnly)
+                .Select(x => x.StartTime.ToLocalDateTime().Date));
+
+            if (exDateExclusionsDateOnly.Count > 0)
+            {
+                periods = periods.Where(dt => !exDateExclusionsDateOnly.Contains(dt.Start.Date));
+            }
         }
 
         // Convert results to the requested time zone
