@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -105,4 +105,6 @@ public abstract class PeriodListWrapperBase
     /// </summary>
     internal IEnumerable<Period> GetAllPeriodsByKind(params PeriodKind[] periodKinds)
         => ListOfPeriodList.SelectMany(pl => pl.Where(p => periodKinds.Contains(p.PeriodKind))).Distinct();
+
+    internal bool IsEmpty() => ListOfPeriodList.All(static pl => pl.Count == 0);
 }
