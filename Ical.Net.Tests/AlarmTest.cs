@@ -4,94 +4,217 @@
 //
 
 #nullable enable
-using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using NUnit.Framework;
-using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Linq;
-using Ical.Net.Serialization.DataTypes;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
+using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
 [TestFixture]
-public class AttendeeTest
+public class AlarmTests
 {
-    internal static CalendarEvent VEventFactory() => new CalendarEvent
+    #region Examples from RFC 5545
+
+    [Test]
+    public void ExactTimeAlarmWithRepeat()
     {
-        Summary = "Testing",
-        Start = new CalDateTime(2010, 3, 25),
-        End = new CalDateTime(2010, 3, 26)
-    };
+        CalendarEvent e = new()
+        {
+            Start = new CalDateTime(1997, 3, 18)
+        };
 
-    private static readonly IList<Attendee> _attendees = new List<Attendee>
+        var valarm = """
+            BEGIN:VALARM
+            TRIGGER;VALUE=DATE-TIME:19970317T133000Z
+            REPEAT:4
+            DURATION:PT15M
+            ACTION:AUDIO
+            ATTACH;FMTTYPE=audio/basic:ftp://example.com/pub/
+                sounds/bell-01.aud
+            END:VALARM
+            """;
+
+        var alarm = SimpleDeserializer.Default
+            .Deserialize(new StringReader(valarm))
+            .Cast<Alarm>()
+            .Single();
+
+        e.Alarms.Add(alarm);
+
+        var results = e.PollAlarms(new CalDateTime(1997, 3, 10), null)
+            .Select(x => x.DateTime)
+            .ToList();
+
+        var expectedAlarms = new[]
+        {
+            new CalDateTime(new DateTime(1997, 3, 17, 13, 30, 0, DateTimeKind.Utc)),
+            new CalDateTime(new DateTime(1997, 3, 17, 13, 45, 0, DateTimeKind.Utc)),
+            new CalDateTime(new DateTime(1997, 3, 17, 14, 0, 0, DateTimeKind.Utc)),
+            new CalDateTime(new DateTime(1997, 3, 17, 14, 15, 0, DateTimeKind.Utc)),
+            new CalDateTime(new DateTime(1997, 3, 17, 14, 30, 0, DateTimeKind.Utc)),
+        };
+
+        Assert.That(results, Is.EquivalentTo(expectedAlarms));
+    }
+
+    [Test]
+    public void RelativeAlarmWithRepeat()
     {
-        new Attendee("MAILTO:james@example.com")
+        CalendarEvent e = new()
         {
-            CommonName = "James James",
-            Role = ParticipationRole.RequiredParticipant,
-            Rsvp = true,
-            ParticipationStatus = EventParticipationStatus.Tentative
-        },
-        new Attendee("MAILTO:mary@example.com")
+            Start = new CalDateTime(1997, 3, 18, 8, 30, 0, "America/New_York")
+        };
+
+        var valarm = """
+            BEGIN:VALARM
+            TRIGGER:-PT30M
+            REPEAT:2
+            DURATION:PT15M
+            ACTION:DISPLAY
+            DESCRIPTION:Breakfast meeting with executive
+                team at 8:30 AM EST.
+            END:VALARM
+            """;
+
+        var alarm = SimpleDeserializer.Default
+            .Deserialize(new StringReader(valarm))
+            .Cast<Alarm>()
+            .Single();
+
+        e.Alarms.Add(alarm);
+
+        var results = e.PollAlarms(new CalDateTime(1997, 3, 18), null)
+            .Select(x => x.DateTime)
+            .ToList();
+
+        var expectedAlarms = new[]
         {
-            CommonName = "Mary Mary",
-            Role = ParticipationRole.RequiredParticipant,
-            Rsvp = true,
-            ParticipationStatus = EventParticipationStatus.Accepted
-        }
-    }.AsReadOnly();
+            new CalDateTime(1997, 3, 18, 8, 0, 0, "America/New_York"),
+            new CalDateTime(1997, 3, 18, 8, 15, 0, "America/New_York"),
+            new CalDateTime(1997, 3, 18, 8, 30, 0, "America/New_York"),
+        };
 
+        Assert.That(results, Is.EquivalentTo(expectedAlarms));
+    }
 
-    /// <summary>
-    /// Ensures that attendees can be properly added to an event.
-    /// </summary>
-    [Test, Category("Attendee")]
-    public void Add1Attendee()
+    [Test]
+    public void RelativeAlarmDaysBefore()
     {
-        var evt = VEventFactory();
-        Assert.That(evt.Attendees.Count, Is.EqualTo(0));
-
-        evt.Attendees.Add(_attendees[0]);
-        Assert.That(evt.Attendees, Has.Count.EqualTo(1));
-
-        Assert.Multiple(() =>
+        Todo todo = new()
         {
-            //the properties below had been set to null during the Attendees.Add operation in NuGet version 2.1.4
-            Assert.That(evt.Attendees[0].Role, Is.EqualTo(ParticipationRole.RequiredParticipant));
-            Assert.That(evt.Attendees[0].ParticipationStatus, Is.EqualTo(EventParticipationStatus.Tentative));
+            Start = new CalDateTime(1997, 3, 18, 7, 30, 0, "America/New_York"),
+            Due = new CalDateTime(1997, 3, 18, 8, 30, 0, "America/New_York"),
+        };
+
+        var valarm = """
+            BEGIN:VALARM
+            TRIGGER;RELATED=END:-P2D
+            ACTION:EMAIL
+            ATTENDEE:mailto:john_doe@example.com
+            SUMMARY:*** REMINDER: SEND AGENDA FOR WEEKLY STAFF MEETING ***
+            DESCRIPTION:A draft agenda needs to be sent out to the attendees
+              to the weekly managers meeting (MGR-LIST). Attached is a
+              pointer the document template for the agenda file.
+            ATTACH;FMTTYPE=application/msword:http://example.com/
+             templates/agenda.doc
+            END:VALARM
+            """;
+
+        var alarm = SimpleDeserializer.Default
+            .Deserialize(new StringReader(valarm))
+            .Cast<Alarm>()
+            .Single();
+
+        todo.Alarms.Add(alarm);
+
+        var results = todo.PollAlarms(new CalDateTime(1997, 3, 10), new CalDateTime(1997, 3, 20))
+            .Select(x => x.DateTime)
+            .ToList();
+
+        var expectedAlarms = new[]
+        {
+            new CalDateTime(1997, 3, 16, 8, 30, 0, "America/New_York"),
+        };
+
+        Assert.That(results, Is.EquivalentTo(expectedAlarms));
+    }
+
+    #endregion
+
+
+    [Test]
+    public void AlarmWithExactTime()
+    {
+        CalendarEvent e = new()
+        {
+            Start = new CalDateTime(2026, 4, 7)
+        };
+
+        e.Alarms.Add(new Alarm()
+        {
+            Trigger = new Trigger
+            {
+                DateTime = new CalDateTime(new DateTime(2026, 4, 5, 0, 0, 0, DateTimeKind.Utc))
+            }
         });
+
+        var alarmOccurrences = e.PollAlarms(e.Start, e.Start.AddDays(1))
+            .Select(x => x.DateTime!)
+            .ToList();
+
+        var expectedAlarms = new[]
+        {
+            new CalDateTime(new DateTime(2026, 4, 5, 0, 0, 0, DateTimeKind.Utc)),
+        };
+
+        Assert.That(alarmOccurrences, Is.EquivalentTo(expectedAlarms));
     }
 
-    [Test, Category("Attendee")]
-    public void Add2Attendees()
+    [Test]
+    public void RecurringAlarm()
     {
-        var evt = VEventFactory();
-        Assert.That(evt.Attendees.Count, Is.EqualTo(0));
+        CalendarEvent e = new()
+        {
+            Start = new CalDateTime(2026, 4, 7),
+            RecurrenceRule = new RecurrencePattern(FrequencyType.Weekly, 1)
+        };
 
-        evt.Attendees.Add(_attendees[0]);
-        evt.Attendees.Add(_attendees[1]);
-        Assert.That(evt.Attendees, Has.Count.EqualTo(2));
-        Assert.That(evt.Attendees[1].Role, Is.EqualTo(ParticipationRole.RequiredParticipant));
+        e.Alarms.Add(new Alarm()
+        {
+            Trigger = new Trigger(new Duration(days: -1))
+        });
+
+        var alarmOccurrences = e.PollAlarms(e.Start, e.Start.AddDays(21))
+            .Select(x => x.DateTime!)
+            .ToList();
+
+        var expectedAlarms = new[]
+        {
+            new CalDateTime(2026, 4, 6),
+            new CalDateTime(2026, 4, 13),
+            new CalDateTime(2026, 4, 20),
+        };
+
+        Assert.That(alarmOccurrences, Is.EquivalentTo(expectedAlarms));
     }
 
-    /// <summary>
-    /// Ensures that attendees can be properly removed from an event.
-    /// </summary>
-    [Test, Category("Attendee")]
-    public void Remove1Attendee()
+    [Test]
+    public void AlarmWithoutParentIsEmpty()
     {
-        var evt = VEventFactory();
-        Assert.That(evt.Attendees.Count, Is.EqualTo(0));
+        var alarm = new Alarm()
+        {
+            Trigger = new()
+            {
+                DateTime = new CalDateTime(new DateTime(2026, 4, 5, 0, 0, 0, DateTimeKind.Utc))
+            }
+        };
 
-        var attendee = _attendees.First();
-        evt.Attendees.Add(attendee);
-        Assert.That(evt.Attendees, Has.Count.EqualTo(1));
+        var occurrences = alarm.Poll(null, null);
 
-        evt.Attendees.Remove(attendee);
-        Assert.That(evt.Attendees.Count, Is.EqualTo(0));
-
-        evt.Attendees.Remove(_attendees.Last());
-        Assert.That(evt.Attendees.Count, Is.EqualTo(0));
+        Assert.That(occurrences, Is.Empty);
     }
 }
