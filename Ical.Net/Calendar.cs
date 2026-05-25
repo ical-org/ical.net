@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -236,8 +236,9 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     private static Dictionary<(string? Uid, DateTime RecurrenceId), IUniqueComponent> GetRecurrenceIdsAndUids(IEnumerable<ICalendarObject> children)
     {
         return children.OfType<IRecurrable>()
-            .Where(r => r.RecurrenceId != null)
-            .Select(r => (Component: r as IUniqueComponent, Uid: (r as IUniqueComponent)?.Uid, RecurrenceId: r.RecurrenceId!.Value))
+            // Filter by range of ThisInstance because ThisAndFuture is not supported yet
+            .Where(r => r.RecurrenceIdentifier != null && r.RecurrenceIdentifier.Range == RecurrenceRange.ThisInstance)
+            .Select(r => (Component: r as IUniqueComponent, Uid: (r as IUniqueComponent)?.Uid, RecurrenceId: r.RecurrenceIdentifier!.StartTime.Value))
             .Where(x => x is { Uid: not null, Component: not null })
             // Assure we have only one component per (UID, RECURRENCE-ID) pair
             .GroupBy(x => (x.Uid, x.RecurrenceId))
@@ -265,8 +266,10 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         {
             // If the occurrence is a modified instance (has RecurrenceId and Uid)
             // and the source is the last modified instance for this RecurrenceId/Uid,
-            IUniqueComponent { Uid: not null } uc when r.Source.RecurrenceId != null =>
-                recurrenceIdsAndUids.TryGetValue((uc.Uid, r.Source.RecurrenceId.Value),
+            IUniqueComponent { Uid: not null } uc
+                // Filter by range of ThisInstance because ThisAndFuture is not supported yet
+                when r.Source.RecurrenceIdentifier != null && r.Source.RecurrenceIdentifier.Range == RecurrenceRange.ThisInstance =>
+                recurrenceIdsAndUids.TryGetValue((uc.Uid, r.Source.RecurrenceIdentifier.StartTime.Value),
                     out var lastComponent) && ReferenceEquals(lastComponent, r.Source),
 
             // If not a modified occurrence, keep if:

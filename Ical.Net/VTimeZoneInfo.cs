@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -123,18 +123,6 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
     {
         get => Properties.Get<RecurrenceRule>("RRULE");
         set => Properties.Set("RRULE", value);
-    }
-
-    /// <summary>
-    /// Gets or sets the recurrence identifier for a specific instance of a recurring event.
-    /// </summary>
-    /// <remarks>Use <see cref="RecurrenceIdentifier"/> instead, which
-    /// supports the RANGE parameter for recurring events.</remarks>
-    [Obsolete("Use RecurrenceIdentifier instead, which supports the RANGE parameter.")]
-    public virtual CalDateTime? RecurrenceId
-    {
-        get => RecurrenceIdentifier?.Range == RecurrenceRange.ThisInstance ? RecurrenceIdentifier.StartTime : null;
-        set => RecurrenceIdentifier = value is null ? null : new RecurrenceIdentifier(value, RecurrenceRange.ThisInstance);
     }
 
     /// <summary>

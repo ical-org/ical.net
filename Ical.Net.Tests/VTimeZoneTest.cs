@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -262,44 +262,6 @@ public class VTimeZoneTest
             Assert.That(serialized, Does.Contain("DTSTART:20070311T020000"), "DTSTART:20070311T020000 was not serialized");
             Assert.That(serialized, Does.Contain("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
         }
-    }
-
-    [Test, Category("VTimeZone")]
-    public void RecurrenceId_IsCompatibleWith_RecurrenceInstance()
-    {
-#pragma warning disable CS0618 // Type or member is obsolete
-        var dt = new CalDateTime("20250930");
-
-        var iCal = CreateTestCalendar("America/Detroit");
-
-        var tzInfo1 = iCal.TimeZones.First().TimeZoneInfos.First();
-        tzInfo1.RecurrenceIdentifier = new RecurrenceIdentifier(dt);
-
-        iCal = CreateTestCalendar("America/Detroit");
-        var tzInfo2 = iCal.TimeZones.First().TimeZoneInfos.First();
-        tzInfo2.RecurrenceId = dt.Date.PlusDays(1).ToCalDateTime();
-
-        iCal = CreateTestCalendar("America/Detroit");
-        var tzInfo3 = iCal.TimeZones.First().TimeZoneInfos.First();
-        tzInfo3.RecurrenceIdentifier = new RecurrenceIdentifier(dt, RecurrenceRange.ThisAndFuture);
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(tzInfo1.RecurrenceId, Is.EqualTo(tzInfo1.RecurrenceIdentifier.StartTime));
-            Assert.That(tzInfo1.RecurrenceIdentifier.Range, Is.EqualTo(RecurrenceRange.ThisInstance));
-
-            Assert.That(tzInfo1.TzId, Is.EqualTo("America/Detroit"));
-
-            Assert.That(tzInfo2.RecurrenceIdentifier!.StartTime, Is.EqualTo(dt.Date.PlusDays(1).ToCalDateTime()));
-            Assert.That(tzInfo2.RecurrenceId, Is.EqualTo(dt.Date.PlusDays(1).ToCalDateTime()));
-            Assert.That(tzInfo2.RecurrenceIdentifier.Range, Is.EqualTo(RecurrenceRange.ThisInstance));
-
-            // RecurrenceId only supports ThisInstance implicitly,
-            // so RecurrenceInstance with ThisAndFuture returns null
-            Assert.That(tzInfo3.RecurrenceIdentifier.Range, Is.EqualTo(RecurrenceRange.ThisAndFuture));
-            Assert.That(tzInfo3.RecurrenceId, Is.Null);
-        }
-#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     private static Calendar CreateTestCalendar(string tzId, DateTime? earliestTime = null, bool includeHistoricalData = true)
