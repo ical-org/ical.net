@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -21,7 +21,7 @@ public interface IRecurrable : IGetOccurrences
 
     RecurrenceRule? RecurrenceRule { get; set; }
 
-    CalDateTime? RecurrenceId { get; set; }
+    RecurrenceIdentifier? RecurrenceIdentifier { get; set; }
 
     IEvaluator? Evaluator { get; }
 }

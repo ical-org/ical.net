@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -3927,7 +3927,7 @@ END:VCALENDAR";
         var occurrences = cal
             .GetOccurrences<CalendarEvent>(tz).ToList();
 
-        var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceId == new CalDateTime(2025, 11, 3));
+        var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceIdentifier?.StartTime == new CalDateTime(2025, 11, 3));
 
         using (Assert.EnterMultipleScope())
         {
@@ -3979,7 +3979,7 @@ END:VCALENDAR";
         var occurrences = cal
             .GetOccurrences<CalendarEvent>(tz).ToList();
 
-        var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceId == new CalDateTime(2025, 11, 3));
+        var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceIdentifier?.StartTime == new CalDateTime(2025, 11, 3));
 
         using (Assert.EnterMultipleScope())
         {
@@ -4033,7 +4033,7 @@ END:VCALENDAR";
         var occurrences = cal
             .GetOccurrences<CalendarEvent>(tz).ToList();
 
-        var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceId == new CalDateTime(2025, 11, 3));
+        var overrideOcc = occurrences.FirstOrDefault(o => o.Source.RecurrenceIdentifier?.StartTime == new CalDateTime(2025, 11, 3));
 
         using (Assert.EnterMultipleScope())
         {

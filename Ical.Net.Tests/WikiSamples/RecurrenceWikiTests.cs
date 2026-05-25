@@ -442,7 +442,7 @@ internal class RecurrenceWikiTests
             DtStart = startMoved,
             DtEnd = new(startMoved.ToZonedDateTime().PlusMinutes(13)),
             // Set the original date of the occurrence (2025-07-14 09:00:00).
-            RecurrenceId = new(2025, 07, 14, 09, 00, 00, timeZoneId),
+            RecurrenceIdentifier = new(new(2025, 07, 14, 09, 00, 00, timeZoneId)),
             // The first change for this RecurrenceId
             Sequence = 1
         };
