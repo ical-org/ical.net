@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -17,9 +17,6 @@ public static class AlarmAction
     public const string Audio = "AUDIO";
     public const string Display = "DISPLAY";
     public const string Email = "EMAIL";
-
-    [Obsolete("Procedure was deprecated by RFC-5545")]
-    public const string Procedure = "PROCEDURE";
 }
 
 public static class TriggerRelation
