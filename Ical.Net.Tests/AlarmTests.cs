@@ -587,5 +587,26 @@ public class AlarmTests
         Assert.That(results, Is.EquivalentTo(expectedAlarms));
     }
 
+    [Test]
+    public void AlarmWithoutTriggerIsIgnored()
+    {
+        CalendarEvent e = new()
+        {
+            Start = new CalDateTime(2026, 4, 7, 9, 0, 0, CalDateTime.UtcTzId),
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Weekly, 1) { Count = 4 }
+        };
+
+        e.Alarms.Add(new Alarm
+        {
+            Trigger = null
+        });
+
+        var results = e.GetAlarmOccurrences(DateTimeZone.Utc)
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        Assert.That(results, Is.Empty);
+    }
+
     #endregion
 }
