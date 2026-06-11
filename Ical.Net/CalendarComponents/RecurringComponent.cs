@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -220,25 +219,7 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
 
         // Handle absolute and relative alarms separately because
         // absolute alarms do not require event evaluation.
-        var absoluteAlarms = new List<Alarm>();
-        var relativeAlarms = new List<Alarm>();
-
-        foreach (var alarm in Alarms)
-        {
-            if (alarm.Trigger == null)
-            {
-                continue;
-            }
-
-            if (alarm.Trigger.DateTime != null)
-            {
-                absoluteAlarms.Add(alarm);
-            }
-            else if (alarm.Trigger.Duration != null)
-            {
-                relativeAlarms.Add(alarm);
-            }
-        }
+        var (absoluteAlarms, relativeAlarms) = GetAbsoluteAndRelativeAlarms();
 
         // If all alarms are invalid then quit
         if (absoluteAlarms.Count == 0 && relativeAlarms.Count == 0)
@@ -247,24 +228,7 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
         }
 
         // Generate all absolute alarm occurrences
-        var absoluteOccurrences = new List<AlarmOccurrence>();
-        foreach (var alarm in absoluteAlarms)
-        {
-            var baseFireTime = alarm.Trigger!.DateTime!.ToZonedDateTime();
-
-            foreach (var start in alarm.GetFireTimes(baseFireTime))
-            {
-                var alarmStart = start.ToInstant();
-
-                if ((startTime == null || startTime <= alarmStart)
-                    && (endTime == null || endTime > alarmStart))
-                {
-                    absoluteOccurrences.Add(new AlarmOccurrence(alarm, start, this));
-                }
-            }
-        }
-
-        absoluteOccurrences.Sort();
+        var absoluteOccurrences = GetAbsoluteAlarmOccurrences(absoluteAlarms, startTime, endTime);
 
         // If there are no relative alarms, yield all absolute alarms and quit
         if (relativeAlarms.Count == 0)
@@ -282,17 +246,7 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
 
         foreach (var occurrence in GetOccurrences(timeZone, startTime, options))
         {
-            var alarms = relativeAlarms
-                .SelectMany(alarm => GetRelativeAlarmStart(alarm, occurrence)
-                    .Where(start =>
-                    {
-                        var alarmStart = start.ToInstant();
-
-                        return (startTime == null || startTime <= alarmStart)
-                            && (endTime == null || endTime > alarmStart); 
-                    })
-                    .Select(start => new AlarmOccurrence(alarm, start, this)))
-                .ToList();
+            var alarms = GetRelativeAlarmOccurrences(relativeAlarms, occurrence, startTime, endTime);
 
             // If there are no more alarms, then there is nothing more to merge
             if (alarms.Count == 0)
@@ -343,5 +297,76 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
             .Plus(duration.GetTimePart());
 
         return alarm.GetFireTimes(triggerTime);
+    }
+
+    private (List<Alarm> absolute, List<Alarm> relative) GetAbsoluteAndRelativeAlarms()
+    {
+        var absoluteAlarms = new List<Alarm>();
+        var relativeAlarms = new List<Alarm>();
+
+        foreach (var alarm in Alarms)
+        {
+            if (alarm.Trigger == null)
+            {
+                continue;
+            }
+
+            if (alarm.Trigger.DateTime != null)
+            {
+                absoluteAlarms.Add(alarm);
+            }
+            else if (alarm.Trigger.Duration != null)
+            {
+                relativeAlarms.Add(alarm);
+            }
+        }
+
+        return (absoluteAlarms, relativeAlarms);
+    }
+
+    private List<AlarmOccurrence> GetAbsoluteAlarmOccurrences(
+        List<Alarm> absoluteAlarms,
+        Instant? startTime = null,
+        Instant? endTime = null)
+    {
+        var absoluteOccurrences = new List<AlarmOccurrence>();
+        foreach (var alarm in absoluteAlarms)
+        {
+            var baseFireTime = alarm.Trigger!.DateTime!.ToZonedDateTime();
+
+            foreach (var start in alarm.GetFireTimes(baseFireTime))
+            {
+                var alarmStart = start.ToInstant();
+
+                if ((startTime == null || startTime <= alarmStart)
+                    && (endTime == null || endTime > alarmStart))
+                {
+                    absoluteOccurrences.Add(new AlarmOccurrence(alarm, start, this));
+                }
+            }
+        }
+
+        absoluteOccurrences.Sort();
+
+        return absoluteOccurrences;
+    }
+
+    private List<AlarmOccurrence> GetRelativeAlarmOccurrences(
+        List<Alarm> relativeAlarms,
+        Occurrence occurrence,
+        Instant? startTime = null,
+        Instant? endTime = null)
+    {
+        return relativeAlarms
+            .SelectMany(alarm => GetRelativeAlarmStart(alarm, occurrence)
+                .Where(start =>
+                {
+                    var alarmStart = start.ToInstant();
+
+                    return (startTime == null || startTime <= alarmStart)
+                        && (endTime == null || endTime > alarmStart);
+                })
+                .Select(start => new AlarmOccurrence(alarm, start, this)))
+            .ToList();
     }
 }
