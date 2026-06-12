@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -82,7 +82,7 @@ public class MatchTimeZoneTests
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRule!.Until;
 
-        var expectedUntil = new CalDateTime(DateTime.ParseExact(inputUntil, "yyyyMMddTHHmmssZ",
+        var expectedUntil = CalDateTime.FromDateTime(DateTime.ParseExact(inputUntil, "yyyyMMddTHHmmssZ",
             System.Globalization.CultureInfo.InvariantCulture,
             System.Globalization.DateTimeStyles.AssumeUniversal |
             System.Globalization.DateTimeStyles.AdjustToUniversal));

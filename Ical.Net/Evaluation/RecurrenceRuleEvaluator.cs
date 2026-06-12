@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -48,14 +48,14 @@ internal sealed class RecurrenceRuleEvaluator
 
         // Copy rule values
         _frequency = rule.Frequency;
-        _until = rule.Until?.ToZonedDateTime(timeZone).ToInstant();
+        _until = rule.Until?.ToZonedOrDefault(timeZone).ToInstant();
         _count = rule.Count;
         _interval = Math.Max(1, rule.Interval);
         _rule = ByRuleValues.From(rule);
 
         _firstDayOfWeek = rule.FirstDayOfWeek.ToIsoDayOfWeek();
         _weekYearRule = WeekYearRules.ForMinDaysInFirstWeek(4, _firstDayOfWeek);
-        _zonedReferenceDate = referenceDate.AsZonedOrDefault(timeZone);
+        _zonedReferenceDate = referenceDate.ToZonedOrDefault(timeZone);
         _referenceWeekNo = _weekYearRule.GetWeekOfWeekYear(_zonedReferenceDate.Date);
     }
 
@@ -66,7 +66,7 @@ internal sealed class RecurrenceRuleEvaluator
         EvaluationOptions? options)
         : this(rule, referenceDate, periodStart.Zone, periodStart.ToInstant(), options) { }
 
-    public IEnumerable<EvaluationPeriod> Evaluate()
+    public IEnumerable<ZonedDateTime> Evaluate()
     {
         var evaluatedValuesCount = 0;
 
@@ -96,7 +96,7 @@ internal sealed class RecurrenceRuleEvaluator
                 continue;
             }
 
-            yield return new(value);
+            yield return value;
 
             // Update threshold to prevent duplicate values
             // caused by daylight saving transitions.

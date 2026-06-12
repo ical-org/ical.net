@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -49,8 +49,8 @@ public class DocumentationExamples
         // An event taking place between 07:00 and 08:00, beginning July 5 (a Tuesday)
         var vEvent = new CalendarEvent
         {
-            DtStart = new CalDateTime(DateTime.Parse("2016-07-05T07:00", CultureInfo.InvariantCulture)),
-            DtEnd = new CalDateTime(DateTime.Parse("2016-07-05T08:00",CultureInfo.InvariantCulture)),
+            DtStart = CalDateTime.FromDateTime(DateTime.Parse("2016-07-05T07:00", CultureInfo.InvariantCulture)),
+            DtEnd = CalDateTime.FromDateTime(DateTime.Parse("2016-07-05T08:00",CultureInfo.InvariantCulture)),
 
             // Recurring every other Tuesday until Dec 31
             RecurrenceRule = new(FrequencyType.Weekly, 2)
@@ -75,8 +75,8 @@ public class DocumentationExamples
         // An event taking place between 07:00 and 19:00, beginning July 5 (a Tuesday)
         var vEvent = new CalendarEvent
         {
-            DtStart = new CalDateTime(DateTime.Parse("2000-11-23T07:00", CultureInfo.InvariantCulture)),
-            DtEnd = new CalDateTime(DateTime.Parse("2000-11-23T19:00", CultureInfo.InvariantCulture)),
+            DtStart = CalDateTime.FromDateTime(DateTime.Parse("2000-11-23T07:00", CultureInfo.InvariantCulture)),
+            DtEnd = CalDateTime.FromDateTime(DateTime.Parse("2000-11-23T19:00", CultureInfo.InvariantCulture)),
 
             // Recurring every other Tuesday until Dec 31
             RecurrenceRule = new(FrequencyType.Yearly, 1)

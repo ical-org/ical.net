@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -34,7 +34,7 @@ public static class CollectionExtensions
     ///
     [Obsolete("Use NodaTime.Instant to specify period end.")]
     public static IEnumerable<Occurrence> TakeWhileBefore(this IEnumerable<Occurrence> sequence, CalDateTime periodEnd)
-        => sequence.TakeWhile(p => p.Start.ToInstant() < periodEnd.ToInstant());
+        => sequence.TakeWhile(p => p.Start.ToInstant() < periodEnd.ToZonedOrDefault(DateTimeZone.Utc).ToInstant());
 
     public static IEnumerable<Occurrence> TakeWhileBefore(this IEnumerable<Occurrence> sequence, Instant periodEnd)
         => sequence.TakeWhile(p => p.Start.ToInstant() < periodEnd);

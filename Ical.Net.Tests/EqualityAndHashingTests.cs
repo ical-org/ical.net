@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -28,7 +28,7 @@ public class EqualityAndHashingTests
     {
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(expectedDt.Value, Is.EqualTo(incomingDt.Value));
+            Assert.That(expectedDt.ToDateTimeUnspecified(), Is.EqualTo(incomingDt.ToDateTimeUnspecified()));
             Assert.That(expectedDt.GetHashCode(), Is.EqualTo(incomingDt.GetHashCode()));
             Assert.That(expectedDt.TzId, Is.EqualTo(incomingDt.TzId));
             Assert.That(incomingDt.Equals(expectedDt), Is.True);
@@ -37,17 +37,17 @@ public class EqualityAndHashingTests
 
     public static IEnumerable CalDateTime_TestCases()
     {
-        var nowCalDt = new CalDateTime(_nowTime);
-        yield return new TestCaseData(nowCalDt, new CalDateTime(_nowTime)).SetName("Now, no time zone");
+        var nowCalDt = CalDateTime.FromDateTime(_nowTime);
+        yield return new TestCaseData(nowCalDt, CalDateTime.FromDateTime(_nowTime)).SetName("Now, no time zone");
 
-        var nowCalDtWithTz = new CalDateTime(_nowTime, TzId);
-        yield return new TestCaseData(nowCalDtWithTz, new CalDateTime(_nowTime, TzId)).SetName("Now, with time zone");
+        var nowCalDtWithTz = CalDateTime.FromDateTime(_nowTime, TzId);
+        yield return new TestCaseData(nowCalDtWithTz, CalDateTime.FromDateTime(_nowTime, TzId)).SetName("Now, with time zone");
     }
 
     private static CalendarEvent GetSimpleEvent() => new CalendarEvent
     {
-        DtStart = new CalDateTime(_nowTime),
-        DtEnd = new CalDateTime(_later),
+        DtStart = CalDateTime.FromDateTime(_nowTime),
+        DtEnd = CalDateTime.FromDateTime(_later),
     };
 
     private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } })!;
@@ -108,7 +108,7 @@ public class EqualityAndHashingTests
 
     public static IEnumerable PeriodTestCases()
     {
-        yield return new TestCaseData(new Period(new CalDateTime(_nowTime)), new Period(new CalDateTime(_nowTime)))
+        yield return new TestCaseData(new Period(CalDateTime.FromDateTime(_nowTime)), new Period(CalDateTime.FromDateTime(_nowTime)))
             .SetName("Two identical CalDateTimes are equal");
     }
 
@@ -123,7 +123,7 @@ public class EqualityAndHashingTests
                 new DateTime(2017, 04, 28, 06, 00, 00),
                 new DateTime(2017, 05, 01, 06, 00, 00)
             }
-            .Select(dt => new Period(new CalDateTime(dt))).ToList();
+            .Select(dt => new Period(CalDateTime.FromDateTime(dt))).ToList();
 
         var a = new PeriodList();
         foreach (var period in startTimesA)
@@ -141,7 +141,7 @@ public class EqualityAndHashingTests
                 new DateTime(2017, 05, 01, 06, 00, 00),
                 new DateTime(2017, 04, 28, 06, 00, 00)
             }
-            .Select(dt => new Period(new CalDateTime(dt))).ToList();
+            .Select(dt => new Period(CalDateTime.FromDateTime(dt))).ToList();
 
         var b = new PeriodList();
 
@@ -168,8 +168,8 @@ public class EqualityAndHashingTests
         var nowLocal = DateTime.Now;
         var nowUtc = nowLocal.ToUniversalTime();
 
-        var asLocal = new CalDateTime(nowLocal, "America/New_York");
-        var asUtc = new CalDateTime(nowUtc, "UTC");
+        var asLocal = CalDateTime.FromDateTime(nowLocal, "America/New_York");
+        var asUtc = CalDateTime.FromDateTime(nowUtc, "UTC");
 
         Assert.That(asUtc, Is.Not.EqualTo(asLocal));
     }

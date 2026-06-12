@@ -49,12 +49,12 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
         var value = new StringBuilder(512);
         // NOSONAR: netstandard2.x does not support string.Create(CultureInfo.InvariantCulture, $"{...}");
         value.Append(FormattableString.Invariant($"{dt.Year:0000}{dt.Month:00}{dt.Day:00}")); // NOSONAR
-        if (dt.HasTime)
+        if (dt.Time is { } time)
         {
-            value.Append(FormattableString.Invariant($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}")); // NOSONAR
+            value.Append(FormattableString.Invariant($"T{time.Hour:00}{time.Minute:00}{time.Second:00}")); // NOSONAR
             if (dt.IsUtc)
             {
-                value.Append("Z");
+                value.Append('Z');
             }
         }
 
@@ -115,7 +115,7 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
         if (isUtc) timeZoneId = "UTC";
 
         var res = timePart.HasValue
-            ? new CalDateTime(datePart, timePart.Value, timeZoneId)
+            ? new CalDateTime(datePart.At(timePart.Value), timeZoneId)
             : new CalDateTime(datePart);
 
         return res;

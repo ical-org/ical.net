@@ -277,8 +277,8 @@ public class VTimeZoneTest
         var calEvent = new CalendarEvent
         {
             Description = "Test Recurring Event",
-            Start = new CalDateTime(DateTime.Now, tzId),
-            End = new CalDateTime(DateTime.Now.AddHours(1), tzId),
+            Start = CalDateTime.FromDateTime(DateTime.Now, tzId),
+            End = CalDateTime.FromDateTime(DateTime.Now.AddHours(1), tzId),
             RecurrenceRule = new(FrequencyType.Daily)
         };
         iCal.Events.Add(calEvent);
@@ -286,8 +286,8 @@ public class VTimeZoneTest
         var calEvent2 = new CalendarEvent
         {
             Description = "Test Recurring Event 2",
-            Start = new CalDateTime(DateTime.Now.AddHours(2), tzId),
-            End = new CalDateTime(DateTime.Now.AddHours(3), tzId),
+            Start = CalDateTime.FromDateTime(DateTime.Now.AddHours(2), tzId),
+            End = CalDateTime.FromDateTime(DateTime.Now.AddHours(3), tzId),
             RecurrenceRule = new(FrequencyType.Daily)
         };
         iCal.Events.Add(calEvent2);

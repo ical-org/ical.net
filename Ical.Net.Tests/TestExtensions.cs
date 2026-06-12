@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -23,16 +23,16 @@ internal static class TestExtensions
     public static IEnumerable<Occurrence> TakeWhileBefore(this IEnumerable<Occurrence> sequence, CalDateTime periodEnd)
         => sequence.TakeWhile(p => p.Start.ToInstant() < periodEnd.ToZonedDateTime("America/New_York").ToInstant());
 
-    public static IEnumerable<EvaluationPeriod> TakeWhileBefore(this IEnumerable<EvaluationPeriod> sequence, CalDateTime periodEnd)
-        => sequence.TakeWhile(p => p.Start.ToInstant() < periodEnd.ToZonedDateTime("America/New_York").ToInstant());
+    public static IEnumerable<ZonedDateTime> TakeWhileBefore(this IEnumerable<ZonedDateTime> sequence, CalDateTime periodEnd)
+        => sequence.TakeWhile(p => p.ToInstant() < periodEnd.ToZonedDateTime("America/New_York").ToInstant());
 
-    public static IEnumerable<EvaluationPeriod> Evaluate(this RecurrenceRule pattern, CalDateTime referenceDate, CalDateTime periodStart, EvaluationOptions? options = null)
+    public static IEnumerable<ZonedDateTime> Evaluate(this RecurrenceRule pattern, CalDateTime referenceDate, CalDateTime periodStart, EvaluationOptions? options = null)
     {
         var zonedStart = periodStart.ToZonedDateTime("America/New_York");
         return pattern.Evaluate(referenceDate, zonedStart, options);
     }
 
-    public static IEnumerable<EvaluationPeriod> Evaluate(this RecurrenceRule pattern, CalDateTime referenceDate, ZonedDateTime periodStart, EvaluationOptions? options = null)
+    public static IEnumerable<ZonedDateTime> Evaluate(this RecurrenceRule pattern, CalDateTime referenceDate, ZonedDateTime periodStart, EvaluationOptions? options = null)
     {
         return new RecurrenceRuleEvaluator(pattern, referenceDate, periodStart, options).Evaluate();
     }
@@ -40,5 +40,11 @@ internal static class TestExtensions
     public static ZonedDateTime InZoneLeniently(this LocalDateTime value, string zoneId)
     {
         return value.InZoneLeniently(DateUtil.GetZone(zoneId));
+    }
+
+    public static ZonedDateTime ToZonedDateTime(this CalDateTime value, string zoneId)
+    {
+        var tz = DateUtil.GetZone(zoneId);
+        return value.ToZonedOrDefault(tz).WithZone(tz);
     }
 }

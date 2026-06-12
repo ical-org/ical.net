@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -24,8 +24,8 @@ public class CopyComponentTests
 
     private static CalendarEvent GetSimpleEvent() => new CalendarEvent
     {
-        DtStart = new CalDateTime(_now),
-        DtEnd = new CalDateTime(_later),
+        DtStart = CalDateTime.FromDateTime(_now),
+        DtEnd = CalDateTime.FromDateTime(_later),
     };
 
     private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } })!;
@@ -73,8 +73,8 @@ public class CopyComponentTests
     {
         var orig = new FreeBusy
         {
-            Start = new CalDateTime(_now),
-            End = new CalDateTime(_later),
+            Start = CalDateTime.FromDateTime(_now),
+            End = CalDateTime.FromDateTime(_later),
             Entries = { new FreeBusyEntry(new Period(new CalDateTime(2024, 10, 1), Duration.FromDays(1)), FreeBusyStatus.Busy) { Language = "English" }}
         };
 
@@ -119,7 +119,7 @@ public class CopyComponentTests
         {
             Summary = "Test Todo",
             Description = "This is a test todo",
-            Due = new CalDateTime(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified).AddDays(10)),
+            Due = CalDateTime.FromDateTime(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified).AddDays(10)),
             Priority = 1,
             Contacts = new[] { "John", "Paul" },
             Status = "NeedsAction"
@@ -145,7 +145,7 @@ public class CopyComponentTests
         {
             Summary = "Test Journal",
             Description = "This is a test journal",
-            DtStart = new CalDateTime(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified)),
+            DtStart = CalDateTime.FromDateTime(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified)),
             Categories = new List<string> { "Category1", "Category2" },
             Priority = 1,
             Status = "Draft"

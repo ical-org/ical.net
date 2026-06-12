@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -58,7 +58,7 @@ public class Period : EncodableDataType
     internal Period() { }
 
     internal Period(Instant start, Instant end)
-        : this(new CalDateTime(start), new CalDateTime(end)) { }
+        : this(start.InUtc().ToCalDateTime(), end.InUtc().ToCalDateTime()) { }
 
     /// <summary>
     /// Creates a new <see cref="Period"/> instance starting at the given time
@@ -92,7 +92,7 @@ public class Period : EncodableDataType
             else
             {
                 // Both are zoned, so compare instants
-                isEndBeforeStart = end.ToInstant() < start.ToInstant();
+                isEndBeforeStart = end.ToZonedOrDefault(DateTimeZone.Utc).ToInstant() < start.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
             }
 
             if (isEndBeforeStart)

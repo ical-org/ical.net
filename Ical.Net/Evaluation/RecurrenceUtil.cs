@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -30,18 +30,9 @@ internal static class RecurrenceUtil
 
         var start = recurrable.Start;
 
-        var periods = evaluator.Evaluate(start, timeZone, periodStart, options);
-        if (periodStart != null)
-        {
-            periods =
-                from p in periods
-                where
-                    p.Start.ToInstant() >= periodStart
-                    || (p.End != null && p.End.Value.ToInstant() > periodStart.Value)
-                select p;
-        }
-
-        return periods.Select(p => new Occurrence(recurrable, p.Start, p.End ?? p.Start));
+        return evaluator
+            .Evaluate(start, timeZone, periodStart, options)
+            .Select(p => new Occurrence(recurrable, p.Start, p.End));
     }
 
     public static IEnumerable<T> HandleEvaluationExceptions<T>(this IEnumerable<T> sequence)

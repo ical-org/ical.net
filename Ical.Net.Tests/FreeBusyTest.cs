@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -38,13 +38,13 @@ public class FreeBusyTest
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 7, 59, 59).ToTimeZone("America/New_York")),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 7, 59, 59, "America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Free));
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 0, 0).ToTimeZone("America/New_York")),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 0, 0, "America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Busy));
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 59, 59).ToTimeZone("America/New_York")),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 8, 59, 59, "America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Busy));
-            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 9, 0, 0).ToTimeZone("America/New_York")),
+            Assert.That(freeBusy.GetFreeBusyStatus(new CalDateTime(2025, 10, 1, 9, 0, 0, "America/New_York")),
                 Is.EqualTo(FreeBusyStatus.Free));
         }
     }
@@ -103,7 +103,7 @@ public class FreeBusyTest
         var dtAfter = start.InUtc().PlusHours(1).PlusSeconds(1).ToInstant();
 
         // Period with duration: effective end time = start + 1 hour (exclusive)
-        var periodWithDuration = new FreeBusyEntry(new(new(start), Duration.FromHours(1)), FreeBusyStatus.Free);
+        var periodWithDuration = new FreeBusyEntry(new(start.InUtc().ToCalDateTime(), Duration.FromHours(1)), FreeBusyStatus.Free);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(periodWithDuration.Contains(null), Is.False, "Contains should return false for null dt.");
@@ -263,7 +263,7 @@ public class FreeBusyTest
         {
             Assert.That(freeBusy.Entries, Has.Count.EqualTo(1));
             Assert.That(freeBusy.Entries[0].Status, Is.EqualTo(FreeBusyStatus.Busy));
-            Assert.That(freeBusy.Entries[0].StartTime.AsUtc, Is.EqualTo(busyEvent.Start.AsUtc));
+            Assert.That(freeBusy.Entries[0].StartTime.ToDateTimeUtc(), Is.EqualTo(busyEvent.Start.ToDateTimeUtc()));
         }
     }
 
