@@ -14,10 +14,8 @@ internal class IcsFiles
 
     internal static string ReadStream(string manifestResource)
     {
-        using (var stream = _assembly.GetManifestResourceStream(manifestResource))
-        {
-            return new StreamReader(stream).ReadToEnd();
-        }
+        using var stream = _assembly.GetManifestResourceStream(manifestResource)!;
+        return new StreamReader(stream).ReadToEnd();
     }
 
     internal static string Alarm1 => ReadStream("Ical.Net.Tests.Calendars.Alarm.ALARM1.ics");
@@ -167,6 +165,6 @@ internal class IcsFiles
 
     internal static string RecurrrenceTestCases => ReadStream("Ical.Net.Tests.Calendars.Recurrence.RecurrenceTestCases.txt");
 
-    internal static string LibicalIcalrecurTest => ReadStream("Ical.Net.Tests.contrib.libical.icalrecur_test.out");
+    internal static string LibicalIcalrecurTest => ReadStream("Ical.Net.Tests.contrib.libical.icalrecur_test.txt");
 
 }

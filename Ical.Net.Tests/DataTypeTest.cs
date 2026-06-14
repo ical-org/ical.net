@@ -14,15 +14,13 @@ public class DataTypeTest
 {
     [Test, Category("DataType")]
     public void OrganizerConstructorMustAcceptNull()
-    {
-        Assert.DoesNotThrow(() => { var o = new Organizer(null); });
-    }
+        => Assert.DoesNotThrow(() => { _ = new Organizer(null); });
 
     [Test, Category("DataType")]
     public void AttachmentConstructorMustAcceptNull()
     {
-        Assert.DoesNotThrow(() => { var o = new Attachment((byte[]) null); });
-        Assert.DoesNotThrow(() => { var o = new Attachment((string) null); });
+        Assert.DoesNotThrow(() => { _ = new Attachment((byte[]?) null); });
+        Assert.DoesNotThrow(() => { _ = new Attachment((string?) null); });
     }
 
     public static IEnumerable<TestCaseData> TestWeekDayEqualsTestCases => [
@@ -37,22 +35,22 @@ public class DataTypeTest
     [Test, TestCaseSource(nameof(TestWeekDayEqualsTestCases)), Category("DataType")]
     public void TestWeekDayEquals(WeekDay w1, WeekDay w2)
     {
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(w1.Equals(w1), Is.True);
             Assert.That(w1.Equals(w2), Is.False);
-        });
+        }
     }
 
     [Test, TestCaseSource(nameof(TestWeekDayEqualsTestCases)), Category("DataType")]
     public void TestWeekDayCompareTo(WeekDay w1, WeekDay w2)
     {
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(w1.CompareTo(w1), Is.EqualTo(0));
 
             if (w2 != null)
                 Assert.That(w1.CompareTo(w2), Is.Not.EqualTo(0));
-        });
+        }
     }
 }

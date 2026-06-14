@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,13 +13,14 @@ namespace Ical.Net.Tests.Logging.Abstractions;
 
 internal class InMemorySink : ILogEventSink
 {
-    public static InMemorySink Instance;
+    public static InMemorySink Instance = null!;
 
-    private ConcurrentQueue<Serilog.Events.LogEvent> _events { get; } = new();
+    private readonly ConcurrentQueue<Serilog.Events.LogEvent> _events = new();
 
     public InMemorySink()
     {
         Instance = this;
+        OutputTemplate = Options.DefaultOutputTemplate;
     }
 
     public int MaxLogsCount { get; set; } = Options.DefaultMaxLogsCount;

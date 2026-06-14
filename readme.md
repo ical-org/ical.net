@@ -11,7 +11,7 @@ iCal.NET is a robust and feature-rich iCalendar (RFC 5545) library for .NET, des
 
 * **RFC 5545 Compliance**: Guarantees compatibility with the iCalendar standard, ensuring seamless integration with popular calendaring applications.
 * **Event Management**: Easily create, modify, and manage calendar events programmatically.
-* **Recurrence Rules**: Supports complex recurrence patterns, making it ideal for scheduling recurring events.
+* **Recurrence Rules**: Supports complex recurrence rules, making it ideal for scheduling recurring events.
 * **Serialization/Deserialization**: Effortlessly convert calendar data to and from iCalendar (.ics) files.
 * **Time Zone Support**: Handle events across different time zones with ease.
 * **Attachments**: Add attachments to calendar events (including invites) for enhanced functionality.

@@ -15,69 +15,69 @@ public class JournalTest
     [Test, Category("Journal")]
     public void Journal1()
     {
-        var iCal = Calendar.Load(IcsFiles.Journal1);
+        var iCal = Calendar.Load(IcsFiles.Journal1)!;
         ProgramTest.TestCal(iCal);
         Assert.That(iCal.Journals, Has.Count.EqualTo(1));
         var j = iCal.Journals[0];
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(j, Is.Not.Null, "Journal entry was null");
-            Assert.That(j.Status, Is.EqualTo(JournalStatus.Draft), "Journal entry should have been in DRAFT status, but it was in " + j.Status + " status.");
+            Assert.That(j!.Status, Is.EqualTo(JournalStatus.Draft), "Journal entry should have been in DRAFT status, but it was in " + j.Status + " status.");
             Assert.That(j.Class, Is.EqualTo("PUBLIC"), "Journal class should have been PUBLIC, but was " + j.Class + ".");
-        });
+        }
         Assert.That(j.Start, Is.Null);
     }
 
     [Test, Category("Journal")]
     public void Journal2()
     {
-        var iCal = Calendar.Load(IcsFiles.Journal2);
+        var iCal = Calendar.Load(IcsFiles.Journal2)!;
         ProgramTest.TestCal(iCal);
         Assert.That(iCal.Journals, Has.Count.EqualTo(1));
         var j = iCal.Journals.First();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(j, Is.Not.Null, "Journal entry was null");
             Assert.That(j.Status, Is.EqualTo(JournalStatus.Final), "Journal entry should have been in FINAL status, but it was in " + j.Status + " status.");
             Assert.That(j.Class, Is.EqualTo("PRIVATE"), "Journal class should have been PRIVATE, but was " + j.Class + ".");
-            Assert.That(j.Organizer.CommonName, Is.EqualTo("JohnSmith"), "Organizer common name should have been JohnSmith, but was " + j.Organizer.CommonName);
+            Assert.That(j.Organizer?.CommonName, Is.EqualTo("JohnSmith"), "Organizer common name should have been JohnSmith, but was " + j.Organizer?.CommonName);
             Assert.That(
                 string.Equals(
-                    j.Organizer.SentBy.OriginalString,
+                    j.Organizer?.SentBy?.OriginalString,
                     "mailto:jane_doe@host.com",
                     StringComparison.OrdinalIgnoreCase),
                 Is.True,
-                "Organizer should have had been SENT-BY 'mailto:jane_doe@host.com'; it was sent by '" + j.Organizer.SentBy + "'");
+                "Organizer should have had been SENT-BY 'mailto:jane_doe@host.com'; it was sent by '" + j.Organizer?.SentBy + "'");
             Assert.That(
                 string.Equals(
-                    j.Organizer.DirectoryEntry.OriginalString,
+                    j.Organizer?.DirectoryEntry?.OriginalString,
                     "ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)",
                     StringComparison.OrdinalIgnoreCase),
                 Is.True,
-                "Organizer's directory entry should have been 'ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)', but it was '" + j.Organizer.DirectoryEntry + "'");
+                "Organizer's directory entry should have been 'ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)', but it was '" + j.Organizer?.DirectoryEntry + "'");
             Assert.That(
-                j.Organizer.Value.OriginalString,
+                j.Organizer?.Value?.OriginalString,
                 Is.EqualTo("MAILTO:jsmith@host.com"));
             Assert.That(
-                j.Organizer.Value.UserInfo,
+                j.Organizer?.Value?.UserInfo,
                 Is.EqualTo("jsmith"));
             Assert.That(
-                j.Organizer.Value.Host,
+                j.Organizer?.Value?.Host,
                 Is.EqualTo("host.com"));
             Assert.That(j.Start, Is.Null);
-        });
+        }
     }
 
     [Test, Category("Journal")]
     public void Journal3()
     {
-        var iCal = Calendar.Load(IcsFiles.Journal3);
+        var iCal = Calendar.Load(IcsFiles.Journal3)!;
         ProgramTest.TestCal(iCal);
         Assert.That(iCal.Journals, Has.Count.EqualTo(1));
         var j = iCal.Journals.First();
 
-        Assert.That(j.Organizer.SentBy, Is.Null, "Expected Organizer's SENT-BY to be null, but it was not.");
+        Assert.That(j.Organizer?.SentBy, Is.Null, "Expected Organizer's SENT-BY to be null, but it was not.");
     }
 }

@@ -45,6 +45,46 @@ public struct Duration
         Seconds = seconds;
     }
 
+    public static Duration FromPeriod(NodaTime.Period p)
+        => new(p.Weeks, p.Days, (int) p.Hours, (int) p.Minutes, (int) p.Seconds);
+
+    public readonly NodaTime.Period ToPeriod()
+    {
+        var b = new NodaTime.PeriodBuilder
+        {
+            Weeks = Weeks ?? 0,
+            Days = Days ?? 0,
+            Hours = Hours ?? 0,
+            Minutes = Minutes ?? 0,
+            Seconds = Seconds ?? 0
+        };
+
+        return b.Build();
+    }
+
+    public readonly NodaTime.Period GetNominalPart()
+    {
+        var b = new NodaTime.PeriodBuilder
+        {
+            Weeks = Weeks ?? 0,
+            Days = Days ?? 0,
+        };
+
+        return b.Build();
+    }
+
+    public readonly NodaTime.Duration GetTimePart()
+    {
+        var b = new NodaTime.PeriodBuilder
+        {
+            Hours = Hours ?? 0,
+            Minutes = Minutes ?? 0,
+            Seconds = Seconds ?? 0,
+        };
+
+        return b.Build().ToDuration();
+    }
+
     /// <summary>
     /// Gets the number of weeks.
     /// </summary>
@@ -139,25 +179,6 @@ public struct Duration
         => new Duration(hours: NullIfZero(t.Days * 24 + t.Hours), minutes: NullIfZero(t.Minutes), seconds: NullIfZero(t.Seconds));
 
     /// <summary>
-    /// Creates an instance that represents the given time span, treating the days as nominal duration and the time part as exact.
-    /// </summary>
-    /// <remarks>
-    /// According to RFC5545 the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
-    /// </remarks>
-    internal static Duration FromTimeSpan(TimeSpan t)
-        => new Duration(days: NullIfZero(t.Days), hours: NullIfZero(t.Hours), minutes: NullIfZero(t.Minutes), seconds: NullIfZero(t.Seconds));
-
-    /// <summary>
-    /// Gets a value representing the time parts of the given instance.
-    /// </summary>
-    internal TimeSpan TimeAsTimeSpan => new(0, Hours ?? 0, Minutes ?? 0, Seconds ?? 0);
-
-    /// <summary>
-    /// Gets a value representing the date parts (days and weeks) of the given instance.
-    /// </summary>
-    internal TimeSpan DateAsTimeSpan => new((Weeks ?? 0) * 7 + (Days ?? 0), 0, 0, 0);
-
-    /// <summary>
     /// Convert the instance to a <see cref="TimeSpan"/>, ignoring potential
     /// DST changes.
     /// </summary>
@@ -169,28 +190,6 @@ public struct Duration
     /// </remarks>
     public TimeSpan ToTimeSpanUnspecified()
         => new TimeSpan((Weeks ?? 0) * 7 + (Days ?? 0), Hours ?? 0, Minutes ?? 0, Seconds ?? 0);
-
-    /// <summary>
-    /// Convert the instance to a <see cref="TimeSpan"/>, treating the days as nominal duration and
-    /// the time part as exact.
-    /// </summary>
-    /// <remarks>
-    /// A duration's days and weeks are considered nominal durations, while the time fields are considered exact values.
-    /// To convert a duration to a <see cref="TimeSpan"/> while considering the days and weeks as nominal durations,
-    /// use <see cref="ToTimeSpan"/>.
-    /// </remarks>
-    public TimeSpan ToTimeSpan(CalDateTime start)
-        => start.Add(this).SubtractExact(start);
-
-    /// <summary>
-    /// Gets a value indicating whether the duration is zero, that is, all fields are null or 0.
-    /// </summary>
-    internal bool IsZero
-        => ((Weeks ?? 0) == 0)
-            && ((Days ?? 0) == 0)
-            && ((Hours ?? 0) == 0)
-            && ((Minutes ?? 0) == 0)
-            && ((Seconds ?? 0) == 0);
 
     /// <summary>
     /// Gets a value indicating whether the duration is empty, that is, all fields are null.

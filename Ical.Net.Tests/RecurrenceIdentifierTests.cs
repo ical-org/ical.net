@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -75,36 +75,6 @@ internal class RecurrenceIdentifierTests
         {
             Assert.That(recurrenceId!.StartTime, Is.EqualTo(new CalDateTime(dt)));
             Assert.That(recurrenceId.Range, Is.EqualTo(expected));
-        }
-    }
-
-    [Test]
-    public void RecurrenceId_IsCompatibleWith_RecurrenceIdentifier()
-    {
-        var dt = new CalDateTime("20250930");
-        var evt1 = new CalendarEvent
-        {
-            RecurrenceId = dt
-        };
-
-        var evt2 = new CalendarEvent
-        {
-            RecurrenceIdentifier = new RecurrenceIdentifier(dt)
-        };
-        
-        var evtFuture = new CalendarEvent
-        {
-            RecurrenceIdentifier = new RecurrenceIdentifier(dt, RecurrenceRange.ThisAndFuture)
-        };
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(evt1.RecurrenceId, Is.EqualTo(evt1.RecurrenceIdentifier?.StartTime));
-            Assert.That(evt2.RecurrenceId, Is.EqualTo(evt2.RecurrenceIdentifier.StartTime));
-            Assert.That(evt1.RecurrenceIdentifier?.Range, Is.EqualTo(RecurrenceRange.ThisInstance));
-            // RecurrenceId only supports ThisInstance implicitly,
-            // so RecurrenceInstance with ThisAndFuture returns null
-            Assert.That(evtFuture.RecurrenceId, Is.Null);
         }
     }
 

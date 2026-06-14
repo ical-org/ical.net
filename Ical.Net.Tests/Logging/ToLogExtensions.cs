@@ -2,7 +2,7 @@
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
-#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,15 +44,14 @@ internal static class ToLogExtensions
             sb.Append(occurrence.ToLog()).Append('\n');
         }
 
-        return sb.ToString().TrimEnd('\n');
+        return sb.ToString().TrimEnd('\r', '\n');
     }
 
     public static string ToLog(this Occurrence occurrence)
     {
         return $"""
-                Start: {occurrence.Period.StartTime}
-                  Period: {occurrence.Period.Duration?.ToString() ?? "null"}
-                  End: {occurrence.Period.EffectiveEndTime ?? occurrence.Period.StartTime.Add(occurrence.Period.Duration!.Value)}
+                Start: {occurrence.Start}
+                  End: {occurrence.End}
                 """;
     }
 }

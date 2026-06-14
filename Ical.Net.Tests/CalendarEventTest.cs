@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -57,17 +57,17 @@ public class CalendarEventTest
         };
 
         cal.Events.Add(evt);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(cal.Children, Has.Count.EqualTo(1));
             Assert.That(cal.Children[0], Is.SameAs(evt));
-        });
+        }
         cal.RemoveChild(evt);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(cal.Children.Count, Is.EqualTo(0));
             Assert.That(cal.Events.Count, Is.EqualTo(0));
-        });
+        }
     }
 
     /// <summary>
@@ -86,18 +86,18 @@ public class CalendarEventTest
         };
 
         cal.Events.Add(evt);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(cal.Children, Has.Count.EqualTo(1));
             Assert.That(cal.Children[0], Is.SameAs(evt));
-        });
+        }
 
         cal.Events.Remove(evt);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(cal.Children.Count, Is.EqualTo(0));
             Assert.That(cal.Events.Count, Is.EqualTo(0));
-        });
+        }
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ public class CalendarEventTest
         };
 
         cal.Events.Add(evt);
-        Assert.That(evt.DtStamp.IsUtc, Is.True, "DTSTAMP should always be of type UTC.");
+        Assert.That(evt.DtStamp?.IsUtc, Is.True, "DTSTAMP should always be of type UTC.");
     }
 
     /// <summary>
@@ -165,7 +165,7 @@ public class CalendarEventTest
         var explicitDtStampCalendar = new Calendar();
         var explicitDtStampEvent = new CalendarEvent
         {
-            DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc))
+            DtStamp = CalDateTime.FromDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc))
         };
         explicitDtStampCalendar.Events.Add(explicitDtStampEvent);
         yield return new TestCaseData(serializer.SerializeToString(explicitDtStampCalendar))
@@ -175,16 +175,11 @@ public class CalendarEventTest
 
     private static CalendarEvent GetSimpleEvent() => new CalendarEvent
     {
-        DtStart = new CalDateTime(_now),
-        DtEnd = new CalDateTime(_later),
+        DtStart = CalDateTime.FromDateTime(_now),
+        DtEnd = CalDateTime.FromDateTime(_later),
         Uid = _uid,
     };
 
-    private static List<RecurrencePattern> GetSimpleRecurrenceList()
-        => new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 } };
-    private static List<CalDateTime> GetExceptionDates()
-        => new List<CalDateTime> { new CalDateTime(_now.AddDays(1).Date) };
-    
     [Test]
     public void EventResourcesCanBeZeroedOut()
     {
@@ -196,11 +191,11 @@ public class CalendarEventTest
 
         var newResources = new[] { "Hello", "Goodbye" };
         e.Resources = new List<string>(newResources);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(newResources, Is.EquivalentTo(e.Resources));
             Assert.That(e.Resources.Any(r => resources.Contains(r)), Is.False);
-        });
+        }
 
         //See https://github.com/rianjs/ical.net/issues/208
         e.Resources = Array.Empty<string>();
@@ -238,7 +233,7 @@ public class CalendarEventTest
             END:VTIMEZONE
             END:VCALENDAR
             """;
-        var timezones = Calendar.Load(ical)
+        var timezones = Calendar.Load(ical)!
             .TimeZones.First()
             .Children.Cast<CalendarComponent>()
             .ToArray();
@@ -257,87 +252,6 @@ public class CalendarEventTest
         Assert.That(negativeOffset?.Offset, Is.EqualTo(expectedNegative));
     }
 
-
-    [Test, Category("CalendarEvent")]
-    public void GetEffectiveDurationTests()
-    {
-        var dt = new DateTime(2025, 3, 1, 14, 30, 0);
-        const string tzIdStart = "America/New_York";
-        const string tzIdEnd = "Europe/London";
-
-        var evt = new CalendarEvent
-        {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(dt), TimeOnly.FromDateTime(dt), tzIdStart),
-            DtEnd = new CalDateTime(DateOnly.FromDateTime(dt.AddHours(1)), TimeOnly.FromDateTime(dt.AddHours(1)), tzIdEnd)
-        };
-
-        var ed = evt.EffectiveDuration;
-        Assert.Multiple(() =>
-        {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(dt));
-            Assert.That(evt.DtEnd.Value, Is.EqualTo(dt.AddHours(1)));
-            Assert.That(evt.EffectiveDuration, Is.EqualTo(Duration.FromHours(-4)));
-        });
-
-        evt = new CalendarEvent
-        {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(dt.Date)),
-            DtEnd = new CalDateTime(DateOnly.FromDateTime(dt.Date))
-        };
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.EffectiveDuration.IsZero, Is.True);
-        });
-
-        evt = new CalendarEvent
-        {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(dt)),
-        };
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.Duration, Is.Null);
-            Assert.That(evt.EffectiveDuration, Is.EqualTo(DataTypes.Duration.FromDays(1)));
-        });
-
-        evt = new CalendarEvent
-        {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(dt), TimeOnly.FromDateTime(dt)),
-            Duration = Duration.FromHours(2),
-        };
-
-        Assert.Multiple(() => {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(dt));
-            Assert.That(evt.DtEnd, Is.Null);
-            Assert.That(evt.EffectiveDuration, Is.EqualTo(Duration.FromHours(2)));
-        });
-
-        evt = new CalendarEvent()
-        {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(dt.Date), TimeOnly.FromDateTime(dt.Date)),
-            Duration = Duration.FromHours(2),
-        };
-
-        Assert.Multiple(() => {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.EffectiveDuration, Is.EqualTo(Duration.FromHours(2)));
-        });
-
-        evt = new CalendarEvent()
-        {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(dt)),
-            Duration = Duration.FromDays(1),
-        };
-
-        Assert.Multiple(() => {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.EffectiveDuration, Is.EqualTo(Duration.FromDays(1)));
-        });
-    }
-
     [Test]
     public void EitherEndTime_OrDuraction_CanBeSet()
     {
@@ -346,13 +260,13 @@ public class CalendarEventTest
             DtStart = new CalDateTime(2025, 10, 11, 12, 13, 14, CalDateTime.UtcTzId)
         };
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(() => evt.DtEnd = new CalDateTime(2025, 12, 11), Throws.Nothing);
             Assert.That(() => evt.Duration = Duration.FromDays(1), Throws.InvalidOperationException);
             Assert.That(() => evt.DtEnd = null, Throws.Nothing);
             Assert.That(() => evt.Duration = Duration.FromDays(1), Throws.Nothing);
             Assert.That(() => evt.DtEnd = new CalDateTime(2025, 12, 11), Throws.InvalidOperationException);
-        });
+        }
     }
 }

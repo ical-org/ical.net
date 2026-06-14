@@ -24,7 +24,7 @@ public class DataTypeSerializerFactory : ISerializerFactory
             { typeof(Organizer), ctx => new OrganizerSerializer(ctx) },
             { typeof(Period), ctx => new PeriodSerializer(ctx) },
             { typeof(PeriodList), ctx => new PeriodListSerializer(ctx) },
-            { typeof(RecurrencePattern), ctx => new RecurrencePatternSerializer(ctx) },
+            { typeof(RecurrenceRule), ctx => new RecurrenceRuleSerializer(ctx) },
             { typeof(RequestStatus), ctx => new RequestStatusSerializer(ctx) },
             { typeof(StatusCode), ctx => new StatusCodeSerializer(ctx) },
             { typeof(Trigger), ctx => new TriggerSerializer(ctx) },

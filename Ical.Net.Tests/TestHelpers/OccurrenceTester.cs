@@ -1,54 +1,73 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
-#nullable enable
+
+using System;
 using System.Linq;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests.TestHelpers;
 
 internal static class OccurrenceTester
 {
+    private const string _tzid = "US-Eastern";
+
     public static void AssertOccurrences(
         Calendar cal,
         CalDateTime? fromDate,
         CalDateTime? toDate,
-        Period[] expectedPeriods,
-        string[]? timeZones,
-        int eventIndex
-    )
+        DataTypes.Period[] expectedPeriods,
+        int eventIndex,
+        string? timeZone = null)
     {
         var evt = cal.Events.Skip(eventIndex).First();
 
-        var occurrences = toDate == null
-            ? evt.GetOccurrences(fromDate).ToList()
-            : evt.GetOccurrences(fromDate).TakeWhileBefore(toDate).ToList();
+        var tz = DateUtil.GetZone(timeZone ?? _tzid);
+        var start = fromDate?.ToZonedOrDefault(tz).ToInstant();
 
-        Assert.Multiple(() =>
+        var occurrences = toDate == null
+            ? evt.GetOccurrences(tz, start).ToList()
+            : evt.GetOccurrences(tz, start).TakeWhileBefore(toDate.ToZonedOrDefault(tz).ToInstant()).ToList();
+
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(
                 occurrences,
                 Has.Count.EqualTo(expectedPeriods.Length),
                 $"There should have been {expectedPeriods.Length} occurrences; there were {occurrences.Count}");
 
-            if (evt.RecurrenceRules.Count > 0)
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(evt.RecurrenceRules, Has.Count.EqualTo(1));
-            }
-
-            for (var i = 0; i < expectedPeriods.Length; i++)
-            {
-                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveDuration!.Value);
-
-                Assert.That(occurrences[i].Period, Is.EqualTo(period), "Event should occur on " + period);
-                if (timeZones != null)
+                for (var i = 0; i < expectedPeriods.Length; i++)
                 {
-                    Assert.That(period.StartTime.TimeZoneName, Is.EqualTo(timeZones[i]),
-                        $"Event {period} should occur in the {timeZones[i]} timezone");
+                    var start2 = expectedPeriods[i].StartTime.ToZonedOrDefault(tz).WithZone(tz);
+
+                    ZonedDateTime end;
+
+                    if (expectedPeriods[i].Duration is { } d)
+                    {
+                        end = start2.LocalDateTime
+                            .Plus(d.GetNominalPart())
+                            .InZoneRelativeTo(start2)
+                            .Plus(d.GetTimePart());
+                    }
+                    else if (expectedPeriods[i].EndTime is { } periodEnd)
+                    {
+                        end = periodEnd.ToZonedOrDefault(tz).WithZone(tz);
+                    }
+                    else
+                    {
+                        throw new Exception("Expected test period must have a duration or an end");
+                    }
+
+                    Assert.That(occurrences[i].Start, Is.EqualTo(start2), "Event should start on " + start);
+                    Assert.That(occurrences[i].End, Is.EqualTo(end), "Event should end on " + end);
                 }
             }
-        });
+        }
     }
 }

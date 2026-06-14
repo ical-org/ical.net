@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -9,12 +9,18 @@ using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
+using NodaTime;
 
 namespace Ical.Net.Evaluation;
 
 internal static class RecurrenceUtil
 {
-    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, CalDateTime? periodStart, EvaluationOptions? options = null)
+    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, ZonedDateTime periodStart, EvaluationOptions? options = null)
+    {
+        return GetOccurrences(recurrable, periodStart.Zone, periodStart.ToInstant(), options);
+    }
+
+    public static IEnumerable<Occurrence> GetOccurrences(IRecurrable recurrable, DateTimeZone timeZone, Instant? periodStart, EvaluationOptions? options = null)
     {
         var evaluator = recurrable.Evaluator;
         if (evaluator == null || recurrable.Start == null)
@@ -24,66 +30,9 @@ internal static class RecurrenceUtil
 
         var start = recurrable.Start;
 
-        var periods = evaluator.Evaluate(start, periodStart, options);
-        if (periodStart != null)
-        {
-            periods =
-                from p in periods
-                let effectiveEndTime = p.EffectiveEndTime
-                where
-                    p.StartTime.GreaterThanOrEqual(periodStart)
-                    || ((effectiveEndTime != null) && effectiveEndTime.GreaterThan(periodStart))
-                select p;
-        }
-
-        return periods.Select(p => new Occurrence(recurrable, p));
-    }
-
-    public static bool?[] GetExpandBehaviorList(RecurrencePattern p)
-    {
-        // See the table in RFC 5545 Section 3.3.10 (Page 43).
-        // Index mapping (must match RecurrencePatternEvaluator.GetCandidates order!):
-        // 0 = BYMONTH, 1 = BYWEEKNO, 2 = BYYEARDAY, 3 = BYMONTHDAY, 4 = BYDAY,
-        // 5 = BYHOUR,  6 = BYMINUTE,  7 = BYSECOND, 8 = BYSETPOS (sentinel)
-        switch (p.Frequency)
-        {
-            case FrequencyType.Minutely:
-                return [false, null, false, false, false, false, false, true, false];
-            case FrequencyType.Hourly:
-                return [false, null, false, false, false, false, true, true, false];
-            case FrequencyType.Daily:
-                return [false, null, null, false, false, true, true, true, false];
-            case FrequencyType.Weekly:
-                return [false, null, null, null, true, true, true, true, false];
-            case FrequencyType.Monthly:
-            {
-                bool?[] row = [false, null, null, true, true, true, true, true, false];
-
-                    // RFC 5545 Notes 1 & 2:
-                    // BYDAY should act as a limiter when BYMONTHDAY or BYYEARDAY are present.
-                    if (p.ByMonthDay.Count > 0 || p.ByYearDay.Count > 0)
-                    {
-                        row[4] = false;
-                    }
-
-                    return row;
-                }
-            case FrequencyType.Yearly:
-                {
-                    bool?[] row = [true, true, true, true, true, true, true, true, false];
-
-                    // RFC 5545 Notes 1 & 2:
-                    // BYDAY should act as a limiter when BYMONTHDAY or BYYEARDAY are present.
-                    if (p.ByYearDay.Count > 0 || p.ByMonthDay.Count > 0)
-                    {
-                        row[4] = false;
-                    }
-
-                    return row;
-                }
-            default:
-                return [false, null, false, false, false, false, false, false, false];
-        }
+        return evaluator
+            .Evaluate(start, timeZone, periodStart, options)
+            .Select(p => new Occurrence(recurrable, p.Start, p.End));
     }
 
     public static IEnumerable<T> HandleEvaluationExceptions<T>(this IEnumerable<T> sequence)
@@ -94,7 +43,7 @@ internal static class RecurrenceUtil
             // the maximum supported date/time value, which is 9999-12-31. When evaluation recurrence rules,
             // these exceptions could basically be raised anywhere, so we handle them here centrally and
             // convert them to EvaluationOutOfRangeException, which are specified to be raised in such cases.
-            // There shouldn't be other causes for this type of exceptions, as most validations of the pattern
+            // There shouldn't be other causes for this type of exceptions, as most validations of the rrule
             // itself are already done earlier, before doing the actual enumeration.
             // Intentionally don't include the outer exception as this most likely is not a technical but a usage error.
             .Catch<T, ArgumentOutOfRangeException>(_ => throw new EvaluationOutOfRangeException("An out-of-range value was encountered while evaluating occurrences. This commonly happens when trying to enumerate an unbounded RRULE to its end. Consider applying the .TakeWhile() operator."))

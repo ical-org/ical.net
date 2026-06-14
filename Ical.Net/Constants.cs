@@ -1,10 +1,9 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
 using System;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace Ical.Net;
@@ -18,9 +17,6 @@ public static class AlarmAction
     public const string Audio = "AUDIO";
     public const string Display = "DISPLAY";
     public const string Email = "EMAIL";
-
-    [Obsolete("Procedure was deprecated by RFC-5545")]
-    public const string Procedure = "PROCEDURE";
 }
 
 public static class TriggerRelation
@@ -191,9 +187,11 @@ public enum FrequencyType
 /// MONTHLY or YEARLY recurrence frequency. For example, within
 /// a MONTHLY frequency, consider the following:
 ///
-/// RecurrencePattern r = new RecurrencePattern();
+/// <code>
+/// RecurrenceRule r = new RecurrenceRule();
 /// r.Frequency = FrequencyType.Monthly;
 /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.First));
+/// </code>
 ///
 /// The above example represents the first Monday within the month,
 /// whereas if FrequencyOccurrence.Last were specified, it would
@@ -201,14 +199,18 @@ public enum FrequencyType
 ///
 /// For a YEARLY frequency, consider the following:
 ///
-/// Recur r = new Recur();
+/// <code>
+/// RecurrenceRule r = new RecurrenceRule();
 /// r.Frequency = FrequencyType.Yearly;
 /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.Second));
+/// </code>
 ///
 /// The above example represents the second Monday of the year.  This can
 /// also be represented with the following code:
 ///
+/// <code>
 /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, 2));
+/// </code>
 /// </summary>
 public enum FrequencyOccurrence
 {

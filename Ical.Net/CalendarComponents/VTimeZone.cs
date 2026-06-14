@@ -191,11 +191,11 @@ public class VTimeZone : CalendarComponent
         timeZoneInfo.TimeZoneName = oldestInterval.Name;
 
         var start = oldestInterval.IsoLocalStart.ToDateTimeUnspecified() + delta;
-        timeZoneInfo.Start = new CalDateTime(start, true);
+        timeZoneInfo.Start = CalDateTime.FromDateTime(start);
 
         if (isRRule)
         {
-            PopulateTimeZoneInfoRecurrenceRules(timeZoneInfo, oldestInterval);
+            PopulateTimeZoneInfoRecurrenceRule(timeZoneInfo, oldestInterval);
         }
         else
         {
@@ -250,22 +250,25 @@ public class VTimeZone : CalendarComponent
     {
         foreach (var interval in intervals)
         {
-            var time = interval.IsoLocalStart.ToDateTimeUnspecified();
-            var date = new CalDateTime(time, true).Add(delta.ToDurationExact());
+            var time = interval.IsoLocalStart.PlusSeconds((long)delta.TotalSeconds);
+            var date = new CalDateTime(time);
 
             tzi.RecurrenceDates.Add(date);
         }
     }
 
-    private static void PopulateTimeZoneInfoRecurrenceRules(VTimeZoneInfo tzi, ZoneInterval interval)
+    private static void PopulateTimeZoneInfoRecurrenceRule(VTimeZoneInfo tzi, ZoneInterval interval)
     {
-        var recurrence = new IntervalRecurrencePattern(interval);
-        tzi.RecurrenceRules.Add(recurrence);
+        var recurrence = new IntervalRecurrenceRule(interval);
+        tzi.RecurrenceRule = recurrence;
     }
 
-    private class IntervalRecurrencePattern : RecurrencePattern
+    private class IntervalRecurrenceRule : RecurrenceRule
     {
-        public IntervalRecurrencePattern(ZoneInterval interval)
+        // Required for serializer
+        public IntervalRecurrenceRule() : base() { }
+
+        public IntervalRecurrenceRule(ZoneInterval interval)
         {
             Frequency = FrequencyType.Yearly;
             ByMonth.Add(interval.IsoLocalStart.Month);

@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
+using NodaTime;
 
 namespace Ical.Net.Evaluation;
 
@@ -34,5 +35,6 @@ public interface IEvaluator
     ///     A sequence of <see cref="Ical.Net.DataTypes.Period"/> objects for
     ///     each date/time when this item occurs/recurs.
     /// </returns>
-    IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options);
+    IEnumerable<EvaluationPeriod> Evaluate(CalDateTime referenceDate, DateTimeZone timeZone, Instant? periodStart, EvaluationOptions? options);
+    IEnumerable<EvaluationPeriod> Evaluate(CalDateTime referenceDate, ZonedDateTime periodStart, EvaluationOptions? options);
 }

@@ -39,7 +39,6 @@ internal class DataTypeMapper
         AddPropertyMapping("DUE", typeof(CalDateTime), false);
         AddPropertyMapping("DURATION", typeof(Duration), false);
         AddPropertyMapping("EXDATE", typeof(PeriodList), false);
-        AddPropertyMapping("EXRULE", typeof(RecurrencePattern), false);
         AddPropertyMapping("FREEBUSY", typeof(FreeBusyEntry), true);
         AddPropertyMapping("GEO", typeof(GeographicLocation), false);
         AddPropertyMapping("LAST-MODIFIED", typeof(CalDateTime), false);
@@ -52,7 +51,7 @@ internal class DataTypeMapper
         AddPropertyMapping("REQUEST-STATUS", typeof(RequestStatus), false);
         AddPropertyMapping("REPEAT", typeof(int), false);
         AddPropertyMapping("RESOURCES", typeof(string), true);
-        AddPropertyMapping("RRULE", typeof(RecurrencePattern), false);
+        AddPropertyMapping("RRULE", typeof(RecurrenceRule), false);
         AddPropertyMapping("SEQUENCE", typeof(int), false);
         AddPropertyMapping("STATUS", ResolveStatusProperty, false);
         AddPropertyMapping("TRANSP", typeof(TransparencyType), false);

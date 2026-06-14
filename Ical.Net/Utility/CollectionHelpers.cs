@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -14,34 +14,19 @@ internal static class CollectionHelpers
     /// <summary> Commutative, stable, order-independent hashing for collections of collections. </summary>
     public static int GetHashCode<T>(IEnumerable<T>? collection)
     {
-        unchecked
+        if (collection == null)
         {
-            if (collection == null)
-            {
-                return 0;
-            }
-
-            return collection
-                .Where(e => e != null)
-                .Aggregate(0, (current, element) => current + element?.GetHashCode() ?? 0);
+            return 0;
         }
-    }
 
-    /// <summary> Commutative, stable, order-independent hashing for collections of collections. </summary>
-    public static int GetHashCodeForNestedCollection<T>(IEnumerable<IEnumerable<T>>? nestedCollection)
-    {
-        unchecked
+        var hashCode = new HashCode();
+
+        foreach (var item in collection)
         {
-            if (nestedCollection == null)
-            {
-                return 0;
-            }
-
-            return nestedCollection
-                .SelectMany(c => c)
-                .Where(e => e != null)
-                .Aggregate(0, (current, element) => current + element?.GetHashCode() ?? 0);
+            hashCode.Add(item);
         }
+
+        return hashCode.ToHashCode();
     }
 
     public static bool Equals<T>(IEnumerable<T>? left, IEnumerable<T>? right, bool orderSignificant = false)
@@ -182,52 +167,6 @@ internal static class CollectionHelpers
         var right = OrderedMergeMany(sequences, offs + mid, length - mid, comparer);
 
         return left.OrderedMerge(right, comparer);
-    }
-
-    /// <summary>
-    /// Returns the elements of the first ordered sequence that are not present in the second ordered sequence.
-    /// </summary>
-    /// <remarks>
-    /// Both sequences must be ordered according to the type's default comparer.
-    ///
-    /// The method operates in a streaming manner, meaning it only enumerates the input sequences while the
-    /// output sequence is being enumerated, and can therefore handle indefinite sequences.
-    /// </remarks>
-    public static IEnumerable<T> OrderedExclude<T>(this IEnumerable<T> items, IEnumerable<T> exclude)
-        => items.OrderedExclude(exclude, Comparer<T>.Default);
-
-    /// <summary>
-    /// Returns the elements of the first ordered sequence that are not present in the second ordered sequence.
-    /// </summary>
-    /// <remarks>
-    /// Both sequences must be ordered according to the specified comparer.
-    ///
-    /// The method operates in a streaming manner, meaning it only enumerates the input sequences while the
-    /// output sequence is being enumerated, and can therefore handle indefinite sequences.
-    /// </remarks>
-    public static IEnumerable<T> OrderedExclude<T>(this IEnumerable<T> items, IEnumerable<T> exclude, IComparer<T> comparer)
-    {
-        using var it = items.GetEnumerator();
-        using var itEx = exclude.GetEnumerator();
-
-        var hasNextIt = it.MoveNext();
-        var hasNextEx = itEx.MoveNext();
-
-        while (hasNextIt)
-        {
-            var cmp = hasNextEx ? comparer.Compare(it.Current, itEx.Current) : -1;
-            if (cmp <= 0)
-            {
-                if (cmp < 0)
-                    yield return it.Current;
-
-                hasNextIt = it.MoveNext();
-            }
-            else
-            {
-                hasNextEx = itEx.MoveNext();
-            }
-        }
     }
 
     /// <summary>

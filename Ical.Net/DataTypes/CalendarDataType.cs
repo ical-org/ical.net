@@ -76,7 +76,7 @@ public abstract class CalendarDataType : ICalendarDataType
                 case "PERIOD":
                     return typeof(Period);
                 case "RECUR":
-                    return typeof(RecurrencePattern);
+                    return typeof(RecurrenceRule);
                 case "TEXT":
                     return typeof(string);
                 case "TIME":
@@ -142,13 +142,6 @@ public abstract class CalendarDataType : ICalendarDataType
         _associatedObject = dt.AssociatedObject;
         _proxy.SetParent(_associatedObject);
         _proxy.SetProxiedObject(dt.Parameters);
-    }
-
-    protected internal void CopyDataType(CalendarDataType other)
-    {
-        _proxy = other._proxy;
-        _parameters = other._parameters;
-        _associatedObject = other._associatedObject;
     }
 
     /// <summary>

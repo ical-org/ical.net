@@ -5,11 +5,13 @@ on:
   pull_request:
     branches:
       - main
+      - 'version/6.0'
     paths-ignore:
       - '**/*.md'
   push:
     branches:
       - main
+      - 'version/6.0'
       - 'pr/**/*'
       - 'wip/**/*'
     paths-ignore:

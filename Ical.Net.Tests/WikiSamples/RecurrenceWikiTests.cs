@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +12,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Tests.Logging;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests.WikiSamples;
@@ -56,7 +56,7 @@ internal class RecurrenceWikiTests
     {
         // Wiki code start
 
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Daily,
             Interval = 2,
@@ -72,7 +72,8 @@ internal class RecurrenceWikiTests
         };
 
         // Get all occurrences of the series.
-        IEnumerable<Occurrence> allOccurrences = calendarEvent.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("UTC");
+        IEnumerable<Occurrence> allOccurrences = calendarEvent.GetOccurrences(tz);
         Assert.That(allOccurrences.Count(), Is.EqualTo(5));
 
         // Wiki code end
@@ -80,21 +81,16 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             5 occurrences:
-            Start: 07/10/2025
-              Period: P1D
-              End: 07/11/2025
-            Start: 07/12/2025
-              Period: P1D
-              End: 07/13/2025
-            Start: 07/14/2025
-              Period: P1D
-              End: 07/15/2025
-            Start: 07/16/2025
-              Period: P1D
-              End: 07/17/2025
-            Start: 07/18/2025
-              Period: P1D
-              End: 07/19/2025
+            Start: 2025-07-10T00:00:00 UTC (+00)
+              End: 2025-07-11T00:00:00 UTC (+00)
+            Start: 2025-07-12T00:00:00 UTC (+00)
+              End: 2025-07-13T00:00:00 UTC (+00)
+            Start: 2025-07-14T00:00:00 UTC (+00)
+              End: 2025-07-15T00:00:00 UTC (+00)
+            Start: 2025-07-16T00:00:00 UTC (+00)
+              End: 2025-07-17T00:00:00 UTC (+00)
+            Start: 2025-07-18T00:00:00 UTC (+00)
+              End: 2025-07-19T00:00:00 UTC (+00)
             """;
 
         var generatedOccurrences = ToWikiPeriodString(allOccurrences);
@@ -112,7 +108,7 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 07, 10, 09, 00, 00, "Europe/Zurich");
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Daily,
             Interval = 2,
@@ -122,7 +118,7 @@ internal class RecurrenceWikiTests
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = start.AddHours(1),
+            DtEnd = start.ToZonedDateTime().PlusHours(1).ToCalDateTime(),
             RecurrenceRule = recurrence
         };
 
@@ -132,11 +128,12 @@ internal class RecurrenceWikiTests
 
         // Serialize Calendar to string
         var calendarSerializer = new CalendarSerializer();
-        var generatedIcs = calendarSerializer.SerializeToString(calendar);
+        var generatedIcs = calendarSerializer.SerializeToString(calendar)!;
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
-        Assert.That(occurrences.Count(), Is.EqualTo(2));
+        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        var occurrences = calendar.GetOccurrences(tz).ToList();
+        Assert.That(occurrences, Has.Count.EqualTo(2));
 
         // Wiki code end
 
@@ -155,12 +152,10 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             2 occurrences:
-            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/10/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 07/12/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/12/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 2025-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-10T10:00:00 Europe/Zurich (+02)
+            Start: 2025-07-12T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-12T10:00:00 Europe/Zurich (+02)
             """;
         
         // Non-Wiki Asserts
@@ -184,18 +179,21 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 07, 10, 09, 00, 00, "Europe/Zurich");
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Yearly,
             ByMonthDay = [10, 12],
-            // 2027-07-10 09:00:00 Europe/Zurich (07:00:00 UTC)
-            Until = start.AddYears(2).ToTimeZone("UTC")
+            Until = start.ToLocalDateTime()
+                .PlusYears(2)
+                .InZoneLeniently("Europe/Zurich")
+                .WithZone(DateTimeZone.Utc)
+                .ToCalDateTime()
         };
 
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = start.AddHours(1),
+            DtEnd = start.ToZonedDateTime().PlusHours(1).ToCalDateTime(),
             RecurrenceRule = recurrence
         };
 
@@ -208,7 +206,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
 
@@ -227,21 +226,16 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             5 occurrences:
-            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/10/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 07/12/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/12/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 07/10/2026 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/10/2026 10:00:00 +02:00 Europe/Zurich
-            Start: 07/12/2026 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/12/2026 10:00:00 +02:00 Europe/Zurich
-            Start: 07/10/2027 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/10/2027 10:00:00 +02:00 Europe/Zurich
+            Start: 2025-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-10T10:00:00 Europe/Zurich (+02)
+            Start: 2025-07-12T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-12T10:00:00 Europe/Zurich (+02)
+            Start: 2026-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2026-07-10T10:00:00 Europe/Zurich (+02)
+            Start: 2026-07-12T09:00:00 Europe/Zurich (+02)
+              End: 2026-07-12T10:00:00 Europe/Zurich (+02)
+            Start: 2027-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2027-07-10T10:00:00 Europe/Zurich (+02)
             """;
 
         // Non-Wiki Asserts
@@ -265,7 +259,7 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 06, 29, 16, 00, 00, "Europe/Zurich");
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Monthly,
             ByDay = [new(DayOfWeek.Sunday, FrequencyOccurrence.Last)],
@@ -275,8 +269,8 @@ internal class RecurrenceWikiTests
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = start.AddHours(4),
-            RecurrenceRule = recurrence,
+            DtEnd = start.ToZonedDateTime().PlusHours(4).ToCalDateTime(),
+            RecurrenceRule = recurrence
         };
         // Add additional an occurrence to the series.
         calendarEvent.RecurrenceDates
@@ -291,7 +285,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
 
@@ -311,18 +306,14 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             4 occurrences:
-            Start: 06/29/2025 16:00:00 +02:00 Europe/Zurich
-              Period: PT4H
-              End: 06/29/2025 20:00:00 +02:00 Europe/Zurich
-            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT4H
-              End: 07/10/2025 13:00:00 +02:00 Europe/Zurich
-            Start: 07/27/2025 16:00:00 +02:00 Europe/Zurich
-              Period: PT4H
-              End: 07/27/2025 20:00:00 +02:00 Europe/Zurich
-            Start: 08/31/2025 16:00:00 +02:00 Europe/Zurich
-              Period: PT4H
-              End: 08/31/2025 20:00:00 +02:00 Europe/Zurich
+            Start: 2025-06-29T16:00:00 Europe/Zurich (+02)
+              End: 2025-06-29T20:00:00 Europe/Zurich (+02)
+            Start: 2025-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-10T13:00:00 Europe/Zurich (+02)
+            Start: 2025-07-27T16:00:00 Europe/Zurich (+02)
+              End: 2025-07-27T20:00:00 Europe/Zurich (+02)
+            Start: 2025-08-31T16:00:00 Europe/Zurich (+02)
+              End: 2025-08-31T20:00:00 Europe/Zurich (+02)
             """;
 
         // Non-Wiki Asserts
@@ -344,17 +335,17 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 07, 10, 20, 00, 00, "UTC");
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Hourly,
-            Until = start.AddHours(4)
+            Until = start.ToZonedDateTime().PlusHours(4).ToCalDateTime()
         };
 
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = start.AddMinutes(15),
-            RecurrenceRule = recurrence,
+            DtEnd = start.ToZonedDateTime().PlusMinutes(15).ToCalDateTime(),
+            RecurrenceRule = recurrence
         };
         // Add the exception date to the series.
         calendarEvent.ExceptionDates
@@ -369,7 +360,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("UTC");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
 
@@ -389,18 +381,14 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             4 occurrences:
-            Start: 07/10/2025 20:00:00 +00:00 UTC
-              Period: PT15M
-              End: 07/10/2025 20:15:00 +00:00 UTC
-            Start: 07/10/2025 21:00:00 +00:00 UTC
-              Period: PT15M
-              End: 07/10/2025 21:15:00 +00:00 UTC
-            Start: 07/10/2025 23:00:00 +00:00 UTC
-              Period: PT15M
-              End: 07/10/2025 23:15:00 +00:00 UTC
-            Start: 07/11/2025 00:00:00 +00:00 UTC
-              Period: PT15M
-              End: 07/11/2025 00:15:00 +00:00 UTC
+            Start: 2025-07-10T20:00:00 UTC (+00)
+              End: 2025-07-10T20:15:00 UTC (+00)
+            Start: 2025-07-10T21:00:00 UTC (+00)
+              End: 2025-07-10T21:15:00 UTC (+00)
+            Start: 2025-07-10T23:00:00 UTC (+00)
+              End: 2025-07-10T23:15:00 UTC (+00)
+            Start: 2025-07-11T00:00:00 UTC (+00)
+              End: 2025-07-11T00:15:00 UTC (+00)
             """;
 
         // Non-Wiki Asserts
@@ -423,8 +411,9 @@ internal class RecurrenceWikiTests
         // Wiki code start
 
         // Create the CalendarEvent
-        var start = new CalDateTime(2025, 07, 10, 09, 00, 00, "Europe/Zurich");
-        var recurrence = new RecurrencePattern
+        var timeZoneId = "Europe/Zurich";
+        var start = new CalDateTime(2025, 07, 10, 09, 00, 00, timeZoneId);
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Daily,
             Interval = 2,
@@ -437,12 +426,12 @@ internal class RecurrenceWikiTests
             Uid = "my-custom-id",
             Summary = "Walking",
             DtStart = start,
-            DtEnd = start.AddHours(1),
+            DtEnd = start.ToZonedDateTime().PlusHours(1).ToCalDateTime(),
             RecurrenceRule = recurrence,
             Sequence = 0 // default value
         };
 
-        var startMoved = new CalDateTime(2025, 07, 13, 13, 00, 00, "Europe/Zurich");
+        var startMoved = new CalDateTime(2025, 07, 13, 13, 00, 00, timeZoneId);
         var movedEvent = new CalendarEvent
         {
             // UID links master with child.
@@ -451,9 +440,9 @@ internal class RecurrenceWikiTests
             Summary = "Short after lunch walk",
             // Set new start and end time.
             DtStart = startMoved,
-            DtEnd = startMoved.AddMinutes(13),
+            DtEnd = startMoved.ToZonedDateTime().PlusMinutes(13).ToCalDateTime(),
             // Set the original date of the occurrence (2025-07-14 09:00:00).
-            RecurrenceId = start.AddDays(4),
+            RecurrenceIdentifier = new(new(2025, 07, 14, 09, 00, 00, timeZoneId)),
             // The first change for this RecurrenceId
             Sequence = 1
         };
@@ -468,7 +457,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
 
@@ -498,18 +488,14 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             4 occurrences:
-            Start: 07/10/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/10/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 07/12/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/12/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 07/13/2025 13:00:00 +02:00 Europe/Zurich
-              Period: PT13M
-              End: 07/13/2025 13:13:00 +02:00 Europe/Zurich
-            Start: 07/16/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 07/16/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 2025-07-10T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-10T10:00:00 Europe/Zurich (+02)
+            Start: 2025-07-12T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-12T10:00:00 Europe/Zurich (+02)
+            Start: 2025-07-13T13:00:00 Europe/Zurich (+02)
+              End: 2025-07-13T13:13:00 Europe/Zurich (+02)
+            Start: 2025-07-16T09:00:00 Europe/Zurich (+02)
+              End: 2025-07-16T10:00:00 Europe/Zurich (+02)
             """;
         
         // Non-Wiki Asserts
@@ -531,7 +517,7 @@ internal class RecurrenceWikiTests
 
         // Create the CalendarEvent
         var start = new CalDateTime(2025, 03, 24, 09, 00, 00, "Europe/Zurich"); // Before DST starts
-        var recurrence = new RecurrencePattern
+        var recurrence = new RecurrenceRule
         {
             Frequency = FrequencyType.Weekly,
             Count = 3 // Three Mondays: before, on, and after DST change
@@ -540,7 +526,7 @@ internal class RecurrenceWikiTests
         var calendarEvent = new CalendarEvent
         {
             DtStart = start,
-            DtEnd = start.AddHours(1),
+            DtEnd = start.ToZonedDateTime().PlusHours(1).ToCalDateTime(),
             RecurrenceRule = recurrence
         };
 
@@ -553,7 +539,8 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences();
+        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
 
@@ -572,15 +559,12 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             3 occurrences:
-            Start: 03/24/2025 09:00:00 +01:00 Europe/Zurich
-              Period: PT1H
-              End: 03/24/2025 10:00:00 +01:00 Europe/Zurich
-            Start: 03/31/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 03/31/2025 10:00:00 +02:00 Europe/Zurich
-            Start: 04/07/2025 09:00:00 +02:00 Europe/Zurich
-              Period: PT1H
-              End: 04/07/2025 10:00:00 +02:00 Europe/Zurich
+            Start: 2025-03-24T09:00:00 Europe/Zurich (+01)
+              End: 2025-03-24T10:00:00 Europe/Zurich (+01)
+            Start: 2025-03-31T09:00:00 Europe/Zurich (+02)
+              End: 2025-03-31T10:00:00 Europe/Zurich (+02)
+            Start: 2025-04-07T09:00:00 Europe/Zurich (+02)
+              End: 2025-04-07T10:00:00 Europe/Zurich (+02)
             """;
 
         // Non-Wiki Asserts
@@ -599,28 +583,30 @@ internal class RecurrenceWikiTests
         // Wiki code start
 
         var calendar = new Calendar();
-        var start = new CalDateTime(2025, 9, 1, 10, 0, 0, CalDateTime.UtcTzId);
+
+        var start = new LocalDateTime(2025, 9, 1, 10, 0, 0);
 
         // Event that recurs daily
         calendar.Events.Add(new CalendarEvent
         {
             Summary = "Daily event",
-            Start = start,
-            End = start.AddHours(1),
-            RecurrenceRule = new RecurrencePattern(FrequencyType.Daily, interval: 1)
+            Start = start.ToCalDateTime(CalDateTime.UtcTzId),
+            End = start.InUtc().PlusHours(1).ToCalDateTime(),
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Daily, interval: 1)
         });
 
         // Simple event in far future
         calendar.Events.Add(new CalendarEvent
         {
             Summary = "Far future event",
-            Start = start.AddYears(10),
-            End = start.AddYears(10).AddHours(1)
+            Start = start.PlusYears(10).ToCalDateTime(CalDateTime.UtcTzId),
+            End = start.PlusYears(10).InUtc().PlusHours(1).ToCalDateTime()
         });
         
+        var tz = TimeZoneResolvers.Default("UTC");
         var occurrences =
             calendar.Events
-                .SelectMany(ev => ev.GetOccurrences().Take(1))
+                .SelectMany(ev => ev.GetOccurrences(tz).Take(1))
                 .ToArray();
 
         // Wiki code end
@@ -629,12 +615,10 @@ internal class RecurrenceWikiTests
         const string expectedOccurrences =
             """
             2 occurrences:
-            Start: 09/01/2025 10:00:00 +00:00 UTC
-              Period: PT1H
-              End: 09/01/2025 11:00:00 +00:00 UTC
-            Start: 09/01/2035 10:00:00 +00:00 UTC
-              Period: PT1H
-              End: 09/01/2035 11:00:00 +00:00 UTC
+            Start: 2025-09-01T10:00:00 UTC (+00)
+              End: 2025-09-01T11:00:00 UTC (+00)
+            Start: 2035-09-01T10:00:00 UTC (+00)
+              End: 2035-09-01T11:00:00 UTC (+00)
             """;
 
         // Non-Wiki Asserts
@@ -643,56 +627,6 @@ internal class RecurrenceWikiTests
         Assert.That(generatedOccurrences, Is.EqualTo(expectedOccurrences));
 
         _logger.LogDebug(expectedOccurrences);
-    }
-
-    [Test]
-    public void MoreRecurrenceRuleExamples()
-    {
-        // Every other Tuesday until the end of the year
-        var rrule1 = new RecurrencePattern(FrequencyType.Weekly, 2)
-        {
-            Until = new CalDateTime(2026, 1, 1)
-        };
-
-        // The 2nd day of every month for 5 occurrences
-        var rrule2 = new RecurrencePattern(FrequencyType.Monthly)
-        {
-            ByMonthDay = [2],  // Your day of the month goes here
-            Count = 5
-        };
-
-        // The 4th Thursday of November every year
-        var rrule3 = new RecurrencePattern(FrequencyType.Yearly, 1)
-        {
-            Frequency = FrequencyType.Yearly,
-            Interval = 1,
-            ByMonth = [11],
-            ByDay = [new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 }],
-        };
-
-        // Every day in 2025, except Sundays
-        var rrule4 = new RecurrencePattern(FrequencyType.Daily)
-        {
-            // Start: 2025-01-01, End: 2025-12-31
-            Until = new CalDateTime(2025, 12, 31),
-            // Exclude Sundays
-            ByDay = [
-                new WeekDay(DayOfWeek.Monday),
-                new WeekDay(DayOfWeek.Tuesday),
-                new WeekDay(DayOfWeek.Wednesday),
-                new WeekDay(DayOfWeek.Thursday),
-                new WeekDay(DayOfWeek.Friday),
-                new WeekDay(DayOfWeek.Saturday)
-            ]
-        };
-
-        Assert.That(() =>
-        {
-            _ = new CalendarEvent
-            {
-                ExceptionRules = [rrule1, rrule2, rrule3, rrule4]
-            };
-        }, Throws.Nothing);
     }
 
     private static string RemoveIrrelevantProperties(string generatedIcs, string[]? keep = null)

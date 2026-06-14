@@ -1,13 +1,11 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
+using NodaTime;
 
 namespace Ical.Net.Evaluation;
 
@@ -18,75 +16,123 @@ public class EventEvaluator : RecurringEvaluator
 {
     protected CalendarEvent CalendarEvent => (CalendarEvent) Recurrable;
 
-    protected override Duration? DefaultDuration => CalendarEvent.EffectiveDuration;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="EventEvaluator"/> class.
     /// </summary>
     /// <param name="evt"></param>
     public EventEvaluator(CalendarEvent evt) : base(evt) { }
 
-    /// <summary>
-    /// Evaluates this event to determine the dates and times for which the event occurs.
-    /// This method only evaluates events which occur at or after<paramref name="periodStart"/>.
-    /// </summary>
-    /// <remarks>
-    /// For events with very complex recurrence rules, this method may be a bottleneck
-    /// during processing time, especially when this method in called for a large number
-    /// of events, in sequence, or for a very large time span.
-    /// </remarks>
-    /// <param name="referenceDate"></param>
-    /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-    /// <param name="options"></param>
-    /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, EvaluationOptions? options)
-    {
-        // Evaluate recurrences normally
-        var periods = base.Evaluate(referenceDate, periodStart, options)
-            .Select(WithFinalDuration);
+    protected override EvaluationPeriod EvaluateRDate(DataTypes.Period rdate, DateTimeZone referenceTimeZone)
+	{
+		var start = rdate.StartTime.ToZonedOrDefault(referenceTimeZone);
 
-        return periods;
-    }
+		ZonedDateTime end;
+		if (rdate.Duration is { } duration)
+		{
+			if (!rdate.StartTime.HasTime && duration.HasTime)
+			{
+				throw new EvaluationException($"Unable to add time to date-only RDATE {rdate}");
+			}
 
-    /// <summary>
-    /// The <paramref name="period"/> to evaluate has the <see cref="Period.StartTime"/> set,
-    /// but neither <see cref="Period.EndTime"/> nor <see cref="Period.Duration"/> are set.
-    /// </summary>
-    /// <param name="period">The period where <see cref="Period.Duration"/> will be set.</param>
-    /// <returns>Returns the <paramref name="period"/> with <see cref="Period.Duration"/> and exact <see cref="Period.EffectiveEndTime"/> set.</returns>
-    private Period WithFinalDuration(Period period)
+			end = start.LocalDateTime
+				.Plus(duration.GetNominalPart())
+				.InZoneRelativeTo(start)
+				.Plus(duration.GetTimePart());
+		}
+		else if (rdate.EndTime is { } dtEnd)
+		{
+			var exactDuration = dtEnd.ToZonedOrDefault(referenceTimeZone).ToInstant() - start.ToInstant();
+
+			if (exactDuration < Duration.Zero)
+			{
+				throw new InvalidOperationException("DtEnd is before DtStart");
+			}
+
+			end = start.Plus(exactDuration);
+		}
+		else
+		{
+			if (!rdate.StartTime.HasTime
+				&& CalendarEvent.Duration is { } eventDuration
+				&& eventDuration.HasTime)
+			{
+				throw new EvaluationException($"Unable to add time to date-only RDATE {rdate}");
+			}
+
+			// Use event
+			end = GetEnd(start);
+		}
+
+		return new EvaluationPeriod(start, end);
+	}
+
+    protected override ZonedDateTime GetEnd(ZonedDateTime start)
     {
-        try
+        if (CalendarEvent.Duration is { } duration)
         {
-            /*
-               The period's Duration evaluates the event's definition of DtStart
-               and Duration, or the timespan from DtStart to DtEnd.
+            // Add nominal values (weeks & days) to local time
+            // and then add accurate time to zoned time.
+            return start.LocalDateTime
+                .Plus(duration.GetNominalPart())
+                .InZoneRelativeTo(start)
+                .Plus(duration.GetTimePart());
+        }
 
-               The time span is used, because the period end time gets the same timezone as the event end time.
-               This ensures that the end time is correct, even for DST transitions.
+        if (CalendarEvent.DtStart is not { } dtStart)
+        {
+            throw new InvalidOperationException("DtStart must be set.");
+        }
 
-               The exact duration is calculated from the zoned end time and the zoned start time,
-               and it may differ from the time span added to the period start time.
-             */
-
-            // The preliminary duration was set in a previous evaluation step
-            var duration = period.Duration;
-
-            if (duration == null)
+        if (CalendarEvent.DtEnd is { } dtEnd)
+        {
+            // The spec says specifying DTEND results in exact time,
+            // but tests say that all day events should be treated
+            // as a nominal duration.
+            if (!dtStart.HasTime && !dtEnd.HasTime)
             {
-                duration = CalendarEvent.EffectiveDuration;
+                // Calculate nominal duration between dates
+                var nominalDuration = dtEnd.Date.Minus(dtStart.Date);
+
+                var end = start.LocalDateTime
+                    .Plus(nominalDuration)
+                    .InZoneRelativeTo(start);
+
+                if (end.LocalDateTime < start.LocalDateTime)
+                {
+                    throw new InvalidOperationException("DtEnd is before DtStart");
+                }
+
+                return end;
             }
 
-            var newPeriod = new Period(
-                start: period.StartTime,
-                duration: duration.Value);
+            // The spec says DtEnd MUST be the same type as DtStart.
+            // Some cases can be reasonably handled though.
 
-            return newPeriod;
+            // Assume a floating end is in the time zone of the event.
+            if (dtStart.TzId != null && dtEnd.TzId == null && dtEnd.Time != null)
+            {
+                dtEnd = new(dtEnd.ToLocalDateTime(), dtStart.TzId);
+            }
+
+            var exactDuration = dtEnd.ToZonedOrDefault(start.Zone).ToInstant() - dtStart.ToZonedOrDefault(start.Zone).ToInstant();
+
+            if (exactDuration < Duration.Zero)
+            {
+                throw new InvalidOperationException("DtEnd is before DtStart");
+            }
+
+            return start.Plus(exactDuration);
         }
-        catch (ArgumentOutOfRangeException)
+
+        if (!dtStart.HasTime)
         {
-            // intentionally don't include the outer exception
-            throw new EvaluationOutOfRangeException("Evaluation aborted: Calculating the end time of the event occurrence resulted in an out-of-range value. This commonly happens when trying to enumerate an unbounded RRULE to its end. Consider applying the .TakeWhile() operator.");
+            // Spec says to assume duration is one day date only (nominal, not 24 hours) 
+            return start.LocalDateTime
+                .Plus(Period.FromDays(1))
+                .InZoneRelativeTo(start);
         }
+
+        // Event ends as it starts
+        return start;
     }
 }

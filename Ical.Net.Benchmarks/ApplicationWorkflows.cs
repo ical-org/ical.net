@@ -5,6 +5,7 @@
 
 using BenchmarkDotNet.Attributes;
 using Ical.Net.DataTypes;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,8 +15,13 @@ namespace Ical.Net.Benchmarks;
 
 public class ApplicationWorkflows
 {
-    private static readonly CalDateTime _searchStart = CalDateTime.Now.AddDays(-365);
-    private static readonly CalDateTime _searchEnd = CalDateTime.Now;
+    private static DateTimeZone tz = DateTimeZoneProviders.Tzdb["America/New_York"];
+
+    private static readonly Instant _searchEnd = SystemClock.Instance.GetCurrentInstant();
+    private static readonly ZonedDateTime _searchStart = _searchEnd
+        .Minus(NodaTime.Duration.FromDays(365))
+        .InZone(tz);
+
     private static readonly List<string> _manyCalendars = GetIcalStrings();
 
     private static List<string> GetIcalStrings()
@@ -38,7 +44,7 @@ public class ApplicationWorkflows
         return _manyCalendars
             .SelectMany(Calendar.Load<Calendar>)
             .SelectMany(c => c.Events)
-            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Period.StartTime < _searchEnd))
+            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Start.ToInstant() < _searchEnd))
             .ToList();
     }
 
@@ -49,7 +55,7 @@ public class ApplicationWorkflows
             .AsParallel()
             .SelectMany(Calendar.Load<Calendar>)
             .SelectMany(c => c.Events)
-            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Period.StartTime < _searchEnd))
+            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Start.ToInstant() < _searchEnd))
             .ToList();
     }
 
@@ -60,7 +66,7 @@ public class ApplicationWorkflows
             .SelectMany(Calendar.Load<Calendar>)
             .SelectMany(c => c.Events)
             .AsParallel()
-            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Period.StartTime < _searchEnd))
+            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Start.ToInstant() < _searchEnd))
             .ToList();
     }
 
@@ -72,7 +78,7 @@ public class ApplicationWorkflows
             .SelectMany(Calendar.Load<Calendar>)
             .AsSequential()
             .SelectMany(c => c.Events)
-            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Period.StartTime < _searchEnd))
+            .SelectMany(e => e.GetOccurrences(_searchStart).TakeWhile(p => p.Start.ToInstant() < _searchEnd))
             .ToList();
     }
 }

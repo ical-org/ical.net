@@ -57,11 +57,8 @@ internal static class TextUtil
             byteIndex += chBytes;
         }
 
-        // Append the remaining characters to the result
-        if (charIndex > 0)
-        {
-            result.Append(lineArray, 0, charIndex);
-        }
+        // Append the remaining characters (if any, i.e. charIndex > 0) to the result
+        result.Append(lineArray, 0, charIndex);
 
         result.Append(SerializationConstants.LineBreak);
     }

@@ -7,10 +7,8 @@ using System;
 
 namespace Ical.Net;
 
-public abstract class CalendarObjectBase : ICopyable, ILoadable
+public abstract class CalendarObjectBase : ICopyable
 {
-    private bool _mIsLoaded = true;
-
     /// <summary>
     /// Makes a deep copy of the <see cref="ICopyable"/> source
     /// to the current object. This method must be overridden in a derived class.
@@ -31,15 +29,5 @@ public abstract class CalendarObjectBase : ICopyable, ILoadable
 
         obj.CopyFrom(this);
         return objOfT;
-    }
-
-    public virtual bool IsLoaded => _mIsLoaded;
-
-    public event EventHandler? Loaded;
-
-    public virtual void OnLoaded()
-    {
-        _mIsLoaded = true;
-        Loaded?.Invoke(this, EventArgs.Empty);
     }
 }

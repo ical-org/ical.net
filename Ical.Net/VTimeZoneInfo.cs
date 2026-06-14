@@ -1,15 +1,15 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
+using NodaTime;
 
 namespace Ical.Net;
 
@@ -111,13 +111,6 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
 
     public virtual ExceptionDates ExceptionDates { get; private set; } = null!;
 
-    [Obsolete("EXRULE is marked as deprecated in RFC 5545 and will be removed in a future version")]
-    public virtual IList<RecurrencePattern> ExceptionRules
-    {
-        get => Properties.GetMany<RecurrencePattern>("EXRULE");
-        set => Properties.Set("EXRULE", value);
-    }
-
     internal IList<PeriodList> RecurrenceDatesPeriodLists
     {
         get => Properties.GetMany<PeriodList>("RDATE");
@@ -126,29 +119,10 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
 
     public virtual RecurrenceDates RecurrenceDates { get; private set; } = null!;
 
-    [Obsolete("Use RecurrenceRule instead. Support for multiple recurrence rules will be removed in a future version.")]
-    public virtual IList<RecurrencePattern> RecurrenceRules
-    {
-        get => Properties.GetMany<RecurrencePattern>("RRULE");
-        set => Properties.Set("RRULE", value);
-    }
-
     public virtual RecurrenceRule? RecurrenceRule
     {
-        get => RecurrenceRules?.FirstOrDefault();
-        set => RecurrenceRules = value is null ? [] : [new(value)];
-    }
-
-    /// <summary>
-    /// Gets or sets the recurrence identifier for a specific instance of a recurring event.
-    /// </summary>
-    /// <remarks>Use <see cref="RecurrenceIdentifier"/> instead, which
-    /// supports the RANGE parameter for recurring events.</remarks>
-    [Obsolete("Use RecurrenceIdentifier instead, which supports the RANGE parameter.")]
-    public virtual CalDateTime? RecurrenceId
-    {
-        get => RecurrenceIdentifier?.Range == RecurrenceRange.ThisInstance ? RecurrenceIdentifier.StartTime : null;
-        set => RecurrenceIdentifier = value is null ? null : new RecurrenceIdentifier(value, RecurrenceRange.ThisInstance);
+        get => Properties.Get<RecurrenceRule>("RRULE");
+        set => Properties.Set("RRULE", value);
     }
 
     /// <summary>
@@ -168,6 +142,9 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
 
     public IEvaluator? Evaluator => _evaluator;
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime? startTime = null, EvaluationOptions? options = null)
-        => RecurrenceUtil.GetOccurrences(this, startTime, options);
+    public virtual IEnumerable<Occurrence> GetOccurrences(ZonedDateTime startTime, EvaluationOptions? options = null)
+        => RecurrenceUtil.GetOccurrences(this, startTime.Zone, startTime.ToInstant(), options);
+
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTimeZone timeZone, Instant? startTime = null, EvaluationOptions? options = null)
+        => RecurrenceUtil.GetOccurrences(this, timeZone, startTime, options);
 }

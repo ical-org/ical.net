@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.IO;
 
 namespace Ical.Net.Serialization;
@@ -11,4 +12,5 @@ public interface IStringSerializer : ISerializer
 {
     string? SerializeToString(object? obj);
     object? Deserialize(TextReader tr);
+    object? Deserialize(ReadOnlySpan<char> value);
 }

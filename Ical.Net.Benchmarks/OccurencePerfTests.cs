@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -6,6 +6,7 @@
 using BenchmarkDotNet.Attributes;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using NodaTime;
 using System;
 using System.Linq;
 
@@ -15,47 +16,136 @@ public class OccurencePerfTests
 {
     private Calendar _calendarFourEvents = null!;
     private Calendar _calendarWithRecurrences = null!;
+    private Calendar _calendarWithBySetPos = null!;
+    private Calendar _calendarWithPositiveBySetPos = null!;
+
+    private static DateTimeZone tz = DateTimeZoneProviders.Tzdb["America/New_York"];
 
     [GlobalSetup]
     public void Setup()
     {
         _calendarFourEvents = GetFourCalendarEventsWithUntilRule();
         _calendarWithRecurrences = GenerateCalendarWithRecurrences();
+        _calendarWithBySetPos = GenerateCalendarWithBySetPosRecurrence();
+        _calendarWithPositiveBySetPos = GenerateCalendarWithPositiveBySetPosRecurrence();
     }
 
     [Benchmark]
     public void GetOccurrences()
     {
-        _ = _calendarWithRecurrences.GetOccurrences().ToList();
+        _ = _calendarWithRecurrences.GetOccurrences(tz).ToList();
     }
 
     [Benchmark]
     public void MultipleEventsWithUntilOccurrencesSearchingByWholeCalendar()
     {
-        var searchStart = _calendarFourEvents.Events.First().DtStart!.AddYears(-1);
-        var searchEnd = _calendarFourEvents.Events.Last().DtStart!.AddYears(1);
-        _ = _calendarFourEvents.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd);
+        var searchStart = _calendarFourEvents.Events.First().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(-1)
+            .InZoneLeniently(tz);
+
+        var searchEnd = _calendarFourEvents.Events.Last().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(1)
+            .InZoneLeniently(tz)
+            .ToInstant();
+
+        _ = _calendarFourEvents.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd);
     }
 
     [Benchmark]
     public void MultipleEventsWithUntilOccurrences()
     {
-        var searchStart = _calendarFourEvents.Events.First().DtStart!.AddYears(-1);
-        var searchEnd = _calendarFourEvents.Events.Last().DtStart!.AddYears(1);
+        var searchStart = _calendarFourEvents.Events.First().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(-1)
+            .InZoneLeniently(tz);
+
+        var searchEnd = _calendarFourEvents.Events.Last().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(1)
+            .InZoneLeniently(tz)
+            .ToInstant();
+
         _ = _calendarFourEvents.Events
-            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
+            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd))
             .ToList();
     }
 
     [Benchmark]
     public void MultipleEventsWithUntilOccurrencesEventsAsParallel()
     {
-        var searchStart = _calendarFourEvents.Events.First().DtStart!.AddYears(-1);
-        var searchEnd = _calendarFourEvents.Events.Last().DtStart!.AddYears(1).AddDays(10);
+        var searchStart = _calendarFourEvents.Events.First().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(-1)
+            .InZoneLeniently(tz);
+
+        var searchEnd = _calendarFourEvents.Events.Last().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(1)
+            .PlusDays(10)
+            .InZoneLeniently(tz)
+            .ToInstant();
+
         _ = _calendarFourEvents.Events
             .AsParallel()
-            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
+            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd))
             .ToList();
+    }
+
+    [Benchmark]
+    public void EventWithBySetPosRecurrence()
+    {
+        _ = _calendarWithBySetPos.GetOccurrences(tz).ToList();
+    }
+
+    private static Calendar GenerateCalendarWithBySetPosRecurrence()
+    {
+        var calendar = new Calendar();
+        var dailyEvent = new CalendarEvent
+        {
+            Start = new CalDateTime(2025, 1, 1),
+            End = null,
+            RecurrenceRule = new(FrequencyType.Yearly, 1)
+            {
+                Count = 100,
+                ByDay = [new(DayOfWeek.Monday), new(DayOfWeek.Wednesday)],
+                BySetPosition = [1, -1, -2]
+            }
+        };
+        calendar.Events.Add(dailyEvent);
+        return calendar;
+    }
+
+
+    [Benchmark]
+    public void EventWithPositiveBySetPosRecurrence()
+    {
+        _ = _calendarWithPositiveBySetPos.GetOccurrences(tz).ToList();
+    }
+
+    private static Calendar GenerateCalendarWithPositiveBySetPosRecurrence()
+    {
+        var calendar = new Calendar();
+        var dailyEvent = new CalendarEvent
+        {
+            Start = new CalDateTime(2025, 1, 1),
+            End = null,
+            RecurrenceRule = new(FrequencyType.Yearly, 1)
+            {
+                Count = 100,
+                ByDay = [new(DayOfWeek.Monday), new(DayOfWeek.Wednesday)],
+                BySetPosition = [1, 2, 4]
+            }
+        };
+        calendar.Events.Add(dailyEvent);
+        return calendar;
     }
 
     private static Calendar GenerateCalendarWithRecurrences()
@@ -76,25 +166,22 @@ public class OccurencePerfTests
         const string tzid = "America/New_York";
         const int limit = 4;
 
-        var startTime = CalDateTime.Now.AddDays(-1);
-        var interval = TimeSpan.FromDays(1);
+        var startTime = new LocalDate(2026, 02, 21).AtMidnight();
 
         var events = Enumerable
             .Range(0, limit)
             .Select(n =>
             {
-                var rrule = new RecurrencePattern(FrequencyType.Daily, 1)
-                {
-                    Until = new CalDateTime(startTime.AddDays(10)),
-                };
-
                 var e = new CalendarEvent
                 {
-                    Start = startTime.AddMinutes(5).ToTimeZone(tzid),
-                    End = startTime.AddMinutes(10).ToTimeZone(tzid),
-                    RecurrenceRule = rrule,
+                    Start = new(startTime.PlusMinutes(5), tzid),
+                    End = new(startTime.PlusMinutes(10), tzid),
+                    RecurrenceRule = new(FrequencyType.Daily, 1)
+                    {
+                        Until = CalDateTime.FromZonedDateTime(startTime.PlusDays(10).InUtc()),
+                    },
                 };
-                startTime = startTime.Add(Duration.FromTimeSpanExact(interval));
+                startTime = startTime.PlusDays(1);
                 return e;
             });
 
@@ -107,19 +194,41 @@ public class OccurencePerfTests
     public void MultipleEventsWithCountOccurrencesSearchingByWholeCalendar()
     {
         var calendar = GetFourCalendarEventsWithCountRule();
-        var searchStart = calendar.Events.First().DtStart!.AddYears(-1);
-        var searchEnd = calendar.Events.Last().DtStart!.AddYears(1);
-        _ = calendar.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd);
+        var searchStart = _calendarFourEvents.Events.First().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(-1)
+            .InZoneLeniently(tz);
+
+        var searchEnd = _calendarFourEvents.Events.Last().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(1)
+            .InZoneLeniently(tz)
+            .ToInstant();
+
+        _ = calendar.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd);
     }
 
     [Benchmark]
     public void MultipleEventsWithCountOccurrences()
     {
         var calendar = GetFourCalendarEventsWithCountRule();
-        var searchStart = calendar.Events.First().DtStart!.AddYears(-1);
-        var searchEnd = calendar.Events.Last().DtStart!.AddYears(1);
+        var searchStart = _calendarFourEvents.Events.First().DtStart!
+             .ToZonedOrDefault(tz)
+             .LocalDateTime
+             .PlusYears(-1)
+             .InZoneLeniently(tz);
+
+        var searchEnd = _calendarFourEvents.Events.Last().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(1)
+            .InZoneLeniently(tz)
+            .ToInstant();
+
         _ = calendar.Events
-            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
+            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd))
             .ToList();
     }
 
@@ -127,11 +236,23 @@ public class OccurencePerfTests
     public void MultipleEventsWithCountOccurrencesEventsAsParallel()
     {
         var calendar = GetFourCalendarEventsWithCountRule();
-        var searchStart = calendar.Events.First().DtStart!.AddYears(-1);
-        var searchEnd = calendar.Events.Last().DtStart!.AddYears(1).AddDays(10);
+        var searchStart = _calendarFourEvents.Events.First().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(-1)
+            .InZoneLeniently(tz);
+
+        var searchEnd = _calendarFourEvents.Events.Last().DtStart!
+            .ToZonedOrDefault(tz)
+            .LocalDateTime
+            .PlusYears(1)
+            .PlusDays(10)
+            .InZoneLeniently(tz)
+            .ToInstant();
+
         _ = calendar.Events
             .AsParallel()
-            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Period.StartTime < searchEnd))
+            .SelectMany(e => e.GetOccurrences(searchStart).TakeWhile(p => p.Start.ToInstant() < searchEnd))
             .ToList();
     }
 
@@ -147,16 +268,14 @@ public class OccurencePerfTests
             .Range(0, limit)
             .Select(n =>
             {
-                var rrule = new RecurrencePattern(FrequencyType.Daily, 1)
-                {
-                    Count = 100,
-                };
-
                 var e = new CalendarEvent
                 {
-                    Start = new CalDateTime(startTime.AddMinutes(5), tzid),
-                    End = new CalDateTime(startTime.AddMinutes(10), tzid),
-                    RecurrenceRule = rrule,
+                    Start = CalDateTime.FromDateTime(startTime.AddMinutes(5), tzid),
+                    End = CalDateTime.FromDateTime(startTime.AddMinutes(10), tzid),
+                    RecurrenceRule = new(FrequencyType.Daily, 1)
+                    {
+                        Count = 100,
+                    },
                 };
                 startTime = startTime.Add(interval);
                 return e;

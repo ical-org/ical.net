@@ -6,9 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes;
 
@@ -80,18 +78,18 @@ public class RecurrenceRule : EncodableDataType
 
     public List<int> BySecond { get; set; } = new List<int>();
 
-    /// <summary> The ordinal minutes of the hour associated with this recurrence pattern. Valid values are 0-59. </summary>
+    /// <summary> The ordinal minutes of the hour associated with this recurrence rule. Valid values are 0-59. </summary>
     public List<int> ByMinute { get; set; } = new List<int>();
 
     public List<int> ByHour { get; set; } = new List<int>();
 
     public List<WeekDay> ByDay { get; set; } = new List<WeekDay>();
 
-    /// <summary> The ordinal days of the month associated with this recurrence pattern. Valid values are 1-31. </summary>
+    /// <summary> The ordinal days of the month associated with this recurrence rule. Valid values are 1-31. </summary>
     public List<int> ByMonthDay { get; set; } = new List<int>();
 
     /// <summary>
-    /// The ordinal days of the year associated with this recurrence pattern. Something recurring on the first day of the year would be a list containing
+    /// The ordinal days of the year associated with this recurrence rule. Something recurring on the first day of the year would be a list containing
     /// 1, and would also be New Year's Day.
     /// </summary>
     public List<int> ByYearDay { get; set; } = new List<int>();
@@ -173,5 +171,18 @@ public class RecurrenceRule : EncodableDataType
         ByMonth = new List<int>(r.ByMonth);
         BySetPosition = new List<int>(r.BySetPosition);
         FirstDayOfWeek = r.FirstDayOfWeek;
+    }
+
+    internal bool HasByRules()
+    {
+        return ByDay.Count > 0
+            || ByMonth.Count > 0
+            || ByMonthDay.Count > 0
+            || ByWeekNo.Count > 0
+            || ByYearDay.Count > 0
+            || ByHour.Count > 0
+            || ByMinute.Count > 0
+            || BySecond.Count > 0
+            || BySetPosition.Count > 0;
     }
 }

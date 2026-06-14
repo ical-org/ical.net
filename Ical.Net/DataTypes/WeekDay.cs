@@ -57,7 +57,7 @@ public class WeekDay : EncodableDataType
         return weekday.Offset == Offset && weekday.DayOfWeek == DayOfWeek;
     }
 
-    public override int GetHashCode() => (Offset ?? 0).GetHashCode() ^ DayOfWeek.GetHashCode();
+    public override int GetHashCode() => HashCode.Combine(Offset, DayOfWeek);
 
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable obj)

@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 //
 
-#nullable enable
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -42,7 +41,7 @@ public class PeriodListWrapperTests
 
         var serialized = new CalendarSerializer(cal).SerializeToString();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // 2 dedicate PeriodList objects
             Assert.That(evt.ExceptionDatesPeriodLists, Has.Count.EqualTo(3));
@@ -70,7 +69,7 @@ public class PeriodListWrapperTests
 
             // A flattened list of all dates
             Assert.That(exDates.GetAllDates().Count(), Is.EqualTo(5));
-        });
+        }
     }
 
     [Test]
@@ -83,14 +82,14 @@ public class PeriodListWrapperTests
         var dateTime = new CalDateTime(2025, 1, 1, 10, 11, 12, "Europe/Berlin");
 
         exDates.Add(dateOnly);
-        exDates.Add(dateOnly.AddDays(1));
+        exDates.Add(dateOnly.Date.PlusDays(1).ToCalDateTime());
         exDates.Add(dateTime);
 
         var dateTimeSuccess = exDates.Remove(dateTime);
         var dateOnlySuccess = exDates.Remove(dateOnly);
         var dateOnlyFail = !exDates.Remove(dateOnly); // already removed
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(dateOnlySuccess, Is.True);
             Assert.That(dateTimeSuccess, Is.True);
@@ -100,7 +99,7 @@ public class PeriodListWrapperTests
             // Empty lists should work as well
             evt.ExceptionDatesPeriodLists.Clear();
             Assert.That(() => exDates.Remove(dateTime), Is.False);
-        });
+        }
     }
 
     #endregion
@@ -128,7 +127,7 @@ public class PeriodListWrapperTests
 
         var serialized = new CalendarSerializer(cal).SerializeToString();
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // 2 dedicate PeriodList objects
             Assert.That(evt.RecurrenceDatesPeriodLists, Has.Count.EqualTo(2));
@@ -150,7 +149,7 @@ public class PeriodListWrapperTests
 
             // A flattened list of all dates
             Assert.That(recDates.GetAllDates().Count(), Is.EqualTo(4));
-        });
+        }
     }
 
     [Test]
@@ -191,7 +190,7 @@ public class PeriodListWrapperTests
         evt = cal.Events[0];
 
         // Assert the serialized string and the deserialized event
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             // 2 dedicate PeriodList objects
             Assert.That(evt!.RecurrenceDatesPeriodLists, Has.Count.EqualTo(3));
@@ -222,7 +221,7 @@ public class PeriodListWrapperTests
             Assert.That(recPeriod.GetAllDates().Count(), Is.EqualTo(0));
             // A flattened list of all periods
             Assert.That(recPeriod.GetAllPeriods().Count(), Is.EqualTo(6));
-        });
+        }
     }
 
     [Test]
@@ -235,20 +234,20 @@ public class PeriodListWrapperTests
         var period2 = new Period(new CalDateTime(2025, 1, 1, 10, 0, 0, "Europe/Berlin"), Duration.FromHours(6));
 
         recDates.Add(period1).Add(period2);
-        recDates.Add(new Period(period1.StartTime.AddDays(1), Duration.FromDays(5)));
+        recDates.Add(new Period(period1.StartTime.Date.PlusDays(1).ToCalDateTime(), Duration.FromDays(5)));
 
         var period1Success = recDates.Remove(period1);
         var period2Success = recDates.Remove(period2);
         var period2Fail = !recDates.Remove(period2); // already removed
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(period2Success, Is.True);
             Assert.That(period1Success, Is.True);
             Assert.That(period2Fail, Is.True);
             Assert.That(evt.RecurrenceDatesPeriodLists[0], Has.Count.EqualTo(1));
             Assert.That(evt.RecurrenceDatesPeriodLists[1], Is.Empty);
-        });
+        }
     }
 
     [Test]
@@ -262,11 +261,11 @@ public class PeriodListWrapperTests
 
         recDates.Add(period1).Add(period2);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(recDates.Contains(period1), Is.True);
             Assert.That(recDates.Contains(period2), Is.True);
-        });
+        }
     }
 
     [Test]
@@ -280,11 +279,14 @@ public class PeriodListWrapperTests
 
         recDates.AddRange([period1, period2]);
         
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(recDates.Contains(new Period(period1.StartTime.AddDays(1), Duration.FromDays(5))), Is.False);
-            Assert.That(recDates.Contains(new Period(period2.StartTime.AddDays(1), Duration.FromHours(6))), Is.False);
-        });
+            var start1 = period1.StartTime.Date.PlusDays(1).ToCalDateTime();
+            Assert.That(recDates.Contains(new Period(start1, Duration.FromDays(5))), Is.False);
+
+            var start2 = period2.StartTime.ToLocalDateTime().PlusDays(1).ToCalDateTime("Europe/Berlin");
+            Assert.That(recDates.Contains(new Period(start2, Duration.FromHours(6))), Is.False);
+        }
     }
 
     #endregion
@@ -317,11 +319,11 @@ public class PeriodListWrapperTests
 
         exDates.Add(dateOnly).Add(dateTime);
         
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(exDates.Contains(dateOnly), Is.True);
             Assert.That(exDates.Contains(dateTime), Is.True);
-        });
+        }
     }
 
     [Test]
@@ -335,11 +337,11 @@ public class PeriodListWrapperTests
 
         exDates.AddRange([dateOnly, dateTime]);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(exDates.Contains(dateOnly.AddDays(1)), Is.False);
-            Assert.That(exDates.Contains(dateTime.AddDays(1)), Is.False);
-        });
+            Assert.That(exDates.Contains(new CalDateTime(2025, 1, 2)), Is.False);
+            Assert.That(exDates.Contains(new CalDateTime(2025, 1, 2, 10, 11, 12, "Europe/Berlin")), Is.False);
+        }
     }
 
     #endregion

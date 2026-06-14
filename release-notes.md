@@ -1,19 +1,8 @@
-# Release notes
+﻿# Release notes
 
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ## v5
-
-### 5.2.2 - (2026-05-08)
-
-Fix: `Alarm.GetOccurrences(...) and `Alarm.Poll(...)` now have an
-optional `endTime` parameter to limit the evaluation of occurrences.
-
-This prevents potential performance issues when evaluating alarms with no end date or a very long recurrence pattern. If `endTime` is not provided, the methods will evaluate occurrences indefinitely until an exception is thrown or the system's maximum date is reached.
-
-### 5.2.1 - (2026-02-09)
-
-Fix: Stop todo evaluation at given datetime.<br/>(If a TODO had an RRULE without COUNT or UNTIL, `IsCompleted()` threw with `ArgumentOutOfRangeException`.)
 
 ### 5.2.0 - (2025-12-24)
 
