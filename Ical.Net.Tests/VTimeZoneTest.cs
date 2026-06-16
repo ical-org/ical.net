@@ -10,6 +10,8 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
+using NodaTime;
+using NodaTime.TimeZones;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -17,15 +19,15 @@ namespace Ical.Net.Tests;
 public class VTimeZoneTest
 {
     [Test, Category("VTimeZone")]
-    public void InvalidTzIdShouldThrowException()
+    public void CustomIdShouldNotThrow()
     {
-        Assert.Throws<ArgumentException>(() => new VTimeZone("shouldFail"));
+        Assert.DoesNotThrow(() => new VTimeZone("shouldFail"));
     }
 
     [Test, Category("VTimeZone")]
-    public void VTimeZoneFromDateTimeZoneNullZoneShouldThrowException()
+    public void InvalidTzIdFromDateTimeZoneShouldThrow()
     {
-        Assert.Throws<ArgumentException>(() => CreateTestCalendar("shouldFail"));
+        Assert.Throws<DateTimeZoneNotFoundException>(() => CreateTestCalendar("shouldFail"));
     }
 
     [Test, Category("VTimeZone")]
@@ -262,6 +264,50 @@ public class VTimeZoneTest
             Assert.That(serialized, Does.Contain("DTSTART:20070311T020000"), "DTSTART:20070311T020000 was not serialized");
             Assert.That(serialized, Does.Contain("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
         }
+    }
+
+    [Test]
+    public void CalendarWithCustomTimeZonesLoads()
+    {
+        var data = """
+            BEGIN:VCALENDAR
+            PRODID:ical.net
+            BEGIN:VTIMEZONE
+            TZID:Customized Time Zone
+            BEGIN:STANDARD
+            DTSTART:16010101T030000
+            TZOFFSETFROM:+0200
+            TZOFFSETTO:+0100
+            RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=4SU;BYMONTH=10
+            END:STANDARD
+            BEGIN:DAYLIGHT
+            DTSTART:16010101T020000
+            TZOFFSETFROM:+0100
+            TZOFFSETTO:+0200
+            RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
+            END:DAYLIGHT
+            END:VTIMEZONE
+            BEGIN:VEVENT
+            UID:446677788899995465
+            SUMMARY:My Event
+            DTSTART;TZID=Customized Time Zone:20240423T114500
+            DTEND;TZID=Customized Time Zone:20240423T120000
+            DTSTAMP:20250306T143151Z
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var cal = Calendar.Load(data)!;
+
+        Assert.That(cal.TimeZones, Is.Not.Empty);
+
+        var customTimeZone = cal.TimeZoneProvider["Customized Time Zone"];
+        var start = Instant.FromUtc(2024, 1, 1, 0, 0).InZone(customTimeZone);
+        var results = cal.GetOccurrences(start).ToList();
+
+        Assert.That(results, Has.Count.EqualTo(1));
+
+        Assert.That(results[0].Start, Is.EqualTo(new LocalDateTime(2024, 4, 23, 11, 45).InZoneStrictly(customTimeZone)));
     }
 
     private static Calendar CreateTestCalendar(string tzId, DateTime? earliestTime = null, bool includeHistoricalData = true)
