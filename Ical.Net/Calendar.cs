@@ -198,7 +198,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTimeZone timeZone, Instant? startTime = null, EvaluationOptions? options = null) where T : IRecurringComponent
     {
         // Get UID/RECURRENCE-ID combinations that replace occurrences
-        var recurrenceIdsAndUids = GetRecurrenceIdsAndUids(Children);
+        var recurrenceIdsAndUids = GetRecurrenceIdsAndUids(timeZone, Children);
 
         var occurrences = RecurringItems
             .OfType<T>()
@@ -206,7 +206,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
                 // Exclude occurrences that are overridden by other components with the same UID and RECURRENCE-ID.
                 // This must happen before .OrderedDistinct() because that method would remove duplicates
                 // based on the occurrence time, and we need to remove them based on UID + RECURRENCE-ID.
-                .Where(r => IsUnmodifiedOccurrence(r, recurrenceIdsAndUids)))
+                .Where(r => IsUnmodifiedOccurrence(timeZone, r, recurrenceIdsAndUids)))
 
             // Enumerate the list of occurrences (not the occurrences themselves) now to ensure
             // the initialization code is run, including validation and error handling.
@@ -233,53 +233,96 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <para/>
     /// This is used to identify the *latest* modification for each recurring instance.
     /// </summary>
-    private static Dictionary<(string? Uid, DateTime RecurrenceId), IUniqueComponent> GetRecurrenceIdsAndUids(IEnumerable<ICalendarObject> children)
+    private static Dictionary<(string Uid, Instant RecurrenceId), IUniqueComponent> GetRecurrenceIdsAndUids(
+        DateTimeZone timeZone,
+        IEnumerable<ICalendarObject> children)
     {
-        return children.OfType<IRecurrable>()
-            .Where(r => r.RecurrenceIdentifier != null && r.RecurrenceIdentifier.Range == RecurrenceRange.ThisInstance)
-            .Select(r => (Component: r as IUniqueComponent, Uid: (r as IUniqueComponent)?.Uid, RecurrenceId: r.RecurrenceIdentifier!.StartTime.ToDateTimeUnspecified()))
-            .Where(x => x is { Uid: not null, Component: not null })
-            // Assure we have only one component per (UID, RECURRENCE-ID) pair
-            .GroupBy(x => (x.Uid, x.RecurrenceId))
-            // Get the last modified component for each (UID, RECURRENCE-ID) pair
-            .Select(g =>
-            {
-                // Try to get the maximum SEQUENCE if present, otherwise fallback to Last()
-                var maxSeqItem = g
-                    .Where(x => x.Component is CalendarEvent { Sequence: > 0 })
-                    .OrderByDescending(x => ((CalendarEvent) x.Component!).Sequence)
-                    .FirstOrDefault();
+        var componentLookup = new Dictionary<(string Uid, Instant RecurrenceId), IUniqueComponent>();
 
-                return maxSeqItem.Component != null ? maxSeqItem : g.Last();
-            })
-            .ToDictionary(x => (x.Uid, x.RecurrenceId), x => x.Component!);
+        foreach (var r in children.OfType<IRecurrable>())
+        {
+            // Only ThisInstance is supported for now
+            if (r.RecurrenceIdentifier is not { Range: RecurrenceRange.ThisInstance } rid)
+            {
+                continue;
+            }
+
+            // Ignore components without a UID
+            if (r is not IUniqueComponent { Uid: not null } uc)
+            {
+                continue;
+            }
+
+            var key = GetOccurrenceKey(timeZone, uc.Uid, rid);
+
+            // Use the maximum SEQUENCE if present, otherwise use the latest
+            if (uc is CalendarEvent calEvent
+                && componentLookup.TryGetValue(key, out var otherComponent)
+                && otherComponent is CalendarEvent otherEvent
+                && otherEvent.Sequence > calEvent.Sequence)
+            {
+                continue;
+            }
+
+            // Add or overwrite to use the latest component
+            componentLookup[key] = uc;
+        }
+
+        return componentLookup;
     }
 
     /// <summary>
     /// Checks if an occurrence has not been replaced/overridden by a more
     /// recent modification (based on UID and RecurrenceId).
     /// </summary>
-    private static bool IsUnmodifiedOccurrence(Occurrence r, Dictionary<(string? Uid, DateTime RecurrenceId), IUniqueComponent> recurrenceIdsAndUids)
+    private static bool IsUnmodifiedOccurrence(
+        DateTimeZone timeZone,
+        Occurrence occurrence,
+        Dictionary<(string Uid, Instant RecurrenceId), IUniqueComponent> recurrenceIdsAndUids)
     {
-        return r.Source switch
+        if (occurrence.Source is not IUniqueComponent uc || uc.Uid is null)
         {
-            // If the occurrence is a modified instance (has RecurrenceId and Uid)
-            // and the source is the last modified instance for this RecurrenceId/Uid,
-            IUniqueComponent { Uid: not null } uc
-                // Filter by range of ThisInstance because ThisAndFuture is not supported yet
-                when r.Source.RecurrenceIdentifier != null && r.Source.RecurrenceIdentifier.Range == RecurrenceRange.ThisInstance =>
-                recurrenceIdsAndUids.TryGetValue((uc.Uid, r.Source.RecurrenceIdentifier.StartTime.ToDateTimeUnspecified()),
-                    out var lastComponent) && ReferenceEquals(lastComponent, r.Source),
-
-            // If not a modified occurrence, keep if:
-            // - It is not a unique component, or
-            // - There is no replacement for this UID/StartTime in recurrenceIdsAndUids
-            IUniqueComponent uc =>
-                !recurrenceIdsAndUids.ContainsKey((uc.Uid, r.DtStart?.ToDateTimeUnspecified() ?? default)),
-
             // If not a unique component, always keep
-            _ => true
-        };
+            return true;
+        }
+
+        // Filter by range of ThisInstance because ThisAndFuture is not supported yet
+        if (occurrence.Source.RecurrenceIdentifier is { } rid
+            && rid.Range == RecurrenceRange.ThisInstance)
+        {
+            var key = GetOccurrenceKey(timeZone, uc.Uid, rid);
+
+            // If the occurrence is a modified instance (has RecurrenceId and Uid)
+            // and the source is the last modified instance for this RecurrenceId/Uid.
+            return recurrenceIdsAndUids.TryGetValue(key, out var lastComponent)
+                && ReferenceEquals(lastComponent, occurrence.Source);
+        }
+
+        // If not a modified occurrence, keep if:
+        // - It is not a unique component, or
+        // - There is no replacement for this UID/StartTime in recurrenceIdsAndUids
+        return !recurrenceIdsAndUids.ContainsKey((uc.Uid, occurrence.Start.ToInstant()));
+    }
+
+    private static (string, Instant) GetOccurrenceKey(DateTimeZone timeZone, string uid, RecurrenceIdentifier rid)
+    {
+        // Evaluate the RECURRENCE-ID start time as an Instant to identify the
+        // exact occurrence, using the evaluation time zone for floating values.
+        //
+        // The RECURRENCE-ID value is supposed to be of the same type as the
+        // DTSTART property of the master event. If the two properties are of
+        // the DATE-TIME type, they could still have different time zones or
+        // one could have a time zone while the other does not.
+        //
+        // If the master event has a time zone while the RECURRENCE-ID is
+        // floating, evaluating the RECURRENCE-ID using the evaluation time zone
+        // means that the RECURRENCE-ID could identify different occurrences
+        // depending on the evaluation time zone.
+        var startTime = rid.StartTime
+            .ToZonedOrDefault(timeZone)
+            .ToInstant();
+
+        return (uid, startTime);
     }
 
     /// <summary>

@@ -4392,6 +4392,82 @@ END:VCALENDAR";
         Assert.That(occurrences.Select(o => o.Start).ToArray(), Is.EqualTo(expected));
     }
 
+    [Test, Category("RECURRENCE-ID")]
+    public void GetOccurrences_FloatingRecurrenceId_UsesEvaluationTimeZone()
+    {
+        var ical = """
+                   BEGIN:VCALENDAR
+                   VERSION:2.0
+                   BEGIN:VEVENT
+                   UID:uid-1
+                   DTSTART;TZID=America/New_York:20250101T080000
+                   DURATION:PT1H
+                   RRULE:FREQ=HOURLY;COUNT=3
+                   SUMMARY:Master
+                   END:VEVENT
+                   BEGIN:VEVENT
+                   UID:uid-1
+                   RECURRENCE-ID:20250101T090000
+                   DTSTART:20250101T093000
+                   DURATION:PT30M
+                   SUMMARY:Override
+                   END:VEVENT
+                   END:VCALENDAR
+                   """;
+
+        var cal = Calendar.Load(ical)!;
+
+        var tz = DateUtil.GetZone("America/New_York");
+
+        var from = new LocalDateTime(2025, 01, 01, 0, 0).InZoneStrictly(tz);
+        var to = new LocalDateTime(2025, 01, 02, 0, 0).InZoneStrictly(tz).ToInstant();
+
+        var a = cal.GetOccurrences(from).TakeWhileBefore(to).Select(x => x.Start).ToArray();
+
+        // 9AM is pushed to 9:30AM
+        var expected = new[]
+        {
+            new LocalTime(8, 0, 0),
+            new LocalTime(9, 30, 0),
+            new LocalTime(10, 0, 0),
+        }.Select(x => new LocalDate(2025, 1, 1).At(x).InZoneStrictly(tz)).ToArray();
+
+        Assert.That(a, Is.EqualTo(expected));
+
+        // Evaluate again for another time zone that is 1 hour behind
+        tz = DateUtil.GetZone("America/Chicago");
+
+        from = new LocalDateTime(2025, 01, 01, 0, 0).InZoneStrictly(tz);
+        to = new LocalDateTime(2025, 01, 02, 0, 0).InZoneStrictly(tz).ToInstant();
+
+        var b = cal.GetOccurrences(from).TakeWhileBefore(to).Select(x => x.Start).ToArray();
+
+        // 9AM is pushed to 9:30AM
+        expected = new[]
+        {
+            new LocalTime(7, 0, 0),
+            new LocalTime(8, 0, 0),
+            new LocalTime(9, 30, 0),
+        }.Select(x => new LocalDate(2025, 1, 1).At(x).InZoneStrictly(tz)).ToArray();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(b, Is.EqualTo(expected));
+
+            // Points to the same instant
+            Assert.That(a[0].ToInstant(), Is.EqualTo(b[0].ToInstant()));
+
+            // Not equal because a[1] was replaced
+            Assert.That(a[1].ToInstant(), Is.Not.EqualTo(b[1].ToInstant()));
+
+            // Not equal because b[2] was replaced
+            Assert.That(a[2].ToInstant(), Is.Not.EqualTo(b[2].ToInstant()));
+
+            // Both replacements are not equal because they replaced different occurrences
+            Assert.That(a[1].ToInstant(), Is.Not.EqualTo(b[2].ToInstant()));
+        }
+    }
+
     [TestCase("20251102T040000", "UTC", "FREQ=HOURLY")]
     [TestCase("20251102", "America/New_York", "FREQ=HOURLY")]
     [TestCase("20251102", null, "FREQ=HOURLY")]
