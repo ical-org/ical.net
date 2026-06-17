@@ -8,7 +8,6 @@ using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
-using Ical.Net.Utility;
 using NodaTime;
 using NUnit.Framework;
 
@@ -57,7 +56,7 @@ public class RecurrenceWithExDateTests
         var ics = serializer.SerializeToString(calendar)!;
 
         var deserializedCalendar = Calendar.Load(ics)!;
-        var occurrences = deserializedCalendar.GetOccurrences<CalendarEvent>(DateUtil.GetZone(timeZoneId)).ToList();
+        var occurrences = deserializedCalendar.GetOccurrences<CalendarEvent>(CalendarTimeZoneProviders.TzdbWithAliases[timeZoneId]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -96,7 +95,7 @@ public class RecurrenceWithExDateTests
                   """;
 
         var cal = Calendar.Load(ics)!;
-        var occurrences = cal.GetOccurrences<CalendarEvent>(DateUtil.GetZone("GMT")).ToList();
+        var occurrences = cal.GetOccurrences<CalendarEvent>(CalendarTimeZoneProviders.TzdbWithAliases["GMT"]).ToList();
 
         var serializer = new CalendarSerializer();
         ics = serializer.SerializeToString(cal);
@@ -144,7 +143,7 @@ public class RecurrenceWithExDateTests
                   """;
 
         var cal = Calendar.Load(ics)!;
-        var occurrences = cal.GetOccurrences<CalendarEvent>(DateUtil.GetZone("Europe/Berlin")).ToList();
+        var occurrences = cal.GetOccurrences<CalendarEvent>(CalendarTimeZoneProviders.TzdbWithAliases["Europe/Berlin"]).ToList();
 
         var serializer = new CalendarSerializer();
         ics = serializer.SerializeToString(cal);
@@ -206,7 +205,7 @@ public class RecurrenceWithExDateTests
         var cal = Calendar.Load(ics)!;
         // serialize and deserialize to ensure the exclusion dates de/serialized
         cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString()!)!;
-        var occurrences = cal.GetOccurrences<CalendarEvent>(DateUtil.GetZone("America/New_York")).ToList();
+        var occurrences = cal.GetOccurrences<CalendarEvent>(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
         // Occurrences:
         // October 25, 2023, 09:00 AM (EDT, UTC-4)

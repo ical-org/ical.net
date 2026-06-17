@@ -10,6 +10,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Proxies;
 using Ical.Net.Utility;
 using NodaTime;
+using NodaTime.Extensions;
 using NodaTime.TimeZones;
 
 namespace Ical.Net.CalendarComponents;
@@ -287,14 +288,20 @@ public class VTimeZone : CalendarComponent
             Frequency = FrequencyType.Yearly;
             ByMonth.Add(interval.IsoLocalStart.Month);
 
-            var date = interval.IsoLocalStart.ToDateTimeUnspecified();
-            var weekday = date.DayOfWeek;
-            var weekNumber = DateUtil.WeekOfMonth(date);
+            var weekday = interval.IsoLocalStart.DayOfWeek.ToDayOfWeek();
+            var weekNumber = WeekOfMonth(interval.IsoLocalStart);
 
             if (weekNumber >= 4)
                 ByDay.Add(new WeekDay(weekday, -1)); // Almost certainly likely last X-day of month. Avoid issues with 4/5 sundays in different year/months. Ideally, use the nodazone tz database rule for this interval instead.
             else
                 ByDay.Add(new WeekDay(weekday, weekNumber));
+        }
+
+        private static int WeekOfMonth(LocalDateTime d)
+        {
+            var isExact = d.Day % 7 == 0;
+            var offset = isExact ? 0 : 1;
+            return (int) Math.Floor(d.Day / 7.0) + offset;
         }
     }
 

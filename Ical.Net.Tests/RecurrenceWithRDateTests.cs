@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -9,7 +9,6 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
-using Ical.Net.Utility;
 using NodaTime;
 using NUnit.Framework;
 using Duration = Ical.Net.DataTypes.Duration;
@@ -37,7 +36,7 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal);
 
-        var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
+        var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -70,7 +69,7 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal);
 
-        var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
+        var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -105,7 +104,7 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal);
 
-        var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone(tzId)).ToList();
+        var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[tzId]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -144,7 +143,7 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal)!;
 
-        var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone(tzId)).ToList();
+        var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[tzId]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -161,7 +160,7 @@ public class RecurrenceWithRDateTests
         // Deserialization
 
         cal = Calendar.Load(ics)!;
-        occurrences = cal.Events.First().GetOccurrences(DateUtil.GetZone(tzId)).ToList();
+        occurrences = cal.Events.First().GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[tzId]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -192,7 +191,7 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal);
 
-        var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
+        var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -228,7 +227,7 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal);
 
-        var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
+        var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -262,7 +261,7 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal);
 
-        var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
+        var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -299,7 +298,7 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal);
 
-        var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
+        var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -333,7 +332,7 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var occurrences = calendarEvent.GetOccurrences(tz).ToList();
 
         using (Assert.EnterMultipleScope())
@@ -371,7 +370,7 @@ public class RecurrenceWithRDateTests
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(cal);
 
-        var occurrences = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
+        var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -401,7 +400,7 @@ public class RecurrenceWithRDateTests
 
         void action()
         {
-            _ = calendarEvent.GetOccurrences(DateUtil.GetZone("America/New_York")).ToList();
+            _ = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
         }
 
         Assert.That(action, Throws.InstanceOf<EvaluationException>());

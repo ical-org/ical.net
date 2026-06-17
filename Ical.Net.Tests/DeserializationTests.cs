@@ -124,8 +124,10 @@ public class DeserializationTests
             Assert.That(evt.End?.HasTime, Is.True);
         }
 
-        var results = evt.GetOccurrences(new LocalDateTime(2010, 1, 17, 0, 0, 0).InZoneLeniently("Asia/Tokyo"))
-            .TakeWhileBefore(new LocalDateTime(2010, 2, 1, 0, 0, 0).InZoneLeniently("Asia/Tokyo").ToInstant());
+        var tz = iCal.TimeZoneProvider["Asia/Tokyo"];
+
+        var results = evt.GetOccurrences(new LocalDateTime(2010, 1, 17, 0, 0, 0).InZoneLeniently(tz))
+            .TakeWhileBefore(new LocalDateTime(2010, 2, 1, 0, 0, 0).InZoneLeniently(tz).ToInstant());
 
         foreach (var o in results)
         {
