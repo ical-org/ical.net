@@ -21,10 +21,10 @@ namespace Ical.Net.CalendarComponents;
 public class VTimeZone : CalendarComponent
 {
     public static VTimeZone FromLocalTimeZone()
-        => FromDateTimeZone(DefaultTimeZoneResolver.LocalDateTimeZone.Id);
+        => FromDateTimeZone(DateTimeZoneProviders.Tzdb.GetSystemDefault().Id);
 
     public static VTimeZone FromLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
-        => FromDateTimeZone(DefaultTimeZoneResolver.LocalDateTimeZone.Id, earliestDateTimeToSupport, includeHistoricalData);
+        => FromDateTimeZone(DateTimeZoneProviders.Tzdb.GetSystemDefault().Id, earliestDateTimeToSupport, includeHistoricalData);
 
     public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         => FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1), false);
@@ -40,6 +40,9 @@ public class VTimeZone : CalendarComponent
         var tz = CalendarTimeZoneProviders.TzdbWithAliases[tzId];
         return FromDateTimeZone(tz, tzId, earliestDateTimeToSupport, includeHistoricalData);
     }
+
+    public static VTimeZone FromDateTimeZone(DateTimeZone tz)
+        => FromDateTimeZone(tz, new DateTime(DateTime.Now.Year, 1, 1), includeHistoricalData: false);
 
     public static VTimeZone FromDateTimeZone(DateTimeZone tz, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         => FromDateTimeZone(tz, tz.Id, earliestDateTimeToSupport, includeHistoricalData);
