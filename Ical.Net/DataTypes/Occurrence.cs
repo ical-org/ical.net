@@ -5,8 +5,6 @@
 
 using System;
 using Ical.Net.CalendarComponents;
-using Ical.Net.Evaluation;
-using Ical.Net.Utility;
 using NodaTime;
 
 namespace Ical.Net.DataTypes;
@@ -31,30 +29,6 @@ public class Occurrence : IComparable<Occurrence>
         Source = recurrable;
         Start = start;
         End = end;
-    }
-
-    public CalDateTime? DtStart
-    {
-        get
-        {
-            if (Source.Start is not { } dtStart)
-            {
-                return null;
-            }
-
-            var start = Start;
-            var tzid = dtStart.TimeZoneName;
-
-            // Switch to recurrable time zone, if any
-            if (tzid is not null)
-            {
-                start = start.WithZone(DateUtil.GetZone(tzid));
-            }
-
-            return dtStart.HasTime
-                ? new(start.LocalDateTime, tzid)
-                : new(start.Date);
-        }
     }
 
     /// <summary>
