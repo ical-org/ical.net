@@ -15,7 +15,6 @@ using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Tests.TestHelpers;
-using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.Extensions;
 using NUnit.Framework;
@@ -168,17 +167,19 @@ public class RecurrenceTests
         ProgramTest.TestCal(iCal);
         var evt = iCal.Events.First();
 
+        var tz = iCal.TimeZoneProvider[_tzid];
+
         var occurrences = evt.GetOccurrences(
-            new CalDateTime(1997, 9, 1).ToZonedDateTime(_tzid))
-            .TakeWhileBefore(new CalDateTime(1998, 1, 1).ToZonedDateTime(_tzid).ToInstant())
+            new LocalDate(1997, 9, 1).AtStartOfDayInZone(tz))
+            .TakeWhileBefore(new LocalDate(1998, 1, 1).AtStartOfDayInZone(tz).ToInstant())
             .ToList();
 
-        var dt = new CalDateTime(1997, 9, 2, 9, 0, 0).ToZonedDateTime(_tzid);
+        var dt = new LocalDateTime(1997, 9, 2, 9, 0, 0).InZoneStrictly(tz);
         var i = 0;
         while (dt.Year < 1998)
         {
-            if (dt.ToInstant() >= evt.Start!.ToZonedDateTime(_tzid).ToInstant() &&
-                dt.ToInstant() < new CalDateTime(1997, 12, 24, 0, 0, 0).ToZonedDateTime(_tzid).ToInstant())
+            if (dt.ToInstant() >= evt.Start!.ToZonedDateTime(iCal.TimeZoneProvider).ToInstant() &&
+                dt.ToInstant() < new LocalDate(1997, 12, 24).AtStartOfDayInZone(tz).ToInstant())
             {
                 Assert.That(occurrences[i].Start, Is.EqualTo(dt), "Event should occur at " + dt);
 
@@ -187,7 +188,7 @@ public class RecurrenceTests
 
             dt = dt.LocalDateTime
                 .PlusDays(1)
-                .InZoneLeniently(_tzid);
+                .InZoneLeniently(tz);
         }
     }
 
@@ -1581,7 +1582,7 @@ public class RecurrenceTests
     {
         var iCal = Calendar.Load(IcsFiles.Secondly1)!;
 
-        var tz = DateUtil.GetZone(_tzid);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[_tzid];
         var start = new LocalDateTime(2007, 6, 21, 8, 0).InZoneStrictly(tz);
         var end = new LocalDateTime(2007, 6, 21, 8, 1).InZoneStrictly(tz);
 
@@ -1602,7 +1603,7 @@ public class RecurrenceTests
     {
         var iCal = Calendar.Load(IcsFiles.Minutely1)!;
 
-        var tz = DateUtil.GetZone(_tzid);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[_tzid];
         var start = new LocalDateTime(2007, 6, 21, 8, 0, 0).InZoneStrictly(tz);
         var end = new LocalDateTime(2007, 6, 21, 12, 0, 1).InZoneStrictly(tz); // End period is exclusive, not inclusive.
 
@@ -1623,7 +1624,7 @@ public class RecurrenceTests
     {
         var iCal = Calendar.Load(IcsFiles.Hourly1)!;
 
-        var tz = DateUtil.GetZone(_tzid);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[_tzid];
         var start = new LocalDateTime(2007, 6, 21, 8, 0, 0).InZoneStrictly(tz);
         var end = new LocalDateTime(2007, 6, 25, 8, 0, 1).InZoneStrictly(tz); // End period is exclusive, not inclusive.
 
@@ -2791,7 +2792,7 @@ public class RecurrenceTests
     public void Recurrence_WithOutOfBoundsUtc_ShouldFailWithCorrectException(string ical, bool shouldThrow)
     {
         var cal = Calendar.Load(ical)!;
-        Assert.That(() => cal.GetOccurrences(DateUtil.GetZone(_tzid)).ToList(),
+        Assert.That(() => cal.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[_tzid]).ToList(),
             shouldThrow ? Throws.InstanceOf<EvaluationOutOfRangeException>() : Throws.Nothing);
     }
 
@@ -3115,7 +3116,7 @@ END:VCALENDAR";
             End = CalDateTime.FromDateTime(DateTime.Parse("2019-06-08 00:00:00", CultureInfo.InvariantCulture))
         };
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
 
         //Testing on both the first day and the next, results used to be different
         for (var i = 0; i <= 1; i++)
@@ -3205,7 +3206,6 @@ END:VCALENDAR";
             END:VCALENDAR
             """;
         const string timeZoneId = @"Eastern Standard Time";
-        DateUtil.GetZone(timeZoneId);
         var calendar = Calendar.Load(icalText)!;
         var firstEvent = calendar.Events.First();
         var startSearch =
@@ -3377,7 +3377,7 @@ END:VCALENDAR";
 
         // Evaluate all tests in UTC so that INSTANCES match
         // the local date and time of the expected values.
-        var timeZone = DateUtil.GetZone("UTC");
+        var timeZone = CalendarTimeZoneProviders.TzdbWithAliases["UTC"];
 
         var startAt = testCase.StartAt?.ToZonedOrDefault(timeZone).ToInstant();
 
@@ -3511,7 +3511,7 @@ END:VCALENDAR";
 
         // Although the occurrences are unbounded, we can still call GetOccurrences without
         // specifying bounds, because the instances are only generated on enumeration.
-        var occurrences = calendar.GetOccurrences(DateUtil.GetZone(_tzid));
+        var occurrences = calendar.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[_tzid]);
 
         var instances = occurrences.Take(100).ToList();
 
@@ -3600,7 +3600,7 @@ END:VCALENDAR";
                 ? Throws.Exception.TypeOf<EvaluationLimitExceededException>()
                 : Throws.Nothing;
 
-        Assert.That(() => cal.GetOccurrences(DateUtil.GetZone(_tzid), options: options).ToList(), constraint);
+        Assert.That(() => cal.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[_tzid], options: options).ToList(), constraint);
     }
 
     [TestCase("FREQ=DAILY;INTERVAL=2;UNTIL=20250430T000000Z")]
@@ -3700,7 +3700,7 @@ END:VCALENDAR";
                   """;
         var cal = Calendar.Load(ics)!;
 
-        var tz = DateUtil.GetZone("Europe/Vienna");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["Europe/Vienna"];
 
         var occ = cal.GetOccurrences(tz).ToList();
 
@@ -3766,7 +3766,7 @@ END:VCALENDAR";
         // Should be considered only at the exact time
         cal.ExceptionDates.Add(new CalDateTime("20250703T150000"));
 
-        var occurrences = cal.GetOccurrences(DateUtil.GetZone(_tzid))
+        var occurrences = cal.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[_tzid])
             .Take(2)
             .Select(o => o.Start)
             .ToList();
@@ -3796,7 +3796,7 @@ END:VCALENDAR";
                                 END:VCALENDAR
                                 """)!;
 
-        var occurrences = cal.GetOccurrences(DateUtil.GetZone(_tzid))
+        var occurrences = cal.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[_tzid])
             .Select(o => o.Start)
             .ToList();
 
@@ -3891,7 +3891,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone(periodStartTzId ?? _tzid);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[periodStartTzId ?? _tzid];
 
         var firstFewOccurrences = cal.GetOccurrences(tz).Take(3).ToList();
 
@@ -3933,7 +3933,7 @@ END:VCALENDAR";
                                  END:VCALENDAR
                                  """)!;
 
-        var tz = DateUtil.GetZone(_tzid);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[_tzid];
 
         var occurrences = cal
             .GetOccurrences<CalendarEvent>(tz).ToList();
@@ -3985,7 +3985,7 @@ END:VCALENDAR";
                                 END:VCALENDAR
                                 """)!;
 
-        var tz = DateUtil.GetZone(_tzid);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[_tzid];
 
         var occurrences = cal
             .GetOccurrences<CalendarEvent>(tz).ToList();
@@ -4039,7 +4039,7 @@ END:VCALENDAR";
                                 END:VCALENDAR
                                 """)!;
 
-        var tz = DateUtil.GetZone(_tzid);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[_tzid];
 
         var occurrences = cal
             .GetOccurrences<CalendarEvent>(tz).ToList();
@@ -4076,7 +4076,7 @@ END:VCALENDAR";
         var calendar = new Calendar();
         calendar.Events.Add(vEvent);
 
-        var tz = DateUtil.GetZone("UTC");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["UTC"];
 
         var intervalStart = eventStart.ToZonedOrDefault(tz);
         var intervalEnd = intervalStart.LocalDateTime
@@ -4117,7 +4117,7 @@ END:VCALENDAR";
         calendar.Events.Add(vEvent);
         calendar.Events.Add(vEvent2);
 
-        var tz = DateUtil.GetZone(_tzid);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[_tzid];
 
         var searchStart = new CalDateTime(2015, 12, 29).ToZonedOrDefault(tz);
         var searchEnd = new CalDateTime(2017, 02, 10).ToZonedOrDefault(tz).ToInstant();
@@ -4257,7 +4257,7 @@ END:VCALENDAR";
                             END:VCALENDAR
                             """;
 
-        var tz = DateUtil.GetZone(_tzid);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[_tzid];
 
         var collection = Calendar.Load(ical)!;
         var startCheck = new CalDateTime(2023, 10, 1).ToZonedOrDefault(tz);
@@ -4289,7 +4289,7 @@ END:VCALENDAR";
     [Test]
     public void CalendarCollection_GetOccurrences_ShouldEnumerateAndMerge()
     {
-        var tz = DateUtil.GetZone(_tzid);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[_tzid];
         var cal1 = new Calendar();
         cal1.Events.Add(
             new CalendarEvent { DtStart = new CalDateTime(2025, 1, 1), DtEnd = new CalDateTime(2025, 1, 2) });
@@ -4425,7 +4425,7 @@ END:VCALENDAR";
 
         var cal = Calendar.Load(ical)!;
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = cal.TimeZoneProvider["America/New_York"];
 
         var from = new LocalDateTime(2025, 01, 01, 0, 0).InZoneStrictly(tz);
         var to = new LocalDateTime(2025, 01, 02, 0, 0).InZoneStrictly(tz).ToInstant();
@@ -4443,7 +4443,7 @@ END:VCALENDAR";
         Assert.That(a, Is.EqualTo(expected));
 
         // Evaluate again for another time zone that is 1 hour behind
-        tz = DateUtil.GetZone("America/Chicago");
+        tz = cal.TimeZoneProvider["America/Chicago"];
 
         from = new LocalDateTime(2025, 01, 01, 0, 0).InZoneStrictly(tz);
         to = new LocalDateTime(2025, 01, 02, 0, 0).InZoneStrictly(tz).ToInstant();
@@ -4489,7 +4489,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var result = cal.GetOccurrences(tz.AtStartOfDay(new LocalDate(2025, 11, 2)))
             .TakeWhileBefore(tz.AtStartOfDay(new LocalDate(2025, 11, 3)).ToInstant())
             .Select(x => x.Start)
@@ -4516,7 +4516,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var result = cal.GetOccurrences(tz.AtStrictly(new LocalDateTime(2025, 11, 2, 0, 15)))
             .TakeWhileBefore(tz.AtStartOfDay(new LocalDate(2025, 11, 3)).ToInstant())
             .Select(x => x.Period)
@@ -4543,7 +4543,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var result = cal.GetOccurrences(tz.AtStrictly(new LocalDateTime(2025, 11, 2, 0, 15)))
             .TakeWhileBefore(tz.AtStartOfDay(new LocalDate(2025, 11, 3)).ToInstant())
             .Select(x => x.Period)
@@ -4570,7 +4570,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var result = cal.GetOccurrences(tz.AtStrictly(new LocalDateTime(2025, 11, 2, 0, 15)))
             .TakeWhileBefore(tz.AtStartOfDay(new LocalDate(2025, 11, 3)).ToInstant())
             .Select(x => x.Period)
@@ -4653,7 +4653,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var result = cal.GetOccurrences(tz, evt.Start.ToZonedDateTime().ToInstant())
             .Select(x => x.Start)
             .ToList();
@@ -4682,7 +4682,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var result = cal.GetOccurrences(tz, evt.Start.ToZonedDateTime().ToInstant())
             .Select(x => x.Start)
             .ToList();
@@ -4711,7 +4711,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var result = cal.GetOccurrences(tz, evt.Start.ToZonedDateTime().ToInstant())
             .Select(x => x.Start)
             .ToList();
@@ -4745,7 +4745,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var result = cal.GetOccurrences(tz, evt.Start.ToZonedDateTime().ToInstant())
             .Select(x => x.Start)
             .ToList();
@@ -4774,7 +4774,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var start = new LocalDate(2025, 11, 2)
             .AtStartOfDayInZone(tz);
 
@@ -4806,7 +4806,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var start = new OffsetDateTime(new(2025, 11, 2, 1, 0), tz.MinOffset)
             .InZone(tz);
 
@@ -4838,7 +4838,7 @@ END:VCALENDAR";
         var cal = new Calendar();
         cal.Events.Add(evt);
 
-        var tz = DateUtil.GetZone("America/New_York");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var start = new LocalDate(2025, 1, 4).AtStartOfDayInZone(tz);
         var result = cal.GetOccurrences(start)
             .Select(x => x.Start)

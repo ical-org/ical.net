@@ -178,6 +178,7 @@ internal class RecurrenceWikiTests
         // Wiki code start
 
         // Create the CalendarEvent
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["Europe/Zurich"];
         var start = new CalDateTime(2025, 07, 10, 09, 00, 00, "Europe/Zurich");
         var recurrence = new RecurrenceRule
         {
@@ -185,7 +186,7 @@ internal class RecurrenceWikiTests
             ByMonthDay = [10, 12],
             Until = start.ToLocalDateTime()
                 .PlusYears(2)
-                .InZoneLeniently("Europe/Zurich")
+                .InZoneLeniently(tz)
                 .WithZone(DateTimeZone.Utc)
                 .ToCalDateTime()
         };
@@ -206,7 +207,6 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        var tz = TimeZoneResolvers.Default("Europe/Zurich");
         IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end

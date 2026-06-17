@@ -37,14 +37,9 @@ internal static class TestExtensions
         return new RecurrenceRuleEvaluator(pattern, referenceDate, periodStart, CalendarTimeZoneProviders.TzdbWithAliases, options).Evaluate();
     }
 
-    public static ZonedDateTime InZoneLeniently(this LocalDateTime value, string zoneId)
-    {
-        return value.InZoneLeniently(DateUtil.GetZone(zoneId));
-    }
-
     public static ZonedDateTime ToZonedDateTime(this CalDateTime value, string zoneId)
     {
-        var tz = DateUtil.GetZone(zoneId);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[zoneId];
         return value.ToZonedOrDefault(tz, CalendarTimeZoneProviders.TzdbWithAliases).WithZone(tz);
     }
 
