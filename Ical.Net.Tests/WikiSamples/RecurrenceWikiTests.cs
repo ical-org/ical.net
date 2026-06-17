@@ -72,7 +72,7 @@ internal class RecurrenceWikiTests
         };
 
         // Get all occurrences of the series.
-        var tz = TimeZoneResolvers.Default("UTC");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["UTC"];
         IEnumerable<Occurrence> allOccurrences = calendarEvent.GetOccurrences(tz);
         Assert.That(allOccurrences.Count(), Is.EqualTo(5));
 
@@ -131,7 +131,7 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar)!;
 
         // Calculate all occurrences
-        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["Europe/Zurich"];
         var occurrences = calendar.GetOccurrences(tz).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(2));
 
@@ -285,7 +285,7 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["Europe/Zurich"];
         IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
@@ -360,7 +360,7 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        var tz = TimeZoneResolvers.Default("UTC");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["UTC"];
         IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
@@ -457,7 +457,7 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["Europe/Zurich"];
         IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
@@ -539,7 +539,7 @@ internal class RecurrenceWikiTests
         var generatedIcs = calendarSerializer.SerializeToString(calendar);
 
         // Calculate all occurrences
-        var tz = TimeZoneResolvers.Default("Europe/Zurich");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["Europe/Zurich"];
         IEnumerable<Occurrence> occurrences = calendar.GetOccurrences(tz);
 
         // Wiki code end
@@ -603,7 +603,7 @@ internal class RecurrenceWikiTests
             End = start.PlusYears(10).InUtc().PlusHours(1).ToCalDateTime()
         });
         
-        var tz = TimeZoneResolvers.Default("UTC");
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases["UTC"];
         var occurrences =
             calendar.Events
                 .SelectMany(ev => ev.GetOccurrences(tz).Take(1))
