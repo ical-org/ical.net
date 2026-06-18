@@ -4,6 +4,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
@@ -273,7 +274,7 @@ public class VTimeZoneTest
             BEGIN:VCALENDAR
             PRODID:ical.net
             BEGIN:VTIMEZONE
-            TZID:Customized Time Zone
+            TZID:Custom Time Zone
             BEGIN:STANDARD
             DTSTART:16010101T030000
             TZOFFSETFROM:+0200
@@ -290,8 +291,8 @@ public class VTimeZoneTest
             BEGIN:VEVENT
             UID:446677788899995465
             SUMMARY:My Event
-            DTSTART;TZID=Customized Time Zone:20240423T114500
-            DTEND;TZID=Customized Time Zone:20240423T120000
+            DTSTART;TZID=Custom Time Zone:20240423T114500
+            DTEND;TZID=Custom Time Zone:20240423T120000
             DTSTAMP:20250306T143151Z
             END:VEVENT
             END:VCALENDAR
@@ -301,13 +302,171 @@ public class VTimeZoneTest
 
         Assert.That(cal.TimeZones, Is.Not.Empty);
 
-        var customTimeZone = cal.TimeZoneProvider["Customized Time Zone"];
+        var customTimeZone = cal.TimeZoneProvider["Custom Time Zone"];
         var start = Instant.FromUtc(2024, 1, 1, 0, 0).InZone(customTimeZone);
         var results = cal.GetOccurrences(start).ToList();
 
         Assert.That(results, Has.Count.EqualTo(1));
 
         Assert.That(results[0].Start, Is.EqualTo(new LocalDateTime(2024, 4, 23, 11, 45).InZoneStrictly(customTimeZone)));
+    }
+
+    [Test]
+    public void CalendarWithCustomTimeZonesFailsWithTzdbOnlyProvider()
+    {
+        var data = """
+            BEGIN:VCALENDAR
+            PRODID:ical.net
+            BEGIN:VTIMEZONE
+            TZID:Custom Time Zone
+            BEGIN:STANDARD
+            DTSTART:16010101T030000
+            TZOFFSETFROM:+0200
+            TZOFFSETTO:+0100
+            RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=4SU;BYMONTH=10
+            END:STANDARD
+            BEGIN:DAYLIGHT
+            DTSTART:16010101T020000
+            TZOFFSETFROM:+0100
+            TZOFFSETTO:+0200
+            RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
+            END:DAYLIGHT
+            END:VTIMEZONE
+            BEGIN:VEVENT
+            UID:446677788899995465
+            SUMMARY:My Event
+            DTSTART;TZID=Custom Time Zone:20240423T114500
+            DTEND;TZID=Custom Time Zone:20240423T120000
+            DTSTAMP:20250306T143151Z
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var cal = Calendar.Load(data)!;
+
+        // Only allow strict Tzdb with no extra aliases
+        cal.TimeZoneProvider = DateTimeZoneProviders.Tzdb;
+
+        Assert.That(cal.TimeZones, Is.Not.Empty);
+
+        Assert.Throws<DateTimeZoneNotFoundException>(() =>
+        {
+            // Time zone does not exist in Tzdb
+            var customTimeZone = cal.TimeZoneProvider["Custom Time Zone"];
+        });
+
+        Assert.Throws<DateTimeZoneNotFoundException>(() =>
+        {
+            // Time zone does not exist in Tzdb
+            var customTimeZone = cal.TimeZoneProvider["Eastern Standard Time"];
+        });
+
+        var tz = cal.TimeZoneProvider["America/New_York"];
+        var start = Instant.FromUtc(2024, 1, 1, 0, 0).InZone(tz);
+
+        Assert.Throws<DateTimeZoneNotFoundException>(() =>
+        {
+            // Should attempt to evaluate event time zone using Tzdb and fail
+            var _ = cal.GetOccurrences(start).ToList();
+        });
+    }
+
+    [Test]
+    public void CalendarWithVTimeZoneOnlyFailsToEvaluateUnknownEventTimeZone()
+    {
+        var data = """
+            BEGIN:VCALENDAR
+            PRODID:ical.net
+            BEGIN:VTIMEZONE
+            TZID:Custom Time Zone
+            BEGIN:STANDARD
+            DTSTART:16010101T030000
+            TZOFFSETFROM:+0200
+            TZOFFSETTO:+0100
+            RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=4SU;BYMONTH=10
+            END:STANDARD
+            BEGIN:DAYLIGHT
+            DTSTART:16010101T020000
+            TZOFFSETFROM:+0100
+            TZOFFSETTO:+0200
+            RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
+            END:DAYLIGHT
+            END:VTIMEZONE
+            BEGIN:VEVENT
+            UID:446677788899995465
+            SUMMARY:My Event
+            DTSTART;TZID=America/New_York:20240423T114500
+            DTEND;TZID=America/New_York:20240423T120000
+            DTSTAMP:20250306T143151Z
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var cal = Calendar.Load(data)!;
+
+        // Only allow VTIMEZONE events
+        cal.TimeZoneProvider = CalendarTimeZoneProviders.FromCalendar(cal);
+
+        var tz = cal.TimeZoneProvider["Custom Time Zone"];
+        var start = Instant.FromUtc(2024, 1, 1, 0, 0).InZone(tz);
+
+        Assert.Throws<DateTimeZoneNotFoundException>(() =>
+        {
+            // Fails to evaluate because America/New_York is not defined
+            var _ = cal.GetOccurrences(start).ToList();
+        });
+    }
+
+
+    [Test]
+    public void CalendarWithVTimeZoneOnlyCanEvaluateUsingUnknownTimeZone()
+    {
+        var data = """
+            BEGIN:VCALENDAR
+            PRODID:ical.net
+            BEGIN:VTIMEZONE
+            TZID:Custom Time Zone
+            BEGIN:STANDARD
+            DTSTART:16010101T030000
+            TZOFFSETFROM:+0200
+            TZOFFSETTO:+0100
+            RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=4SU;BYMONTH=10
+            END:STANDARD
+            BEGIN:DAYLIGHT
+            DTSTART:16010101T020000
+            TZOFFSETFROM:+0100
+            TZOFFSETTO:+0200
+            RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
+            END:DAYLIGHT
+            END:VTIMEZONE
+            BEGIN:VEVENT
+            UID:446677788899995465
+            SUMMARY:My Event
+            DTSTART;TZID=Custom Time Zone:20240423T114500
+            DTEND;TZID=Custom Time Zone:20240423T120000
+            DTSTAMP:20250306T143151Z
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var cal = Calendar.Load(data)!;
+
+        // Only allow VTIMEZONE events
+        cal.TimeZoneProvider = CalendarTimeZoneProviders.FromCalendar(cal);
+
+        var tz = DateTimeZoneProviders.Tzdb["America/New_York"];
+        var start = Instant.FromUtc(2024, 1, 1, 0, 0).InZone(tz);
+
+        List<Occurrence> results = null!;
+
+        Assert.DoesNotThrow(() =>
+        {
+            // America/New_York is not defined in the calendar, but it
+            // should still be able to evaluate.
+            results = cal.GetOccurrences(start).ToList();
+        });
+
+        Assert.That(results, Has.Count.EqualTo(1));
     }
 
     private static Calendar CreateTestCalendar(string tzId, DateTime? earliestTime = null, bool includeHistoricalData = true)

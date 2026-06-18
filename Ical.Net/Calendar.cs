@@ -437,7 +437,10 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     }
 
     public IDateTimeZoneProvider TimeZoneProvider
-        => field ??= CalendarTimeZoneProviders.FromCalendar(this, CalendarTimeZoneProviders.TzdbWithAliases);
+    {
+        get => field ??= CalendarTimeZoneProviders.FromCalendar(this, CalendarTimeZoneProviders.TzdbWithAliases);
+        set;
+    }
 
     internal IDateTimeZoneSource TimeZoneSource => field ??= new CalendarDateTimeZoneSource(this);
 
