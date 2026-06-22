@@ -580,7 +580,8 @@ public class SerializationTests
     [TestCase("th-TH")] // Thai (Thailand)
     [TestCase("ru-RU")] // Russian (Russia)
     [TestCase("ko-KR")] // Korean (Korea)
-    public void TestConvertToInt32WithNegativeNumberInDifferentCultures(string cultureStr)
+    [TestCase("tr-TR")] // Turkish (Turkey)
+    public void TestSerializationInDifferentCultures(string cultureStr)
     {
         var originalCulture = CultureInfo.CurrentCulture;
         try
@@ -596,12 +597,14 @@ public class SerializationTests
                     BEGIN:VCALENDAR
                     BEGIN:VEVENT
                     DTSTART:20251231
-                    RRULE:FREQ=YEARLY;BYYEARDAY=-1
+                    RRULE:FREQ=YEARLY;BYYEARDAY=-1;UNTIL=20260622
                     END:VEVENT
                     END:VCALENDAR
                     """), Throws.Nothing);
+
                 // Serialize
                 Assert.That(() => new DurationSerializer().SerializeToString(new Duration(null, -1)), Is.EqualTo("-P1D"));
+                Assert.That(() => new RecurrenceRuleSerializer().SerializeToString(new RecurrencePattern() { Frequency = FrequencyType.Daily, Until = new CalDateTime(2026, 6, 22) }).Contains("UNTIL=20260622"), Is.True);
 
             });
         }    
