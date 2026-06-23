@@ -20,7 +20,7 @@ public class RecurrenceRuleSerializer : EncodableDataTypeSerializer
 
     public static DayOfWeek GetDayOfWeek(string value)
     {
-        return value.ToUpper() switch
+        return value.ToUpperInvariant() switch
         {
             "SU" => DayOfWeek.Sunday,
             "MO" => DayOfWeek.Monday,
@@ -115,7 +115,7 @@ public class RecurrenceRuleSerializer : EncodableDataTypeSerializer
         SerializationContext.Push(recur);
         var values = new List<string>
         {
-            $"FREQ={recur.Frequency.ToString().ToUpper()}"
+            $"FREQ={recur.Frequency.ToString().ToUpperInvariant()}"
         };
 
         //-- FROM RFC2445 --
@@ -139,7 +139,7 @@ public class RecurrenceRuleSerializer : EncodableDataTypeSerializer
 
         if (recur.FirstDayOfWeek != DayOfWeek.Monday)
         {
-            values.Add($"WKST={Enum.GetName(typeof(DayOfWeek), recur.FirstDayOfWeek)?.ToUpper().Substring(0, 2)}");
+            values.Add($"WKST={Enum.GetName(typeof(DayOfWeek), recur.FirstDayOfWeek)?.ToUpperInvariant().Substring(0, 2)}");
         }
 
         if (recur.Count.HasValue)
@@ -240,7 +240,7 @@ public class RecurrenceRuleSerializer : EncodableDataTypeSerializer
                 freqPartExists = true;
             }
 
-            ProcessKeyValuePair(keyValues[0].ToLower(), keyValues[1], r, factory);
+            ProcessKeyValuePair(keyValues[0].ToLowerInvariant(), keyValues[1], r, factory);
         }
 
         if (!freqPartExists)
