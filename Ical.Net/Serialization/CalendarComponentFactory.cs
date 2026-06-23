@@ -12,7 +12,7 @@ public class CalendarComponentFactory
     public virtual ICalendarComponent Build(string objectName)
     {
         ICalendarComponent c;
-        var name = objectName.ToUpper();
+        var name = objectName.ToUpperInvariant();
 
         switch (name)
         {

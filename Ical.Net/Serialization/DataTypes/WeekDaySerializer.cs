@@ -37,7 +37,7 @@ public class WeekDaySerializer : EncodableDataTypeSerializer
             var name = Enum.GetName(typeof(DayOfWeek), ds.DayOfWeek);
             if (name == null) return null;
 
-            value += name.ToUpper().Substring(0, 2);
+            value += name.ToUpperInvariant().Substring(0, 2);
         }
         catch
         {
