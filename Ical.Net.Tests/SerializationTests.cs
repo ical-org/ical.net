@@ -585,8 +585,8 @@ public class SerializationTests
 
                 // Serialize
                 Assert.That(() => new DurationSerializer().SerializeToString(new Duration(null, -1)), Is.EqualTo("-P1D"));
-                Assert.That(() => new RecurrenceRuleSerializer().SerializeToString(new RecurrencePattern() { Frequency = FrequencyType.Daily, Until = new CalDateTime(2026, 6, 22) }).Contains("UNTIL=20260622"), Is.True);
-            });
+                Assert.That(() => new RecurrenceRuleSerializer().SerializeToString(new RecurrenceRule { Frequency = FrequencyType.Daily, Until = new CalDateTime(2026, 6, 22) })?.Contains("UNTIL=20260622"), Is.True);
+            };
         }    
         finally
         {
