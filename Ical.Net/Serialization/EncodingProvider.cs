@@ -63,7 +63,7 @@ internal class EncodingProvider : IEncodingProvider
     /// <exception cref="SerializationException">Decoder not supported.</exception>
     protected virtual DecoderDelegate GetDecoderFor(string encoding)
     {
-        return encoding.ToUpper() switch
+        return encoding.ToUpperInvariant() switch
         {
             "8BIT" => Decode8Bit,
             "BASE64" => DecodeBase64,
@@ -99,7 +99,7 @@ internal class EncodingProvider : IEncodingProvider
     /// <exception cref="SerializationException">Encoder not supported.</exception>
     protected virtual EncoderDelegate GetEncoderFor(string encoding)
     {
-        return encoding.ToUpper() switch
+        return encoding.ToUpperInvariant() switch
         {
             "8BIT" => Encode8Bit,
             "BASE64" => EncodeBase64,

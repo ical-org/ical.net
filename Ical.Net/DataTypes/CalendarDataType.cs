@@ -94,7 +94,7 @@ public abstract class CalendarDataType : ICalendarDataType
     }
 
     public virtual void SetValueType(string type) =>
-        _proxy.Set("VALUE", type.ToUpper());
+        _proxy.Set("VALUE", type.ToUpperInvariant());
 
     public virtual ICalendarObject? AssociatedObject
     {
