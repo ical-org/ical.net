@@ -23,7 +23,7 @@ jobs:
       TAG_NAME: ${{ steps.resolve.outputs.TAG_NAME }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0  # Fetch full history and tags
 
@@ -48,7 +48,7 @@ jobs:
           3.1.x
 
     - name: Checkout the resolved tag (detached)
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
         ref: ${{ steps.resolve.outputs.TAG_NAME }}
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout the same tag
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
         ref: ${{ needs.tests.outputs.TAG_NAME }}
