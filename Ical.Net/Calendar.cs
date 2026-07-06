@@ -436,10 +436,26 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         return tz;
     }
 
+#if NET9_0_OR_GREATER
+    private readonly System.Threading.Lock _timeZoneProviderLock = new();
+#else
+    private readonly object _timeZoneProviderLock = new();
+#endif
+
     public IDateTimeZoneProvider TimeZoneProvider
     {
-        get => field ??= CalendarTimeZoneProviders.FromCalendar(this, CalendarTimeZoneProviders.TzdbWithAliases);
-        set;
+        get
+        {
+            lock (_timeZoneProviderLock)
+            {
+                return field ??= CalendarTimeZoneProviders
+                    .FromCalendar(this, CalendarTimeZoneProviders.TzdbWithAliases);
+            }
+        }
+        set
+        {
+            lock (_timeZoneProviderLock) { field = value; }
+        }
     }
 
     internal IDateTimeZoneSource TimeZoneSource => field ??= new CalendarDateTimeZoneSource(this);
