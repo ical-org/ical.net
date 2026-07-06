@@ -442,6 +442,12 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     private readonly object _timeZoneProviderLock = new();
 #endif
 
+    /// <summary>
+    /// The <see cref="IDateTimeZoneProvider"/> used during evaluation of
+    /// components within this calendar. The default provider is
+    /// <see cref="CalendarTimeZoneProviders.TzdbWithAliases"/>
+    /// with this calendar's VTIMEZONE components as the fallback.
+    /// </summary>
     public IDateTimeZoneProvider TimeZoneProvider
     {
         get
@@ -449,7 +455,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             lock (_timeZoneProviderLock)
             {
                 return field ??= CalendarTimeZoneProviders
-                    .FromCalendar(this, CalendarTimeZoneProviders.TzdbWithAliases);
+                    .Combine(CalendarTimeZoneProviders.TzdbWithAliases, CreateTimeZoneProvider());
             }
         }
         set
@@ -457,6 +463,13 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             lock (_timeZoneProviderLock) { field = value; }
         }
     }
+
+    /// <summary>
+    /// Creates a new <see cref="IDateTimeZoneProvider"/> using this calendar's
+    /// VTIMEZONE components.
+    /// </summary>
+    public IDateTimeZoneProvider CreateTimeZoneProvider()
+        => new DateTimeZoneCache(TimeZoneSource);
 
     internal IDateTimeZoneSource TimeZoneSource => field ??= new CalendarDateTimeZoneSource(this);
 
