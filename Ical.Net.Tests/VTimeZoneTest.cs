@@ -405,7 +405,7 @@ public class VTimeZoneTest
         var cal = Calendar.Load(data)!;
 
         // Only allow VTIMEZONE events
-        cal.TimeZoneProvider = CalendarTimeZoneProviders.FromCalendar(cal);
+        cal.TimeZoneProvider = cal.CreateTimeZoneProvider();
 
         var tz = cal.TimeZoneProvider["Custom Time Zone"];
         var start = Instant.FromUtc(2024, 1, 1, 0, 0).InZone(tz);
@@ -452,7 +452,7 @@ public class VTimeZoneTest
         var cal = Calendar.Load(data)!;
 
         // Only allow VTIMEZONE events
-        cal.TimeZoneProvider = CalendarTimeZoneProviders.FromCalendar(cal);
+        cal.TimeZoneProvider = cal.CreateTimeZoneProvider();
 
         var tz = DateTimeZoneProviders.Tzdb["America/New_York"];
         var start = Instant.FromUtc(2024, 1, 1, 0, 0).InZone(tz);

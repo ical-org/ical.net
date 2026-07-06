@@ -31,12 +31,8 @@ public static class CalendarTimeZoneProviders
     private static readonly Lazy<InternalTzdbWithAliasesIgnoreCase> _tzdbWithAliasesIgnoreCase
         = new(static () => new InternalTzdbWithAliasesIgnoreCase(), isThreadSafe: true);
 
-    public static IDateTimeZoneProvider FromCalendar(Calendar calendar, params IDateTimeZoneProvider[] fallbackProviders)
-    {
-        var calendarProvider = new DateTimeZoneCache(calendar.TimeZoneSource);
-        var combinedProvider = new CombinedDateTimeZoneProvider([calendarProvider, .. fallbackProviders]);
-        return combinedProvider;
-    }
+    public static IDateTimeZoneProvider Combine(params IDateTimeZoneProvider[] providers)
+        => new CombinedDateTimeZoneProvider(providers);
 
     private sealed class CombinedDateTimeZoneProvider : IDateTimeZoneProvider
     {
