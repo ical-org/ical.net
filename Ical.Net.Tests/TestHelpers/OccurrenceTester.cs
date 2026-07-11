@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 using NodaTime;
 using NUnit.Framework;
 
@@ -26,12 +25,12 @@ internal static class OccurrenceTester
     {
         var evt = cal.Events.Skip(eventIndex).First();
 
-        var tz = DateUtil.GetZone(timeZone ?? _tzid);
-        var start = fromDate?.ToZonedOrDefault(tz).ToInstant();
+        var tz = cal.TimeZoneProvider[timeZone ?? _tzid];
+        var start = fromDate?.ToZonedOrDefault(tz, cal.TimeZoneProvider).ToInstant();
 
         var occurrences = toDate == null
             ? evt.GetOccurrences(tz, start).ToList()
-            : evt.GetOccurrences(tz, start).TakeWhileBefore(toDate.ToZonedOrDefault(tz).ToInstant()).ToList();
+            : evt.GetOccurrences(tz, start).TakeWhileBefore(toDate.ToZonedOrDefault(tz, cal.TimeZoneProvider).ToInstant()).ToList();
 
         using (Assert.EnterMultipleScope())
         {
@@ -44,7 +43,7 @@ internal static class OccurrenceTester
             {
                 for (var i = 0; i < expectedPeriods.Length; i++)
                 {
-                    var start2 = expectedPeriods[i].StartTime.ToZonedOrDefault(tz).WithZone(tz);
+                    var start2 = expectedPeriods[i].StartTime.ToZonedOrDefault(tz, cal.TimeZoneProvider).WithZone(tz);
 
                     ZonedDateTime end;
 
@@ -57,7 +56,7 @@ internal static class OccurrenceTester
                     }
                     else if (expectedPeriods[i].EndTime is { } periodEnd)
                     {
-                        end = periodEnd.ToZonedOrDefault(tz).WithZone(tz);
+                        end = periodEnd.ToZonedOrDefault(tz, cal.TimeZoneProvider).WithZone(tz);
                     }
                     else
                     {

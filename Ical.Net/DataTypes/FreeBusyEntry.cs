@@ -48,7 +48,8 @@ public class FreeBusyEntry : Period
     /// <returns></returns>
     public bool Contains(CalDateTime? dt)
     {
-        return dt is not null && Contains(dt.ToZonedOrDefault(DateTimeZone.Utc).ToInstant());
+        return dt is not null
+            && Contains(dt.ToZonedOrDefault(DateTimeZone.Utc, CalendarTimeZoneProvider).ToInstant());
     }
 
     /// <summary>
@@ -58,7 +59,7 @@ public class FreeBusyEntry : Period
     /// </summary>
     public bool Contains(Instant value)
     {
-        var startInstant = StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
+        var startInstant = StartTime.ToZonedOrDefault(DateTimeZone.Utc, CalendarTimeZoneProvider).ToInstant();
         if (startInstant > value)
         {
             return false;
@@ -67,7 +68,7 @@ public class FreeBusyEntry : Period
         Instant end;
         if (EndTime is { } endTime)
         {
-            end = endTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
+            end = endTime.ToZonedOrDefault(DateTimeZone.Utc, CalendarTimeZoneProvider).ToInstant();
         }
         else if (Duration is { } duration)
         {
@@ -102,11 +103,16 @@ public class FreeBusyEntry : Period
             throw new ArgumentException("Period start time must be in UTC");
         }
 
-        var start = StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
+        var start = StartTime
+            .ToZonedOrDefault(DateTimeZone.Utc, CalendarTimeZoneProvider)
+            .ToInstant();
+
         Instant end;
         if (EndTime is { } endTime)
         {
-            end = endTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
+            end = endTime
+                .ToZonedOrDefault(DateTimeZone.Utc, CalendarTimeZoneProvider)
+                .ToInstant();
         }
         else if (Duration is { } duration)
         {
@@ -120,7 +126,10 @@ public class FreeBusyEntry : Period
             return false;
         }
 
-        var otherStart = period.StartTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
+        var otherStart = period.StartTime
+            .ToZonedOrDefault(DateTimeZone.Utc, CalendarTimeZoneProvider)
+            .ToInstant();
+
         Instant otherEnd;
         if (period.EndTime is { } periodEndTime)
         {
@@ -129,7 +138,9 @@ public class FreeBusyEntry : Period
                 throw new ArgumentException("Period end time must be in UTC");
             }
 
-            otherEnd = periodEndTime.ToZonedOrDefault(DateTimeZone.Utc).ToInstant();
+            otherEnd = periodEndTime
+                .ToZonedOrDefault(DateTimeZone.Utc, CalendarTimeZoneProvider)
+                .ToInstant();
         }
         else if (period.Duration is { } periodDuration)
         {

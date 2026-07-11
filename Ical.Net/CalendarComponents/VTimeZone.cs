@@ -3,14 +3,15 @@
 // Licensed under the MIT license.
 //
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Proxies;
 using Ical.Net.Utility;
 using NodaTime;
+using NodaTime.Extensions;
 using NodaTime.TimeZones;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -20,10 +21,10 @@ namespace Ical.Net.CalendarComponents;
 public class VTimeZone : CalendarComponent
 {
     public static VTimeZone FromLocalTimeZone()
-        => FromDateTimeZone(DefaultTimeZoneResolver.LocalDateTimeZone.Id);
+        => FromDateTimeZone(DateTimeZoneProviders.Tzdb.GetSystemDefault().Id);
 
     public static VTimeZone FromLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
-        => FromDateTimeZone(DefaultTimeZoneResolver.LocalDateTimeZone.Id, earliestDateTimeToSupport, includeHistoricalData);
+        => FromDateTimeZone(DateTimeZoneProviders.Tzdb.GetSystemDefault().Id, earliestDateTimeToSupport, includeHistoricalData);
 
     public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         => FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1), false);
@@ -36,7 +37,24 @@ public class VTimeZone : CalendarComponent
 
     public static VTimeZone FromDateTimeZone(string tzId, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
     {
-        var vTimeZone = new VTimeZone(tzId);
+        var tz = CalendarTimeZoneProviders.TzdbWithAliases[tzId];
+        return FromDateTimeZone(tz, tzId, earliestDateTimeToSupport, includeHistoricalData);
+    }
+
+    public static VTimeZone FromDateTimeZone(DateTimeZone tz)
+        => FromDateTimeZone(tz, new DateTime(DateTime.Now.Year, 1, 1), includeHistoricalData: false);
+
+    public static VTimeZone FromDateTimeZone(DateTimeZone tz, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        => FromDateTimeZone(tz, tz.Id, earliestDateTimeToSupport, includeHistoricalData);
+
+    internal static VTimeZone FromDateTimeZone(
+        DateTimeZone tz,
+        string timeZoneAlias,
+        DateTime earliestDateTimeToSupport,
+        bool includeHistoricalData)
+    {
+        // Use the alias as the VTIMEZONE TZID value
+        var vTimeZone = new VTimeZone(tz, timeZoneAlias);
 
         var earliestYear = 1900;
         var earliestMonth = earliestDateTimeToSupport.Month;
@@ -60,7 +78,7 @@ public class VTimeZone : CalendarComponent
 
         // Only include historical data if asked to do so.  Otherwise,
         // use only the most recent adjustment rules available.
-        var intervals = vTimeZone._nodaZone.GetZoneIntervals(earliest, Instant.FromDateTimeOffset(DateTimeOffset.Now))
+        var intervals = tz.GetZoneIntervals(earliest, Instant.FromDateTimeOffset(DateTimeOffset.Now))
             .Where(z => z.HasStart && z.Start != Instant.MinValue)
             .ToList();
 
@@ -68,17 +86,17 @@ public class VTimeZone : CalendarComponent
         var matchingStandardIntervals = new List<ZoneInterval>();
 
         // if there are no intervals, create at least one standard interval
-        if (!intervals.Any())
+        if (intervals.Count == 0)
         {
-            var start = new DateTimeOffset(new DateTime(earliestYear, 1, 1), new TimeSpan(vTimeZone._nodaZone.MaxOffset.Ticks));
+            var start = new DateTimeOffset(new DateTime(earliestYear, 1, 1), new TimeSpan(tz.MaxOffset.Ticks));
             var interval = new ZoneInterval(
-                name: vTimeZone._nodaZone.Id,
+                name: tz.Id,
                 start: Instant.FromDateTimeOffset(start),
                 end: Instant.FromDateTimeOffset(start) + NodaTime.Duration.FromHours(1),
-                wallOffset: vTimeZone._nodaZone.MinOffset,
+                wallOffset: tz.MinOffset,
                 savings: Offset.Zero);
             intervals.Add(interval);
-            var zoneInfo = CreateTimeZoneInfo(intervals, new List<ZoneInterval>(), true, true);
+            var zoneInfo = CreateTimeZoneInfo(intervals, [], true, true);
             vTimeZone.AddChild(zoneInfo);
         }
         else
@@ -273,14 +291,20 @@ public class VTimeZone : CalendarComponent
             Frequency = FrequencyType.Yearly;
             ByMonth.Add(interval.IsoLocalStart.Month);
 
-            var date = interval.IsoLocalStart.ToDateTimeUnspecified();
-            var weekday = date.DayOfWeek;
-            var weekNumber = DateUtil.WeekOfMonth(date);
+            var weekday = interval.IsoLocalStart.DayOfWeek.ToDayOfWeek();
+            var weekNumber = WeekOfMonth(interval.IsoLocalStart);
 
             if (weekNumber >= 4)
                 ByDay.Add(new WeekDay(weekday, -1)); // Almost certainly likely last X-day of month. Avoid issues with 4/5 sundays in different year/months. Ideally, use the nodazone tz database rule for this interval instead.
             else
                 ByDay.Add(new WeekDay(weekday, weekNumber));
+        }
+
+        private static int WeekOfMonth(LocalDateTime d)
+        {
+            var isExact = d.Day % 7 == 0;
+            var offset = isExact ? 0 : 1;
+            return (int) Math.Floor(d.Day / 7.0) + offset;
         }
     }
 
@@ -289,6 +313,15 @@ public class VTimeZone : CalendarComponent
         Name = Components.Timezone;
     }
 
+    /// <summary>
+    /// Creates a VTIMEZONE component using the specified time zone ID.
+    /// <para/>
+    /// It is recommended to use an ID from <see cref="DateTimeZoneProviders.Tzdb"/>.
+    /// <para/>
+    /// The <see cref="Location"/> will be set if the time zone ID matches
+    /// a time zone in <see cref="DateTimeZoneProviders.Tzdb"/>.
+    /// </summary>
+    /// <param name="tzId">The TZID property value.</param>
     public VTimeZone(string tzId) : this()
     {
         if (string.IsNullOrWhiteSpace(tzId))
@@ -297,10 +330,17 @@ public class VTimeZone : CalendarComponent
         }
 
         TzId = tzId;
-        Location = _nodaZone.Id;
+
+        // Time zone ID could be a standard ID or a custom one
+        Location = CalendarTimeZoneProviders.TzdbWithAliases.GetZoneOrNull(tzId)?.Id;
     }
 
-    private DateTimeZone _nodaZone = DateTimeZone.Utc; // must initialize
+    internal VTimeZone(DateTimeZone tz, string timeZoneAlias)
+    {
+        TzId = timeZoneAlias;
+        Location = tz.Id;
+    }
+
     private string? _tzId;
     public virtual string? TzId
     {
@@ -326,20 +366,7 @@ public class VTimeZone : CalendarComponent
                 return;
             }
 
-            _nodaZone = DateUtil.GetZone(value);
-            var id = _nodaZone.Id;
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                throw new ArgumentException($"Unrecognized time zone id: {value}");
-            }
-
-            if (!string.Equals(id, value, StringComparison.OrdinalIgnoreCase))
-            {
-                //It was a BCL time zone, so we should use the original value
-                id = value;
-            }
-
-            _tzId = id;
+            _tzId = value;
             Properties.Set("TZID", value);
         }
     }
@@ -367,4 +394,123 @@ public class VTimeZone : CalendarComponent
     }
 
     public ICalendarObjectList<VTimeZoneInfo> TimeZoneInfos => new CalendarObjectListProxy<VTimeZoneInfo>(Children);
+
+    internal DateTimeZone ToDateTimeZone() => CalendarDateTimeZone.From(this);
+
+    private sealed class CalendarDateTimeZone : DateTimeZone
+    {
+        private readonly List<VTimeZoneInfo> intervals;
+
+        public static CalendarDateTimeZone From(VTimeZone data)
+        {
+            if (data.TzId == null)
+            {
+                throw new Exception("Time zone ID must be set");
+            }
+
+            var info = data.TimeZoneInfos
+                .Select(x => x.Copy<VTimeZoneInfo>()!)
+                .ToList();
+
+            var min = Offset.Zero;
+            var max = Offset.Zero;
+
+            void CheckMinMax(UtcOffset? utcOffset)
+            {
+                if (utcOffset != null)
+                {
+                    var from = Offset.FromTimeSpan(utcOffset.Offset);
+                    if (from < min)
+                    {
+                        min = from;
+                    }
+
+                    if (from > max)
+                    {
+                        max = from;
+                    }
+                }
+            }
+
+            foreach (var x in info)
+            {
+                CheckMinMax(x.OffsetFrom);
+                CheckMinMax(x.OffsetTo);
+            }
+
+            var tz = new CalendarDateTimeZone(data.TzId, false, min, max, info);
+
+            return tz;
+        }
+
+        private CalendarDateTimeZone(string id, bool isFixed, Offset minOffset, Offset maxOffset, List<VTimeZoneInfo> intervals)
+            : base(id, isFixed, minOffset, maxOffset)
+        {
+            this.intervals = intervals;
+        }
+
+        public override ZoneInterval GetZoneInterval(Instant instant)
+        {
+            Instant? start = null;
+            Instant? end = null;
+            VTimeZoneInfo? info = null;
+
+            var previousYear = instant.InUtc()
+                .LocalDateTime
+                .PlusYears(-1)
+                .InUtc()
+                .ToInstant();
+
+            var timeZoneChanges = CollectionHelpers.OrderedMergeMany(
+                intervals.Select(x => x.GetOccurrences(Utc, previousYear)));
+
+            foreach (var occurrence in timeZoneChanges)
+            {
+                var changeInstant = occurrence.Start.ToInstant();
+
+                if (changeInstant > instant)
+                {
+                    end = changeInstant;
+                    break;
+                }
+                else
+                {
+                    info = (VTimeZoneInfo) occurrence.Source;
+                    start = changeInstant;
+                }
+            }
+
+            if (info == null)
+            {
+                // Fixed offset time zone
+                var maxStart = Instant.MinValue;
+                var fixedTimeZones = intervals.Where(x => x.RecurrenceRule == null);
+
+                foreach (var tz in fixedTimeZones)
+                {
+                    var tzStart = tz.Start!.ToLocalDateTime().InUtc().ToInstant();
+                    if (tzStart > maxStart && tzStart <= instant)
+                    {
+                        maxStart = tzStart;
+                        info = tz;
+                    }
+                }
+            }
+
+            if (info == null)
+            {
+                throw new Exception("Could not find zone interval");
+            }
+
+            var name = info.TimeZoneName ?? "Unknown";
+
+            var wallOffset = Offset.FromTimeSpan(info.OffsetTo!.Offset);
+
+            var savings = info.Name == Components.Standard
+                ? Offset.Zero
+                : Offset.FromTimeSpan(info.OffsetTo!.Offset) - wallOffset;
+
+            return new ZoneInterval(name, start, end, wallOffset, savings);
+        }
+    }
 }

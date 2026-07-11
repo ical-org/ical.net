@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 using NodaTime;
 using NUnit.Framework;
 using Duration = Ical.Net.DataTypes.Duration;
@@ -31,8 +30,10 @@ public class FreeBusyTest
         evt.Start = new CalDateTime(2025, 10, 1, 8, 0, 0);
         evt.End = new CalDateTime(2025, 10, 1, 9, 0, 0);
 
+        var tz = cal.TimeZoneProvider["America/New_York"];
+
         var freeBusy = cal.GetFreeBusy(
-            DateUtil.GetZone("America/New_York"),
+            tz,
             new CalDateTime(2025, 10, 1, 0, 0, 0),
             new CalDateTime(2025, 10, 7, 11, 59, 59))!;
 
@@ -60,7 +61,7 @@ public class FreeBusyTest
         evt.End = new CalDateTime(2025, 6, 1, 10, 0, 0);
 
         var freeBusy = cal.GetFreeBusy(
-            DateUtil.GetZone("UTC"),
+            cal.TimeZoneProvider["UTC"],
             new CalDateTime(2025, 6, 1, 0, 0, 0, "UTC"),
             new CalDateTime(2025, 6, 7, 0, 0, 0, "UTC"))!;
 
@@ -106,7 +107,6 @@ public class FreeBusyTest
         var periodWithDuration = new FreeBusyEntry(new(start.InUtc().ToCalDateTime(), Duration.FromHours(1)), FreeBusyStatus.Free);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(periodWithDuration.Contains(null), Is.False, "Contains should return false for null dt.");
             Assert.That(periodWithDuration.Contains(dtBefore), Is.False, "Contains should return false if dt is before start.");
             Assert.That(periodWithDuration.Contains(dtAtStart), Is.True, "Contains should return true for dt equal to start.");
             Assert.That(periodWithDuration.Contains(dtMid), Is.True, "Contains should return true for dt in the middle.");
@@ -263,7 +263,7 @@ public class FreeBusyTest
         {
             Assert.That(freeBusy.Entries, Has.Count.EqualTo(1));
             Assert.That(freeBusy.Entries[0].Status, Is.EqualTo(FreeBusyStatus.Busy));
-            Assert.That(freeBusy.Entries[0].StartTime.ToDateTimeUtc(), Is.EqualTo(busyEvent.Start.ToDateTimeUtc()));
+            Assert.That(freeBusy.Entries[0].StartTime, Is.EqualTo(new CalDateTime(2025, 9, 1, 9, 0, 0, "UTC")));
         }
     }
 

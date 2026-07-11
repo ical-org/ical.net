@@ -6,6 +6,8 @@
 using System;
 using System.Linq;
 using Ical.Net.DataTypes;
+using NodaTime;
+using NodaTime.TimeZones;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -239,6 +241,109 @@ public class MatchTimeZoneTests
         {
             Assert.That(until, Is.EqualTo(expectedUntil));
             Assert.That(occurrences.Count, Is.EqualTo(5));
+        }
+    }
+
+    [Test, Category("Recurrence")]
+    public void MatchTimeZone_CaseInsensitive_EventEval()
+    {
+        const string ical =
+            """
+            BEGIN:VCALENDAR
+            VERSION:2.0
+            PRODID:-//Example Corp//NONSGML Event//EN
+            BEGIN:VEVENT
+            UID:example1
+            SUMMARY:Event with local time and time zone
+            DTSTART;TZID=America/New_york:20231101T090000
+            RRULE:FREQ=DAILY;UNTIL=20231105T130000Z
+            DTEND;TZID=America/New_york:20231101T100000
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var calendar = Calendar.Load(ical)!;
+        var evt = calendar.Events.First();
+
+        // Throws because the default time zone provider
+        // expects "New_York" instead of "New_york".
+        Assert.Throws<DateTimeZoneNotFoundException>(() =>
+        {
+            var _ = evt.GetOccurrences(new CalDateTime(2023, 11, 01))
+                .TakeWhileBefore(new CalDateTime(2023, 11, 06));
+        });
+
+        // Set the calendar time zone provider to ignore case
+        calendar.TimeZoneProvider = CalendarTimeZoneProviders.TzdbWithAliasesIgnoreCase;
+
+        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01))
+            .TakeWhileBefore(new CalDateTime(2023, 11, 06))
+            .ToList();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(occurrences, Has.Count.EqualTo(4));
+            Assert.That(occurrences[0].Start.Zone.Id, Is.EqualTo("America/New_York"));
+        }
+    }
+
+    [Test, Category("Recurrence")]
+    public void MatchTimeZone_CaseInsensitive_CalendarEval()
+    {
+        const string ical =
+            """
+            BEGIN:VCALENDAR
+            VERSION:2.0
+            PRODID:-//Example Corp//NONSGML Event//EN
+            BEGIN:VEVENT
+            UID:example1
+            SUMMARY:Event with local time and time zone
+            DTSTART;TZID=America/New_york:20231101T090000
+            RRULE:FREQ=DAILY;UNTIL=20231105T130000Z
+            DTEND;TZID=America/New_york:20231101T100000
+            END:VEVENT
+            BEGIN:VEVENT
+            UID:example2
+            SUMMARY:Event with local time and time zone
+            DTSTART;TZID=us-eastern:20231101T100000
+            RRULE:FREQ=DAILY;UNTIL=20231105T130000Z
+            DTEND;TZID=us-eastern:20231101T110000
+            END:VEVENT
+            BEGIN:VEVENT
+            UID:example3
+            SUMMARY:Event with local time and time zone
+            DTSTART;TZID=eastern standard time:20231101T110000
+            RRULE:FREQ=DAILY;UNTIL=20231105T130000Z
+            DTEND;TZID=eastern standard time:20231101T120000
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var calendar = Calendar.Load(ical)!;
+
+        var tz = calendar.TimeZoneProvider.GetZoneOrNull("America/Los_Angeles")!;
+
+        var start = new LocalDate(2023, 11, 1).AtStartOfDayInZone(tz);
+        var end = new LocalDate(2023, 11, 6).AtStartOfDayInZone(tz).ToInstant();
+
+        // Throws because the default time zone provider
+        // expects "New_York" instead of "New_york".
+        Assert.Throws<DateTimeZoneNotFoundException>(() =>
+        {
+            var _ = calendar.GetOccurrences(start).TakeWhileBefore(end);
+        });
+
+        // Set the calendar time zone provider to ignore case
+        calendar.TimeZoneProvider = CalendarTimeZoneProviders.TzdbWithAliasesIgnoreCase;
+
+        var occurrences = calendar.GetOccurrences(start)
+            .TakeWhileBefore(end)
+            .ToList();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(occurrences, Has.Count.EqualTo(12));
+            Assert.That(occurrences[0].Start.Zone.Id, Is.EqualTo("America/Los_Angeles"));
         }
     }
 }

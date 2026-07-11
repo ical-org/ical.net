@@ -22,49 +22,53 @@ public class EventEvaluator : RecurringEvaluator
     /// <param name="evt"></param>
     public EventEvaluator(CalendarEvent evt) : base(evt) { }
 
+    protected override IDateTimeZoneProvider TimeZoneProvider => CalendarEvent.CalendarTimeZoneProvider;
+
     protected override EvaluationPeriod EvaluateRDate(DataTypes.Period rdate, DateTimeZone referenceTimeZone)
-	{
-		var start = rdate.StartTime.ToZonedOrDefault(referenceTimeZone);
+    {
+        var start = rdate.StartTime
+            .ToZonedOrDefault(referenceTimeZone, TimeZoneProvider);
 
-		ZonedDateTime end;
-		if (rdate.Duration is { } duration)
-		{
-			if (!rdate.StartTime.HasTime && duration.HasTime)
-			{
-				throw new EvaluationException($"Unable to add time to date-only RDATE {rdate}");
-			}
+        ZonedDateTime end;
+        if (rdate.Duration is { } duration)
+        {
+            if (!rdate.StartTime.HasTime && duration.HasTime)
+            {
+                throw new EvaluationException($"Unable to add time to date-only RDATE {rdate}");
+            }
 
-			end = start.LocalDateTime
-				.Plus(duration.GetNominalPart())
-				.InZoneRelativeTo(start)
-				.Plus(duration.GetTimePart());
-		}
-		else if (rdate.EndTime is { } dtEnd)
-		{
-			var exactDuration = dtEnd.ToZonedOrDefault(referenceTimeZone).ToInstant() - start.ToInstant();
+            end = start.LocalDateTime
+                .Plus(duration.GetNominalPart())
+                .InZoneRelativeTo(start)
+                .Plus(duration.GetTimePart());
+        }
+        else if (rdate.EndTime is { } dtEnd)
+        {
+            var exactDuration = dtEnd
+                .ToZonedOrDefault(referenceTimeZone, TimeZoneProvider).ToInstant() - start.ToInstant();
 
-			if (exactDuration < Duration.Zero)
-			{
-				throw new InvalidOperationException("DtEnd is before DtStart");
-			}
+            if (exactDuration < Duration.Zero)
+            {
+                throw new InvalidOperationException("DtEnd is before DtStart");
+            }
 
-			end = start.Plus(exactDuration);
-		}
-		else
-		{
-			if (!rdate.StartTime.HasTime
-				&& CalendarEvent.Duration is { } eventDuration
-				&& eventDuration.HasTime)
-			{
-				throw new EvaluationException($"Unable to add time to date-only RDATE {rdate}");
-			}
+            end = start.Plus(exactDuration);
+        }
+        else
+        {
+            if (!rdate.StartTime.HasTime
+                && CalendarEvent.Duration is { } eventDuration
+                && eventDuration.HasTime)
+            {
+                throw new EvaluationException($"Unable to add time to date-only RDATE {rdate}");
+            }
 
-			// Use event
-			end = GetEnd(start);
-		}
+            // Use event
+            end = GetEnd(start);
+        }
 
-		return new EvaluationPeriod(start, end);
-	}
+        return new EvaluationPeriod(start, end);
+    }
 
     protected override ZonedDateTime GetEnd(ZonedDateTime start)
     {
@@ -114,7 +118,10 @@ public class EventEvaluator : RecurringEvaluator
                 dtEnd = new(dtEnd.ToLocalDateTime(), dtStart.TzId);
             }
 
-            var exactDuration = dtEnd.ToZonedOrDefault(start.Zone).ToInstant() - dtStart.ToZonedOrDefault(start.Zone).ToInstant();
+            var exactDuration = dtEnd
+                .ToZonedOrDefault(start.Zone, TimeZoneProvider)
+                .ToInstant()
+                .Minus(dtStart.ToZonedOrDefault(start.Zone, TimeZoneProvider).ToInstant());
 
             if (exactDuration < Duration.Zero)
             {
