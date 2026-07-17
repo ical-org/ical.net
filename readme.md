@@ -90,6 +90,6 @@ Big thanks to [JetBrains](https://www.jetbrains.com/) for supporting the project
 Without those two guys, iCal.NET would not exist today:
 
 * [Rian Stockbower](https://github.com/rianjs/) took over the project in 2016, after obtaining permission from Douglas Day to relicense and continue developing the library. Rian maintained the library until Sept 2024. He added support to newer versions of .NET and focused on performance.
-* [Douglas Day](https://github.com/douglasday) founded and maintained the iCal.NET open-source project from 2007 to 2016. During this period, he contributed significantly to the development and enhancement of the library.
+* [Doug Day](https://github.com/dougrday) founded and maintained the iCal.NET open-source project from 2007 to 2016. During this period, he contributed significantly to the development and enhancement of the library.
 
 * iCal.NET logo adapted from [Love Calendar](https://thenounproject.com/term/love-calendar/116866/) by Sergey Demushkin
