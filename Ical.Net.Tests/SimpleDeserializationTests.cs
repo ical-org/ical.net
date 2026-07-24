@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -512,5 +512,29 @@ END:VCALENDAR
 
         for (var i = 0; i < props.Count; i++)
             Assert.That(props[i].Value, Is.EqualTo("2." + i));
+    }
+
+    [Test]
+    public void EscapedTextWithTrailingSlash()
+    {
+        var s = new StringSerializer();
+
+        var input = @"Ends\\With\;Slash\";
+        var reader = new StringReader(input);
+        var result = s.Deserialize(reader);
+
+        Assert.That(result, Is.EqualTo(@"Ends\With;Slash\"));
+    }
+
+    [Test]
+    public void DoubleQuoteIsUnescaped()
+    {
+        // Double quotes aren't escaped in RFC2445, but are in Mozilla Sunbird (0.5-)
+        var s = new StringSerializer();
+        var input = @"Value From \""Mozilla Sunbird\""";
+        var reader = new StringReader(input);
+        var result = s.Deserialize(reader);
+
+        Assert.That(result, Is.EqualTo(@"Value From ""Mozilla Sunbird"""));
     }
 }
