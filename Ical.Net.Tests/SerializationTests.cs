@@ -645,4 +645,33 @@ public class SerializationTests
             Assert.That(HasBom(withBomBytes), Is.True, "Stream should contain a UTF-8 BOM");
         });
     }
+
+    [TestCase(@"Lab, Training", @"Lab\, Training")]
+    [TestCase(@"Lab; Training", @"Lab\; Training")]
+    [TestCase(@"Lab \ Training", @"Lab \\ Training")]
+    [TestCase(@"Lab \\ Training", @"Lab \\\\ Training")]
+    [TestCase(@"Orientation\New Hire", @"Orientation\\New Hire")]
+    [TestCase(@"Orientation\new Hire", @"Orientation\\new Hire")]
+    [TestCase(@"\\StartsWithSlash", @"\\\\StartsWithSlash")]
+    [TestCase(@"\\", @"\\\\")]
+    [TestCase(@",;\\", @"\,\;\\\\")]
+    [TestCase("Line1\rLine2", @"Line1\nLine2", "Line1\nLine2")]
+    [TestCase("Line1\nLine2", @"Line1\nLine2")]
+    [TestCase("Line1\r\nLine2", @"Line1\nLine2", "Line1\nLine2")]
+    [TestCase("Line1\r\r\nLine2", @"Line1\n\nLine2", "Line1\n\nLine2")]
+    [TestCase("Line1\n\r\r\nLine2", @"Line1\n\n\nLine2", "Line1\n\n\nLine2")]
+    [TestCase("Line1\n\r\r\nLine2\r", @"Line1\n\n\nLine2\n", "Line1\n\n\nLine2\n")]
+    [TestCase(@"Ends\With;Slash\", @"Ends\\With\;Slash\\", "Ends\\With;Slash\\")]
+    public void TextValueEscapesSpecialCharacters(string originalText, string serializedText, string? deserializedText = null)
+    {
+        var calendar = new Calendar();
+        var calEvent = new CalendarEvent { Description = originalText };
+        calendar.Events.Add(calEvent);
+
+        var result = new CalendarSerializer().SerializeToString(calendar);
+        Assert.That(result, Does.Contain($"DESCRIPTION:{serializedText}"));
+
+        var resultCal = Calendar.Load(result)!;
+        Assert.That(resultCal.Events[0]!.Description, Is.EqualTo(deserializedText ?? originalText));
+    }
 }
