@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -46,6 +46,9 @@ public class Runner
 
             Console.WriteLine("Running ThroughputTests benchmarks...");
             BenchmarkRunner.Run<ThroughputTests>(config);
+
+            Console.WriteLine("Running StringSerializerBenchmarks...");
+            BenchmarkRunner.Run<StringSerializerBenchmarks>(config);
         }
     }
 
