@@ -21,7 +21,7 @@ iCal.NET is a robust and feature-rich iCalendar (RFC 5545) library for .NET, des
 * **Performance and Usability**: The latest version (v5) is extensively rewritten for improved performance, correctness, and usability. Memory usage is optimized down to 50% of v4.
 * **Compatibility**: Works seamlessly with .NET 8, .NET 6, .NET Standard, and .NET Framework, making it versatile for various projects.
 * **Community-Driven**: Actively maintained and supported by a dedicated community, with extensive documentation and examples to get started quickly.
-* **Open Source**: Open Source: Free to use and contribute to under the MIT license, fostering collaboration and innovation.
+* **Open Source**: Free to use and contribute to under the MIT license, fostering collaboration and innovation.
 
 ## Mission Statement
 
