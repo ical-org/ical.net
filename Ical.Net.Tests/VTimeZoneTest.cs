@@ -498,4 +498,121 @@ public class VTimeZoneTest
         iCal.Events.Add(calEvent2);
         return iCal;
     }
+
+    [Test]
+    public void VTimeZone_ConvertsToAndFromDateTimeZone()
+    {
+        var calendar = Calendar.Load(IcsFiles.Google1)!;
+
+        // Only use calendar time zones
+        calendar.TimeZoneProvider = calendar.CreateTimeZoneProvider();
+        var vtz = calendar.TimeZoneProvider["Europe/Berlin"];
+
+        var converted = VTimeZone.FromDateTimeZone(vtz).ToDateTimeZone();
+
+        var start = Instant.FromUtc(2025, 1, 1, 0, 0);
+        var end = Instant.FromUtc(2026, 1, 1, 0, 0);
+
+        var convertedIntervals = converted.GetZoneIntervals(start, end);
+        var originalIntervals = vtz.GetZoneIntervals(start, end);
+
+        Assert.That(convertedIntervals, Is.EqualTo(originalIntervals));
+    }
+
+    [Test]
+    public void VTimeZone_CalendarDateTimeZone_ZoneIntervalMatchesNodaTime()
+    {
+        var calendar = Calendar.Load(IcsFiles.Google1)!;
+
+        // Only use calendar time zones
+        calendar.TimeZoneProvider = calendar.CreateTimeZoneProvider();
+
+        var start = Instant.FromUtc(2025, 1, 1, 0, 0);
+        var end = Instant.FromUtc(2026, 1, 1, 0, 0);
+
+        var vtz = calendar.TimeZoneProvider["Europe/Berlin"];
+        var calIntervals = vtz.GetZoneIntervals(start, end);
+
+        var tz = DateTimeZoneProviders.Tzdb["Europe/Berlin"];
+        var expectedIntervals = tz.GetZoneIntervals(start, end);
+
+        Assert.That(calIntervals, Is.EqualTo(expectedIntervals));
+    }
+
+    [Test, Category("VTimeZone")]
+    public void VTimeZone_CalendarDateTimeZone_GetZoneInterval_Should_Calculate_Savings_Correctly()
+    {
+        // Arrange: Create a calendar with a custom VTIMEZONE that has daylight saving time
+        var icalString = """
+            BEGIN:VCALENDAR
+            VERSION:2.0
+            PRODID:ical.net
+            BEGIN:VTIMEZONE
+            TZID:Test/DST
+            BEGIN:STANDARD
+            DTSTART:19701101T020000
+            RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+            TZOFFSETFROM:-0400
+            TZOFFSETTO:-0500
+            TZNAME:EST
+            END:STANDARD
+            BEGIN:DAYLIGHT
+            DTSTART:19700308T020000
+            RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+            TZOFFSETFROM:-0500
+            TZOFFSETTO:-0400
+            TZNAME:EDT
+            END:DAYLIGHT
+            END:VTIMEZONE
+            BEGIN:VEVENT
+            DTSTART;TZID=Test/DST:20250615T120000
+            DTEND;TZID=Test/DST:20250615T130000
+            SUMMARY:Test Event
+            UID:test@example.com
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var calendar = Calendar.Load(icalString)!;
+        var vtz = calendar.TimeZones.First();
+
+        // Act: Get the DateTimeZone from the VTIMEZONE
+        var dateTimeZone = vtz.ToDateTimeZone();
+
+        // Get a zone interval during daylight saving time (June 2025)
+        var instantInDst = Instant.FromUtc(2025, 6, 15, 16, 0); // 12:00 EDT = 16:00 UTC
+        var dstInterval = dateTimeZone.GetZoneInterval(instantInDst);
+
+        // Get a zone interval during standard time (December 2025)
+        var instantInStd = Instant.FromUtc(2025, 12, 15, 17, 0); // 12:00 EST = 17:00 UTC
+        var stdInterval = dateTimeZone.GetZoneInterval(instantInStd);
+
+        // Assert: Daylight saving time should have non-zero savings
+        using (Assert.EnterMultipleScope())
+        {
+            // During daylight time (EDT), wall offset is -04:00
+            Assert.That(dstInterval.WallOffset.ToTimeSpan(), Is.EqualTo(TimeSpan.FromHours(-4)),
+                "Wall offset during DST should be -04:00");
+
+            // Savings should be +01:00 (the difference from standard time)
+            Assert.That(dstInterval.Savings.ToTimeSpan(), Is.EqualTo(TimeSpan.FromHours(1)),
+                "Savings during DST should be +01:00");
+
+            // Standard offset should be -05:00 (wall offset - savings)
+            Assert.That(dstInterval.StandardOffset.ToTimeSpan(), Is.EqualTo(TimeSpan.FromHours(-5)),
+                "Standard offset during DST should be -05:00");
+
+            // During standard time (EST), wall offset is -05:00
+            Assert.That(stdInterval.WallOffset.ToTimeSpan(), Is.EqualTo(TimeSpan.FromHours(-5)),
+                "Wall offset during standard time should be -05:00");
+
+            // Savings should be zero during standard time
+            Assert.That(stdInterval.Savings.ToTimeSpan(), Is.EqualTo(TimeSpan.Zero),
+                "Savings during standard time should be zero");
+
+            // Standard offset equals wall offset during standard time
+            Assert.That(stdInterval.StandardOffset.ToTimeSpan(), Is.EqualTo(TimeSpan.FromHours(-5)),
+                "Standard offset during standard time should be -05:00");
+        }
+    }
 }

@@ -335,7 +335,7 @@ public class VTimeZone : CalendarComponent
         Location = CalendarTimeZoneProviders.TzdbWithAliases.GetZoneOrNull(tzId)?.Id;
     }
 
-    internal VTimeZone(DateTimeZone tz, string timeZoneAlias)
+    internal VTimeZone(DateTimeZone tz, string timeZoneAlias) : this()
     {
         TzId = timeZoneAlias;
         Location = tz.Id;
@@ -405,7 +405,7 @@ public class VTimeZone : CalendarComponent
         {
             if (data.TzId == null)
             {
-                throw new Exception("Time zone ID must be set");
+                throw new InvalidOperationException("Time zone ID must be set");
             }
 
             var info = data.TimeZoneInfos
@@ -415,25 +415,37 @@ public class VTimeZone : CalendarComponent
             var min = Offset.Zero;
             var max = Offset.Zero;
 
-            void CheckMinMax(UtcOffset? utcOffset)
+            void CheckMinMax(UtcOffset utcOffset)
             {
-                if (utcOffset != null)
+                var from = Offset.FromTimeSpan(utcOffset.Offset);
+                if (from < min)
                 {
-                    var from = Offset.FromTimeSpan(utcOffset.Offset);
-                    if (from < min)
-                    {
-                        min = from;
-                    }
+                    min = from;
+                }
 
-                    if (from > max)
-                    {
-                        max = from;
-                    }
+                if (from > max)
+                {
+                    max = from;
                 }
             }
 
             foreach (var x in info)
             {
+                if (x.OffsetFrom == null)
+                {
+                    throw new InvalidOperationException($"\"{x.TimeZoneName}\" in time zone \"{data.TzId}\" must have a TZOFFSETFROM value");
+                }
+
+                if (x.OffsetTo == null)
+                {
+                    throw new InvalidOperationException($"\"{x.TimeZoneName}\" in time zone \"{data.TzId}\" must have a TZOFFSETTO value");
+                }
+
+                if (x.Start == null)
+                {
+                    throw new InvalidOperationException($"\"{x.TimeZoneName}\" in time zone \"{data.TzId}\" must have a DTSTART value");
+                }
+
                 CheckMinMax(x.OffsetFrom);
                 CheckMinMax(x.OffsetTo);
             }
@@ -461,8 +473,15 @@ public class VTimeZone : CalendarComponent
                 .InUtc()
                 .ToInstant();
 
+            // Evaluate each VTIMEZONE event in its fixed-offset time zone
             var timeZoneChanges = CollectionHelpers.OrderedMergeMany(
-                intervals.Select(x => x.GetOccurrences(Utc, previousYear)));
+                intervals.Select(x => {
+                    var offset = Offset.FromTimeSpan(x.OffsetFrom!.Offset);
+                    var fixedOffsetTz = ForOffset(offset);
+
+                    return x.GetOccurrences(fixedOffsetTz, previousYear);
+                })
+            );
 
             foreach (var occurrence in timeZoneChanges)
             {
@@ -499,7 +518,7 @@ public class VTimeZone : CalendarComponent
 
             if (info == null)
             {
-                throw new Exception("Could not find zone interval");
+                throw new InvalidOperationException("Could not find zone interval");
             }
 
             var name = info.TimeZoneName ?? "Unknown";
@@ -508,7 +527,7 @@ public class VTimeZone : CalendarComponent
 
             var savings = info.Name == Components.Standard
                 ? Offset.Zero
-                : Offset.FromTimeSpan(info.OffsetTo!.Offset) - wallOffset;
+                : wallOffset - Offset.FromTimeSpan(info.OffsetFrom!.Offset);
 
             return new ZoneInterval(name, start, end, wallOffset, savings);
         }
