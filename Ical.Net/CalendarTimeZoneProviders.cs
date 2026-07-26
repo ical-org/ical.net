@@ -31,6 +31,9 @@ public static class CalendarTimeZoneProviders
     private static readonly Lazy<InternalTzdbWithAliasesIgnoreCase> _tzdbWithAliasesIgnoreCase
         = new(static () => new InternalTzdbWithAliasesIgnoreCase(), isThreadSafe: true);
 
+    /// <summary>
+    /// Creates a time zone provider using the given list of providers.
+    /// </summary>
     public static IDateTimeZoneProvider Combine(params IDateTimeZoneProvider[] providers)
         => new CombinedDateTimeZoneProvider(providers);
 
@@ -39,6 +42,8 @@ public static class CalendarTimeZoneProviders
         private readonly IDateTimeZoneProvider[] providers;
 
         public ReadOnlyCollection<string> Ids { get; }
+
+        public string VersionId { get; }
 
         public CombinedDateTimeZoneProvider(params IDateTimeZoneProvider[] providers)
         {
@@ -57,6 +62,9 @@ public static class CalendarTimeZoneProviders
             var idList = new List<string>(idSet);
             idList.Sort(StringComparer.Ordinal);
             Ids = new ReadOnlyCollection<string>(idList);
+
+            // Create an ID that describes all providers
+            VersionId = "combined: " + string.Join(", ", providers.Select(x => x.VersionId));
         }
 
         public DateTimeZone this[string id]
@@ -70,10 +78,19 @@ public static class CalendarTimeZoneProviders
             }
         }
 
-        public string VersionId => field ??= "combined: " + string.Join(", ", providers.Select(x => x.VersionId));
+        public DateTimeZone GetSystemDefault()
+        {
+            foreach (var provider in providers)
+            {
+                try
+                {
+                    return provider.GetSystemDefault();
+                }
+                catch (DateTimeZoneNotFoundException) { }
+            }
 
-
-        public DateTimeZone GetSystemDefault() => throw new NotImplementedException();
+            throw new DateTimeZoneNotFoundException(FormattableString.Invariant($"System default time zone is unknown to source {VersionId}"));
+        }
 
         public DateTimeZone? GetZoneOrNull(string id)
         {
