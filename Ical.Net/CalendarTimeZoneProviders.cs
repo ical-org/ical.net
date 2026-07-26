@@ -40,33 +40,21 @@ public static class CalendarTimeZoneProviders
 
         public ReadOnlyCollection<string> Ids { get; }
 
-        /// <summary>
-        /// A map of IDs to providers so that the same ID
-        /// always uses the same time zone provider.
-        /// </summary>
-        private readonly ReadOnlyDictionary<string, IDateTimeZoneProvider> providerMap;
-
         public CombinedDateTimeZoneProvider(params IDateTimeZoneProvider[] providers)
         {
             this.providers = providers;
 
-            var idMap = new Dictionary<string, IDateTimeZoneProvider>();
+            // Create list of supported IDs
+            var idSet = new HashSet<string>(StringComparer.Ordinal);
             foreach (var provider in providers)
             {
                 foreach (var id in provider.Ids)
                 {
-                    if (!idMap.ContainsKey(id))
-                    {
-                        idMap.Add(id, provider);
-                    }
+                    idSet.Add(id);
                 }
             }
 
-            providerMap = new ReadOnlyDictionary<string, IDateTimeZoneProvider>(idMap);
-
-            // List supported IDs as the from the ID mapping to
-            // make sure all IDs are unique.
-            var idList = new List<string>(providerMap.Keys);
+            var idList = new List<string>(idSet);
             idList.Sort(StringComparer.Ordinal);
             Ids = new ReadOnlyCollection<string>(idList);
         }
