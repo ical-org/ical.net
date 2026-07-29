@@ -615,4 +615,140 @@ public class VTimeZoneTest
                 "Standard offset during standard time should be -05:00");
         }
     }
+
+    [TestCase("America/Caracas")]
+    [TestCase("America/New_York")]
+    //[TestCase("America/Nuuk")]
+    [TestCase("Asia/Anadyr")]
+    [TestCase("Australia/Eucla")]
+    //[TestCase("Australia/Lord_Howe")]
+    //[TestCase("UTC")]
+    public void VTimeZone_MatchesNodaTimeZoneIntervals(string timeZone)
+    {
+        var start = Instant.FromUtc(2025, 1, 1, 0, 0);
+        var end = Instant.FromUtc(2026, 1, 1, 0, 0);
+
+        var tz = DateTimeZoneProviders.Tzdb[timeZone];
+        var vtz = VTimeZone.FromDateTimeZone(tz, start.ToDateTimeUtc(), false).ToDateTimeZone();
+
+        var calIntervals = vtz.GetZoneIntervals(start, end);
+        var expectedIntervals = tz.GetZoneIntervals(start, end);
+
+        Assert.That(calIntervals, Is.EqualTo(expectedIntervals));
+    }
+
+    [Test]
+    public void VTimeZone_MatchesTimeZoneInterval_AtIntervalStart()
+    {
+        var start = Instant.FromUtc(2025, 1, 1, 0, 0);
+
+        var tz = DateTimeZoneProviders.Tzdb["America/New_York"];
+        var vtz = VTimeZone.FromDateTimeZone(tz, start.ToDateTimeUtc(), false).ToDateTimeZone();
+
+        var expectedInterval = tz.GetZoneInterval(start);
+
+        var calInterval = vtz.GetZoneInterval(expectedInterval.Start);
+
+        Assert.That(calInterval, Is.EqualTo(expectedInterval));
+    }
+
+    [Test]
+    public void VTimeZone_WithRDate()
+    {
+        // VTIMEZONE of America/New_York from RFC 5545
+        var icalString = """
+            BEGIN:VCALENDAR
+            VERSION:2.0
+            PRODID:ical.net
+            BEGIN:VTIMEZONE
+            TZID:America/New_York
+            LAST-MODIFIED:20050809T050000Z
+            BEGIN:DAYLIGHT
+            DTSTART:19670430T020000
+            RRULE:FREQ=YEARLY;BYMONTH=4;BYDAY=-1SU;UNTIL=19730429T070000Z
+            TZOFFSETFROM:-0500
+            TZOFFSETTO:-0400
+            TZNAME:EDT
+            END:DAYLIGHT
+            BEGIN:STANDARD
+            DTSTART:19671029T020000
+            RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU;UNTIL=20061029T060000Z
+            TZOFFSETFROM:-0400
+            TZOFFSETTO:-0500
+            TZNAME:EST
+            END:STANDARD
+            BEGIN:DAYLIGHT
+            DTSTART:19740106T020000
+            RDATE:19750223T020000
+            TZOFFSETFROM:-0500
+            TZOFFSETTO:-0400
+            TZNAME:EDT
+            END:DAYLIGHT
+            BEGIN:DAYLIGHT
+            DTSTART:19760425T020000
+            RRULE:FREQ=YEARLY;BYMONTH=4;BYDAY=-1SU;UNTIL=19860427T070000Z
+            TZOFFSETFROM:-0500
+            TZOFFSETTO:-0400
+            TZNAME:EDT
+            END:DAYLIGHT
+            BEGIN:DAYLIGHT
+            DTSTART:19870405T020000
+            RRULE:FREQ=YEARLY;BYMONTH=4;BYDAY=1SU;UNTIL=20060402T070000Z
+            TZOFFSETFROM:-0500
+            TZOFFSETTO:-0400
+            TZNAME:EDT
+            END:DAYLIGHT
+            BEGIN:DAYLIGHT
+            DTSTART:20070311T020000
+            RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+            TZOFFSETFROM:-0500
+            TZOFFSETTO:-0400
+            TZNAME:EDT
+            END:DAYLIGHT
+            BEGIN:STANDARD
+            DTSTART:20071104T020000
+            RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+            TZOFFSETFROM:-0400
+            TZOFFSETTO:-0500
+            TZNAME:EST
+            END:STANDARD
+            END:VTIMEZONE
+            BEGIN:VEVENT
+            DTSTART;TZID=America/New_York:19740223T010000
+            DTEND;TZID=America/New_York:19740223T040000
+            SUMMARY:Test Event
+            RRULE:FREQ=YEARLY
+            UID:test@example.com
+            END:VEVENT
+            BEGIN:VEVENT
+            DTSTART;TZID=America/New_York:19740223T020000
+            DTEND;TZID=America/New_York:19740223T040000
+            SUMMARY:Test Event2
+            RRULE:FREQ=YEARLY
+            UID:test2@example.com
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var calendar = Calendar.Load(icalString)!;
+
+        var tz = calendar.TimeZoneProvider["America/New_York"];
+        var occurrencesWithNodaTimeZone = calendar.GetOccurrences(tz)
+            .Take(6)
+            // Convert to OffsetDateTime to compare with different DateTimeZone
+            .Select(x => (x.Start.ToOffsetDateTime(), x.End.ToOffsetDateTime()))
+            .ToList();
+
+        // Only use calendar time zones
+        calendar.TimeZoneProvider = calendar.CreateTimeZoneProvider();
+
+        var vtz = calendar.TimeZoneProvider["America/New_York"];
+        var occurrencesWithVTimeZone = calendar.GetOccurrences(vtz)
+            .Take(6)
+            // Convert to OffsetDateTime to compare with different DateTimeZone
+            .Select(x => (x.Start.ToOffsetDateTime(), x.End.ToOffsetDateTime()))
+            .ToList();
+
+        Assert.That(occurrencesWithVTimeZone, Is.EqualTo(occurrencesWithNodaTimeZone));
+    }
 }
