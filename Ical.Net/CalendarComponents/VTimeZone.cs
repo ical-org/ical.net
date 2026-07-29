@@ -401,6 +401,8 @@ public class VTimeZone : CalendarComponent
     {
         private readonly List<VTimeZoneInfo> intervals;
 
+        private readonly List<ZoneInterval> zoneIntervalCache = [];
+
         public static CalendarDateTimeZone From(VTimeZone data)
         {
             if (data.TzId == null)
@@ -463,55 +465,75 @@ public class VTimeZone : CalendarComponent
 
         public override ZoneInterval GetZoneInterval(Instant instant)
         {
+            // A slow caching system that should be improved later
+            var interval = zoneIntervalCache.Find(x => x.Contains(instant));
+            if (interval == null)
+            {
+                interval = CreateZoneInterval(instant);
+                zoneIntervalCache.Add(interval);
+
+                // Remove a chunk if cache gets too big
+                if (zoneIntervalCache.Count > 300)
+                {
+                    zoneIntervalCache.RemoveRange(0, 50);
+                }
+            }
+
+            return interval;
+        }
+
+        private ZoneInterval CreateZoneInterval(Instant instant)
+        {
             Instant? start = null;
             Instant? end = null;
             VTimeZoneInfo? info = null;
 
-            var previousYear = instant.InUtc()
-                .LocalDateTime
-                .PlusYears(-1)
-                .InUtc()
-                .ToInstant();
-
-            // Evaluate each VTIMEZONE event in its fixed-offset time zone
-            var timeZoneChanges = CollectionHelpers.OrderedMergeMany(
-                intervals.Select(x => {
-                    var offset = Offset.FromTimeSpan(x.OffsetFrom!.Offset);
-                    var fixedOffsetTz = ForOffset(offset);
-
-                    return x.GetOccurrences(fixedOffsetTz, previousYear);
-                })
-            );
-
-            foreach (var occurrence in timeZoneChanges)
+            if (intervals.Count == 1)
             {
-                var changeInstant = occurrence.Start.ToInstant();
+                // Assume a single rule is a fixed offset time zone
+                info = intervals[0];
 
-                if (changeInstant > instant)
-                {
-                    end = changeInstant;
-                    break;
-                }
-                else
-                {
-                    info = (VTimeZoneInfo) occurrence.Source;
-                    start = changeInstant;
-                }
+                // Just use start time and ignore RRULE. It does not
+                // make sense to have an RRULE without multiple time
+                // zone info components.
+                start = info.Start!.ToLocalDateTime()
+                    .WithOffset(Offset.FromTimeSpan(info.OffsetFrom!.Offset))
+                    .ToInstant();
+
+                // No end
+                end = null;
             }
-
-            if (info == null)
+            else if (intervals.Count > 1)
             {
-                // Fixed offset time zone
-                var maxStart = Instant.MinValue;
-                var fixedTimeZones = intervals.Where(x => x.RecurrenceRule == null);
+                var previousYear = instant.InUtc()
+                    .LocalDateTime
+                    .PlusYears(-1)
+                    .InUtc()
+                    .ToInstant();
 
-                foreach (var tz in fixedTimeZones)
+                // Evaluate each VTIMEZONE event in its fixed-offset time zone
+                var timeZoneChanges = CollectionHelpers.OrderedMergeMany(
+                    intervals.Select(x => {
+                        var offset = Offset.FromTimeSpan(x.OffsetFrom!.Offset);
+                        var fixedOffsetTz = ForOffset(offset);
+
+                        return x.GetOccurrences(fixedOffsetTz, previousYear);
+                    })
+                );
+
+                foreach (var occurrence in timeZoneChanges)
                 {
-                    var tzStart = tz.Start!.ToLocalDateTime().InUtc().ToInstant();
-                    if (tzStart > maxStart && tzStart <= instant)
+                    var changeInstant = occurrence.Start.ToInstant();
+
+                    if (changeInstant > instant)
                     {
-                        maxStart = tzStart;
-                        info = tz;
+                        end = changeInstant;
+                        break;
+                    }
+                    else
+                    {
+                        info = (VTimeZoneInfo) occurrence.Source;
+                        start = changeInstant;
                     }
                 }
             }
