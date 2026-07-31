@@ -404,13 +404,14 @@ public class StringSerializer : EncodableDataTypeSerializer
             AssociatedObject = context.Peek() as ICalendarObject
         };
 
-        var encodedValues = serializeAsList ? SplitOnUnescapedCommas(value) : Enumerable.Repeat(value, 1);
-        var values = encodedValues.Select(v => Unescape(Decode(dt, v))).ToList();
-
-        if (values.Count == 1)
+        if (!serializeAsList)
         {
-            return values[0];
+            return Unescape(Decode(dt, value));
         }
-        return values;
+
+        var values = SplitOnUnescapedCommas(value)
+            .Select(v => Unescape(Decode(dt, v)))
+            .ToList();
+        return values.Count == 1 ? values[0] : values;
     }
 }
