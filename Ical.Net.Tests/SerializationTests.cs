@@ -654,4 +654,32 @@ public class SerializationTests
         var resultCal = Calendar.Load(result)!;
         Assert.That(resultCal.Events[0]!.Description, Is.EqualTo(deserializedText ?? originalText));
     }
+
+    private static readonly object[] MultiValueSeparatorCases =
+    {
+        // categories, expected serialized CATEGORIES line
+        new object[] { new[] { "a", "b" }, @"CATEGORIES:a,b" },                 // plain separator
+        new object[] { new[] { "a,b", "c" }, @"CATEGORIES:a\,b,c" },            // escaped comma stays inside a value
+        new object[] { new[] { @"a\", "b" }, @"CATEGORIES:a\\,b" },             // escaped backslash before a separator
+        new object[] { new[] { @"a\,b" }, @"CATEGORIES:a\\\,b" },               // escaped backslash + escaped comma = one value
+        new object[] { new[] { @"a\\", "b" }, @"CATEGORIES:a\\\\,b" },          // two escaped backslashes before a separator
+        new object[] { new[] { "a", @"b\" }, @"CATEGORIES:a,b\\" },             // trailing backslash on the last value
+        new object[] { new[] { @"x\", @"y\", "z" }, @"CATEGORIES:x\\,y\\,z" },  // several escaped backslashes before separators
+    };
+
+    [TestCaseSource(nameof(MultiValueSeparatorCases))]
+    public void MultiValueTextRoundTripsAcrossEscapedSeparators(string[] categories, string serializedLine)
+    {
+        var calendar = new Calendar();
+        var calEvent = new CalendarEvent { Summary = "x" };
+        foreach (var category in categories)
+            calEvent.Categories.Add(category);
+        calendar.Events.Add(calEvent);
+
+        var result = new CalendarSerializer().SerializeToString(calendar);
+        Assert.That(result, Does.Contain(serializedLine));
+
+        var roundTripped = Calendar.Load(result)!.Events[0]!.Categories.ToList();
+        Assert.That(roundTripped, Is.EqualTo(categories));
+    }
 }
