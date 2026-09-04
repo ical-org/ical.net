@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -22,10 +22,15 @@ public class GeographicLocation : EncodableDataType
 
     public GeographicLocation() { }
 
-    public GeographicLocation(string value) : this()
+    public GeographicLocation(string value)
     {
         var serializer = new GeographicLocationSerializer();
-        serializer.Deserialize(value);
+        var geo = serializer.Deserialize(value);
+        if (geo != null)
+        {
+            Latitude = geo.Latitude;
+            Longitude = geo.Longitude;
+        }
     }
 
     public GeographicLocation(double latitude, double longitude)
