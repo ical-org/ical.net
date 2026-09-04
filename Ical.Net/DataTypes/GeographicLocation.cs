@@ -59,8 +59,7 @@ public class GeographicLocation : EncodableDataType
     public static GeographicLocation? FromString(string value)
     {
         var serializer = new GeographicLocationSerializer();
-        if(serializer != null) return serializer.Deserialize(value);
-        return null;
+        return serializer.Deserialize(value);
     }
 
     public override string ToString() => Latitude.ToString("0.000000", CultureInfo.InvariantCulture) + ";" + Longitude.ToString("0.000000", CultureInfo.InvariantCulture);
