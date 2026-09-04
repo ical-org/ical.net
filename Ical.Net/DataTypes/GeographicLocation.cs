@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using Ical.Net.CalendarComponents;
@@ -22,6 +23,7 @@ public class GeographicLocation : EncodableDataType
 
     public GeographicLocation() { }
 
+    [Obsolete("Replaced by FromString Factory Method.")]
     public GeographicLocation(string value)
     {
         var serializer = new GeographicLocationSerializer();
@@ -52,6 +54,13 @@ public class GeographicLocation : EncodableDataType
 
         Latitude = geo.Latitude;
         Longitude = geo.Longitude;
+    }
+
+    public static GeographicLocation? FromString(string value)
+    {
+        var serializer = new GeographicLocationSerializer();
+        if(serializer != null) return serializer.Deserialize(value);
+        return null;
     }
 
     public override string ToString() => Latitude.ToString("0.000000", CultureInfo.InvariantCulture) + ";" + Longitude.ToString("0.000000", CultureInfo.InvariantCulture);
