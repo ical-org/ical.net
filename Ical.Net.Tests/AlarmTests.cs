@@ -42,10 +42,7 @@ public class AlarmTests
             END:VALARM
             """;
 
-        var alarm = SimpleDeserializer.Default
-            .Deserialize(new StringReader(valarm))
-            .Cast<Alarm>()
-            .Single();
+        var alarm = CalendarSerializer.Deserialize<Alarm>(valarm)!;
 
         e.Alarms.Add(alarm);
 
@@ -83,10 +80,7 @@ public class AlarmTests
             END:VALARM
             """;
 
-        var alarm = SimpleDeserializer.Default
-            .Deserialize(new StringReader(valarm))
-            .Cast<Alarm>()
-            .Single();
+        var alarm = CalendarSerializer.Deserialize<Alarm>(valarm)!;
 
         e.Alarms.Add(alarm);
 
@@ -122,10 +116,7 @@ public class AlarmTests
             END:VALARM
             """;
 
-        var alarm = SimpleDeserializer.Default
-            .Deserialize(new StringReader(valarm))
-            .Cast<Alarm>()
-            .Single();
+        var alarm = CalendarSerializer.Deserialize<Alarm>(valarm)!;
 
         e.Alarms.Add(alarm);
 
@@ -151,10 +142,7 @@ public class AlarmTests
             END:VALARM
             """;
 
-        var alarm = SimpleDeserializer.Default
-            .Deserialize(new StringReader(valarm))
-            .Cast<Alarm>()
-            .Single();
+        var alarm = CalendarSerializer.Deserialize<Alarm>(valarm);
 
         CalendarEvent e = new()
         {

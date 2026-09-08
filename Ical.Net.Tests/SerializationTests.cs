@@ -300,7 +300,7 @@ public class SerializationTests
     [Test]
     public void ZeroDuration_Test()
     {
-        var result = new DurationSerializer().SerializeToString(Duration.Zero);
+        var result = Duration.Zero.ToBasicIso();
         Assert.That(result, Is.EqualTo("P0D"));
     }
 
@@ -401,7 +401,7 @@ public class SerializationTests
            STATUS:CONFIRMED
            END:VEVENT
            """;
-        var deserializedEvent = Calendar.Load<CalendarEvent>(ics).Single();
+        var deserializedEvent = CalendarSerializer.Deserialize<CalendarEvent>(ics);
 
         using (Assert.EnterMultipleScope())
         {
@@ -433,7 +433,7 @@ public class SerializationTests
            END:DAYLIGHT
            END:VTIMEZONE
            """;
-        var timeZone = Calendar.Load<VTimeZone>(ics).Single();
+        var timeZone = CalendarSerializer.Deserialize<VTimeZone>(ics);
         Assert.That(timeZone, Is.Not.Null, "Expected the TimeZone to be successfully deserialized");
         var timeZoneInfos = timeZone.TimeZoneInfos;
         using (Assert.EnterMultipleScope())
@@ -584,8 +584,12 @@ public class SerializationTests
                     """), Throws.Nothing);
 
                 // Serialize
-                Assert.That(() => new DurationSerializer().SerializeToString(new Duration(null, -1)), Is.EqualTo("-P1D"));
-                Assert.That(() => new RecurrenceRuleSerializer().SerializeToString(new RecurrenceRule { Frequency = FrequencyType.Daily, Until = new CalDateTime(2026, 6, 22) })?.Contains("UNTIL=20260622"), Is.True);
+                Assert.That(() => new Duration(null, -1).ToBasicIso(), Is.EqualTo("-P1D"));
+                Assert.That(() => new RecurrenceRule
+                {
+                    Frequency = FrequencyType.Daily,
+                    Until = new CalDateTime(2026, 6, 22)
+                }.ToString().Contains("UNTIL=20260622"), Is.True);
             };
         }    
         finally
@@ -653,6 +657,20 @@ public class SerializationTests
 
         var resultCal = Calendar.Load(result)!;
         Assert.That(resultCal.Events[0]!.Description, Is.EqualTo(deserializedText ?? originalText));
+    }
+
+    [Test]
+    public void ListItemsAreEscaped()
+    {
+        var ev = new CalendarEvent
+        {
+            Name = "Test event",
+            Resources = ["A \\ B", "", "Nothing", "1,2,3"]
+        };
+
+        var eventStr = new EventSerializer().SerializeToString(ev);
+
+        Assert.That(eventStr!, Does.Contain(@"A \\ B,,Nothing,1\,2\,3"));
     }
 
     private static readonly object[] MultiValueSeparatorCases =
