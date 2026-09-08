@@ -1,11 +1,11 @@
-﻿# Monday and Thursday, 3 times.
+# Monday and Thursday, 3 times.
 RRULE:FREQ=WEEKLY;BYDAY=MO,TH;COUNT=3
 DTSTART:20241024
 INSTANCES:20241024,20241028,20241031
 
 # Illegal rule part with multiple '='
 RRULE:FREQ=WEEKLY;BYDAY=MO=;COUNT=3
-EXCEPTION:System.ArgumentOutOfRangeException
+EXCEPTION:System.FormatException
 
 # The first date belongs to 2009, so after 6 years it will be 2015, which has a week 53.
 RRULE:FREQ=YEARLY;BYWEEKNO=53;BYDAY=TU,SA;INTERVAL=6;UNTIL=20170101T000000Z

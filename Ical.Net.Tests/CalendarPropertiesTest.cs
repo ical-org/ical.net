@@ -74,7 +74,7 @@ public class CalendarPropertiesTest
                   SEQUENCE:0
                   UID:8f7aa9fc-e9d7-4276-8bf6-915dfe168f0d
                   X-ALT-DESC;FMTTYPE=text/html:<html><body>BodyText</body></html>
-                  X-PROJECTS;PROP=name;PRIO=high:ProjectA,ProjectB
+                  X-PROJECTS;PROP=name;PRIO=high:ProjectA\,ProjectB
                   END:VEVENT
                   END:VCALENDAR
                   """;

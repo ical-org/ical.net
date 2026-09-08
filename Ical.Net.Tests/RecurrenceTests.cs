@@ -80,9 +80,8 @@ public class RecurrenceTests
         var cal = Calendar.Load(calendarIcalStr)!;
         var tzid = cal.Events.Single().Start!.TzId;
 
-        var periodSerializer = new PeriodSerializer();
         var periods = expectedPeriods
-            .Select(p => (Period) periodSerializer.Deserialize(new StringReader(p))!)
+            .Select(p => Period.TryParse(p, null, out var period) ? period! : null!)
             .Select(p =>
                 p.Duration is null
                     ? new Period(p.StartTime.ToLocalDateTime().ToCalDateTime(tzid), p.EndTime)
@@ -2262,11 +2261,10 @@ public class RecurrenceTests
 
         var start = iCal.Events.First().Start;
 
-        var periodSerializer = new PeriodSerializer();
         var expectedPeriods =
             new[] { d1, d2, d3 }
                 .Where(x => x != null)
-                .Select(x => (Period) periodSerializer.Deserialize(new StringReader(x!))!)
+                .Select(x => Period.TryParse(x, null, out var period) ? period! : null!)
                 .ToArray();
 
         for (var index = 0; index < expectedPeriods.Length; index++)
@@ -2382,10 +2380,8 @@ public class RecurrenceTests
     [Test, Category("Recurrence")]
     public void Bug3119920()
     {
-        using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO");
+        var rp = RecurrenceRule.Parse("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO");
         var start = new CalDateTime(2010, 11, 27, 9, 0, 0);
-        var serializer = new RecurrenceRuleSerializer();
-        var rp = (RecurrenceRule) serializer.Deserialize(sr)!;
 
         var lastOccurrence = rp.Evaluate(start, start.ToZonedDateTime(_tzid))
             .TakeWhileBefore(rp.Until!)
@@ -2427,9 +2423,7 @@ public class RecurrenceTests
     [Test, Category("Recurrence")]
     public void Bug3292737()
     {
-        using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126");
-        var serializer = new RecurrenceRuleSerializer();
-        var rp = (RecurrenceRule) serializer.Deserialize(sr)!;
+        var rp = RecurrenceRule.Parse("FREQ=WEEKLY;UNTIL=20251126");
 
         Assert.That(rp, Is.Not.Null);
         Assert.That(rp.Until, Is.EqualTo(new CalDateTime(2025, 11, 26)));
@@ -2712,10 +2706,8 @@ public class RecurrenceTests
         recur.ByDay.Add(new WeekDay(DayOfWeek.Friday));
         evt.RecurrenceRule = recur;
 
-        var serializer = new RecurrenceRuleSerializer();
         Assert.That(
-            string.Compare(serializer.SerializeToString(recur), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR",
-                StringComparison.Ordinal) == 0,
+            string.Equals(recur.ToString(), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR", StringComparison.Ordinal),
             Is.True,
             "Serialized recurrence string is incorrect");
     }
@@ -3609,8 +3601,7 @@ END:VCALENDAR";
     [TestCase("INTERVAL=2;UNTIL=20250430T000000Z;FREQ=DAILY")]
     public void Recurrence_RRULE_Properties_ShouldBeDeserialized_In_Any_Order(string rRule)
     {
-        var serializer = new RecurrenceRuleSerializer();
-        var recurrencePattern = serializer.Deserialize(new StringReader(rRule)) as RecurrenceRule;
+        var recurrencePattern = RecurrenceRule.Parse(rRule);
 
         using (Assert.EnterMultipleScope())
         {
@@ -3626,38 +3617,28 @@ END:VCALENDAR";
     [Test]
     public void Recurrence_RRULE_Without_Freq_Should_Throw()
     {
-        var serializer = new RecurrenceRuleSerializer();
-
-        Assert.That(() => serializer.Deserialize(new StringReader("INTERVAL=2;UNTIL=20250430T000000Z")),
-            Throws.TypeOf<ArgumentOutOfRangeException>());
+        Assert.That(() => RecurrenceRule.Parse("INTERVAL=2;UNTIL=20250430T000000Z"),
+            Throws.TypeOf<FormatException>());
     }
 
     [Test]
     public void Recurrence_RRULE_With_Freq_Undefined_Should_Throw()
     {
-        var serializer = new RecurrenceRuleSerializer();
-
-        Assert.That(() => serializer.Deserialize(new StringReader("FREQ=UNDEFINED;INTERVAL=2;UNTIL=20250430T000000Z")),
+        Assert.That(() => RecurrenceRule.Parse("FREQ=UNDEFINED;INTERVAL=2;UNTIL=20250430T000000Z"),
             Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
     public void Recurrence_RRULE_With_Unsupported_Part_Should_Throw()
     {
-        var serializer = new RecurrenceRuleSerializer();
-
-        Assert.That(() => serializer.Deserialize(new StringReader("FREQ=DAILY;INTERVAL=2;FAILING=0")),
+        Assert.That(() => RecurrenceRule.Parse("FREQ=DAILY;INTERVAL=2;FAILING=0"),
             Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
     public void Preceding_Appended_and_duplicate_Semicolons_Should_Be_Ignored()
     {
-        var serializer = new RecurrenceRuleSerializer();
-
-        var recurrencePattern =
-            serializer.Deserialize(new StringReader(";FREQ=DAILY;INTERVAL=2;UNTIL=20250430T000000Z")) as
-                RecurrenceRule;
+        var recurrencePattern = RecurrenceRule.Parse(";FREQ=DAILY;INTERVAL=2;UNTIL=20250430T000000Z");
         using (Assert.EnterMultipleScope())
         {
             Assert.That(recurrencePattern, Is.Not.Null);
@@ -3671,14 +3652,12 @@ END:VCALENDAR";
     [Test]
     public void Disallowed_Recurrence_RangeChecks_Should_Throw()
     {
-        var serializer = new RecurrenceRuleSerializer();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(() => serializer.CheckMutuallyExclusive("a", "b", 1, CalDateTime.Now),
+            Assert.That(() => RecurrenceRule.Parse("FREQ=DAILY;COUNT=1;UNTIL=20250430T000000Z"),
                 Throws.TypeOf<ArgumentOutOfRangeException>());
-            Assert.That(() => serializer.CheckRange("a", 0, 1, 2, false), Throws.TypeOf<ArgumentOutOfRangeException>());
-            Assert.That(() => serializer.CheckRange("a", (int?) 0, 1, 2, false),
-                Throws.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => RecurrenceRule.Parse("FREQ=DAILY;INTERVAL=0"), Throws.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => RecurrenceRule.Parse("FREQ=DAILY;COUNT=0"), Throws.TypeOf<ArgumentOutOfRangeException>());
         }
     }
 
