@@ -38,8 +38,8 @@ public class RecurrenceTests_From_Issues
              BEGIN:VEVENT
              UID:VW6
              DTSTAMP:20240630T000000Z
-             DTSTART;TZID=Europe/London:{startDate}
-             DTEND;TZID=Europe/London:{endDate}
+             DTSTART;TZID=Europe/London:{startDate.ToBasicIso()}
+             DTEND;TZID=Europe/London:{endDate.ToBasicIso()}
              SUMMARY:New home speech.mp4
              COMMENT:New location announcement; may need update before Thanksgiving
              END:VEVENT
