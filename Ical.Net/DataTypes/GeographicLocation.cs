@@ -1,8 +1,9 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using Ical.Net.CalendarComponents;
@@ -22,10 +23,16 @@ public class GeographicLocation : EncodableDataType
 
     public GeographicLocation() { }
 
-    public GeographicLocation(string value) : this()
+    [Obsolete("Replaced by FromString Factory Method.")]
+    public GeographicLocation(string value)
     {
         var serializer = new GeographicLocationSerializer();
-        serializer.Deserialize(value);
+        var geo = serializer.Deserialize(value);
+        if (geo != null)
+        {
+            Latitude = geo.Latitude;
+            Longitude = geo.Longitude;
+        }
     }
 
     public GeographicLocation(double latitude, double longitude)
@@ -47,6 +54,12 @@ public class GeographicLocation : EncodableDataType
 
         Latitude = geo.Latitude;
         Longitude = geo.Longitude;
+    }
+
+    public static GeographicLocation? FromString(string value)
+    {
+        var serializer = new GeographicLocationSerializer();
+        return serializer.Deserialize(value);
     }
 
     public override string ToString() => Latitude.ToString("0.000000", CultureInfo.InvariantCulture) + ";" + Longitude.ToString("0.000000", CultureInfo.InvariantCulture);
