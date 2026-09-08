@@ -1,12 +1,11 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
 using System;
 using System.Diagnostics;
-using System.IO;
-using Ical.Net.Serialization.DataTypes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Ical.Net.DataTypes;
 
@@ -75,16 +74,13 @@ public class Organizer : EncodableDataType
 
     public Organizer() { }
 
+    [Obsolete("Use TryParse instead.")]
     public Organizer(string? value) : this()
     {
-        if (string.IsNullOrWhiteSpace(value))
+        if (TryParse(value, out var other))
         {
-            return;
+            Value = other.Value;
         }
-
-        var serializer = new OrganizerSerializer();
-        if (serializer.Deserialize(new StringReader(value)) is ICopyable deserialized)
-            CopyFrom(deserialized);
     }
 
     /// <inheritdoc/>
@@ -97,4 +93,42 @@ public class Organizer : EncodableDataType
             Value = o.Value;
         }
     }
+
+    #region Text Parsing
+
+    private const string OrganizerScheme = "mailto:";
+
+    public static bool TryParse(
+        string? value,
+#if NET
+        [NotNullWhen(true)]
+#endif
+        out Organizer? organizer)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            organizer = default;
+            return false;
+        }
+
+        // Prepend "mailto:" if necessary
+        if (!value.StartsWith(OrganizerScheme, StringComparison.OrdinalIgnoreCase))
+        {
+            value = "mailto:" + value;
+        }
+
+        if (Uri.TryCreate(value, UriKind.Absolute, out var uri))
+        {
+            organizer = new Organizer
+            {
+                Value = uri
+            };
+            return true;
+        }
+
+        organizer = default;
+        return false;
+    }
+
+    #endregion
 }

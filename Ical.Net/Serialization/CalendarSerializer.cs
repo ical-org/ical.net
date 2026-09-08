@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Ical.Net.Serialization;
 
-public class CalendarSerializer : ComponentSerializer
+public partial class CalendarSerializer : ComponentSerializer
 {
     private readonly Calendar? _calendar;
 

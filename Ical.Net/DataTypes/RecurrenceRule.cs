@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -14,7 +14,7 @@ namespace Ical.Net.DataTypes;
 /// An iCalendar representation of the <c>RRULE</c> property.
 /// https://tools.ietf.org/html/rfc5545#section-3.3.10
 /// </summary>
-public class RecurrenceRule : EncodableDataType
+public partial class RecurrenceRule : EncodableDataType
 {
     private int? _interval;
     private FrequencyType _frequency;
@@ -131,21 +131,16 @@ public class RecurrenceRule : EncodableDataType
         Interval = interval;
     }
 
+    [Obsolete("Use RecurrenceRule.Parse(string) instead.")]
     public RecurrenceRule(string value) : this()
     {
         if (string.IsNullOrWhiteSpace(value))
         {
             return;
         }
-        var serializer = new RecurrenceRuleSerializer();
-        if (serializer.Deserialize(new StringReader(value)) is ICopyable deserialized)
-            CopyFrom(deserialized);
-    }
 
-    public override string? ToString()
-    {
-        var serializer = new RecurrenceRuleSerializer();
-        return serializer.SerializeToString(this);
+        var other = Parse(value);
+        CopyFrom(other);
     }
 
     /// <inheritdoc/>

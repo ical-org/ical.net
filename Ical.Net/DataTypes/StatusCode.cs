@@ -1,11 +1,13 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
-using System.IO;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
-using Ical.Net.Serialization.DataTypes;
+using System.Text.RegularExpressions;
 using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes;
@@ -47,13 +49,12 @@ public class StatusCode : EncodableDataType
         Parts = parts;
     }
 
+    [Obsolete("Use TryParse instead.")]
     public StatusCode(string value) : this()
     {
-        var serializer = new StatusCodeSerializer();
-        var deserialized = serializer.Deserialize(new StringReader(value)) as ICopyable;
-        if (deserialized != null)
+        if (TryParse(value, out var other))
         {
-            CopyFrom(deserialized);
+            CopyFrom(other);
         }
     }
 
@@ -67,7 +68,48 @@ public class StatusCode : EncodableDataType
         statusCode.Parts.CopyTo(Parts, 0);
     }
 
-    public override string? ToString() => new StatusCodeSerializer().SerializeToString(this);
+    internal static readonly Regex StatusCodeRegex = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant, RegexDefaults.Timeout);
+
+    public static bool TryParse(
+        string value,
+#if NET
+        [NotNullWhen(true)]
+#endif
+        out StatusCode? statusCode)
+    {
+        var match = StatusCodeRegex.Match(value);
+        if (!match.Success)
+        {
+            statusCode = null;
+            return false;
+        }
+
+        var parts = match.Value.Split('.');
+        var intParts = new int[parts.Length];
+        for (var i = 0; i < parts.Length; i++)
+        {
+            if (!int.TryParse(parts[i], out var num))
+            {
+                statusCode = null;
+                return false;
+            }
+            intParts[i] = num;
+        }
+
+        statusCode = new StatusCode(intParts);
+        return true;
+    }
+
+    public override string ToString()
+    {
+        var vals = new string[Parts.Length];
+        for (var i = 0; i < Parts.Length; i++)
+        {
+            vals[i] = Parts[i].ToString(CultureInfo.InvariantCulture);
+        }
+
+        return string.Join(".", vals);
+    }
 
     protected bool Equals(StatusCode other) => Parts.SequenceEqual(other.Parts);
 
