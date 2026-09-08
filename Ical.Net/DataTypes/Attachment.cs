@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -20,6 +20,8 @@ public class Attachment : EncodableDataType
     public virtual byte[]? Data { get; private set; } // private set for CopyFrom
 
     private Encoding _valueEncoding = System.Text.Encoding.UTF8;
+
+    [Obsolete("Keep track of encoding separately.")]
     public virtual Encoding ValueEncoding //NOSONAR
     {
         get => _valueEncoding;
@@ -42,6 +44,12 @@ public class Attachment : EncodableDataType
         }
     }
 
+    public Attachment(Uri? uri) : this()
+    {
+        Uri = uri;
+    }
+
+    [Obsolete("Use Uri.Parse or decode data bytes directly.")]
     public Attachment(string? value) : this()
     {
         if (string.IsNullOrEmpty(value))

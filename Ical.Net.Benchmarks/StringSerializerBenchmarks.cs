@@ -383,6 +383,7 @@ public class StringSerializerBenchmarks
         """;
 
     private static readonly StringSerializer serializer = new();
+    private static readonly CalendarSerializer calSerializer = new();
 
     private static readonly string ShortText = (string) serializer.Deserialize(ShortEscape)!;
     private static readonly string MediumText = (string) serializer.Deserialize(MediumEscape)!;
@@ -451,4 +452,6 @@ public class StringSerializerBenchmarks
     [Benchmark]
     public string? LongSerializeNoSpecial() => serializer.SerializeToString(LongTextNoSpecial);
 
+    [Benchmark]
+    public string? SerializeListShort() => serializer.SerializeToString(new string[] { ShortText, MediumText, ShortText });
 }

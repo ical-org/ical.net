@@ -141,16 +141,22 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// If the parsed string represents an RFC 5545, DATE-TIME value, the <paramref name="tzId"/> will be used.
     /// </param>
     /// <param name="tzId">The time zone ID.</param>
+    ///
+    [Obsolete("Use CalDateTime.TryParse instead.")]
     public CalDateTime(string value, string? tzId = null)
     {
-        var serializer = new DateTimeSerializer();
-        var dt = serializer.Deserialize(new StringReader(value)) as CalDateTime
-                 ?? throw new InvalidOperationException($"Failure when deserializing value '{value}'");
+        if (!TryParse(value, tzId, out var dt))
+        {
+            // The new Parse method throws FormatException.
+            // Keep exception the same as before.
+            throw new InvalidOperationException($"Failure when deserializing value '{value}'");
+        }
 
         _localDate = dt._localDate;
         _localTime = dt._localTime;
-        _tzId = dt.IsUtc ? UtcTzId : tzId;
+        _tzId = dt._tzId;
 
+        // The new TryParse method ignores this check.
         if (dt.IsUtc && tzId != null && !string.Equals(tzId, UtcTzId, StringComparison.OrdinalIgnoreCase))
         {
             throw new ArgumentException(
@@ -409,4 +415,131 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
 
         return _localDate.ToString(format ?? "d", formatProvider) + tzIdString;
     }
+
+    #region Parsing
+
+    private static readonly InstantPattern instantPattern = InstantPattern.CreateWithInvariantCulture("uuuuMMddTHHmmss'Z'");
+    private static readonly LocalDateTimePattern localDateTimePattern = LocalDateTimePattern.CreateWithInvariantCulture("uuuuMMddTHHmmss");
+    private static readonly LocalDatePattern localDatePattern = LocalDatePattern.CreateWithInvariantCulture("uuuuMMdd");
+
+    /// <summary>
+    /// Converts the text value to a <see cref="CalDateTime"/> if possible.
+    /// The text should be in the basic ISO 8601 format.
+    /// </summary>
+    /// <param name="basicIsoString">Text to parse in basic ISO 8601 format.</param>
+    /// <param name="result">A <see cref="CalDateTime"/> representing the text value.</param>
+    /// <returns>True if conversion succeeded.</returns>
+    public static bool TryParse(
+#if NET
+        [NotNullWhen(true)]
+#endif
+        string? basicIsoString,
+#if NET
+        [NotNullWhen(true)]
+#endif
+        out CalDateTime? result) => TryParse(basicIsoString, null, out result);
+
+    /// <summary>
+    /// Converts the text value to a <see cref="CalDateTime"/> if possible.
+    /// The text should be in the basic ISO 8601 format.
+    /// </summary>
+    /// <param name="basicIsoString">Text to parse in basic ISO 8601 format.</param>
+    /// <param name="tzId">Time zone ID. This value is ignored for DATE and UTC DATE-TIME values.</param>
+    /// <param name="result">A <see cref="CalDateTime"/> representing the text value.</param>
+    /// <returns>True if conversion succeeded.</returns>
+    public static bool TryParse(
+#if NET
+        [NotNullWhen(true)]
+#endif
+        string? basicIsoString,
+        string? tzId,
+#if NET
+        [NotNullWhen(true)]
+#endif
+        out CalDateTime? result)
+    {
+        if (basicIsoString is not null)
+        {
+            var instantResult = instantPattern.Parse(basicIsoString);
+            if (instantResult.Success)
+            {
+                var utcValue = instantResult.Value.InUtc();
+                if (utcValue.Year < 1)
+                {
+                    result = null;
+                    return false;
+                }
+
+                result = FromZonedDateTime(utcValue);
+                return true;
+            }
+
+            var localDateTimeResult = localDateTimePattern.Parse(basicIsoString);
+            if (localDateTimeResult.Success)
+            {
+                if (localDateTimeResult.Value.Year < 1)
+                {
+                    result = null;
+                    return false;
+                }
+
+                result = new CalDateTime(localDateTimeResult.Value, tzId);
+                return true;
+            }
+
+            var localDateResult = localDatePattern.Parse(basicIsoString);
+            if (localDateResult.Success)
+            {
+                if (localDateResult.Value.Year < 1)
+                {
+                    result = null;
+                    return false;
+                }
+
+                result = new CalDateTime(localDateResult.Value);
+                return true;
+            }
+        }
+
+        result = null;
+        return false;
+    }
+
+    public static CalDateTime Parse(string? basicIsoString, string? tzId)
+    {
+        if (TryParse(basicIsoString, tzId, out var result))
+        {
+            return result;
+        }
+
+        throw new FormatException("String value is not in the ISO 8601 basic format for DATE or DATE-TIME");
+    }
+
+    /// <summary>
+    /// Converts the date and time (if any) to the ISO 8601 basic format
+    /// used in the iCal data format.
+    /// <para/>
+    /// If <see cref="TzId"/> is UTC, this will return a UTC time with
+    /// a Z suffix. Otherwise, a local date and time will be returned,
+    /// dropping the <see cref="TzId"/> value.
+    /// </summary>
+    /// <returns>A string representing the date and time (if any) of this value.</returns>
+    public string ToBasicIso()
+    {
+        if (IsUtc)
+        {
+            var instant = ToLocalDateTime().InUtc().ToInstant();
+            return instantPattern.Format(instant);
+        }
+
+        if (HasTime)
+        {
+            var localDateTime = ToLocalDateTime();
+            return localDateTimePattern.Format(localDateTime);
+        }
+
+        return localDatePattern.Format(Date);
+    }
+
+    #endregion
 }
