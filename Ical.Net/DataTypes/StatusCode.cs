@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -15,6 +15,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class StatusCode : EncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new StatusCode();
+
     public int[] Parts { get; private set; }
 
     public int Primary

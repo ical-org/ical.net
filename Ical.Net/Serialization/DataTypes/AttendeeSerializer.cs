@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -16,6 +16,9 @@ public class AttendeeSerializer : StringSerializer
     public AttendeeSerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(Attendee);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new Attendee();
 
     public override string? SerializeToString(object? obj)
     {

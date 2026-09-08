@@ -10,6 +10,9 @@ namespace Ical.Net.DataTypes;
 
 public class FreeBusyEntry : Period
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new FreeBusyEntry();
+
     public virtual FreeBusyStatus Status { get; set; }
 
     public FreeBusyEntry()

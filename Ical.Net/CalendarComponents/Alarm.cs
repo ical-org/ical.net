@@ -14,6 +14,9 @@ namespace Ical.Net.CalendarComponents;
 /// </summary>
 public class Alarm : CalendarComponent
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new Alarm();
+
     public virtual string? Action
     {
         get => Properties.Get<string>(AlarmAction.Key);

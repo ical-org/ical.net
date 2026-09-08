@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -18,6 +18,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 internal class PeriodList : EncodableDataType, IList<Period>
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new PeriodList();
+
     internal PeriodKind PeriodKind => Count == 0 ? PeriodKind.Undefined : Periods[0].PeriodKind;
 
     internal string? TzId => Count == 0 ? null : Periods[0].TzId;

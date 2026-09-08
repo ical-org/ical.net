@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -16,6 +16,9 @@ public class FreeBusyEntrySerializer : PeriodSerializer
     public FreeBusyEntrySerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(FreeBusyEntry);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new FreeBusyEntry();
 
     public override string? SerializeToString(object? obj)
     {

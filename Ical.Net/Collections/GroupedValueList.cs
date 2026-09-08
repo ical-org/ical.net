@@ -1,9 +1,8 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.Collections.Interfaces;
@@ -29,7 +28,7 @@ public class GroupedValueList<TGroup, TInterface, TItem, TValueType> :
         }
 
         // No matching item was found, add a new item to the list
-        if (Activator.CreateInstance(typeof(TItem), true) is TInterface obj)
+        if (new TItem() is TInterface obj)
         {
             obj.Group = group;
             obj.SetValue(values);

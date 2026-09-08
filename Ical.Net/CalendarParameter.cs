@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -15,6 +15,9 @@ namespace Ical.Net;
 [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
 public class CalendarParameter : CalendarObject, IValueObject<string>
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new CalendarParameter();
+
     private HashSet<string?> _values = new();
 
     public CalendarParameter()

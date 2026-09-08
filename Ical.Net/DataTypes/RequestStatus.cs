@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -14,6 +14,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class RequestStatus : EncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new RequestStatus();
+
     private string? _mDescription;
     private string? _mExtraData;
     private StatusCode? _mStatusCode;

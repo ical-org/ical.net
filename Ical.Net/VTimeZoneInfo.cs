@@ -15,6 +15,9 @@ namespace Ical.Net;
 
 public class VTimeZoneInfo : CalendarComponent, IRecurrable
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new VTimeZoneInfo();
+
     private TimeZoneInfoEvaluator? _evaluator;
 
     public VTimeZoneInfo()

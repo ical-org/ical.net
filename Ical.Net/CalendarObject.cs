@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.Serialization;
 using Ical.Net.Collections;
+using Ical.Net.Serialization;
 using NodaTime;
 
 namespace Ical.Net;
@@ -13,8 +14,11 @@ namespace Ical.Net;
 /// <summary>
 /// The base class for all iCalendar objects and components.
 /// </summary>
-public class CalendarObject : CalendarObjectBase, ICalendarObject
+public class CalendarObject : CalendarObjectBase, ICalendarObject, IDeserializationCallbacks
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new CalendarObject();
+
     // Are initialized in the constructor
     private ICalendarObjectList<ICalendarObject> _children = null!;
 
@@ -41,11 +45,9 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
         _children.ItemAdded += Children_ItemAdded;
     }
 
-    [OnDeserializing]
-    internal void DeserializingInternal(StreamingContext context) => OnDeserializing(context);
+    void IDeserializationCallbacks.OnDeserializing(StreamingContext context) => OnDeserializing(context);
 
-    [OnDeserialized]
-    internal void DeserializedInternal(StreamingContext context) => OnDeserialized(context);
+    void IDeserializationCallbacks.OnDeserialized(StreamingContext context) => OnDeserialized(context);
 
     protected virtual void OnDeserializing(StreamingContext context) => Initialize();
 

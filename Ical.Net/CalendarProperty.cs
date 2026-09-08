@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -31,6 +31,9 @@ namespace Ical.Net;
 [DebuggerDisplay("{Name}:{Value}")]
 public class CalendarProperty : CalendarObject, ICalendarProperty
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new CalendarProperty();
+
     private readonly List<object?> _values = new List<object?>();
 
     /// <summary>
@@ -73,6 +76,16 @@ public class CalendarProperty : CalendarObject, ICalendarProperty
         {
             return;
         }
+
+        // Parameters must be deep-copied: sharing the collection makes the copy serialize
+        // differently from its source, losing VALUE, TZID, ENCODING and the like.
+        var parameters = new ParameterList();
+        foreach (var parameter in p.Parameters)
+        {
+            parameters.Add(parameter.Copy<CalendarParameter>());
+        }
+        parameters.SetParent(this);
+        Parameters = parameters;
 
         SetValue(p.Values);
     }

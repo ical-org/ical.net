@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -16,6 +16,9 @@ namespace Ical.Net.DataTypes;
 [DebuggerDisplay("{Value}")]
 public class Organizer : EncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new Organizer();
+
     public virtual Uri? SentBy
     {
         get

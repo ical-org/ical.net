@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <!-- Every TFM the library declares IsAotCompatible for. netstandard2.0 is excluded there
+             and so is excluded here. -->
+        <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <IsPackable>false</IsPackable>
+        <!-- Not a VSTest project: VSTest and NUnit3TestAdapter are not AOT-compatible, so this is a
+             plain Exe with hand-rolled assertions. Keeps solution-wide `dotnet test` from probing it. -->
+        <IsTestProject>false</IsTestProject>
+        <PublishAot>true</PublishAot>
+        <!-- Deliberately aggressive. There is no TrimmerRootAssembly and no ILLink descriptor:
+             needing either is exactly what this gate exists to catch. -->
+        <TrimMode>full</TrimMode>
+        <InvariantGlobalization>true</InvariantGlobalization>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Ical.Net\Ical.Net.csproj" />
+    </ItemGroup>
+</Project>

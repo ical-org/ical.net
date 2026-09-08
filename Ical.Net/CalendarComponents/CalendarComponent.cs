@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -15,6 +15,9 @@ namespace Ical.Net.CalendarComponents;
 [DebuggerDisplay("Component: {Name}")]
 public class CalendarComponent : CalendarObject, ICalendarComponent
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new CalendarComponent();
+
     /// <summary>
     /// Returns a list of properties that are associated with the iCalendar object.
     /// </summary>

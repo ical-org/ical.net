@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -18,6 +18,9 @@ public class StatusCodeSerializer : StringSerializer
     public StatusCodeSerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(StatusCode);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new StatusCode();
 
     public override string? SerializeToString(object? obj)
     {

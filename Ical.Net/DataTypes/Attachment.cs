@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -16,6 +16,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class Attachment : EncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new Attachment();
+
     public virtual Uri? Uri { get; set; }
     public virtual byte[]? Data { get; private set; } // private set for CopyFrom
 

@@ -42,3 +42,28 @@ jobs:
       run: dotnet build --no-restore --configuration Release -p:nowarn=1591
     - name: Test
       run: dotnet test --no-build --configuration Release --verbosity normal
+
+  aot:
+    name: AOT smoke test (${{ matrix.framework }})
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        framework: [net8.0, net10.0]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v7
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: |
+          10.0.x
+          8.0.x
+    - name: Install the native toolchain
+      run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+    - name: Publish native binary
+      run: dotnet publish Ical.Net.AotTests --configuration Release --framework ${{ matrix.framework }} --runtime linux-x64 -warnaserror
+    - name: Run native binary
+      run: ./Ical.Net.AotTests/bin/Release/${{ matrix.framework }}/linux-x64/publish/Ical.Net.AotTests

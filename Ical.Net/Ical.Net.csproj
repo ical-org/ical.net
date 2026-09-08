@@ -1,10 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
     <PropertyGroup>
         <TargetFrameworks>net10.0;net8.0;netstandard2.0</TargetFrameworks>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
         <nullable>enable</nullable>
         <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup>
+        <!-- Implies IsTrimmable, EnableTrimAnalyzer, EnableAotAnalyzer and EnableSingleFileAnalyzer.
+             The condition excludes netstandard2.0, which has no trimming support. -->
+        <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsAotCompatible>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="NodaTime" Version="3.2.2" />

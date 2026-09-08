@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -102,6 +102,9 @@ public class RecurrenceRuleSerializer : EncodableDataTypeSerializer
     }
 
     public override Type TargetType => typeof(RecurrenceRule);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new RecurrenceRule();
 
     public override string? SerializeToString(object? obj)
     {

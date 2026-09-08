@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -16,6 +16,9 @@ public class AttachmentSerializer : EncodableDataTypeSerializer
     public AttachmentSerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(Attachment);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new Attachment();
 
     public override string? SerializeToString(object? obj)
     {

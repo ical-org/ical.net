@@ -19,6 +19,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class Period : EncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new Period();
+
     private CalDateTime _startTime = null!;
     private CalDateTime? _endTime;
     private Duration? _duration;

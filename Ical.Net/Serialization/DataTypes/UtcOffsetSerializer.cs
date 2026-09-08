@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -17,6 +17,9 @@ public class UtcOffsetSerializer : EncodableDataTypeSerializer
     public UtcOffsetSerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(UtcOffset);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new UtcOffset();
 
     public override string? SerializeToString(object? obj)
     {

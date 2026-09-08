@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -18,6 +18,9 @@ public class WeekDaySerializer : EncodableDataTypeSerializer
     public WeekDaySerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(WeekDay);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new WeekDay();
 
     public override string? SerializeToString(object? obj)
     {
