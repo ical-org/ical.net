@@ -4,7 +4,8 @@
 //
 
 using System;
-using Ical.Net.Serialization.DataTypes;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using NodaTime;
 
 namespace Ical.Net.DataTypes;
@@ -143,11 +144,7 @@ public class Period : EncodableDataType
     public override int GetHashCode() => HashCode.Combine(StartTime, EndTime, Duration);
 
     /// <inheritdoc/>
-    public override string? ToString()
-    {
-        var periodSerializer = new PeriodSerializer();
-        return periodSerializer.SerializeToString(this);
-    }
+    public override string? ToString() => ToBasicIso();
 
     /// <summary>
     /// Gets the start time of the period.
@@ -180,4 +177,95 @@ public class Period : EncodableDataType
             return _startTime.HasTime ? PeriodKind.DateTime : PeriodKind.DateOnly;
         }
     }
+
+    #region Parsing 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="basicIsoString">ISO-8601 basic format for a period of time.</param>
+    /// <param name="tzId"></param>
+    /// <param name="result"></param>
+    /// <returns></returns>
+    public static bool TryParse(
+        string? basicIsoString,
+        string? tzId,
+#if NET
+        [NotNullWhen(true)]
+#endif
+        out Period? result)
+    {
+        if (basicIsoString == null)
+        {
+            result = null;
+            return false;
+        }
+
+        var values = basicIsoString.Split('/');
+        if (values.Length != 2)
+        {
+            result = null;
+            return false;
+        }
+
+        if (!CalDateTime.TryParse(values[0], tzId, out var start))
+        {
+            result = null;
+            return false;
+        }
+
+        if (CalDateTime.TryParse(values[1], tzId, out var end))
+        {
+            result = Create(start, end);
+            return true;
+        }
+
+        if (DataTypes.Duration.TryParse(values[1], out var duration))
+        {
+            result = Create(start, end: null, duration);
+            return true;
+        }
+
+        result = null;
+        return false;
+    }
+
+    public string ToBasicIso()
+    {
+        var sb = new StringBuilder();
+
+        // Serialize the start time
+        sb.Append(StartTime.ToBasicIso());
+
+        // RFC 5545 section 3.6.1:
+        // For cases where a "VEVENT" calendar component
+        // specifies a "DTSTART" property with a DATE value type but no
+        // "DTEND" nor "DURATION" property, the event’s duration is taken to
+        // be one day:
+
+        if (EndTime is { } endtime)
+        {
+            // Serialize the end date and time...
+            sb.Append('/');
+            sb.Append(endtime.ToBasicIso());
+        }
+        else if (Duration is { } duration)
+        {
+            // Serialize the duration
+            sb.Append('/');
+            sb.Append(duration.ToBasicIso());
+        }
+        else
+        {
+            // TODO: Previous behavior allowed start only:
+            // >  else, just the start time gets serialized to comply with the RFC 5545 section 3.6.1
+            //
+            // Where in the RFC is this allowed?
+            //throw new InvalidOperationException("Period is missing an end or duration");
+        }
+
+        return sb.ToString();
+    }
+
+    #endregion
 }

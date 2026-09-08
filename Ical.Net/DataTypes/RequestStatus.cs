@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -38,6 +38,7 @@ public class RequestStatus : EncodableDataType
 
     public RequestStatus() { }
 
+    [Obsolete("Set properties directly.")]
     public RequestStatus(string value) : this()
     {
         var serializer = new RequestStatusSerializer();
@@ -59,12 +60,6 @@ public class RequestStatus : EncodableDataType
         StatusCode = rs.StatusCode;
         Description = rs.Description;
         ExtraData = rs.ExtraData;
-    }
-
-    public override string? ToString()
-    {
-        var serializer = new RequestStatusSerializer();
-        return serializer.SerializeToString(this);
     }
 
     protected bool Equals(RequestStatus other) => string.Equals(_mDescription, other._mDescription) && string.Equals(_mExtraData, other._mExtraData) &&

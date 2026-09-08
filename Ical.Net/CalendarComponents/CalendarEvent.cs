@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -187,6 +187,13 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer
         base.OnDeserializing(context);
 
         Initialize();
+    }
+
+    internal override bool ShouldSerializeProperty(ICalendarProperty property)
+    {
+        // Do not serialize DURATION when DTEND exists
+        return !property.Name.Equals("DURATION", StringComparison.OrdinalIgnoreCase)
+            || !Properties.ContainsKey("DTEND");
     }
 
     protected bool Equals(CalendarEvent? other)

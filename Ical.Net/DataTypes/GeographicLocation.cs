@@ -1,12 +1,13 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
+using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Ical.Net.CalendarComponents;
-using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes;
 
@@ -22,10 +23,14 @@ public class GeographicLocation : EncodableDataType
 
     public GeographicLocation() { }
 
+    [Obsolete("Use TryParse instead.")]
     public GeographicLocation(string value) : this()
     {
-        var serializer = new GeographicLocationSerializer();
-        serializer.Deserialize(value);
+        if (TryParse(value, out var other))
+        {
+            Latitude = other.Latitude;
+            Longitude = other.Longitude;
+        }
     }
 
     public GeographicLocation(double latitude, double longitude)
@@ -49,5 +54,49 @@ public class GeographicLocation : EncodableDataType
         Longitude = geo.Longitude;
     }
 
-    public override string ToString() => Latitude.ToString("0.000000", CultureInfo.InvariantCulture) + ";" + Longitude.ToString("0.000000", CultureInfo.InvariantCulture);
+    public override string ToString() => Latitude.ToString("0.000000", CultureInfo.InvariantCulture)
+        + ";"
+        + Longitude.ToString("0.000000", CultureInfo.InvariantCulture);
+
+    #region Text Parsing
+
+    public static bool TryParse(
+        ReadOnlySpan<char> value,
+#if NET
+        [NotNullWhen(true)]
+#endif
+    out GeographicLocation? geographicLocation)
+    {
+        var partIndex = value.IndexOf(';');
+        if (partIndex == -1)
+        {
+            geographicLocation = null;
+            return false;
+        }
+
+#if NET
+        var latStr = value.Slice(0, partIndex);
+        var lonStr = value.Slice(partIndex + 1);
+#else
+        var latStr = value.Slice(0, partIndex).ToString();
+        var lonStr = value.Slice(partIndex + 1).ToString();
+#endif
+
+        if (!double.TryParse(latStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var lat))
+        {
+            geographicLocation = null;
+            return false;
+        }
+
+        if (!double.TryParse(lonStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var lon))
+        {
+            geographicLocation = null;
+            return false;
+        }
+
+        geographicLocation = new(lat, lon);
+        return true;
+    }
+
+#endregion
 }
