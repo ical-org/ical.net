@@ -7,7 +7,6 @@ using System;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Serialization;
 using NodaTime;
 using NUnit.Framework;
 
@@ -17,9 +16,12 @@ namespace Ical.Net.Tests;
 /// The class contains the tests for submitted issues from the GitHub repository,
 /// slightly modified to fit the testing environment and the current version of the library.
 /// </summary>
-[TestFixture]
-public class RecurrenceWithExDateTests
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class RecurrenceWithExDateTests(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
     [TestCase(true)]
     [TestCase(false)]
     public void ShouldNotOccurOnLocalExceptionDate(bool useExDateWithTime)
@@ -52,10 +54,9 @@ public class RecurrenceWithExDateTests
         calendar.Events.Add(recurringEvent);
 
         // Act
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(calendar)!;
+        var ics = _serializerSwitch.Serialize(calendar);
 
-        var deserializedCalendar = Calendar.Load(ics)!;
+        var deserializedCalendar = _serializerSwitch.Deserialize<Calendar>(ics)!;
         var occurrences = deserializedCalendar.GetOccurrences<CalendarEvent>(CalendarTimeZoneProviders.TzdbWithAliases[timeZoneId]).ToList();
 
         using (Assert.EnterMultipleScope())
@@ -94,13 +95,12 @@ public class RecurrenceWithExDateTests
                   END:VCALENDAR
                   """;
 
-        var cal = Calendar.Load(ics)!;
+        var cal = _serializerSwitch.Deserialize<Calendar>(ics)!;
         var occurrences = cal.GetOccurrences<CalendarEvent>(CalendarTimeZoneProviders.TzdbWithAliases["GMT"]).ToList();
 
-        var serializer = new CalendarSerializer();
-        ics = serializer.SerializeToString(cal);
+        ics = _serializerSwitch.Serialize(cal);
         // serialize and deserialize to ensure the exclusion dates de/serialized
-        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString()!)!;
+        cal = _serializerSwitch.Deserialize<Calendar>(ics);
 
         // Start date: 2024-10-19 at 18:00 (GMT Standard Time)
         // Recurrence: Every hour, 4 occurrences
@@ -142,13 +142,12 @@ public class RecurrenceWithExDateTests
                   END:VCALENDAR
                   """;
 
-        var cal = Calendar.Load(ics)!;
+        var cal = _serializerSwitch.Deserialize<Calendar>(ics)!;
         var occurrences = cal.GetOccurrences<CalendarEvent>(CalendarTimeZoneProviders.TzdbWithAliases["Europe/Berlin"]).ToList();
 
-        var serializer = new CalendarSerializer();
-        ics = serializer.SerializeToString(cal);
+        ics = _serializerSwitch.Serialize(cal);
         // serialize and deserialize to ensure the exclusion dates de/serialized
-        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString()!)!;
+        cal = _serializerSwitch.Deserialize<Calendar>(ics);
 
         // Occurrences:
         // 2023-10-25 09:00 (UTC Offset: +0200)
@@ -202,9 +201,9 @@ public class RecurrenceWithExDateTests
                   END:VCALENDAR
                   """;
 
-        var cal = Calendar.Load(ics)!;
+        var cal = _serializerSwitch.Deserialize<Calendar>(ics)!;
         // serialize and deserialize to ensure the exclusion dates de/serialized
-        cal = Calendar.Load(new CalendarSerializer(cal).SerializeToString()!)!;
+        cal = _serializerSwitch.Deserialize<Calendar>(_serializerSwitch.Serialize(cal));
         var occurrences = cal.GetOccurrences<CalendarEvent>(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
         // Occurrences:
