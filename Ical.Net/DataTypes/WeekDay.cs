@@ -1,12 +1,12 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Ical.Net.Serialization.DataTypes;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace Ical.Net.DataTypes;
 
@@ -34,12 +34,12 @@ public class WeekDay : EncodableDataType
 
     public WeekDay(DayOfWeek day, FrequencyOccurrence type) : this(day, (int) type) { }
 
+    [Obsolete("Use TryParse instead.")]
     public WeekDay(string value)
     {
-        var serializer = new WeekDaySerializer();
-        if (serializer.Deserialize(new StringReader(value)) is ICopyable deserializedObject)
+        if (TryParse(value, out var other))
         {
-            CopyFrom(deserializedObject);
+            CopyFrom(other);
         }
         else
         {
@@ -85,4 +85,137 @@ public class WeekDay : EncodableDataType
         }
         return compare;
     }
+
+    public override string ToString()
+    {
+        if (!TryFormat(DayOfWeek, out var dayOfWeek))
+        {
+            return string.Empty;
+        }
+
+        if (Offset is not { } offset)
+        {
+            return dayOfWeek;
+        }
+
+        return offset.ToString(CultureInfo.InvariantCulture) + dayOfWeek;
+    }
+
+    #region Text Parsing
+
+    public static bool TryParse(
+        ReadOnlySpan<char> value,
+#if NET
+        [NotNullWhen(true)]
+#endif
+        out WeekDay? weekDay)
+    {
+        if (value.Length == 0)
+        {
+            weekDay = default;
+            return false;
+        }
+
+        // Determine sign
+        var sign = value[0] == '-' ? -1 : 1;
+
+        if (value[0] is '+' or '-')
+        {
+            value = value.Slice(1);
+        }
+
+        // Count offset
+        var offsetLength = 0;
+        while (offsetLength < value.Length
+            && char.IsDigit(value[offsetLength])
+            && ++offsetLength < 2) ;
+
+        // Parse offset later
+        var offsetStr = value.Slice(0, offsetLength);
+
+        // Parse day of week
+        var dayOfWeekStr = value.Slice(offsetLength);
+        if (!TryGetDayOfWeek(dayOfWeekStr, out var dayOfWeek))
+        {
+            weekDay = default;
+            return false;
+        }
+
+        // Parse offset if there is one
+        if (offsetStr.Length > 0)
+        {
+            var offsetParseResult = int.TryParse(value.Slice(0, offsetLength)
+#if !NET
+                .ToString()
+#endif
+                , out var offset);
+
+            if (!offsetParseResult)
+            {
+                weekDay = default;
+                return false;
+            }
+
+            // Week day with offset
+            weekDay = new WeekDay(dayOfWeek, sign * offset);
+            return true;
+        }
+
+        // Week day without offset
+        weekDay = new WeekDay(dayOfWeek);
+        return true;
+    }
+
+    internal static bool TryGetDayOfWeek(ReadOnlySpan<char> value, out DayOfWeek dayOfWeek)
+    {
+        if (value.Length != 2)
+        {
+            dayOfWeek = default;
+            return false;
+        }
+
+        Span<char> upperValue = stackalloc char[2];
+        value.ToUpperInvariant(upperValue);
+
+        dayOfWeek = upperValue switch
+        {
+            // Check Sunday after
+            // "SU" => DayOfWeek.Sunday,
+            "MO" => DayOfWeek.Monday,
+            "TU" => DayOfWeek.Tuesday,
+            "WE" => DayOfWeek.Wednesday,
+            "TH" => DayOfWeek.Thursday,
+            "FR" => DayOfWeek.Friday,
+            "SA" => DayOfWeek.Saturday,
+            // Produces Sunday for invalid input or "SU"
+            _ => default
+        };
+
+        // Check for invalid input
+        return dayOfWeek != default || upperValue is "SU";
+    }
+
+    internal static bool TryFormat(DayOfWeek value,
+#if NET
+        [NotNullWhen(true)]
+#endif
+    out string? dayOfWeek)
+    {
+        dayOfWeek = value switch
+        {
+            DayOfWeek.Sunday => "SU",
+            DayOfWeek.Monday => "MO",
+            DayOfWeek.Tuesday => "TU",
+            DayOfWeek.Wednesday => "WE",
+            DayOfWeek.Thursday => "TH",
+            DayOfWeek.Friday => "FR",
+            DayOfWeek.Saturday => "SA",
+            _ => null
+        };
+
+        return dayOfWeek is not null;
+    }
+
+
+    #endregion
 }

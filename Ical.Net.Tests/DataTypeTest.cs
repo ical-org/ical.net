@@ -1,8 +1,9 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
+using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
@@ -20,7 +21,7 @@ public class DataTypeTest
     public void AttachmentConstructorMustAcceptNull()
     {
         Assert.DoesNotThrow(() => { _ = new Attachment((byte[]?) null); });
-        Assert.DoesNotThrow(() => { _ = new Attachment((string?) null); });
+        Assert.DoesNotThrow(() => { _ = new Attachment((Uri?) null); });
     }
 
     public static IEnumerable<TestCaseData> TestWeekDayEqualsTestCases => [

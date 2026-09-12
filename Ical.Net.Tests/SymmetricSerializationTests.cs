@@ -150,7 +150,7 @@ public class SymmetricSerializationTests
     }
 
     [Test, TestCaseSource(nameof(UriAttachment_TestCases))]
-    public void UriAttachment_Tests(string uri, Uri expectedUri)
+    public void UriAttachment_Tests(Uri uri)
     {
         var attachment = new Attachment(uri);
 
@@ -170,7 +170,7 @@ public class SymmetricSerializationTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(unserializedUri, Is.EqualTo(expectedUri));
+            Assert.That(unserializedUri, Is.EqualTo(uri));
             Assert.That(unserialized.GetHashCode(), Is.EqualTo(calendar.GetHashCode()));
             Assert.That(unserialized, Is.EqualTo(calendar));
         }
@@ -178,11 +178,11 @@ public class SymmetricSerializationTests
 
     public static IEnumerable UriAttachment_TestCases()
     {
-        yield return new TestCaseData("http://www.google.com", new Uri("http://www.google.com")).SetName("HTTP URL");
-        yield return new TestCaseData("mailto:rstockbower@gmail.com", new Uri("mailto:rstockbower@gmail.com")).SetName("mailto: URL");
-        yield return new TestCaseData(_ldapUri, new Uri(_ldapUri)).SetName("ldap URL");
-        yield return new TestCaseData("C:\\path\\to\\file.txt", new Uri("C:\\path\\to\\file.txt")).SetName("Local file path URL");
-        yield return new TestCaseData("\\\\uncPath\\to\\resource.txt", new Uri("\\\\uncPath\\to\\resource.txt")).SetName("UNC path URL");
+        yield return new TestCaseData(new Uri("http://www.google.com")).SetName("HTTP URL");
+        yield return new TestCaseData(new Uri("mailto:rstockbower@gmail.com")).SetName("mailto: URL");
+        yield return new TestCaseData(new Uri(_ldapUri)).SetName("ldap URL");
+        yield return new TestCaseData(new Uri("C:\\path\\to\\file.txt")).SetName("Local file path URL");
+        yield return new TestCaseData(new Uri("\\\\uncPath\\to\\resource.txt")).SetName("UNC path URL");
     }
 
     [Test, TestCaseSource(nameof(CategoryTest_TestCases))]

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -7,8 +7,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes;
 
@@ -36,25 +36,22 @@ internal class PeriodList : EncodableDataType, IList<Period>
     { }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="PeriodList"/> class from the <see cref="StringReader"/>.
-    /// </summary>
-    /// <param name="value"></param>
-    /// <exception cref="ArgumentException"></exception>
-    private PeriodList(StringReader value)
-    {
-        var serializer = new PeriodListSerializer();
-        if (serializer.Deserialize(value) is ICopyable deserialized)
-        {
-            CopyFrom(deserialized);
-        }
-    }
-
-    /// <summary>
     /// Creates a new instance of the <see cref="PeriodList"/> class from the <see cref="StringReader"/> object.
     /// </summary>
     /// <param name="value"></param>
     /// <exception cref="ArgumentException"></exception>
-    public static PeriodList FromStringReader(StringReader value) => new PeriodList(value);
+    ///
+    [Obsolete("Use Period.TryParse or Duration.TryParse instead.")]
+    public static PeriodList FromStringReader(StringReader value)
+    {
+        var serializer = new PeriodListSerializer();
+        if (serializer.Deserialize(value) is PeriodList deserialized)
+        {
+            return deserialized;
+        }
+
+        return [];
+    }
 
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable obj)
@@ -75,7 +72,12 @@ internal class PeriodList : EncodableDataType, IList<Period>
     /// Gets the string representation of the list.
     /// </summary>
     /// <returns></returns>
-    public override string? ToString() => new PeriodListSerializer().SerializeToString(this);
+    public override string? ToString() => string.Join(",", this.Select(PeriodOrDurationToString));
+
+    private string PeriodOrDurationToString(Period period) => period.HasEndOrDuration
+        ? period.ToBasicIso()
+        : period.StartTime.ToBasicIso();
+    
 
     /// <inheritdoc/>
     public Period this[int index]

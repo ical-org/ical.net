@@ -1,11 +1,11 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes;
 
@@ -26,9 +26,17 @@ public class UtcOffset : EncodableDataType
 
     public UtcOffset() { }
 
+    [Obsolete("Use TryParse instead.")]
     public UtcOffset(string value) : this()
     {
-        Offset = UtcOffsetSerializer.GetOffset(value);
+        if (TryParse(value, out var utcOffset))
+        {
+            Offset = utcOffset.Offset;
+        }
+        else
+        {
+            throw new FormatException($"{value} is not a valid UTC offset.");
+        }
     }
 
     public UtcOffset(TimeSpan ts)
@@ -66,10 +74,50 @@ public class UtcOffset : EncodableDataType
     public override int GetHashCode() => Offset.GetHashCode();
 
     public override string ToString() => (Positive ? "+" : "-")
-                                         + Hours.ToString("00", CultureInfo.InvariantCulture) +
-                                         Minutes.ToString("00", CultureInfo.InvariantCulture) + (Seconds != 0
-                                             ? Seconds.ToString("00", CultureInfo.InvariantCulture)
-                                             : string.Empty);
+        + Hours.ToString("00", CultureInfo.InvariantCulture)
+        + Minutes.ToString("00", CultureInfo.InvariantCulture)
+        + (Seconds != 0 ? Seconds.ToString("00", CultureInfo.InvariantCulture) : string.Empty);
+
+    private static readonly string[] _utcOffsetFormats = ["hhmmss", "hhmm", "hh"];
+
+    public static bool TryParse(
+        ReadOnlySpan<char> value,
+#if NET
+        [NotNullWhen(true)]
+#endif
+        out UtcOffset? utcOffset)
+    {
+        if (value.Length == 0)
+        {
+            utcOffset = default;
+            return false;
+        }
+
+        var isNegative = value[0] == '-';
+
+        // Remove sign if needed
+        if (value[0] is '-' or '+')
+        {
+            value = value.Slice(1);
+        }
+
+        var parseResult = TimeSpan.TryParseExact(
+#if NET
+            value,
+#else
+            value.ToString(),
+#endif
+            _utcOffsetFormats, CultureInfo.InvariantCulture, out var ts);
+
+        if (!parseResult)
+        {
+            utcOffset = default;
+            return false;
+        }
+
+        utcOffset = new UtcOffset(isNegative ? -ts : ts);
+        return true;
+    }
 
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable obj)

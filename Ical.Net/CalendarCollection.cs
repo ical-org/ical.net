@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -22,6 +22,7 @@ namespace Ical.Net;
 /// </summary>
 public class CalendarCollection : List<Calendar>
 {
+    [Obsolete("Use CalendarSerializer.DeserializeCollection")]
     public static CalendarCollection Load(string iCalendarString)
         => Load(new StringReader(iCalendarString));
 
@@ -30,9 +31,11 @@ public class CalendarCollection : List<Calendar>
     /// </summary>
     /// <param name="s">The stream from which to load the <see cref="Calendar"/> object</param>
     /// <returns>An <see cref="Calendar"/> object</returns>
+    [Obsolete("Use CalendarSerializer.DeserializeCollection")]
     public static CalendarCollection Load(Stream s)
         => Load(new StreamReader(s, Encoding.UTF8));
 
+    [Obsolete("Use CalendarSerializer.DeserializeCollection")]
     public static CalendarCollection Load(TextReader tr)
     {
         var calendars = SimpleDeserializer.Default.Deserialize(tr).OfType<Calendar>();

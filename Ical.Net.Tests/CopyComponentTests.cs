@@ -39,7 +39,7 @@ public class CopyComponentTests
         orig.Resources = new[] { "A", "B" };
         orig.GeographicLocation = new GeographicLocation(48.210033, 16.363449);
         orig.Transparency = TransparencyType.Opaque;
-        orig.Attachments.Add(new Attachment("https://original.org/"));
+        orig.Attachments.Add(new Attachment(new Uri("https://original.org/")));
         var copy = orig.Copy<CalendarEvent>()!;
 
         copy.Uid = "Goodbye";
