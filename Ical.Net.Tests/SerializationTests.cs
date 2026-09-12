@@ -38,8 +38,6 @@ public class SerializationTests
         Duration = Duration.FromPeriod(_later.ToLocalDateTime() - _nowTime.ToLocalDateTime())
     };
 
-    private static Calendar DeserializeCalendar(string s) => Calendar.Load(s)!;
-
     internal static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
     {
         foreach (var p1 in cb1.Properties)
@@ -120,8 +118,12 @@ public class SerializationTests
     }
 
     [Test, Category("Serialization")]
-    public void SerializeDeserialize_CalendarWithVTimezone()
+    [TestCase(SerializerVersion.Current)]
+    [TestCase(SerializerVersion.Obsolete)]
+    public void SerializeDeserialize_CalendarWithVTimezone(SerializerVersion serializerVersion)
     {
+        SerializerSwitch serializerSwitch = new(serializerVersion);
+
         var cal = new Calendar
         {
             Method = "PUBLISH",
@@ -149,8 +151,8 @@ public class SerializationTests
         };
         cal.Events.Add(evt);
 
-        var serializedCalendar = new CalendarSerializer().SerializeToString(cal)!;
-        var deserializedCalendar = Calendar.Load(serializedCalendar)!;
+        var serializedCalendar = serializerSwitch.Serialize(cal);
+        var deserializedCalendar = serializerSwitch.Deserialize<Calendar>(serializedCalendar);
 
         var vTimezone = InspectSerializedSection(serializedCalendar,
             "VTIMEZONE", ["TZID:" + vTz.TzId]);
@@ -334,7 +336,7 @@ public class SerializationTests
         var serialized = SerializeToString(e);
         Assert.That(serialized.Contains(EventStatus.Confirmed, EventStatus.Comparison), Is.True);
 
-        var calendar = DeserializeCalendar(serialized);
+        var calendar = Calendar.Load(serialized)!;
         var eventStatus = calendar.Events.First().Status;
         Assert.That(string.Equals(EventStatus.Confirmed, eventStatus, EventStatus.Comparison), Is.True);
     }
@@ -351,7 +353,7 @@ public class SerializationTests
         var serialized = SerializeToString(c);
         Assert.That(serialized.Contains(TodoStatus.NeedsAction, TodoStatus.Comparison), Is.True);
 
-        var calendar = DeserializeCalendar(serialized);
+        var calendar = Calendar.Load(serialized)!;
         var status = calendar.Todos.First().Status;
         Assert.That(string.Equals(TodoStatus.NeedsAction, status, TodoStatus.Comparison), Is.True);
     }
@@ -368,7 +370,7 @@ public class SerializationTests
         var serialized = SerializeToString(c);
         Assert.That(serialized.Contains(JournalStatus.Final, JournalStatus.Comparison), Is.True);
 
-        var calendar = DeserializeCalendar(serialized);
+        var calendar = Calendar.Load(serialized)!;
         var status = calendar.Journals.First().Status;
         Assert.That(string.Equals(JournalStatus.Final, status, JournalStatus.Comparison), Is.True);
     }

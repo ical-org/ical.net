@@ -17,8 +17,13 @@ using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
-public class VTimeZoneTest
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class VTimeZoneTest(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
+
     [Test, Category("VTimeZone")]
     public void CustomIdShouldNotThrow()
     {
@@ -298,7 +303,7 @@ public class VTimeZoneTest
             END:VCALENDAR
             """;
 
-        var cal = Calendar.Load(data)!;
+        var cal = _serializerSwitch.Deserialize<Calendar>(data)!;
 
         Assert.That(cal.TimeZones, Is.Not.Empty);
 
@@ -342,7 +347,7 @@ public class VTimeZoneTest
             END:VCALENDAR
             """;
 
-        var cal = Calendar.Load(data)!;
+        var cal = _serializerSwitch.Deserialize<Calendar>(data)!;
 
         // Only allow strict Tzdb with no extra aliases
         cal.TimeZoneProvider = DateTimeZoneProviders.Tzdb;
@@ -402,7 +407,7 @@ public class VTimeZoneTest
             END:VCALENDAR
             """;
 
-        var cal = Calendar.Load(data)!;
+        var cal = _serializerSwitch.Deserialize<Calendar>(data)!;
 
         // Only allow VTIMEZONE events
         cal.TimeZoneProvider = cal.CreateTimeZoneProvider();
@@ -449,7 +454,7 @@ public class VTimeZoneTest
             END:VCALENDAR
             """;
 
-        var cal = Calendar.Load(data)!;
+        var cal = _serializerSwitch.Deserialize<Calendar>(data)!;
 
         // Only allow VTIMEZONE events
         cal.TimeZoneProvider = cal.CreateTimeZoneProvider();
@@ -502,7 +507,7 @@ public class VTimeZoneTest
     [Test]
     public void VTimeZone_ConvertsToAndFromDateTimeZone()
     {
-        var calendar = Calendar.Load(IcsFiles.Google1)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(IcsFiles.Google1)!;
 
         // Only use calendar time zones
         calendar.TimeZoneProvider = calendar.CreateTimeZoneProvider();
@@ -522,7 +527,7 @@ public class VTimeZoneTest
     [Test]
     public void VTimeZone_CalendarDateTimeZone_ZoneIntervalMatchesNodaTime()
     {
-        var calendar = Calendar.Load(IcsFiles.Google1)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(IcsFiles.Google1)!;
 
         // Only use calendar time zones
         calendar.TimeZoneProvider = calendar.CreateTimeZoneProvider();
@@ -573,7 +578,7 @@ public class VTimeZoneTest
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(icalString)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(icalString)!;
         var vtz = calendar.TimeZones.First();
 
         // Act: Get the DateTimeZone from the VTIMEZONE
@@ -730,7 +735,7 @@ public class VTimeZoneTest
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(icalString)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(icalString)!;
 
         var tz = calendar.TimeZoneProvider["America/New_York"];
         var occurrencesWithNodaTimeZone = calendar.GetOccurrences(tz)

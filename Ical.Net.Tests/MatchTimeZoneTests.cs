@@ -12,9 +12,12 @@ using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
-[TestFixture]
-public class MatchTimeZoneTests
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class MatchTimeZoneTests(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
     [Test, Category("Recurrence")]
     public void MatchTimeZone_LocalTimeUsaWithTimeZone()
     {
@@ -34,7 +37,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRule!.Until;
 
@@ -80,7 +83,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRule!.Until;
 
@@ -130,7 +133,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRule!.Until;
 
@@ -163,7 +166,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRule!.Until;
 
@@ -197,7 +200,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRule!.Until;
 
@@ -230,7 +233,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(ical)!;
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRule!.Until;
 
@@ -262,7 +265,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(ical)!;
         var evt = calendar.Events.First();
 
         // Throws because the default time zone provider
@@ -319,7 +322,7 @@ public class MatchTimeZoneTests
             END:VCALENDAR
             """;
 
-        var calendar = Calendar.Load(ical)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(ical)!;
 
         var tz = calendar.TimeZoneProvider.GetZoneOrNull("America/Los_Angeles")!;
 
