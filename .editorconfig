@@ -21,6 +21,12 @@ insert_final_newline = true
 #require members of anonymous types to be on separate lines
 csharp_new_line_before_members_in_anonymous_types = true
 
+[*.ics]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = false
+trim_trailing_whitespace = false
+
 [*.cs]
 #Specify CultureInfo
 dotnet_diagnostic.CA1304.severity = warning
