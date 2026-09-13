@@ -7,8 +7,8 @@ set -euo pipefail
 
 scan_path="${1:-Ical.Net.Tests}"
 
-if [ ! -d "$scan_path" ]; then
-  echo "::error::Path '$scan_path' does not exist"
+if [[ ! -d "$scan_path" ]]; then
+  echo "::error::Path '$scan_path' does not exist" >&2
   exit 1
 fi
 
@@ -24,16 +24,18 @@ while IFS= read -r -d '' file; do
 	efbbbf*)      bom_name="UTF-8" ;;
 	feff*)        bom_name="UTF-16 (BE)" ;;
 	fffe*)        bom_name="UTF-16 (LE)" ;;
+	*)            bom_name="" ;;
   esac
 
-  if [ -n "$bom_name" ]; then
+  if [[ -n "$bom_name" ]]; then
+	echo "$file: $bom_name BOM"
 	echo "::error file=$file::File contains a $bom_name BOM"
 	found_bom=1
   fi
 done < <(find "$scan_path" -type f -name '*.ics' -print0)
 
-if [ "$found_bom" -eq 1 ]; then
-  echo "One or more .ics files contain a byte order mark (BOM). Please remove it."
+if [[ "$found_bom" -eq 1 ]]; then
+  echo "One or more .ics files contain a byte order mark (BOM). Please remove it." >&2
   exit 1
 fi
 
