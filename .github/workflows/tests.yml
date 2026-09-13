@@ -34,6 +34,11 @@ jobs:
           8.0.x
           6.0.x
           3.1.x
+    - name: Check .ics fixtures for BOM
+      shell: bash
+      run: |
+        chmod +x .github/workflows/EnsureIcsFixturesWithoutBOM.sh
+        .github/workflows/EnsureIcsFixturesWithoutBOM.sh Ical.Net.Tests
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
