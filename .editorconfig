@@ -24,7 +24,7 @@ csharp_new_line_before_members_in_anonymous_types = true
 [*.ics]
 charset = utf-8
 end_of_line = crlf
-insert_final_newline = false
+insert_final_newline = true
 trim_trailing_whitespace = false
 
 [*.cs]
