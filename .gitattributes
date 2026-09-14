@@ -18,6 +18,8 @@
 *.sh text eol=lf
 *.bat text eol=crlf
 *.cmd text eol=crlf
+# CRLF line endings for .ics files per RFC 5545
+*.ics text eol=crlf
 *.css text
 *.scss text diff=css
 *.htm text diff=html

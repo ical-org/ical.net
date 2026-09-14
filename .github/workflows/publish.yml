@@ -35,9 +35,6 @@ jobs:
         # no need for chmod when using bash to run the resolver script
         bash .github/workflows/PublishResolveVersion.sh "${{ github.event.inputs.major_version }}"
 
-    - name: Set Git config for line endings
-      run: git config --global core.autocrlf true
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v6
       with:

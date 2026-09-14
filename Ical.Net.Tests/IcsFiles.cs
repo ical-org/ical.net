@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -84,7 +84,6 @@ internal class IcsFiles
     internal static string Language1 => ReadStream("Ical.Net.Tests.Calendars.Serialization.Language1.ics");
     internal static string Language2 => ReadStream("Ical.Net.Tests.Calendars.Serialization.Language2.ics");
     internal static string Language3 => ReadStream("Ical.Net.Tests.Calendars.Serialization.Language3.ics");
-    internal static string Language4 => ReadStream("Ical.Net.Tests.Calendars.Serialization.Language4.ics");
     internal static string Minutely1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.Minutely1.ics");
     internal static string MinutelyByHour1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.MinutelyByHour1.ics");
     internal static string MinutelyCount1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.MinutelyCount1.ics");
