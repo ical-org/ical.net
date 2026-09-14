@@ -489,11 +489,67 @@ public class DeserializationTests
         }, Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
     }
 
-    [Test]
-    public void Language4()
+[Test]
+public void Language1_ParsesNonAsciiAndFoldedLongText_With_BOM() // Spanish
     {
-        var iCal = Calendar.Load(IcsFiles.Language4);
-        Assert.That(iCal, Is.Not.Null);
+        var icsText = new StringReader(IcsFiles.Language1).ReadToEnd()!;
+        var bom = new byte[] { 0xEF, 0xBB, 0xBF }; // UTF-8 BOM
+        var bytesWithBom = bom.Concat(Encoding.UTF8.GetBytes(icsText)).ToArray();
+
+        // Load the calendar from a MemoryStream containing the BOM
+        var iCal = Calendar.Load(new MemoryStream(bytesWithBom))!;
+        var evt = iCal.Events.First();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(iCal.Properties["X-WR-CALNAME"]?.Value, Is.EqualTo("Barça 2006 - 2007"));
+            Assert.That(iCal.TimeZones, Has.Count.EqualTo(1));
+            Assert.That(iCal.TimeZones[0]!.TzId, Is.EqualTo("Europe/Madrid"));
+
+            Assert.That(evt.Start?.HasTime, Is.True);
+            Assert.That(evt.End, Is.Null);
+
+            Assert.That(evt.Location, Is.EqualTo("San Mamés, Bilbao"));
+            Assert.That(evt.Summary, Is.EqualTo("Athletic Bilbao - Barça"));
+
+            // Verify \n escape sequences were unescaped inside a long folded description
+            Assert.That(evt.Description, Is.EqualTo("Liga\nJornada 5\n\nGoles:\nN/A"));
+        }
+    }
+
+    [Test]
+    public void Language2_ParsesSplitPropertyNameValueFolding() // Swedish
+    {
+        // Mozilla-style folding: property name on one line, ":value" continuation on next
+        var iCal = Calendar.Load(IcsFiles.Language2)!;
+
+        var todo = iCal.Todos.First();
+        var evt = iCal.Events.First();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(todo.Summary, Is.EqualTo("Städa garaget"));
+            Assert.That(todo.Description, Is.EqualTo("NOGA!!!"));
+            Assert.That(todo.Location, Is.EqualTo("Garaget"));
+            Assert.That(todo.Alarms, Has.Count.EqualTo(1));
+            Assert.That(evt.Summary, Is.EqualTo("God Jul"));
+        }
+    }
+
+    [Test]
+    public void Language3_ParsesCyrillicTextAndYearlyRecurrence() // Cyrillic/Russian
+    {
+        var iCal = Calendar.Load(IcsFiles.Language3)!;
+        var newYear = iCal.Events.First(e => e.Uid == "8147ef1b-8301-4ea8-b712-90a394f647a3");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(iCal.Events, Has.Count.GreaterThan(0));
+            Assert.That(newYear.Summary, Is.EqualTo("Новый год"));
+            Assert.That(newYear.RecurrenceRule, Is.Not.Null);
+            Assert.That(newYear.RecurrenceRule!.Frequency, Is.EqualTo(FrequencyType.Yearly));
+            Assert.That(newYear.Start!.HasTime, Is.False); // VALUE=DATE
+        }
     }
 
     [Test]
