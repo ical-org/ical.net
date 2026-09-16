@@ -434,7 +434,7 @@ END:VCALENDAR
     [Test, Category("Deserialization")]
     public void Language1()
     {
-        var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.Language3)).Cast<Calendar>().Single();
+        var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.Language1)).Cast<Calendar>().Single();
         Assert.That(iCal, Is.Not.Null);
     }
 
