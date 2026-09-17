@@ -45,6 +45,9 @@ public sealed class CalendarReader
 
     private readonly Stream _input;
 
+    private bool _checkForBom = true;
+    private static ReadOnlySpan<byte> Utf8Bom => [0xEF, 0xBB, 0xBF];
+
     internal CalendarReader(Stream input)
     {
         _input = input;
@@ -127,6 +130,18 @@ public sealed class CalendarReader
     /// </summary>
     private bool TryGetContentLine(bool endOfStream, out Memory<byte> contentLine)
     {
+        // Skip UTF-8 BOM if present
+        if (_checkForBom && _bufferLength >= Utf8Bom.Length)
+        {
+            if (_buffer.AsSpan(_bufferStart, Utf8Bom.Length).StartsWith(Utf8Bom))
+            {
+                _bufferStart += Utf8Bom.Length;
+                _bufferLength -= Utf8Bom.Length;
+            }
+
+            _checkForBom = false;
+        }
+
         while (true)
         {
             var bufferedBytes = _buffer.AsSpan(_bufferStart, _bufferLength);
