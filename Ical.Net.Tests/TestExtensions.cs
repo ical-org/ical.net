@@ -52,4 +52,9 @@ internal static class TestExtensions
     {
         return value.ToZonedOrDefault(timeZone, CalendarTimeZoneProviders.TzdbWithAliases);
     }
+
+#if NETFRAMEWORK
+    public static string ReplaceLineEndings(this string value, string lineEnding)
+        => value.Replace("\r\n", "\n").Replace("\n", lineEnding);
+#endif
 }

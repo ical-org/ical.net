@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
 
@@ -69,6 +70,7 @@ public class Trigger : EncodableDataType
         Duration = ts;
     }
 
+    [Obsolete("Set properties directly.")]
     public Trigger(string value) : this()
     {
         var serializer = new TriggerSerializer();

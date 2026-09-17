@@ -38,8 +38,6 @@ public class SerializationTests
         Duration = Duration.FromPeriod(_later.ToLocalDateTime() - _nowTime.ToLocalDateTime())
     };
 
-    private static Calendar DeserializeCalendar(string s) => Calendar.Load(s)!;
-
     internal static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
     {
         foreach (var p1 in cb1.Properties)
@@ -120,8 +118,12 @@ public class SerializationTests
     }
 
     [Test, Category("Serialization")]
-    public void SerializeDeserialize_CalendarWithVTimezone()
+    [TestCase(SerializerVersion.Current)]
+    [TestCase(SerializerVersion.Obsolete)]
+    public void SerializeDeserialize_CalendarWithVTimezone(SerializerVersion serializerVersion)
     {
+        SerializerSwitch serializerSwitch = new(serializerVersion);
+
         var cal = new Calendar
         {
             Method = "PUBLISH",
@@ -149,8 +151,8 @@ public class SerializationTests
         };
         cal.Events.Add(evt);
 
-        var serializedCalendar = new CalendarSerializer().SerializeToString(cal)!;
-        var deserializedCalendar = Calendar.Load(serializedCalendar)!;
+        var serializedCalendar = serializerSwitch.Serialize(cal);
+        var deserializedCalendar = serializerSwitch.Deserialize<Calendar>(serializedCalendar);
 
         var vTimezone = InspectSerializedSection(serializedCalendar,
             "VTIMEZONE", ["TZID:" + vTz.TzId]);
@@ -300,7 +302,7 @@ public class SerializationTests
     [Test]
     public void ZeroDuration_Test()
     {
-        var result = new DurationSerializer().SerializeToString(Duration.Zero);
+        var result = Duration.Zero.ToBasicIso();
         Assert.That(result, Is.EqualTo("P0D"));
     }
 
@@ -334,7 +336,7 @@ public class SerializationTests
         var serialized = SerializeToString(e);
         Assert.That(serialized.Contains(EventStatus.Confirmed, EventStatus.Comparison), Is.True);
 
-        var calendar = DeserializeCalendar(serialized);
+        var calendar = Calendar.Load(serialized)!;
         var eventStatus = calendar.Events.First().Status;
         Assert.That(string.Equals(EventStatus.Confirmed, eventStatus, EventStatus.Comparison), Is.True);
     }
@@ -351,7 +353,7 @@ public class SerializationTests
         var serialized = SerializeToString(c);
         Assert.That(serialized.Contains(TodoStatus.NeedsAction, TodoStatus.Comparison), Is.True);
 
-        var calendar = DeserializeCalendar(serialized);
+        var calendar = Calendar.Load(serialized)!;
         var status = calendar.Todos.First().Status;
         Assert.That(string.Equals(TodoStatus.NeedsAction, status, TodoStatus.Comparison), Is.True);
     }
@@ -368,7 +370,7 @@ public class SerializationTests
         var serialized = SerializeToString(c);
         Assert.That(serialized.Contains(JournalStatus.Final, JournalStatus.Comparison), Is.True);
 
-        var calendar = DeserializeCalendar(serialized);
+        var calendar = Calendar.Load(serialized)!;
         var status = calendar.Journals.First().Status;
         Assert.That(string.Equals(JournalStatus.Final, status, JournalStatus.Comparison), Is.True);
     }
@@ -401,7 +403,7 @@ public class SerializationTests
            STATUS:CONFIRMED
            END:VEVENT
            """;
-        var deserializedEvent = Calendar.Load<CalendarEvent>(ics).Single();
+        var deserializedEvent = CalendarSerializer.Deserialize<CalendarEvent>(ics);
 
         using (Assert.EnterMultipleScope())
         {
@@ -433,7 +435,7 @@ public class SerializationTests
            END:DAYLIGHT
            END:VTIMEZONE
            """;
-        var timeZone = Calendar.Load<VTimeZone>(ics).Single();
+        var timeZone = CalendarSerializer.Deserialize<VTimeZone>(ics);
         Assert.That(timeZone, Is.Not.Null, "Expected the TimeZone to be successfully deserialized");
         var timeZoneInfos = timeZone.TimeZoneInfos;
         using (Assert.EnterMultipleScope())
@@ -584,8 +586,12 @@ public class SerializationTests
                     """), Throws.Nothing);
 
                 // Serialize
-                Assert.That(() => new DurationSerializer().SerializeToString(new Duration(null, -1)), Is.EqualTo("-P1D"));
-                Assert.That(() => new RecurrenceRuleSerializer().SerializeToString(new RecurrenceRule { Frequency = FrequencyType.Daily, Until = new CalDateTime(2026, 6, 22) })?.Contains("UNTIL=20260622"), Is.True);
+                Assert.That(() => new Duration(null, -1).ToBasicIso(), Is.EqualTo("-P1D"));
+                Assert.That(() => new RecurrenceRule
+                {
+                    Frequency = FrequencyType.Daily,
+                    Until = new CalDateTime(2026, 6, 22)
+                }.ToString().Contains("UNTIL=20260622"), Is.True);
             };
         }    
         finally
@@ -653,6 +659,20 @@ public class SerializationTests
 
         var resultCal = Calendar.Load(result)!;
         Assert.That(resultCal.Events[0]!.Description, Is.EqualTo(deserializedText ?? originalText));
+    }
+
+    [Test]
+    public void ListItemsAreEscaped()
+    {
+        var ev = new CalendarEvent
+        {
+            Name = "Test event",
+            Resources = ["A \\ B", "", "Nothing", "1,2,3"]
+        };
+
+        var eventStr = new EventSerializer().SerializeToString(ev);
+
+        Assert.That(eventStr!, Does.Contain(@"A \\ B,,Nothing,1\,2\,3"));
     }
 
     private static readonly object[] MultiValueSeparatorCases =

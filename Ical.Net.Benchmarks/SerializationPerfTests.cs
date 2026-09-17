@@ -3,15 +3,15 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using BenchmarkDotNet.Attributes;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
-using System;
-using System.Linq;
 
 namespace Ical.Net.Benchmarks;
 
+[MemoryDiagnoser]
 public class SerializationPerfTests
 {
     private const string SampleEvent = """
@@ -68,10 +68,19 @@ public class SerializationPerfTests
                                        """;
 
     [Benchmark]
-    public void Deserialize() => _ = Calendar.Load(SampleEvent)!.Events.First();
+    public void Deserialize() => _ = Calendar.Load(SampleEvent);
 
     [Benchmark]
-    public void BenchmarkSerializeCalendar() => new CalendarSerializer().SerializeToString(CreateSimpleCalendar());
+    public void Deserialize2() => _ = CalendarSerializer.Deserialize<Calendar>(SampleEvent);
+
+    [Benchmark]
+    public void BenchmarkSerializeCalendar() => new CalendarSerializer().SerializeToString(simpleCalendar);
+
+
+    [Benchmark]
+    public void BenchmarkSerializeCalendar2() => CalendarSerializer.Serialize(simpleCalendar);
+
+    private static Calendar simpleCalendar = CreateSimpleCalendar();
 
     private static Calendar CreateSimpleCalendar()
     {
@@ -90,5 +99,65 @@ public class SerializationPerfTests
 
         simpleCalendar.Events.Add(calendarEvent);
         return simpleCalendar;
+    }
+
+    private static Calendar CreateMultibyteCalendar()
+    {
+        var cal = new Calendar();
+
+        var e = new CalendarEvent
+        {
+            Start = CalDateTime.UtcNow
+        };
+
+        e.AddProperty("X-ABC-MULTIBYTE", "🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄");
+        e.AddProperty("X-ABC-MULTIBYTES", "🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄");
+
+        cal.Events.Add(e);
+        return cal;
+    }
+
+    private static Calendar multibyteCal = CreateMultibyteCalendar();
+
+    [Benchmark]
+    public void SerializeMultibyte()
+    {
+        var t = new CalendarSerializer();
+        t.SerializeToString(multibyteCal);
+    }
+
+    [Benchmark]
+    public void SerializeMultibyte2()
+    {
+        CalendarSerializer.Serialize(multibyteCal);
+    }
+
+const string iCalString =
+    """
+    BEGIN:VCALENDAR
+    PRODID:-//github.com/ical-org/ical.net//NONSGML ical.net//EN
+    VERSION:2.0
+    BEGIN:VEVENT
+    X-ABC-TEST:This\;is\;a\\value\wow
+    DTSTAMP:20250608T164638Z
+    DTSTART:20250301T000000
+    RRULE:FREQ=DAILY;COUNT=1000
+    SEQUENCE:0
+    UID:ac22036c-73e6-4020-b54a-80e580462749
+    END:VEVENT
+    END:VCALENDAR
+    """;
+
+    [Benchmark]
+    public void DeserializeCalendar()
+    {
+
+        _ = Calendar.Load(iCalString);
+    }
+
+    [Benchmark]
+    public void DeserializeCalendar2()
+    {
+        _ = CalendarSerializer.Deserialize<Calendar>(iCalString);
     }
 }

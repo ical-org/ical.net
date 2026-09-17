@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -77,4 +77,6 @@ public class CalendarComponent : CalendarObject, ICalendarComponent
         p.Parent = this;
         Properties.Add(p);
     }
+
+    internal virtual bool ShouldSerializeProperty(ICalendarProperty property) => true;
 }
