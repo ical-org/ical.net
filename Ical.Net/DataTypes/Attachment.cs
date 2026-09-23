@@ -81,6 +81,5 @@ public class Attachment : EncodableDataType
         }
 
         ValueEncoding = att.ValueEncoding;
-        FormatType = att.FormatType;
     }
 }

@@ -264,15 +264,16 @@ public class Attendee : EncodableDataType
 
         Value = atn.Value;
 
-        // String assignments create new instances
-        CommonName = atn.CommonName;
-        ParticipationStatus = atn.ParticipationStatus;
-        Role = atn.Role;
-        Type = atn.Type;
-
-        Rsvp = atn.Rsvp;
-
-        SentBy = atn.SentBy;
-        DirectoryEntry = atn.DirectoryEntry;
+        // Read the copied parameters without adding absent defaults through setters.
+        _commonName = null;
+        _participationStatus = null;
+        _role = null;
+        _type = null;
+        _rsvp = null;
+        _sentBy = null;
+        _directoryEntry = null;
+        _members = null;
+        _delegatedTo = null;
+        _delegatedFrom = null;
     }
 }

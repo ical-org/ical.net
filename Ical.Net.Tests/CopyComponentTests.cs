@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -65,6 +66,118 @@ public class CopyComponentTests
 
             Assert.That(Regex.Matches(serializedOrig, uidPattern, RegexOptions.Compiled, TimeSpan.FromSeconds(100)), Has.Count.EqualTo(1));
             Assert.That(Regex.Matches(serializedCopy, uidPattern, RegexOptions.Compiled, TimeSpan.FromSeconds(100)), Has.Count.EqualTo(1));
+        }
+    }
+
+    [TestCase("ATTACH;FMTTYPE=text/plain:https://example.com/file.txt")]
+    [TestCase("ATTACH:https://example.com/file.txt")]
+    [TestCase("ATTENDEE:mailto:guest@example.com")]
+    [TestCase("ATTENDEE;RSVP=FALSE;CN=Guest:mailto:guest@example.com")]
+    [TestCase("ATTENDEE;SENT-BY=\"mailto:assistant@example.com\":mailto:guest@example.com")]
+    [TestCase("URL;VALUE=URI:https://example.com/")]
+    [TestCase("X-TEST;X-VALUES=first,second:value")]
+    public void CopyCalendarPreservesParameters(string property)
+    {
+        var original = Calendar.Load(string.Join("\r\n", new[]
+        {
+            "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Copy test//EN",
+            "BEGIN:VEVENT", "UID:copy-test", "DTSTAMP:20260101T000000Z",
+            property, "END:VEVENT", "END:VCALENDAR", ""
+        }))!;
+        var serializer = new CalendarSerializer();
+        var beforeCopy = serializer.SerializeToString(original);
+
+        var copy = original.Copy<Calendar>()!;
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(serializer.SerializeToString(copy), Is.EqualTo(beforeCopy));
+            Assert.That(serializer.SerializeToString(original), Is.EqualTo(beforeCopy));
+        }
+    }
+
+    [Test]
+    public void CopyCalendarIsolatesAttachmentParameters()
+    {
+        var original = Calendar.Load(string.Join("\r\n", new[]
+        {
+            "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Copy test//EN",
+            "BEGIN:VEVENT", "UID:copy-test", "DTSTAMP:20260101T000000Z",
+            "ATTACH;FMTTYPE=text/plain:https://example.com/file.txt",
+            "END:VEVENT", "END:VCALENDAR", ""
+        }))!;
+        var copy = original.Copy<Calendar>()!;
+        var originalAttachment = original.Events.First().Attachments[0];
+        var copiedAttachment = copy.Events.First().Attachments[0];
+
+        copiedAttachment.FormatType = "application/pdf";
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(originalAttachment.FormatType, Is.EqualTo("text/plain"));
+            Assert.That(copiedAttachment.FormatType, Is.EqualTo("application/pdf"));
+            Assert.That(copy.Events.First().Properties["ATTACH"]!.Parameters.Get("FMTTYPE"), Is.EqualTo("application/pdf"));
+            Assert.That(copiedAttachment.Calendar, Is.SameAs(copy));
+        }
+    }
+
+    [Test]
+    public void CopyPropertyIsolatesParameterValues()
+    {
+        var original = new CalendarProperty("X-TEST", "value");
+        original.Parameters.Set("X-VALUES", new[] { "first", "second" });
+        var copy = original.Copy<CalendarProperty>()!;
+
+        Assert.That(copy.Parameters.GetMany("X-VALUES"), Is.EquivalentTo(new[] { "first", "second" }));
+        copy.Parameters.GetMany("X-VALUES").Add("third");
+        original.Parameters.GetMany("X-VALUES").Remove("first");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(original.Parameters.GetMany("X-VALUES"), Is.EquivalentTo(new[] { "second" }));
+            Assert.That(copy.Parameters.GetMany("X-VALUES"), Is.EquivalentTo(new[] { "first", "second", "third" }));
+        }
+    }
+
+    [Test]
+    public void CopyDataTypeIsolatesParameters()
+    {
+        var original = new Organizer { CommonName = "Original", Value = new Uri("mailto:host@example.com") };
+        original.Parameters.Set("X-VALUES", new[] { "first", "second" });
+        var copy = original.Copy<Organizer>()!;
+
+        copy.CommonName = "Copy";
+        copy.Parameters.GetMany("X-VALUES").Add("third");
+        original.Parameters.GetMany("X-VALUES").Remove("first");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(original.CommonName, Is.EqualTo("Original"));
+            Assert.That(original.Parameters.GetMany("X-VALUES"), Is.EquivalentTo(new[] { "second" }));
+            Assert.That(copy.Parameters.GetMany("X-VALUES"), Is.EquivalentTo(new[] { "first", "second", "third" }));
+        }
+    }
+
+    [Test]
+    public void CopyAttendeeReplacesCachedParameters()
+    {
+        var original = new Attendee("mailto:guest@example.com");
+        original.Parameters.Set("CN", "Original");
+        original.Parameters.Set("MEMBER", new[] { "mailto:group@example.com" });
+        var copy = new Attendee("mailto:other@example.com")
+        {
+            CommonName = "Other", Rsvp = true, Members = new[] { "mailto:other-group@example.com" }
+        };
+
+        copy.CopyFrom(original);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(copy.CommonName, Is.EqualTo("Original"));
+            Assert.That(copy.Rsvp, Is.False);
+            Assert.That(copy.Parameters.ContainsKey("RSVP"), Is.False);
+            Assert.That(copy.Members, Is.EquivalentTo(original.Members));
+            Assert.That(copy.Value, Is.EqualTo(original.Value));
         }
     }
 
