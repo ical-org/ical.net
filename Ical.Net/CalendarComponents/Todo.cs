@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -17,6 +17,9 @@ namespace Ical.Net.CalendarComponents;
 [DebuggerDisplay("{Summary} - {Status}")]
 public class Todo : RecurringComponent, IAlarmContainer
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new Todo();
+
     private readonly TodoEvaluator _mEvaluator;
 
     /// <summary>

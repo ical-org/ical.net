@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -16,6 +16,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class RecurrenceRule : EncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new RecurrenceRule();
+
     private int? _interval;
     private FrequencyType _frequency;
     private CalDateTime? _until;

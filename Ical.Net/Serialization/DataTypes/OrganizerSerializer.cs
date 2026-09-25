@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -16,6 +16,9 @@ public class OrganizerSerializer : StringSerializer
     public OrganizerSerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(Organizer);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new Organizer();
 
     public override string? SerializeToString(object? obj)
     {

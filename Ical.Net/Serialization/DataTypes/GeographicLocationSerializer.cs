@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -17,6 +17,9 @@ public class GeographicLocationSerializer : EncodableDataTypeSerializer
     public GeographicLocationSerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(GeographicLocation);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new GeographicLocation();
 
     public override string? SerializeToString(object? obj)
     {

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -17,6 +17,9 @@ namespace Ical.Net.DataTypes;
 [DebuggerDisplay("{Latitude};{Longitude}")]
 public class GeographicLocation : EncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new GeographicLocation();
+
     public double Latitude { get; set; }
     public double Longitude { get; set; }
 

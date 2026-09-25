@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -26,6 +26,9 @@ namespace Ical.Net.CalendarComponents;
 /// </remarks>
 public class CalendarEvent : RecurringComponent, IAlarmContainer
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new CalendarEvent();
+
     internal const string ComponentName = "VEVENT";
 
     private void SetProperty<T>(string group, T value)

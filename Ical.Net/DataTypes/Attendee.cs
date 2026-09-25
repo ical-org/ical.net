@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -12,6 +12,9 @@ namespace Ical.Net.DataTypes;
 
 public class Attendee : EncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new Attendee();
+
     private Uri? _sentBy;
     /// <summary> SENT-BY, to indicate who is acting on behalf of the ATTENDEE </summary>
     public virtual Uri? SentBy

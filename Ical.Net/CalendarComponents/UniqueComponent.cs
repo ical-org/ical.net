@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -16,6 +16,9 @@ namespace Ical.Net.CalendarComponents;
 /// </summary>
 public class UniqueComponent : CalendarComponent, IUniqueComponent, IComparable<UniqueComponent>
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new UniqueComponent();
+
     // TODO: Add AddRelationship() public method.
     // This method will add the UID of a related component
     // to the Related_To property, along with any "RELTYPE"

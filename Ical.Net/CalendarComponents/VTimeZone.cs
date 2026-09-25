@@ -20,6 +20,9 @@ namespace Ical.Net.CalendarComponents;
 /// </summary>
 public class VTimeZone : CalendarComponent
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new VTimeZone();
+
     public static VTimeZone FromLocalTimeZone()
         => FromDateTimeZone(DateTimeZoneProviders.Tzdb.GetSystemDefault().Id);
 
@@ -283,6 +286,9 @@ public class VTimeZone : CalendarComponent
 
     private class IntervalRecurrenceRule : RecurrenceRule
     {
+        /// <inheritdoc/>
+        protected override CalendarDataType CreateNew() => new IntervalRecurrenceRule();
+
         // Required for serializer
         public IntervalRecurrenceRule() : base() { }
 

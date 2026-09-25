@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -14,6 +14,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class UtcOffset : EncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new UtcOffset();
+
     public TimeSpan Offset { get; private set; }
 
     public bool Positive => Offset >= TimeSpan.Zero;

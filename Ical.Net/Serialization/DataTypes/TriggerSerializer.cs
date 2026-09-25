@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -16,6 +16,9 @@ public class TriggerSerializer : StringSerializer
     public TriggerSerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(Trigger);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new Trigger();
 
     public override string? SerializeToString(object? obj)
     {

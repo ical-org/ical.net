@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -13,6 +13,9 @@ namespace Ical.Net.CalendarComponents;
 /// </summary>
 public class Journal : RecurringComponent
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new Journal();
+
     public string? Status
     {
         get => Properties.Get<string>(JournalStatus.Key);

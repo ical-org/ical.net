@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -18,6 +18,9 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
     public PeriodListSerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(PeriodList);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new PeriodList();
 
     public override string? SerializeToString(object? obj)
     {

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -18,6 +18,9 @@ public class RequestStatusSerializer : StringSerializer
     public RequestStatusSerializer(SerializationContext ctx) : base(ctx) { }
 
     public override Type TargetType => typeof(RequestStatus);
+
+    /// <inheritdoc/>
+    protected override ICalendarDataType CreateTargetInstance() => new RequestStatus();
 
     public override string? SerializeToString(object? obj)
     {

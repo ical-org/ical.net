@@ -22,6 +22,9 @@ namespace Ical.Net;
 
 public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new Calendar();
+
     public static Calendar? Load(string iCalendarString)
         => CalendarCollection.Load(new StringReader(iCalendarString)).SingleOrDefault();
 
@@ -343,14 +346,11 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </example>
     /// <typeparam name="T">The type of object to create</typeparam>
     /// <returns>An object of the type specified</returns>
-    public T Create<T>() where T : ICalendarComponent
+    public T Create<T>() where T : ICalendarComponent, new()
     {
-        if (Activator.CreateInstance(typeof(T), true) is ICalendarObject cal)
-        {
-            this.AddChild(cal);
-            return (T) cal;
-        }
-        throw new ArgumentException($"Creating {typeof(T).FullName} failed.");
+        var cal = new T();
+        this.AddChild(cal);
+        return cal;
     }
 
     public virtual void MergeWith(IMergeable obj)

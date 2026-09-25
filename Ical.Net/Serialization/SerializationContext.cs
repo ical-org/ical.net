@@ -1,10 +1,11 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Ical.Net.Serialization;
 
@@ -41,11 +42,13 @@ public class SerializationContext
     public SerializationContext()
     {
         // Add some services by default
-        SetService(new SerializerFactory());
-        SetService(new CalendarComponentFactory());
-        SetService(new DataTypeMapper());
-        SetService(new EncodingStack());
-        SetService(new EncodingProvider(this));
+        // Registered directly against the provider rather than through the overridable
+        // AddService, so a derived type cannot intercept these before its own constructor runs.
+        _mServiceProvider.AddService<ISerializerFactory>(new SerializerFactory());
+        _mServiceProvider.AddService(new CalendarComponentFactory());
+        _mServiceProvider.AddService(new DataTypeMapper());
+        _mServiceProvider.AddService(new EncodingStack());
+        _mServiceProvider.AddService<IEncodingProvider>(new EncodingProvider(this));
     }
 
     public virtual void Push(object? item)
@@ -92,9 +95,24 @@ public class SerializationContext
 
     public virtual void SetService(string name, object obj) => _mServiceProvider.SetService(name, obj);
 
+    [Obsolete("Use AddService<TService>(TService) instead. This overload reflects over the implemented interfaces and is not trimming- or AOT-safe.")]
+    [RequiresUnreferencedCode("Reflects over the interfaces implemented by the argument's runtime type, which may be trimmed away.")]
     public virtual void SetService(object obj) => _mServiceProvider.SetService(obj);
 
+    /// <summary>
+    /// Registers <paramref name="impl"/> under exactly <typeparamref name="TService"/>, replacing
+    /// any existing registration for that type.
+    /// </summary>
+    public virtual void AddService<TService>(TService impl) where TService : notnull => _mServiceProvider.AddService(impl);
+
+    [Obsolete("Use RemoveService<TService>() instead. This overload reflects over the implemented interfaces and is not trimming- or AOT-safe.")]
+    [RequiresUnreferencedCode("Reflects over the interfaces implemented by the given type, which may be trimmed away.")]
     public virtual void RemoveService(Type type) => _mServiceProvider.RemoveService(type);
 
     public virtual void RemoveService(string name) => _mServiceProvider.RemoveService(name);
+
+    /// <summary>
+    /// Removes the service registered under exactly <typeparamref name="TService"/>.
+    /// </summary>
+    public virtual void RemoveService<TService>() => _mServiceProvider.RemoveService<TService>();
 }

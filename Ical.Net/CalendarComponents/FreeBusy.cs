@@ -16,6 +16,9 @@ namespace Ical.Net.CalendarComponents;
 
 public class FreeBusy : UniqueComponent, IMergeable
 {
+    /// <inheritdoc/>
+    protected override CalendarObjectBase CreateNew() => new FreeBusy();
+
     public static FreeBusy? Create(ICalendarObject obj, DateTimeZone timeZone, FreeBusy freeBusyRequest, EvaluationOptions? options = null)
     {
         if (obj is not IGetOccurrencesTyped occ)

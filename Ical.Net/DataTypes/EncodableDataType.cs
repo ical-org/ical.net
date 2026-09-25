@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -10,6 +10,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class EncodableDataType : CalendarDataType, IEncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new EncodableDataType();
+
     public virtual string? Encoding
     {
         get => Parameters.Get("ENCODING");

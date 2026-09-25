@@ -14,6 +14,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class Trigger : EncodableDataType
 {
+    /// <inheritdoc/>
+    protected override CalendarDataType CreateNew() => new Trigger();
+
     private CalDateTime? _mDateTime;
     private Duration? _mDuration;
     private string _mRelated = TriggerRelation.Start;

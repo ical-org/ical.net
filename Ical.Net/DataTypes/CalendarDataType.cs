@@ -4,8 +4,10 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using Ical.Net.Proxies;
+using Ical.Net.Serialization;
 using NodaTime;
 
 namespace Ical.Net.DataTypes;
@@ -13,7 +15,7 @@ namespace Ical.Net.DataTypes;
 /// <summary>
 /// An abstract class from which all iCalendar data types inherit.
 /// </summary>
-public abstract class CalendarDataType : ICalendarDataType
+public abstract class CalendarDataType : ICalendarDataType, IDeserializationCallbacks
 {
     // Well be set with Initialize()
     private IParameterCollection _parameters = null!;
@@ -32,17 +34,9 @@ public abstract class CalendarDataType : ICalendarDataType
         _proxy = new ParameterCollectionProxy(_parameters);
     }
 
-    [OnDeserializing]
-    internal void DeserializingInternal(StreamingContext context)
-    {
-        OnDeserializing(context);
-    }
+    void IDeserializationCallbacks.OnDeserializing(StreamingContext context) => OnDeserializing(context);
 
-    [OnDeserialized]
-    internal void DeserializedInternal(StreamingContext context)
-    {
-        OnDeserialized(context);
-    }
+    void IDeserializationCallbacks.OnDeserialized(StreamingContext context) => OnDeserialized(context);
 
     protected virtual void OnDeserializing(StreamingContext context)
     {
@@ -153,17 +147,36 @@ public abstract class CalendarDataType : ICalendarDataType
     }
 
     /// <summary>
+    /// Creates a new, empty instance of the concrete runtime type.
+    /// </summary>
+    /// <remarks>
+    /// Derived types must override this with a direct <c>new</c>, which is what keeps
+    /// <see cref="Copy{T}"/> free of reflection and therefore trimming- and NativeAOT-safe. The
+    /// base implementation falls back to <see cref="Activator"/>, which needs the concrete type's
+    /// parameterless constructor to survive trimming; under NativeAOT a type relying on it fails
+    /// with a <see cref="MissingMethodException"/>.
+    /// </remarks>
+    /// <returns>A new instance of the runtime type of this object.</returns>
+    protected virtual CalendarDataType? CreateNew() => CreateNewByActivator();
+
+    [UnconditionalSuppressMessage("Trimming", "IL2072",
+        Justification = "Fallback for derived types outside this library that do not override "
+            + "CreateNew(). Every type in this library overrides it, so the trimmer is never asked "
+            + "to preserve a library type's constructor on account of this call.")]
+    private CalendarDataType? CreateNewByActivator()
+        => Activator.CreateInstance(GetType(), true) as CalendarDataType;
+
+    /// <summary>
     /// Creates a deep copy of the <see cref="T"/> object.
     /// </summary>
     /// <returns>The copy of the <see cref="T"/> object.</returns>
     public virtual T? Copy<T>()
     {
-        var type = GetType();
-        var obj = Activator.CreateInstance(type, true) as ICopyable;
+        var obj = CreateNew();
 
         if (obj is not T o) return default(T);
 
-        obj.CopyFrom(this);
+        ((ICopyable) obj).CopyFrom(this);
         return o;
     }
 
