@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net;
 
@@ -74,7 +75,21 @@ public class CalendarProperty : CalendarObject, ICalendarProperty
             return;
         }
 
+        Parameters = new ParameterList();
+        foreach (var parameter in p.Parameters)
+        {
+            Parameters.Add(parameter.Copy<CalendarParameter>()!);
+        }
+        Parameters.SetParent(this);
+
         SetValue(p.Values);
+        foreach (var value in Values.OfType<ICalendarDataType>())
+        {
+            if (ReferenceEquals(value.AssociatedObject, p))
+            {
+                value.AssociatedObject = this;
+            }
+        }
     }
 
     public virtual IEnumerable<object?> Values => _values;

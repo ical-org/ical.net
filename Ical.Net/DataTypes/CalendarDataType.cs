@@ -102,7 +102,7 @@ public abstract class CalendarDataType : ICalendarDataType
         get => _associatedObject;
         set
         {
-            if (Equals(_associatedObject, value))
+            if (ReferenceEquals(_associatedObject, value))
             {
                 return;
             }
@@ -148,8 +148,14 @@ public abstract class CalendarDataType : ICalendarDataType
         }
 
         _associatedObject = dt.AssociatedObject;
+        _parameters = new ParameterList();
+        foreach (var parameter in dt.Parameters)
+        {
+            _parameters.Add(parameter.Copy<CalendarParameter>()!);
+        }
+
+        _proxy.SetProxiedObject(_parameters);
         _proxy.SetParent(_associatedObject);
-        _proxy.SetProxiedObject(dt.Parameters);
     }
 
     /// <summary>
