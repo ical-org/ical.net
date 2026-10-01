@@ -15,7 +15,7 @@ public partial class CalendarSerializer
 {
     public static string Serialize<T>(
         T component,
-        CalendarSerializerOptions? options = default) where T : CalendarComponent
+        CalendarSerializerOptions? options = null) where T : CalendarComponent
     {
         using var memory = new MemoryStream();
         Serialize(memory, component, options);
@@ -31,7 +31,7 @@ public partial class CalendarSerializer
     public static void Serialize(
         Stream utf8Destination,
         CalendarComponent component,
-        CalendarSerializerOptions? options = default)
+        CalendarSerializerOptions? options = null)
     {
         var writer = new CalendarWriter(utf8Destination);
 

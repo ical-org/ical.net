@@ -41,8 +41,7 @@ internal class TriggerConverter : CalendarPropertyConverter<Trigger>
         }
         else if (value.Duration is { } duration)
         {
-            // Duration is default
-            // writer.WriteParameter("VALUE", "DURATION");
+            // DURATION is the default VALUE type
             writer.WriteValue(duration.ToBasicIso());
         }
         else

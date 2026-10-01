@@ -74,7 +74,7 @@ internal class PeriodList : EncodableDataType, IList<Period>
     /// <returns></returns>
     public override string? ToString() => string.Join(",", this.Select(PeriodOrDurationToString));
 
-    private string PeriodOrDurationToString(Period period) => period.HasEndOrDuration
+    private static string PeriodOrDurationToString(Period period) => period.HasEndOrDuration
         ? period.ToBasicIso()
         : period.StartTime.ToBasicIso();
     

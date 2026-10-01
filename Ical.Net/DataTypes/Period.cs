@@ -237,12 +237,6 @@ public class Period : EncodableDataType
         // Serialize the start time
         sb.Append(StartTime.ToBasicIso());
 
-        // RFC 5545 section 3.6.1:
-        // For cases where a "VEVENT" calendar component
-        // specifies a "DTSTART" property with a DATE value type but no
-        // "DTEND" nor "DURATION" property, the event’s duration is taken to
-        // be one day:
-
         if (EndTime is { } endtime)
         {
             // Serialize the end date and time...
@@ -257,10 +251,13 @@ public class Period : EncodableDataType
         }
         else
         {
-            // TODO: Previous behavior allowed start only:
-            // >  else, just the start time gets serialized to comply with the RFC 5545 section 3.6.1
+            // A start-only Period is allowed because Period is currently being
+            // used for a dual purpose instead of just the PERIOD value type.
+            // A PeriodList only stores a list of Period but needs to be able to
+            // handle a "period type" of DATE.
             //
-            // Where in the RFC is this allowed?
+            // IF this were only representing the PERIOD value type, it
+            // should throw an exception when an end or duration is missing.
             //throw new InvalidOperationException("Period is missing an end or duration");
         }
 

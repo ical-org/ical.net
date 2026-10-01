@@ -20,12 +20,15 @@ public sealed class CalendarSerializerOptions
     /// When disabled, invalid properties will be ignored.
     ///
     /// <para/>
-    /// Default value is <see cref="true"/>.
+    /// Default value is <see langword="false"/>.
     /// </summary>
     public bool StrictParsing { get; set; }
 
     /// <summary>
     /// When true, component properties are serialized alphabetically by name.
+    ///
+    /// <para/>
+    /// Default value is <see langword="true"/>.
     /// </summary>
     public bool OrderComponentProperties { get; set; } = true;
 
