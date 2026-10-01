@@ -13,12 +13,14 @@ namespace Ical.Net.Serialization.Converters;
 
 internal class FreeBusyConverter : CalendarPropertyConverter<FreeBusyEntry>
 {
+    private const string Fbtype = "FBTYPE";
+
     public override FreeBusyEntry? Read(CalendarReader reader, IParameterCollection parameters)
     {
         // Date values should always be in UTC
         if (reader.TryGetPeriod(null, out var period))
         {
-            var fbType = parameters.Get("FBTYPE") switch
+            var fbType = parameters.Get(Fbtype) switch
             {
                 "FREE" => FreeBusyStatus.Free,
                 "BUSY-UNAVAILABLE" => FreeBusyStatus.BusyUnavailable,
@@ -37,13 +39,13 @@ internal class FreeBusyConverter : CalendarPropertyConverter<FreeBusyEntry>
         switch (value.Status)
         {
             case FreeBusyStatus.BusyTentative:
-                writer.WriteParameter("FBTYPE", "BUSY-TENTATIVE");
+                writer.WriteParameter(Fbtype, "BUSY-TENTATIVE");
                 break;
             case FreeBusyStatus.BusyUnavailable:
-                writer.WriteParameter("FBTYPE", "BUSY-UNAVAILABLE");
+                writer.WriteParameter(Fbtype, "BUSY-UNAVAILABLE");
                 break;
             case FreeBusyStatus.Free:
-                writer.WriteParameter("FBTYPE", "FREE");
+                writer.WriteParameter(Fbtype, "FREE");
                 break;
         }
 
@@ -57,7 +59,7 @@ internal class FreeBusyConverter : CalendarPropertyConverter<FreeBusyEntry>
     {
         // Use parameters from value instead
         var parametersExceptValue = parameters
-            .Where(x => !x.Name.Equals("FBTYPE", StringComparison.OrdinalIgnoreCase));
+            .Where(x => !x.Name.Equals(Fbtype, StringComparison.OrdinalIgnoreCase));
 
         base.WriteParameters(writer, parametersExceptValue, container);
     }

@@ -54,6 +54,6 @@ public abstract class CalendarPropertyConverter<T> : CalendarPropertyConverter
     internal sealed override void WriteObject(CalendarWriter writer, object value)
         => Write(writer, (T)value);
 
-    internal sealed override void WriteObjectParameters(CalendarWriter writer, ICalendarParameterCollectionContainer value)
-        => WriteParameters(writer, value.Parameters, value);
+    internal sealed override void WriteObjectParameters(CalendarWriter writer, ICalendarParameterCollectionContainer container)
+        => WriteParameters(writer, container.Parameters, container);
 }

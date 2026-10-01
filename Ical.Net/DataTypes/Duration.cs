@@ -171,8 +171,7 @@ public struct Duration
         {
             DurationParseResult.Success => duration,
             DurationParseResult.NoMatch => null,
-            DurationParseResult.Invalid or _ =>
-                throw new FormatException("String value is not in the ISO 8601 basic format for DURATION")
+            _ => throw new FormatException("String value is not in the ISO 8601 basic format for DURATION")
         };
     }
 

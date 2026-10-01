@@ -80,13 +80,13 @@ public class SerializationPerfTests
     [Benchmark]
     public void BenchmarkSerializeCalendar2() => CalendarSerializer.Serialize(simpleCalendar);
 
-    private static Calendar simpleCalendar = CreateSimpleCalendar();
+    private static readonly Calendar simpleCalendar = CreateSimpleCalendar();
 
     private static Calendar CreateSimpleCalendar()
     {
         const string timeZoneId = "America/New_York";
 
-        var simpleCalendar = new Calendar();
+        var calendar = new Calendar();
         var calendarEvent = new CalendarEvent
         {
             Start = CalDateTime.FromDateTime(DateTime.Now, timeZoneId),
@@ -97,8 +97,8 @@ public class SerializationPerfTests
             }
         };
 
-        simpleCalendar.Events.Add(calendarEvent);
-        return simpleCalendar;
+        calendar.Events.Add(calendarEvent);
+        return calendar;
     }
 
     private static Calendar CreateMultibyteCalendar()

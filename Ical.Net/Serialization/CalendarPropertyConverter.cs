@@ -57,8 +57,11 @@ public abstract class CalendarPropertyConverter
             calendarDataType.AssociatedObject = property;
         }
 
-        // TODO: What if a custom value is List<string> that should
-        // not be enumerated like this?
+        // Set the property value. Since all calendar properties store
+        // the value within a list, there needs to be special handling
+        // for list values. A value can also implement IEnumerable
+        // without being a "list value", so the converter needs to
+        // define if a property is a list value or not.
         if (IsListValue && propertyValue is IEnumerable valueList)
         {
             foreach (var s in valueList)

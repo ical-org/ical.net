@@ -249,6 +249,7 @@ public sealed class CalendarReader
     /// Unfolds the content line within the buffer.
     /// </summary>
     /// <param name="buffer">A buffer containing an entire content line.</param>
+    /// <param name="endOfStream">True if there is no more data to buffer.</param>
     /// <param name="lineCount">The number of lines before unfolding.</param>
     /// <returns>The length of the unfolded content line.</returns>
     private static int UnfoldInPlace(Span<byte> buffer, bool endOfStream, out int lineCount)
