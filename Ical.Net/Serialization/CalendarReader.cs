@@ -28,7 +28,8 @@ internal static class CalendarReaderExtensions
 
 public sealed class CalendarReader
 {
-    private byte[] _buffer = new byte[256];
+    private const int DefaultBufferSize = 16 * 1024;
+    private byte[] _buffer = new byte[DefaultBufferSize];
     private int _bufferStart = 0;
     private int _bufferLength = 0;
 
