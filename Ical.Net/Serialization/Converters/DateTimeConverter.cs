@@ -45,7 +45,8 @@ internal class DateTimeConverter : CalendarPropertyConverter<CalDateTime>
         IEnumerable<CalendarParameter> parameters,
         ICalendarParameterCollectionContainer container)
     {
-        // Use TZID from CalDateTime instead
+        // Exclude TZID and VALUE parameters because they are
+        // written based on the property value.
         var parametersExceptTzid = parameters.Where(x =>
             !x.Name.Equals("TZID", StringComparison.OrdinalIgnoreCase)
             && !x.Name.Equals("VALUE", StringComparison.OrdinalIgnoreCase));

@@ -66,7 +66,8 @@ internal class PeriodListConverter : CalendarPropertyConverter<PeriodList>
         IEnumerable<CalendarParameter> parameters,
         ICalendarParameterCollectionContainer container)
     {
-        // Use parameters from PeriodList value instead
+        // Exclude TZID and VALUE parameters because they are
+        // written based on the property value.
         var parametersExceptValue = parameters
             .Where(x => !x.Name.Equals("TZID", StringComparison.OrdinalIgnoreCase)
                 && !x.Name.Equals("VALUE", StringComparison.OrdinalIgnoreCase));
