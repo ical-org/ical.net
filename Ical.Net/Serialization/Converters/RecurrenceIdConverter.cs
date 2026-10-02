@@ -55,7 +55,8 @@ internal class RecurrenceIdConverter : CalendarPropertyConverter<RecurrenceIdent
 
     public override void WriteParameters(CalendarWriter writer, IEnumerable<CalendarParameter> parameters, ICalendarParameterCollectionContainer container)
     {
-        // Set VALUE based on value
+        // Exclude VALUE parameter because it is
+        // written based on the property value.
         parameters = parameters
             .Where(x => !x.Name.Equals("VALUE", StringComparison.OrdinalIgnoreCase));
 

@@ -57,7 +57,8 @@ internal class FreeBusyConverter : CalendarPropertyConverter<FreeBusyEntry>
         IEnumerable<CalendarParameter> parameters,
         ICalendarParameterCollectionContainer container)
     {
-        // Use parameters from value instead
+        // Exclude FBTYPE parameter because it is written
+        // based on the property value.
         var parametersExceptValue = parameters
             .Where(x => !x.Name.Equals(Fbtype, StringComparison.OrdinalIgnoreCase));
 

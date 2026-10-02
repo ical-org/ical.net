@@ -58,7 +58,8 @@ internal class AttachmentConverter : CalendarPropertyConverter<Attachment>
         IEnumerable<CalendarParameter> parameters,
         ICalendarParameterCollectionContainer container)
     {
-        // Set VALUE based on value instead
+        // Exclude VALUE and ENCODING parameters because they are
+        // written based on the property value.
         var parametersExceptValue = parameters
             .Where(x => !x.Name.Equals("VALUE", StringComparison.OrdinalIgnoreCase)
                 && !x.Name.Equals("ENCODING", StringComparison.OrdinalIgnoreCase));
