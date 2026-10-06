@@ -1119,7 +1119,7 @@ internal sealed class RecurrenceRuleEvaluator
             foreach (var month in _rule.Months)
             {
                 var daysInMonth = CalendarSystem.Iso.GetDaysInMonth(value.Year, month);
-                var day = Math.Min(daysInMonth, value.Day);
+                var day = Math.Min(daysInMonth, _zonedReferenceDate.Day);
 
                 yield return new LocalDate(value.Year, month, day)
                     .At(value.TimeOfDay)
