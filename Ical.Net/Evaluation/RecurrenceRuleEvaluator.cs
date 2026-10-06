@@ -756,10 +756,10 @@ internal sealed class RecurrenceRuleEvaluator
 
         // Get the first date that matches a week day
         var i = Array.IndexOf(weekDays, value.DayOfWeek);
-        if (i < 0)
+        while (i < 0)
         {
-            value = value.Next(weekDays[0]);
-            i = 0;
+            value = value.PlusDays(1);
+            i = Array.IndexOf(weekDays, value.DayOfWeek);
         }
 
         while (true)
