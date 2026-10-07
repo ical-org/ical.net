@@ -634,7 +634,7 @@ internal sealed class RecurrenceRuleEvaluator
     private IEnumerable<ZonedDateTime> ExpandDayFromWeekWithoutOffsets()
     {
         // The value represents a week OR a week within the month
-        foreach (var value in ByMonth())
+        foreach (var value in Expand())
         {
             var weekYear = _weekYearRule.GetWeekYear(value.Date);
             var week = _weekYearRule.GetWeekOfWeekYear(value.Date);
@@ -644,7 +644,7 @@ internal sealed class RecurrenceRuleEvaluator
                 var result = _weekYearRule.GetLocalDate(weekYear, week, day);
 
                 // Limit by month if specified
-                if (_rule.ByMonth && result.Month != value.Month)
+                if (_rule.ByMonth && !_rule.Months.Contains(result.Month))
                 {
                     continue;
                 }
