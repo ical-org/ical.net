@@ -630,26 +630,26 @@ internal sealed class RecurrenceRuleEvaluator
     /// Expand by day of week. Offsets are not supported.
     /// Only used for WEEKLY.
     /// </summary>
-    /// <returns></returns>
     private IEnumerable<ZonedDateTime> ExpandDayFromWeekWithoutOffsets()
     {
-        // The value represents a week OR a week within the month
+        // Use Expand() directly instead of going through ByMonth()
+        // because BYMONTH must consider the entire week instead of
+        // just the reference week day. Expand() can be used directly
+        // because frequency MUST be WEEKLY, so BYMONTH is the only
+        // other rule to handle at this point.
         foreach (var value in Expand())
         {
-            var weekYear = _weekYearRule.GetWeekYear(value.Date);
-            var week = _weekYearRule.GetWeekOfWeekYear(value.Date);
+            var start = value.Date.CurrentOrPrevious(_firstDayOfWeek);
+            var end = start.PlusWeeks(1);
 
-            foreach (var day in _rule.DaysOfWeekWithoutOffset)
+            if (_rule.ByMonth && !ConstrainWeekByMonth(ref start, ref end))
             {
-                var result = _weekYearRule.GetLocalDate(weekYear, week, day);
+                continue;
+            }
 
-                // Limit by month if specified
-                if (_rule.ByMonth && !_rule.Months.Contains(result.Month))
-                {
-                    continue;
-                }
-
-                yield return result.At(value.TimeOfDay).InZoneLeniently(value.Zone);
+            foreach (var day in ExpandDayOfWeekWithoutOffset(start, end))
+            {
+                yield return day.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
             }
         }
     }
@@ -661,16 +661,60 @@ internal sealed class RecurrenceRuleEvaluator
             var start = value.Date.CurrentOrPrevious(_firstDayOfWeek);
             var end = start.PlusWeeks(1);
 
+            if (_rule.ByMonth && !ConstrainWeekByMonth(ref start, ref end))
+            {
+                continue;
+            }
+
             foreach (var day in ExpandDayFromRange(start, end))
             {
-                if (_rule.ByMonth && !_rule.Months.Contains(day.Month))
-                {
-                    continue;
-                }
-
                 yield return day.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
             }
         }
+    }
+
+    /// <summary>
+    /// Constrains the date range of a week to fit within the BYMONTH values.
+    /// The resulting range can still span two months if both months are in
+    /// the list of BYMONTH values.
+    /// </summary>
+    /// <param name="start">Inclusive start date of the range.</param>
+    /// <param name="end">Exclusive end date of the range.</param>
+    /// <returns>True if the range is within the BYMONTH values.</returns>
+    private bool ConstrainWeekByMonth(ref LocalDate start, ref LocalDate end)
+    {
+        var months = _rule.Months;
+
+        // Get the month of the last included day
+        var endMonth = end.PlusDays(-1).Month;
+
+        var startIndex = months.IndexOf(start.Month);
+
+        // Skip end check if month is the same
+        var endIndex = endMonth == start.Month
+            ? startIndex : months.IndexOf(endMonth);
+
+        // Stop if entire week is outside of the BYMONTH values
+        if (startIndex == -1 && endIndex == -1)
+        {
+            return false;
+        }
+
+        // If one end is outside of the BYMONTH values, then shrink
+        // the range to the next/previous month.
+        if (startIndex == -1)
+        {
+            start = start.PlusMonths(1).AtStartOfMonth();
+        }
+        else if (endIndex == -1)
+        {
+            // Shrink the end of the week to the start of the
+            // same month because the final end value needs to
+            // be the exclusive end anyway.
+            end = end.AtStartOfMonth();
+        }
+
+        return true;
     }
 
     private IEnumerable<ZonedDateTime> ExpandDayFromMonth()

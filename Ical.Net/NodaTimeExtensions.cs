@@ -74,6 +74,8 @@ public static class NodaTimeExtensions
         return new LocalDate(year, month, Math.Min(targetDay, daysInMonth));
     }
 
+    internal static LocalDate AtStartOfMonth(this LocalDate value) => new(value.Year, value.Month, 1);
+
     /// <summary>
     /// Returns the same date if the day of week is already
     /// the target day of week, else the next date matching
