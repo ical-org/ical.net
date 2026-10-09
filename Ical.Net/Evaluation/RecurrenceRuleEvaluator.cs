@@ -709,14 +709,12 @@ internal sealed class RecurrenceRuleEvaluator
     /// <returns></returns>
     private IEnumerable<LocalDate> ExpandDayFromRange(LocalDate start, LocalDate end)
     {
-        var daysWithoutOffset = _rule.DaysOfWeekWithoutOffset;
-
         // Expanding with and without offsets is done separately
         // because offsets require extra work that can be skipped
         // if there are no offsets.
         if (!_rule.HasByDayOffsets)
         {
-            return ExpandDayOfWeekWithoutOffset(start, end, daysWithoutOffset);
+            return ExpandDayOfWeekWithoutOffset(start, end);
         }
 
         // BYDAY offsets are a finite list of days that is likely small,
@@ -724,11 +722,11 @@ internal sealed class RecurrenceRuleEvaluator
         // and then sort instead of generating the days in order.
         IEnumerable<LocalDate> results = GetDayOfWeekWithOffset(start, end, _rule.DaysOfWeekWithOffset);
 
-        if (daysWithoutOffset.Length > 0)
+        if (_rule.DaysOfWeekWithoutOffset.Length > 0)
         {
             // There are days with and without offsets,
             // so they need to be merged together.
-            results = ExpandDayOfWeekWithoutOffset(start, end, daysWithoutOffset)
+            results = ExpandDayOfWeekWithoutOffset(start, end)
                 .OrderedMerge(results);
         }
 
@@ -743,24 +741,17 @@ internal sealed class RecurrenceRuleEvaluator
     /// </summary>
     /// <param name="start">Inclusive start of the range</param>
     /// <param name="end">Exclusive end of the range</param>
-    /// <param name="weekDays">Days of the week. Values MUST be sorted by first day of week.</param>
     /// <returns></returns>
-    private static IEnumerable<LocalDate> ExpandDayOfWeekWithoutOffset(
+    private IEnumerable<LocalDate> ExpandDayOfWeekWithoutOffset(
         LocalDate start,
-        LocalDate end,
-        IsoDayOfWeek[] weekDays)
+        LocalDate end)
     {
-        Debug.Assert(weekDays.Length > 0);
+        _rule.GetDaysOfWeekStartingAt(start.DayOfWeek, out var daysOfWeek, out var i);
 
-        var value = start;
+        Debug.Assert(daysOfWeek.Length > 0);
 
-        // Get the first date that matches a week day
-        var i = Array.IndexOf(weekDays, value.DayOfWeek);
-        while (i < 0)
-        {
-            value = value.PlusDays(1);
-            i = Array.IndexOf(weekDays, value.DayOfWeek);
-        }
+        // Start at the determined day of week
+        var value = start.CurrentOrNext(daysOfWeek[i]);
 
         while (true)
         {
@@ -771,8 +762,8 @@ internal sealed class RecurrenceRuleEvaluator
 
             yield return value;
 
-            i = (i + 1) % weekDays.Length;
-            value = value.Next(weekDays[i]);
+            i = (i + 1) % daysOfWeek.Length;
+            value = value.Next(daysOfWeek[i]);
         }
     }
 

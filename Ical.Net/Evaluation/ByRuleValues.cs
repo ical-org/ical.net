@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -187,6 +187,44 @@ internal sealed class ByRuleValues
     }
 
     /// <summary>
+    /// Gets the <see cref="DaysOfWeekWithoutOffset"/> and the
+    /// index to start at according to the given start day of week.
+    /// </summary>
+    /// <remarks>
+    /// This is essentially an enumerator of the days of week
+    /// starting at an offset, but this avoids the allocation of
+    /// an enumerator or the extra code of adding a value enumerator
+    /// for just one use.
+    /// </remarks>
+    public void GetDaysOfWeekStartingAt(
+        IsoDayOfWeek startDayOfWeek,
+        out IsoDayOfWeek[] daysOfWeek,
+        out int startIndex)
+    {
+        daysOfWeek = DaysOfWeekWithoutOffset;
+
+        _dayOfWeekComparer ??= new DayOfWeekComparer(_firstDayOfWeek);
+
+        // Find the first day of week that matches start
+        // or the next matching day of week.
+        int i;
+        for (i = 0; i < daysOfWeek.Length; i++)
+        {
+            // The list is sorted, so this
+            // must also use the comparer that sorted it.
+            if (_dayOfWeekComparer.Compare(daysOfWeek[i], startDayOfWeek) >= 0)
+            {
+                startIndex = i;
+                return;
+            }
+        }
+
+        // If no days were ahead of start, then the
+        // first option must be the next day of week.
+        startIndex = 0;
+    }
+
+    /// <summary>
     /// Get normalized weeks based on the number of weeks in
     /// a week year.
     /// </summary>
@@ -255,9 +293,9 @@ internal sealed class ByRuleValues
         var normalizedDays = byDay
             .Where(x => x.Offset == null)
             .Select(x => x.DayOfWeek)
+            .OrderBy(x => x, dayOfWeekComparer)
+            .OrderedDistinct()
             .ToArray();
-
-        Array.Sort(normalizedDays, dayOfWeekComparer);
 
         return normalizedDays;
     }
