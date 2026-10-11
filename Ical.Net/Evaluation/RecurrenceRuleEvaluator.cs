@@ -630,26 +630,26 @@ internal sealed class RecurrenceRuleEvaluator
     /// Expand by day of week. Offsets are not supported.
     /// Only used for WEEKLY.
     /// </summary>
-    /// <returns></returns>
     private IEnumerable<ZonedDateTime> ExpandDayFromWeekWithoutOffsets()
     {
-        // The value represents a week OR a week within the month
+        // Use Expand() directly instead of going through ByMonth()
+        // because BYMONTH must consider the entire week instead of
+        // just the reference week day. Expand() can be used directly
+        // because frequency MUST be WEEKLY, so BYMONTH is the only
+        // other rule to handle at this point.
         foreach (var value in Expand())
         {
-            var weekYear = _weekYearRule.GetWeekYear(value.Date);
-            var week = _weekYearRule.GetWeekOfWeekYear(value.Date);
+            var start = value.Date.CurrentOrPrevious(_firstDayOfWeek);
+            var end = start.PlusWeeks(1);
 
-            foreach (var day in _rule.DaysOfWeekWithoutOffset)
+            if (_rule.ByMonth && !ConstrainWeekByMonth(ref start, ref end))
             {
-                var result = _weekYearRule.GetLocalDate(weekYear, week, day);
+                continue;
+            }
 
-                // Limit by month if specified
-                if (_rule.ByMonth && !_rule.Months.Contains(result.Month))
-                {
-                    continue;
-                }
-
-                yield return result.At(value.TimeOfDay).InZoneLeniently(value.Zone);
+            foreach (var day in ExpandDayOfWeekWithoutOffset(start, end))
+            {
+                yield return day.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
             }
         }
     }
@@ -661,16 +661,60 @@ internal sealed class RecurrenceRuleEvaluator
             var start = value.Date.CurrentOrPrevious(_firstDayOfWeek);
             var end = start.PlusWeeks(1);
 
+            if (_rule.ByMonth && !ConstrainWeekByMonth(ref start, ref end))
+            {
+                continue;
+            }
+
             foreach (var day in ExpandDayFromRange(start, end))
             {
-                if (_rule.ByMonth && !_rule.Months.Contains(day.Month))
-                {
-                    continue;
-                }
-
                 yield return day.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
             }
         }
+    }
+
+    /// <summary>
+    /// Constrains the date range of a week to fit within the BYMONTH values.
+    /// The resulting range can still span two months if both months are in
+    /// the list of BYMONTH values.
+    /// </summary>
+    /// <param name="start">Inclusive start date of the range.</param>
+    /// <param name="end">Exclusive end date of the range.</param>
+    /// <returns>True if the range is within the BYMONTH values.</returns>
+    private bool ConstrainWeekByMonth(ref LocalDate start, ref LocalDate end)
+    {
+        var months = _rule.Months;
+
+        // Get the month of the last included day
+        var endMonth = end.PlusDays(-1).Month;
+
+        var startIndex = months.IndexOf(start.Month);
+
+        // Skip end check if month is the same
+        var endIndex = endMonth == start.Month
+            ? startIndex : months.IndexOf(endMonth);
+
+        // Stop if entire week is outside of the BYMONTH values
+        if (startIndex == -1 && endIndex == -1)
+        {
+            return false;
+        }
+
+        // If one end is outside of the BYMONTH values, then shrink
+        // the range to the next/previous month.
+        if (startIndex == -1)
+        {
+            start = start.PlusMonths(1).AtStartOfMonth();
+        }
+        else if (endIndex == -1)
+        {
+            // Shrink the end of the week to the start of the
+            // same month because the final end value needs to
+            // be the exclusive end anyway.
+            end = end.AtStartOfMonth();
+        }
+
+        return true;
     }
 
     private IEnumerable<ZonedDateTime> ExpandDayFromMonth()
@@ -709,14 +753,12 @@ internal sealed class RecurrenceRuleEvaluator
     /// <returns></returns>
     private IEnumerable<LocalDate> ExpandDayFromRange(LocalDate start, LocalDate end)
     {
-        var daysWithoutOffset = _rule.DaysOfWeekWithoutOffset;
-
         // Expanding with and without offsets is done separately
         // because offsets require extra work that can be skipped
         // if there are no offsets.
         if (!_rule.HasByDayOffsets)
         {
-            return ExpandDayOfWeekWithoutOffset(start, end, daysWithoutOffset);
+            return ExpandDayOfWeekWithoutOffset(start, end);
         }
 
         // BYDAY offsets are a finite list of days that is likely small,
@@ -724,11 +766,11 @@ internal sealed class RecurrenceRuleEvaluator
         // and then sort instead of generating the days in order.
         IEnumerable<LocalDate> results = GetDayOfWeekWithOffset(start, end, _rule.DaysOfWeekWithOffset);
 
-        if (daysWithoutOffset.Length > 0)
+        if (_rule.DaysOfWeekWithoutOffset.Length > 0)
         {
             // There are days with and without offsets,
             // so they need to be merged together.
-            results = ExpandDayOfWeekWithoutOffset(start, end, daysWithoutOffset)
+            results = ExpandDayOfWeekWithoutOffset(start, end)
                 .OrderedMerge(results);
         }
 
@@ -743,24 +785,17 @@ internal sealed class RecurrenceRuleEvaluator
     /// </summary>
     /// <param name="start">Inclusive start of the range</param>
     /// <param name="end">Exclusive end of the range</param>
-    /// <param name="weekDays">Days of the week. Values MUST be sorted by first day of week.</param>
     /// <returns></returns>
-    private static IEnumerable<LocalDate> ExpandDayOfWeekWithoutOffset(
+    private IEnumerable<LocalDate> ExpandDayOfWeekWithoutOffset(
         LocalDate start,
-        LocalDate end,
-        IsoDayOfWeek[] weekDays)
+        LocalDate end)
     {
-        Debug.Assert(weekDays.Length > 0);
+        _rule.GetDaysOfWeekStartingAt(start.DayOfWeek, out var daysOfWeek, out var i);
 
-        var value = start;
+        Debug.Assert(daysOfWeek.Length > 0);
 
-        // Get the first date that matches a week day
-        var i = Array.IndexOf(weekDays, value.DayOfWeek);
-        while (i < 0)
-        {
-            value = value.PlusDays(1);
-            i = Array.IndexOf(weekDays, value.DayOfWeek);
-        }
+        // Start at the determined day of week
+        var value = start.CurrentOrNext(daysOfWeek[i]);
 
         while (true)
         {
@@ -771,8 +806,8 @@ internal sealed class RecurrenceRuleEvaluator
 
             yield return value;
 
-            i = (i + 1) % weekDays.Length;
-            value = value.Next(weekDays[i]);
+            i = (i + 1) % daysOfWeek.Length;
+            value = value.Next(daysOfWeek[i]);
         }
     }
 
