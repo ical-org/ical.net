@@ -221,7 +221,8 @@ public class SimpleDeserializer
             // Unquote the value if necessary
             pValueSpan = Unquote(pValueSpan);
 
-            parameter.AddValue(pValueSpan.ToString());
+            // RFC 6868 caret-decode the unquoted value (inverse of ParameterSerializer).
+            parameter.AddValue(CaretEncoding.Decode(pValueSpan.ToString()));
             valueStart = i + 1;
 
             // If we hit (another) ';' or ':', we are done with this parameter
