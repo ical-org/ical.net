@@ -225,6 +225,11 @@ internal sealed class RecurrenceRuleEvaluator
 
             // Increment before enumerating the next set
             IncrementSeed();
+
+            if (IsSeedIntervalAfterUntil())
+            {
+                yield break;
+            }
         }
     }
 #pragma warning restore S2190
@@ -252,6 +257,11 @@ internal sealed class RecurrenceRuleEvaluator
 
             // Increment before enumerating the next set
             IncrementSeed();
+
+            if (IsSeedIntervalAfterUntil())
+            {
+                yield break;
+            }
         }
 
         // Enumerates values and yields only when set position matches,
@@ -1177,13 +1187,39 @@ internal sealed class RecurrenceRuleEvaluator
         }
         else
         {
-            // Expand forever
-            while (true)
+            // Expand until no later interval can produce a value before UNTIL
+            while (!IsSeedIntervalAfterUntil())
             {
                 yield return _seed;
                 IncrementSeed();
             }
         }
+    }
+
+    /// <summary>
+    /// Returns true if UNTIL is set and every value the interval of the current
+    /// seed could produce lies after it. Without this check, a rule whose BY parts
+    /// never match keeps incrementing past UNTIL until the date range overflows.
+    /// </summary>
+    private bool IsSeedIntervalAfterUntil()
+    {
+        if (_until == null)
+        {
+            return false;
+        }
+
+        var date = _seed.Date;
+        var intervalStart = _frequency switch
+        {
+            // BYWEEKNO can reach into the last days of the previous year
+            FrequencyType.Yearly => new LocalDate(date.Year, 1, 1).PlusDays(-7),
+            FrequencyType.Monthly => new LocalDate(date.Year, date.Month, 1),
+            FrequencyType.Weekly => date.PlusDays(-6),
+            _ => date
+        };
+
+        // One extra day keeps the check on the safe side of zone offsets
+        return intervalStart.PlusDays(-1).AtMidnight().InZoneLeniently(_seed.Zone).ToInstant() > _until.Value;
     }
 
     /// <summary>

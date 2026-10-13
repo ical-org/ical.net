@@ -2790,6 +2790,26 @@ public class RecurrenceTests(SerializerVersion serializerVersion)
             shouldThrow ? Throws.InstanceOf<EvaluationOutOfRangeException>() : Throws.Nothing);
     }
 
+    // The BY parts never match (there is no February 31 and no second
+    // "first Saturday" of a month), so the bounded rules have no occurrences.
+    [TestCase("FREQ=YEARLY;BYMONTH=2;UNTIL=20400101T000000Z")]
+    [TestCase("FREQ=MONTHLY;BYDAY=1SA;BYSETPOS=2;UNTIL=20400101T000000Z")]
+    [TestCase("FREQ=MONTHLY;BYDAY=1SA;BYSETPOS=-2;UNTIL=20400101T000000Z")]
+    public void Recurrence_WithUntilAndNoMatches_ShouldBeEmpty(string rrule)
+    {
+        var ical = $"""
+                    BEGIN:VCALENDAR
+                    BEGIN:VEVENT
+                    DTSTART:20200131T090000Z
+                    RRULE:{rrule}
+                    END:VEVENT
+                    END:VCALENDAR
+                    """;
+        var cal = Calendar.Load(ical)!;
+
+        Assert.That(cal.GetOccurrences(DateTimeZone.Utc).ToList(), Is.Empty);
+    }
+
     [Test, Category("Recurrence")]
     public void ExDateShouldFilterOutAllPeriods()
     {
