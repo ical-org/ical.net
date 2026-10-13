@@ -2,7 +2,7 @@
 
 | [![GitHub release](https://img.shields.io/github/release/ical-org/ical.net.svg?sort=semver)](https://github.com/ical-org/ical.net/releases/latest) | [![codecov](https://codecov.io/gh/ical-org/ical.net/branch/main/graph/badge.svg)](https://codecov.io/gh/ical-org/ical.net) | [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/ical-org/ical.net/blob/main/license.md) |  
 |----------|----------|----------|  
-| [![NuGet Version](https://img.shields.io/nuget/v/ical.net)](https://www.nuget.org/packages/Ical.Net)  |   |   |  
+| [![NuGet Version](https://img.shields.io/nuget/v/ical.net)](https://www.nuget.org/packages/Ical.Net)  | [![NuGet Pre-release](https://img.shields.io/nuget/vpre/ical.net?label=nuget%20pre-release)](https://www.nuget.org/packages/Ical.Net/absoluteLatest)  |   |  
 
 ## What is iCal.NET?
 iCal.NET is a robust and feature-rich iCalendar (RFC 5545) library for .NET, designed to simplify working with calendar data while ensuring full compliance with the iCalendar standard. Here are the main features and benefits:
@@ -18,8 +18,8 @@ iCal.NET is a robust and feature-rich iCalendar (RFC 5545) library for .NET, des
 
 ### Benefits
 
-* **Performance and Usability**: The latest version (v5) is extensively rewritten for improved performance, correctness, and usability. Memory usage is optimized down to 50% of v4.
-* **Compatibility**: Works seamlessly with .NET 8, .NET 6, .NET Standard, and .NET Framework, making it versatile for various projects.
+* **Performance and Usability**: Version 5 was an extensive rewrite for improved performance, correctness, and usability, with memory usage optimized down to 50% of v4. The upcoming v6 pre-release builds further on this foundation with a new recurrence engine, simplified date/time handling, and overhauled time zone and alarm support.
+* **Compatibility**: Works seamlessly with .NET 10, .NET 8, .NET Standard, and .NET Framework, making it versatile for various projects.
 * **Community-Driven**: Actively maintained and supported by a dedicated community, with extensive documentation and examples to get started quickly.
 * **Open Source**: Free to use and contribute to under the MIT license, fostering collaboration and innovation.
 
@@ -31,14 +31,22 @@ Our mission is to provide a robust and reliable iCalendar library for .NET, ensu
 
 ## iCal.NET Versions
 
+### iCal.NET v6
+
+v6 is the best iCal.NET yet - even as a pre-release. Built on over 100 commits since v5.2.0, it introduces a simplified, unambiguous `CalDateTime`, a brand-new `NodaTime`-based recurrence and occurrence evaluation engine, a flexible per-`Calendar` time zone provider, a fully overhauled RFC 5545-compliant alarm evaluator, and a faster serializer.
+
+We encourage you to try it out and share your feedback — it's the most correct, performant, and well-tested version of iCal.NET to date.
+
+See **[release-notes.md](release-notes.md)** for the full list of changes, including breaking changes to be aware of when upgrading from v5.
+
 ### iCal.NET v5
 
 v5 is a comprehensive rewrite of the library, incorporating over 100 merged pull requests and focusing on enhanced performance, correctness, and usability. All reported issues from previous versions have been resolved, and unit tests have been added or enhanced for greater reliability.
 
-See the **[API Changes Document](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5)** and the **[Migration Guide for v4 to v5](https://github.com/ical-org/ical.net/wiki/Migrating-Guides)** in the wiki for detailed information.
+See the **[API Changes Document](https://github.com/ical-org/ical.net/wiki/API-Changes-v4-to-v5)** and the **[Migration Guide for v4 to v5](https://github.com/ical-org/ical.net/wiki/Migrating-Guides)** in the wiki for detailed information. See **[release-notes-v5.md](release-notes-v5.md)** for the full v5.x release history.
 
 ### iCal.NET v4
-is still available up to v4.3.1. Is is out of support and will not receive any further updates. We recommend using the v5 packages instead.
+is still available up to v4.3.1. It is out of support and will not receive any further updates. We recommend using the v6 pre-release or v5 packages instead. See **[release-notes-v4.md](release-notes-v4.md)** for the v4.x (and earlier) release history.
 
 ## Getting Started
 
@@ -49,10 +57,16 @@ A basic understanding of the iCalendar standard (RFC 5545) is essential for usin
 
 ### Install
 
-Install the NuGet packing using the following command:
+Install the NuGet package using the following command:
 
 ```sh
 dotnet add package iCal.NET
+```
+
+To try the upcoming v6 pre-release, include pre-release versions explicitly:
+
+```sh
+dotnet add package iCal.NET --prerelease
 ```
 
 ## Examples
