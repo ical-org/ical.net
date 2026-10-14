@@ -101,9 +101,9 @@ public class SerializationTests2
 
         var calFromString = CalendarSerializer.Deserialize<Calendar>(result, options);
 
-        var expectedIcs = """
+        var expectedIcs = $"""
             BEGIN:VCALENDAR
-            PRODID:-//github.com/ical-org/ical.net//NONSGML ical.net 1.0.0.0//EN
+            PRODID:{cal.ProductId}
             VERSION:2.0
             BEGIN:VEVENT
             DTSTAMP:20260204T040000Z
