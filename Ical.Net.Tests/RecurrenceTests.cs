@@ -2790,24 +2790,24 @@ public class RecurrenceTests(SerializerVersion serializerVersion)
             shouldThrow ? Throws.InstanceOf<EvaluationOutOfRangeException>() : Throws.Nothing);
     }
 
-    // The BY parts never match (there is no February 31 and no second
-    // "first Saturday" of a month), so the bounded rules have no occurrences.
-    [TestCase("FREQ=YEARLY;BYMONTH=2;UNTIL=20400101T000000Z")]
-    [TestCase("FREQ=MONTHLY;BYDAY=1SA;BYSETPOS=2;UNTIL=20400101T000000Z")]
-    [TestCase("FREQ=MONTHLY;BYDAY=1SA;BYSETPOS=-2;UNTIL=20400101T000000Z")]
-    public void Recurrence_WithUntilAndNoMatches_ShouldBeEmpty(string rrule)
+    // DTSTART matches the RRULE, but no later value exists before the end of
+    // the supported date range, so the only occurrence is DTSTART. Evaluation
+    // must stop at UNTIL instead of searching for a next value until it overflows.
+    [TestCase("99960229T090000Z", "FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=29;UNTIL=99970101T000000Z")]
+    [TestCase("20200101T090000Z", "FREQ=DAILY;INTERVAL=2000000;BYMONTH=1;BYMONTHDAY=1;UNTIL=20300101T000000Z")]
+    public void Recurrence_WithUntilAndNoLaterMatch_ShouldOnlyReturnDtStart(string dtStart, string rrule)
     {
         var ical = $"""
                     BEGIN:VCALENDAR
                     BEGIN:VEVENT
-                    DTSTART:20200131T090000Z
+                    DTSTART:{dtStart}
                     RRULE:{rrule}
                     END:VEVENT
                     END:VCALENDAR
                     """;
         var cal = Calendar.Load(ical)!;
 
-        Assert.That(cal.GetOccurrences(DateTimeZone.Utc).ToList(), Is.Empty);
+        Assert.That(cal.GetOccurrences(DateTimeZone.Utc).ToList(), Has.Count.EqualTo(1));
     }
 
     [Test, Category("Recurrence")]
