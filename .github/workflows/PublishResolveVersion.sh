@@ -42,11 +42,6 @@ if [[ -n "${GITHUB_OUTPUT-}" ]]; then
     printf 'VERSION=%s\n' "$Version" >> "$GITHUB_OUTPUT"
 fi
 
-if [[ -n "${GITHUB_ENV-}" ]]; then
-    printf 'TAG_NAME=%s\n' "$Tag" >> "$GITHUB_ENV"
-    printf 'VERSION=%s\n' "$Version" >> "$GITHUB_ENV"
-fi
-
 # Always print results
 printf 'TAG_NAME=%s\n' "$Tag"
 printf 'VERSION=%s\n' "$Version"
