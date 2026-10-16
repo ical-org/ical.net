@@ -25,6 +25,7 @@ internal sealed class RecurrenceRuleEvaluator
     private readonly int? _count;
     private readonly int _interval;
     private readonly Instant? _until;
+    private readonly Instant? _seedLimit;
     private readonly FrequencyType _frequency;
     private readonly IsoDayOfWeek _firstDayOfWeek;
 
@@ -58,6 +59,7 @@ internal sealed class RecurrenceRuleEvaluator
         _weekYearRule = WeekYearRules.ForMinDaysInFirstWeek(4, _firstDayOfWeek);
         _zonedReferenceDate = referenceDate.ToZonedOrDefault(timeZone, timeZoneProvider);
         _referenceWeekNo = _weekYearRule.GetWeekOfWeekYear(_zonedReferenceDate.Date);
+        _seedLimit = GetSeedLimit();
     }
 
     public RecurrenceRuleEvaluator(
@@ -225,6 +227,11 @@ internal sealed class RecurrenceRuleEvaluator
 
             // Increment before enumerating the next set
             IncrementSeed();
+
+            if (IsSeedIntervalAfterUntil())
+            {
+                yield break;
+            }
         }
     }
 #pragma warning restore S2190
@@ -252,6 +259,11 @@ internal sealed class RecurrenceRuleEvaluator
 
             // Increment before enumerating the next set
             IncrementSeed();
+
+            if (IsSeedIntervalAfterUntil())
+            {
+                yield break;
+            }
         }
 
         // Enumerates values and yields only when set position matches,
@@ -1177,13 +1189,60 @@ internal sealed class RecurrenceRuleEvaluator
         }
         else
         {
-            // Expand forever
-            while (true)
+            // Expand until no later interval can produce a value before UNTIL
+            while (!IsSeedIntervalAfterUntil())
             {
                 yield return _seed;
                 IncrementSeed();
             }
         }
+    }
+
+    /// <summary>
+    /// Returns true if UNTIL is set and every value the interval of the current
+    /// seed could produce lies after it. Without this check, a rule whose BY parts
+    /// never match keeps incrementing past UNTIL until the date range overflows.
+    /// </summary>
+    private bool IsSeedIntervalAfterUntil() => _seed.ToInstant() >= _seedLimit;
+
+    /// <summary>
+    /// Calculates the earliest seed for which no value of its interval can be
+    /// at or before UNTIL, or null if there is no UNTIL or no such seed exists
+    /// within the supported date range.
+    /// </summary>
+    private Instant? GetSeedLimit()
+    {
+        if (_until == null)
+        {
+            return null;
+        }
+
+        var zone = _zonedReferenceDate.Zone;
+        try
+        {
+            // One extra day keeps the check on the safe side of zone offsets
+            var minIntervalStart = _until.Value.InZone(zone).Date.PlusDays(2);
+            var limit = _frequency switch
+            {
+                // BYWEEKNO can reach into the last days of the previous year
+                FrequencyType.Yearly => NextYearStart(minIntervalStart.PlusDays(7)),
+                FrequencyType.Monthly => NextMonthStart(minIntervalStart),
+                FrequencyType.Weekly => minIntervalStart.PlusDays(6),
+                _ => minIntervalStart
+            };
+
+            return limit.AtMidnight().InZoneLeniently(zone).ToInstant();
+        }
+        catch (Exception ex) when (ex is ArgumentOutOfRangeException or OverflowException)
+        {
+            return null;
+        }
+
+        static LocalDate NextYearStart(LocalDate date)
+            => date is { Month: 1, Day: 1 } ? date : new LocalDate(date.Year + 1, 1, 1);
+
+        static LocalDate NextMonthStart(LocalDate date)
+            => date.Day == 1 ? date : new LocalDate(date.Year, date.Month, 1).PlusMonths(1);
     }
 
     /// <summary>
