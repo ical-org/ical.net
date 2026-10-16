@@ -1233,7 +1233,7 @@ internal sealed class RecurrenceRuleEvaluator
 
             return limit.AtMidnight().InZoneLeniently(zone).ToInstant();
         }
-        catch (ArgumentOutOfRangeException)
+        catch (Exception ex) when (ex is ArgumentOutOfRangeException or OverflowException)
         {
             return null;
         }
