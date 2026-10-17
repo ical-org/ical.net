@@ -4,6 +4,14 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v5
 
+### 5.2.4 - (2026-10-19)
+
+Fix: `CalendarSerializer` does not escape backslash `(\)` in `TEXT` property values
+
+### 5.2.3 - (2026-06-23)
+
+Fix: Stop using culture-specific string handling, particularly with `.ToUpper()` and `.ToLower()`
+
 ### 5.2.2 - (2026-05-08)
 
 Fix: `Alarm.GetOccurrences(...) and `Alarm.Poll(...)` now have an
