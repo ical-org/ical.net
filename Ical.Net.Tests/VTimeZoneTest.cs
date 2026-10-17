@@ -135,6 +135,47 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
         }
     }
 
+    [TestCase("Australia/Sydney", "TZOFFSETFROM:+1000", "TZOFFSETTO:+1100", "T020000")]
+    [TestCase("Pacific/Auckland", "TZOFFSETFROM:+1200", "TZOFFSETTO:+1300", "T020000")]
+    [TestCase("Australia/Lord_Howe", "TZOFFSETFROM:+1030", "TZOFFSETTO:+1100", "T020000")]
+    [Category("VTimeZone")]
+    public void VTimeZoneSouthernHemisphereDaylightShouldSerializeProperly(string tzId, string expectedOffsetFrom,
+        string expectedOffsetTo, string expectedDtStartTime)
+    {
+        TimeZoneInfo tzInfo;
+        try
+        {
+            tzInfo = TimeZoneInfo.FindSystemTimeZoneById(tzId);
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            Assert.Ignore($"Time zone '{tzId}' was not found on the local machine.");
+            return;
+        }
+
+        var tz = VTimeZone.FromSystemTimeZone(tzInfo, new DateTime(2024, 1, 1), false);
+        var iCal = new Calendar();
+        iCal.AddTimeZone(tz);
+        var serializer = new CalendarSerializer();
+        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal)!);
+
+        // Extract the DAYLIGHT component
+        var daylightMatch = Regex.Match(serialized, @"BEGIN:DAYLIGHT(.*?)END:DAYLIGHT",
+            RegexOptions.Compiled | RegexOptions.Singleline, RegexDefaults.Timeout);
+        Assert.That(daylightMatch.Success, Is.True, "DAYLIGHT component was not serialized");
+        var daylight = daylightMatch.Value;
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(daylight, Does.Contain(expectedOffsetFrom), $"{expectedOffsetFrom} was not serialized");
+            Assert.That(daylight, Does.Contain(expectedOffsetTo), $"{expectedOffsetTo} was not serialized");
+            // DTSTART's date depends on the current date when the test runs; only the wall-clock time
+            // is deterministic (verifies DTSTART was not shifted by an incorrect delta).
+            Assert.That(Regex.IsMatch(daylight, $@"DTSTART:\d{{8}}{expectedDtStartTime}", RegexOptions.Compiled, RegexDefaults.Timeout),
+                Is.True, $"DTSTART with time {expectedDtStartTime} was not serialized");
+        }
+    }
+
     [Test, Category("VTimeZone")]
     public void VTimeZoneAmericaChicagoShouldSerializeProperly()
     {
