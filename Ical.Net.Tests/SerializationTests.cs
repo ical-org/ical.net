@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -673,5 +673,28 @@ public class SerializationTests
 
         var resultCal = Calendar.Load(result)!;
         Assert.That(resultCal.Events[0]!.Description, Is.EqualTo(deserializedText ?? originalText));
+    }
+
+    [Test]
+    public void Issue_1010()
+    {
+        var cal = new Calendar();
+        cal.Events.Add(new CalendarEvent
+        {
+            Uid = "fixed-uid",
+            DtStamp = new CalDateTime(new DateTime(2024, 5, 17, 12, 0, 0, DateTimeKind.Utc), CalDateTime.UtcTzId, true),
+            DtStart = new CalDateTime(new DateTime(2024, 5, 17, 14, 30, 0), null, true),
+            DtEnd = new CalDateTime(new DateTime(2024, 5, 17, 15, 30, 0), null, true),
+            Summary = @"C:\Temp\report",
+            Description = @"a, b; cC:\Temp\report",
+        });
+
+        var result = new CalendarSerializer(cal).SerializeToString();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Does.Contain(@"DESCRIPTION:a\, b\; cC:\\Temp\\report"));
+            Assert.That(result, Does.Contain(@"SUMMARY:C:\\Temp\\report"));
+        }
     }
 }
