@@ -136,8 +136,14 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     }
 
     [TestCase("Australia/Sydney", "TZOFFSETFROM:+1000", "TZOFFSETTO:+1100", "T020000")]
-    [TestCase("Pacific/Auckland", "TZOFFSETFROM:+1200", "TZOFFSETTO:+1300", "T020000")]
     [TestCase("Australia/Lord_Howe", "TZOFFSETFROM:+1030", "TZOFFSETTO:+1100", "T020000")]
+    [TestCase("Australia/Adelaide", "TZOFFSETFROM:+0930", "TZOFFSETTO:+1030", "T020000")]
+    [TestCase("Australia/Broken_Hill", "TZOFFSETFROM:+0930", "TZOFFSETTO:+1030", "T020000")]
+    [TestCase("Pacific/Auckland", "TZOFFSETFROM:+1200", "TZOFFSETTO:+1300", "T020000")]
+    [TestCase("Pacific/Easter", "TZOFFSETFROM:-0600", "TZOFFSETTO:-0500", "T220000")]
+    [TestCase("Pacific/Chatham", "TZOFFSETFROM:+1245", "TZOFFSETTO:+1345", "T024500")]
+    [TestCase("America/Santiago", "TZOFFSETFROM:-0400", "TZOFFSETTO:-0300", "T000000")]
+    [TestCase("Antarctica/Macquarie", "TZOFFSETFROM:+1000", "TZOFFSETTO:+1100", "T020000")]
     [Category("VTimeZone")]
     public void VTimeZoneSouthernHemisphereDaylightShouldSerializeProperly(string tzId, string expectedOffsetFrom,
         string expectedOffsetTo, string expectedDtStartTime)
