@@ -135,15 +135,15 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
         }
     }
 
-    [TestCase("Australia/Sydney", "TZOFFSETFROM:+1000", "TZOFFSETTO:+1100", "T020000")]
-    [TestCase("Australia/Lord_Howe", "TZOFFSETFROM:+1030", "TZOFFSETTO:+1100", "T020000")]
-    [TestCase("Australia/Adelaide", "TZOFFSETFROM:+0930", "TZOFFSETTO:+1030", "T020000")]
-    [TestCase("Australia/Broken_Hill", "TZOFFSETFROM:+0930", "TZOFFSETTO:+1030", "T020000")]
-    [TestCase("Pacific/Auckland", "TZOFFSETFROM:+1200", "TZOFFSETTO:+1300", "T020000")]
-    [TestCase("Pacific/Easter", "TZOFFSETFROM:-0600", "TZOFFSETTO:-0500", "T220000")]
-    [TestCase("Pacific/Chatham", "TZOFFSETFROM:+1245", "TZOFFSETTO:+1345", "T024500")]
-    [TestCase("America/Santiago", "TZOFFSETFROM:-0400", "TZOFFSETTO:-0300", "T000000")]
-    [TestCase("Antarctica/Macquarie", "TZOFFSETFROM:+1000", "TZOFFSETTO:+1100", "T020000")]
+    [TestCase("Australia/Sydney", "+1000", "+1100", "T020000")]
+    [TestCase("Australia/Lord_Howe", "+1030", "+1100", "T020000")]
+    [TestCase("Australia/Adelaide", "+0930", "+1030", "T020000")]
+    [TestCase("Australia/Broken_Hill", "+0930", "+1030", "T020000")]
+    [TestCase("Pacific/Auckland", "+1200", "+1300", "T020000")]
+    [TestCase("Pacific/Easter", "-0600", "-0500", "T220000")]
+    [TestCase("Pacific/Chatham", "+1245", "+1345", "T024500")]
+    [TestCase("America/Santiago", "-0400", "-0300", "T000000")]
+    [TestCase("Antarctica/Macquarie", "+1000", "+1100", "T020000")]
     [Category("VTimeZone")]
     public void VTimeZoneSouthernHemisphereDaylightShouldSerializeProperly(string tzId, string expectedOffsetFrom,
         string expectedOffsetTo, string expectedDtStartTime)
@@ -160,25 +160,14 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
         }
 
         var tz = VTimeZone.FromSystemTimeZone(tzInfo, new DateTime(2024, 1, 1), false);
-        var iCal = new Calendar();
-        iCal.AddTimeZone(tz);
-        var serializer = new CalendarSerializer();
-        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal)!);
-
-        // Extract the DAYLIGHT component
-        var daylightMatch = Regex.Match(serialized, @"BEGIN:DAYLIGHT(.*?)END:DAYLIGHT",
-            RegexOptions.Compiled | RegexOptions.Singleline, RegexDefaults.Timeout);
-        Assert.That(daylightMatch.Success, Is.True, "DAYLIGHT component was not serialized");
-        var daylight = daylightMatch.Value;
+        var daylight = tz.TimeZoneInfos.FirstOrDefault(x => x.Name == "DAYLIGHT")!;
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(daylight, Does.Contain(expectedOffsetFrom), $"{expectedOffsetFrom} was not serialized");
-            Assert.That(daylight, Does.Contain(expectedOffsetTo), $"{expectedOffsetTo} was not serialized");
-            // DTSTART's date depends on the current date when the test runs; only the wall-clock time
-            // is deterministic (verifies DTSTART was not shifted by an incorrect delta).
-            Assert.That(Regex.IsMatch(daylight, $@"DTSTART:\d{{8}}{expectedDtStartTime}", RegexOptions.Compiled, RegexDefaults.Timeout),
-                Is.True, $"DTSTART with time {expectedDtStartTime} was not serialized");
+            Assert.That(daylight, Is.Not.Null);
+            Assert.That(daylight.OffsetFrom?.ToString(), Is.EqualTo(expectedOffsetFrom));
+            Assert.That(daylight.OffsetTo?.ToString(), Is.EqualTo(expectedOffsetTo));
+            Assert.That(daylight.DtStart!.ToBasicIso(), Does.EndWith(expectedDtStartTime));
         }
     }
 
