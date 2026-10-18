@@ -28,7 +28,7 @@ public class StringSerializer : EncodableDataTypeSerializer
             return value;
         }
 
-#if NET8_0_OR_GREATER
+#if NET6_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         return UnescapeWithSpan(value);
 #else
 
@@ -75,7 +75,7 @@ public class StringSerializer : EncodableDataTypeSerializer
 #endif
     }
 
-#if NET8_0_OR_GREATER
+#if NET6_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
     private static string UnescapeWithSpan(string valueToUnescape)
     {
         var value = valueToUnescape.AsSpan();
