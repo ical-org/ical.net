@@ -145,7 +145,7 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     [TestCase("America/Santiago", "-0400", "-0300", "T000000")]
     [TestCase("Antarctica/Macquarie", "+1000", "+1100", "T020000")]
     [Category("VTimeZone")]
-    public void VTimeZoneSouthernHemisphereDaylightShouldSerializeProperly(string tzId, string expectedOffsetFrom,
+    public void VTimeZoneSouthernHemisphereDetermineDaylight(string tzId, string expectedOffsetFrom,
         string expectedOffsetTo, string expectedDtStartTime)
     {
         TimeZoneInfo tzInfo;
