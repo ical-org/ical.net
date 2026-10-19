@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
@@ -168,7 +167,7 @@ public class StringSerializer : EncodableDataTypeSerializer
             return value;
         }
 
-#if NET6_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NET8_0_OR_GREATER
         return EscapeWithSearchValues(value);
 #else
         // Skip escaping if there are no characters to escape. This improves
@@ -232,7 +231,7 @@ public class StringSerializer : EncodableDataTypeSerializer
 #endif
     }
 
-#if NET6_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NET8_0_OR_GREATER
     private static string EscapeWithSearchValues(string valueToEscape)
     {
         var value = valueToEscape.AsSpan();
@@ -342,7 +341,45 @@ public class StringSerializer : EncodableDataTypeSerializer
         return string.Join(",", values);
     }
 
-    internal static readonly Regex UnescapedCommas = new Regex(@"(?<!\\),", RegexOptions.Compiled, RegexDefaults.Timeout);
+    // A value scan stops at an unescaped comma (a separator) or a backslash
+    // (which escapes the following character).
+    private static readonly char[] _valueSeparators = ['\\', ','];
+
+    /// <summary>
+    /// Splits a serialized multi-value TEXT property on its separator commas. A comma
+    /// separates values only when it is not escaped; a backslash escapes the following
+    /// character, so a comma preceded by an odd number of backslashes belongs to a value
+    /// (RFC 5545 3.1.1). Mirrors the left-to-right consumption used by <see cref="Unescape"/>.
+    /// </summary>
+    internal static IEnumerable<string> SplitOnUnescapedCommas(string value)
+    {
+        var start = 0;
+        var pos = 0;
+
+        while (pos < value.Length)
+        {
+            var next = value.IndexOfAny(_valueSeparators, pos);
+            if (next < 0)
+            {
+                break;
+            }
+
+            if (value[next] == '\\')
+            {
+                // Backslash escapes the next character; skip the pair.
+                pos = next + 2;
+            }
+            else
+            {
+                yield return value.Substring(start, next - start);
+                start = next + 1;
+                pos = next + 1;
+            }
+        }
+
+        yield return value.Substring(start);
+    }
+
     public override object? Deserialize(TextReader? tr)
     {
         if (tr == null)
@@ -367,14 +404,14 @@ public class StringSerializer : EncodableDataTypeSerializer
             AssociatedObject = context.Peek() as ICalendarObject
         };
 
-        var encodedValues = serializeAsList ? UnescapedCommas.Split(value) : new[] { value };
-        var escapedValues = encodedValues.Select(v => Decode(dt, v)).ToList();
-        var values = escapedValues.Select(Unescape).ToList();
-
-        if (values.Count == 1)
+        if (!serializeAsList)
         {
-            return values[0];
+            return Unescape(Decode(dt, value));
         }
-        return values;
+
+        var values = SplitOnUnescapedCommas(value)
+            .Select(v => Unescape(Decode(dt, v)))
+            .ToList();
+        return values.Count == 1 ? values[0] : values;
     }
 }
