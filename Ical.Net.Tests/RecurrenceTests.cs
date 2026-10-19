@@ -2833,7 +2833,7 @@ public class RecurrenceTests(SerializerVersion serializerVersion)
         var occurrences = Calendar.Load(ical)!.GetOccurrences(DateTimeZone.Utc).ToList();
 
         Assert.That(occurrences, Has.Count.EqualTo(expectedCount));
-        Assert.That(occurrences[^1].Period.Start.ToDateTimeUtc()
+        Assert.That(occurrences[occurrences.Count - 1].Period.Start.ToDateTimeUtc()
             .ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture), Is.EqualTo(lastStart));
     }
 
