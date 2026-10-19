@@ -2790,6 +2790,53 @@ public class RecurrenceTests(SerializerVersion serializerVersion)
             shouldThrow ? Throws.InstanceOf<EvaluationOutOfRangeException>() : Throws.Nothing);
     }
 
+    // DTSTART matches the RRULE, but no later value exists before the end of
+    // the supported date range, so the only occurrence is DTSTART. Evaluation
+    // must stop at UNTIL instead of searching for a next value until it overflows.
+    [TestCase("99960229T090000Z", "FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=29;UNTIL=99970101T000000Z")]
+    [TestCase("20200101T090000Z", "FREQ=DAILY;INTERVAL=2000000;BYMONTH=1;BYMONTHDAY=1;UNTIL=20300101T000000Z")]
+    [TestCase("99960229T090000Z", "FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=29;BYSETPOS=1;UNTIL=99970101T000000Z")]
+    [TestCase("99960229T090000Z", "FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=29;BYSETPOS=-1;UNTIL=99970101T000000Z")]
+    public void Recurrence_WithUntilAndNoLaterMatch_ShouldOnlyReturnDtStart(string dtStart, string rrule)
+    {
+        var ical = $"""
+                    BEGIN:VCALENDAR
+                    BEGIN:VEVENT
+                    DTSTART:{dtStart}
+                    RRULE:{rrule}
+                    END:VEVENT
+                    END:VCALENDAR
+                    """;
+        var cal = Calendar.Load(ical)!;
+
+        Assert.That(cal.GetOccurrences(DateTimeZone.Utc).ToList(), Has.Count.EqualTo(1));
+    }
+
+    // Calendar-boundary rounding must preserve every occurrence through UNTIL.
+    // A conservative seed limit beyond the supported date range must still
+    // preserve the inclusive UNTIL boundary.
+    [TestCase("20231231T090000Z", "FREQ=MONTHLY;BYMONTHDAY=31;UNTIL=20240130T235959Z", 1, "20231231T090000Z")]
+    [TestCase("20200101T090000Z", "FREQ=YEARLY;BYMONTH=1;BYMONTHDAY=1;UNTIL=20241223T235959Z", 5, "20240101T090000Z")]
+    [TestCase("99991229T090000Z", "FREQ=DAILY;UNTIL=99991230T090000Z", 2, "99991230T090000Z")]
+    [TestCase("99981231T090000Z", "FREQ=YEARLY;UNTIL=99991222T090000Z", 1, "99981231T090000Z")]
+    public void Recurrence_WithUntilAtCalendarBoundary_ShouldPreserveOccurrences(
+        string dtStart, string rrule, int expectedCount, string lastStart)
+    {
+        var ical = $"""
+                    BEGIN:VCALENDAR
+                    BEGIN:VEVENT
+                    DTSTART:{dtStart}
+                    RRULE:{rrule}
+                    END:VEVENT
+                    END:VCALENDAR
+                    """;
+        var occurrences = Calendar.Load(ical)!.GetOccurrences(DateTimeZone.Utc).ToList();
+
+        Assert.That(occurrences, Has.Count.EqualTo(expectedCount));
+        Assert.That(occurrences[occurrences.Count - 1].Period.Start.ToDateTimeUtc()
+            .ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture), Is.EqualTo(lastStart));
+    }
+
     [Test, Category("Recurrence")]
     public void ExDateShouldFilterOutAllPeriods()
     {
