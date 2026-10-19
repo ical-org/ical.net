@@ -96,7 +96,7 @@ public class VTimeZone : CalendarComponent
                 wallOffset: tz.MinOffset,
                 savings: Offset.Zero);
             intervals.Add(interval);
-            var zoneInfo = CreateTimeZoneInfo(intervals, [], true, true);
+            var zoneInfo = CreateTimeZoneInfo(tz, intervals, [], true, true);
             vTimeZone.AddChild(zoneInfo);
         }
         else
@@ -114,7 +114,7 @@ public class VTimeZone : CalendarComponent
             }
 
             matchingStandardIntervals = GetMatchingIntervals(standardIntervals, latestStandardInterval, true);
-            var latestStandardTimeZoneInfo = CreateTimeZoneInfo(matchingStandardIntervals, intervals);
+            var latestStandardTimeZoneInfo = CreateTimeZoneInfo(tz, matchingStandardIntervals, intervals);
             vTimeZone.AddChild(latestStandardTimeZoneInfo);
 
             // check to see if there is no active, future daylight savings (ie, America/Phoenix)
@@ -128,7 +128,7 @@ public class VTimeZone : CalendarComponent
                     var latestDaylightInterval = daylightIntervals.OrderByDescending(x => x.Start).First();
                     matchingDaylightIntervals =
                         GetMatchingIntervals(daylightIntervals, latestDaylightInterval, true);
-                    var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
+                    var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(tz, matchingDaylightIntervals, intervals);
                     vTimeZone.AddChild(latestDaylightTimeZoneInfo);
                 }
             }
@@ -152,7 +152,7 @@ public class VTimeZone : CalendarComponent
             }
 
             var matchedIntervals = GetMatchingIntervals(historicIntervals, interval);
-            var timeZoneInfo = CreateTimeZoneInfo(matchedIntervals, intervals, false);
+            var timeZoneInfo = CreateTimeZoneInfo(tz, matchedIntervals, intervals, false);
             vTimeZone.AddChild(timeZoneInfo);
             historicIntervals = historicIntervals.Where(x => !matchedIntervals.Contains(x)).ToList();
         }
@@ -160,7 +160,7 @@ public class VTimeZone : CalendarComponent
         return vTimeZone;
     }
 
-    private static VTimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true,
+    private static VTimeZoneInfo CreateTimeZoneInfo(DateTimeZone tz, List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true,
         bool isOnlyInterval = false)
     {
         if (matchedIntervals == null || matchedIntervals.Count == 0)
@@ -176,7 +176,7 @@ public class VTimeZone : CalendarComponent
 
         var previousInterval = intervals.SingleOrDefault(x => (x.HasEnd ? x.End : Instant.MaxValue) == oldestInterval.Start);
 
-        var delta = new TimeSpan(1, 0, 0);
+        TimeSpan delta;
 
         if (previousInterval != null)
         {
@@ -185,6 +185,13 @@ public class VTimeZone : CalendarComponent
         else if (isOnlyInterval)
         {
             delta = TimeSpan.Zero;
+        }
+        else
+        {
+            // The true predecessor was not collected in the interval range (e.g. southern-hemisphere
+            // zones where Jan 1st falls inside DST). Look it up directly from the time zone itself.
+            var actualPrevious = tz.GetZoneInterval(oldestInterval.Start - NodaTime.Duration.Epsilon);
+            delta = new TimeSpan(0, 0, actualPrevious.WallOffset.Seconds - oldestInterval.WallOffset.Seconds);
         }
 
         var utcOffset = oldestInterval.StandardOffset.ToTimeSpan();
