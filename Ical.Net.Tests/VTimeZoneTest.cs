@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -124,6 +124,42 @@ public class VTimeZoneTest
             Assert.That(serialized, Does.Contain("DTSTART:19171228T000000"), "DTSTART:19171228T000000 was not serialized");
             // RDATE may contain multiple dates, separated by a comma
             Assert.That(Regex.IsMatch(serialized, $@"RDATE:.*\b19991031T030000\b", RegexOptions.Compiled, RegexDefaults.Timeout), Is.True, "RDATE:19731028T020000 was not serialized");
+        }
+    }
+
+    [TestCase("Australia/Sydney", "+1000", "+1100", "T020000")]
+    [TestCase("Australia/Lord_Howe", "+1030", "+1100", "T020000")]
+    [TestCase("Australia/Adelaide", "+0930", "+1030", "T020000")]
+    [TestCase("Australia/Broken_Hill", "+0930", "+1030", "T020000")]
+    [TestCase("Pacific/Auckland", "+1200", "+1300", "T020000")]
+    [TestCase("Pacific/Easter", "-0600", "-0500", "T220000")]
+    [TestCase("Pacific/Chatham", "+1245", "+1345", "T024500")]
+    [TestCase("America/Santiago", "-0400", "-0300", "T000000")]
+    [TestCase("Antarctica/Macquarie", "+1000", "+1100", "T020000")]
+    [Category("VTimeZone")]
+    public void VTimeZoneSouthernHemisphereDetermineDaylight(string tzId, string expectedOffsetFrom,
+        string expectedOffsetTo, string expectedDtStartTime)
+    {
+        TimeZoneInfo tzInfo;
+        try
+        {
+            tzInfo = TimeZoneInfo.FindSystemTimeZoneById(tzId);
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            Assert.Ignore($"Time zone '{tzId}' was not found on the local machine.");
+            return;
+        }
+
+        var tz = VTimeZone.FromSystemTimeZone(tzInfo, new DateTime(2024, 1, 1), false);
+        var daylight = tz.TimeZoneInfos.FirstOrDefault(x => x.Name == "DAYLIGHT")!;
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(daylight, Is.Not.Null);
+            Assert.That(daylight.OffsetFrom?.ToString(), Is.EqualTo(expectedOffsetFrom));
+            Assert.That(daylight.OffsetTo?.ToString(), Is.EqualTo(expectedOffsetTo));
+            Assert.That($"T{daylight.DtStart!:HHmmss}", Does.EndWith(expectedDtStartTime));
         }
     }
 
