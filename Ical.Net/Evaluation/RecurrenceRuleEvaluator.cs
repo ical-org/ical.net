@@ -1189,7 +1189,7 @@ internal sealed class RecurrenceRuleEvaluator
         }
         else
         {
-            // Expand until no later interval can produce a value before UNTIL
+            // Expand until no later interval can produce a value before or equal to UNTIL
             while (!IsSeedIntervalAfterUntil())
             {
                 yield return _seed;
