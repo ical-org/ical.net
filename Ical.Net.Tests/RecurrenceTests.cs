@@ -4671,6 +4671,46 @@ END:VCALENDAR";
     }
 
     [Test]
+    [TestCase("FREQ=DAILY;COUNT=3", "20250308T020000", "20250309T030000", "20250310T020000")]
+    [TestCase("FREQ=WEEKLY;COUNT=3", "20250302T020000", "20250309T030000", "20250316T020000")]
+    [TestCase("FREQ=MONTHLY;COUNT=3", "20250209T020000", "20250309T030000", "20250409T020000")]
+    [TestCase("FREQ=YEARLY;COUNT=3", "20240309T020000", "20250309T030000", "20260309T020000")]
+    [TestCase("FREQ=MONTHLY;BYMONTHDAY=9,10;COUNT=4",
+        "20250209T020000", "20250210T020000", "20250309T030000", "20250310T020000")]
+    [TestCase("FREQ=YEARLY;BYMONTH=3,4;COUNT=4",
+        "20240309T020000", "20240409T020000", "20250309T030000", "20250409T020000")]
+    [TestCase("FREQ=YEARLY;BYYEARDAY=69,70,71;COUNT=5",
+        "20240309T020000", "20240310T030000", "20240311T020000", "20250310T020000", "20250311T020000")]
+    [TestCase("FREQ=YEARLY;BYWEEKNO=10,11;COUNT=4",
+        "20240309T020000", "20240316T020000", "20250308T020000", "20250315T020000")]
+    [TestCase("FREQ=YEARLY;BYWEEKNO=10,11;BYYEARDAY=66,75;COUNT=2", "20250316T020000", "20260307T020000")]
+    [TestCase("FREQ=YEARLY;BYWEEKNO=10,11;BYMONTHDAY=7,16;COUNT=2", "20250316T020000", "20260307T020000")]
+    public void AroundForwardDaylightSaving_ShiftsHourOnlyOnTransitionDay(string rrule, params string[] expectedStarts)
+    {
+        var evt = new CalendarEvent();
+        evt.RecurrenceRule = new(rrule);
+        evt.Start = new(expectedStarts[0], "America/New_York");
+        evt.Duration = Duration.FromMinutes(90);
+
+        var cal = new Calendar();
+        cal.Events.Add(evt);
+
+        var tz = cal.TimeZoneProvider["America/New_York"];
+        var result = cal.GetOccurrences(evt.Start.ToZonedDateTime(cal.TimeZoneProvider))
+            .Select(x => x.Start)
+            .ToList();
+
+        // Hour is 3AM on the transition days (10 March 2024, 9 March 2025)
+        // because 2AM does not exist, and still 2AM on all other days, even
+        // when the transition day starts the interval (8 March 2026)
+        var expected = expectedStarts
+            .Select(x => new CalDateTime(x).ToLocalDateTime().InZoneStrictly(tz))
+            .ToList();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
     public void MonthlyUtcEvent_OnForwardDaylightSaving_HourShiftsAfterTransition()
     {
         var evt = new CalendarEvent();
