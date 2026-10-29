@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
 using NodaTime;
 using NUnit.Framework;
 
@@ -46,7 +47,7 @@ public class RecurrenceTests_From_Issues
              END:VCALENDAR
              """;
 
-        var calendar = Calendar.Load(ical)!;
+        var calendar = CalendarSerializer.Deserialize<Calendar>(ical);
         // Event ends on 2024-10-27, at 02:00:00 GMT (when DST ends). The end time is excluded by RFC 5545 definition.
         var occurrences = calendar.GetOccurrences(endDate.ToZonedDateTime("US/Eastern"))
             .TakeWhileBefore(new CalDateTime("20250101T000000", "Europe/London")).ToList();

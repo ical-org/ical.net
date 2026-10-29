@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -6,14 +6,16 @@
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Serialization;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
-[TestFixture]
-public class PeriodListWrapperTests
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class PeriodListWrapperTests(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
     #region ** ExceptionDates **
 
     [Test]
@@ -39,7 +41,7 @@ public class PeriodListWrapperTests
             new CalDateTime(2025, 1, 1, 10, 11, 13, "Europe/Berlin")
         ]);
 
-        var serialized = new CalendarSerializer(cal).SerializeToString();
+        var serialized = _serializerSwitch.Serialize(cal);
 
         using (Assert.EnterMultipleScope())
         {
@@ -125,7 +127,7 @@ public class PeriodListWrapperTests
             new CalDateTime(2025, 1, 1, 10, 11, 13, "Europe/Berlin") // duplicate
         ]);
 
-        var serialized = new CalendarSerializer(cal).SerializeToString();
+        var serialized = _serializerSwitch.Serialize(cal);
 
         using (Assert.EnterMultipleScope())
         {
@@ -183,10 +185,10 @@ public class PeriodListWrapperTests
             Period.Create(new CalDateTime(2025, 6, 1, 12, 0, 0, "Europe/Vienna"), duration: Duration.FromHours(8))
         ]);
 
-        var serializer = new CalendarSerializer(cal);
-        var serialized = serializer.SerializeToString()!;
+        var serialized = _serializerSwitch.Serialize(cal);
+
         // Assign the deserialized event
-        cal = Calendar.Load(serialized)!;
+        cal = _serializerSwitch.Deserialize<Calendar>(serialized);
         evt = cal.Events[0];
 
         // Assert the serialized string and the deserialized event

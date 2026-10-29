@@ -89,9 +89,6 @@ public class SerializationTests2
 
         cal.Events.Add(e);
 
-        //var t = new Serialization.CalendarSerializer();
-        //var result = t.SerializeToString(cal);
-
         var options = new CalendarSerializerOptions();
 
         // Must define custom properties if value is not a string
@@ -151,9 +148,9 @@ public class SerializationTests2
     }
 
     [Test]
-    public void Destar()
+    public void SerializerRoundTrip()
     {
-        const string iCalString =
+        var iCalString =
             """
             BEGIN:VCALENDAR
             PRODID:-//github.com/ic
@@ -172,12 +169,32 @@ public class SerializationTests2
             END:VCALENDAR
             """;
 
-        var cal1 = Serialization.SimpleDeserializer.Default.Deserialize(new StringReader(iCalString))
-            .First();
+        var cal = CalendarSerializer.Deserialize<Calendar>(iCalString);
 
-        var cal2 = CalendarSerializer.Deserialize<Calendar>(iCalString);
+        var output = CalendarSerializer.Serialize(cal, new()
+        {
+            OrderComponentProperties = false
+        });
 
-        Assert.That(cal1.Properties["UID"], Is.EqualTo(cal2.Properties["UID"]));
+        var expected = """
+            BEGIN:VCALENDAR
+            PRODID:-//github.com/ical-org/ical.net//NONSGML ical.net//EN
+            VERSION:2.0
+            BEGIN:VEVENT
+            X-ABC-TEST:This\;is\;a\\value\\wow
+            DTSTAMP:20250608T164638Z
+            DTSTART:20250301T000000
+            X-ABC-MULTIBYTE:🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍
+             😄
+            RRULE:FREQ=DAILY;COUNT=1000
+            SEQUENCE:0
+            UID:ac22036c-73e6-4020-b54a-80e580462749
+            END:VEVENT
+            END:VCALENDAR
+
+            """.ReplaceLineEndings("\r\n");
+
+        Assert.That(output, Is.EqualTo(expected));
     }
 
     [Test]
@@ -262,8 +279,6 @@ public class SerializationTests2
 
         ev.AddProperty(prop);
 
-        //var t = new Serialization.EventSerializer();
-        //var data = t.SerializeToString(ev)!;
         var data = CalendarSerializer.Serialize(ev);
         var result = data
             .Split()
@@ -274,7 +289,6 @@ public class SerializationTests2
             X-TEST;VALUE=INTEGER:123
             """;
 
-        //var ev2 = (CalendarEvent) Serialization.SimpleDeserializer.Default.Deserialize(new StringReader(data)).First();
         var ev2 = CalendarSerializer.Deserialize<CalendarEvent>(data);
 
         using (Assert.EnterMultipleScope())
@@ -299,8 +313,6 @@ public class SerializationTests2
 
         ev.AddProperty(prop);
 
-        //var t = new Serialization.EventSerializer();
-        //var data = t.SerializeToString(ev)!;
         var data = CalendarSerializer.Serialize(ev);
         var result = data
             .Split()
@@ -323,8 +335,6 @@ public class SerializationTests2
         ev.Properties.Set("DURATION", Duration.FromHours(1));
         ev.Properties.Set("DTEND", new CalDateTime(2026, 1, 1, 8, 0, 0));
 
-        //var t = new Serialization.EventSerializer();
-        //var data = t.SerializeToString(ev)!;
         var data = CalendarSerializer.Serialize(ev);
 
         Assert.That(data.Contains("DURATION:"), Is.False);

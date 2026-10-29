@@ -3,7 +3,10 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.IO;
+using System.Linq;
+using Ical.Net.CalendarComponents;
 using Ical.Net.Serialization;
 
 namespace Ical.Net.Tests;
@@ -26,28 +29,47 @@ internal class SerializerSwitch(SerializerVersion serializerVersion)
         return new CalendarSerializer().SerializeToString(calendar)!;
     }
 
-    public T Deserialize<T>(string value) where T : Calendar
+    public string Serialize(CalendarEvent calendarEvent)
+    {
+        if (serializerVersion == SerializerVersion.Current)
+        {
+            return CalendarSerializer.Serialize(calendarEvent);
+        }
+
+        return new EventSerializer().SerializeToString(calendarEvent)!;
+    }
+
+    public void Serialize(Stream utf8Destination, Calendar component)
+    {
+        if (serializerVersion == SerializerVersion.Current)
+        {
+            CalendarSerializer.Serialize(utf8Destination, component);
+            return;
+        }
+
+        new CalendarSerializer().Serialize(component, utf8Destination);
+    }
+
+    public T Deserialize<T>(string value) where T : CalendarComponent
     {
         if (serializerVersion == SerializerVersion.Current)
         {
             return CalendarSerializer.Deserialize<T>(value);
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        return (T) Calendar.Load(value)!;
-#pragma warning restore CS0618 // Type or member is obsolete
+        using var reader = new StringReader(value);
+        return (T) SimpleDeserializer.Default.Deserialize(reader).First();
     }
 
-    public T Deserialize<T>(Stream stream) where T : Calendar
+    public T Deserialize<T>(Stream stream) where T : CalendarComponent
     {
         if (serializerVersion == SerializerVersion.Current)
         {
             return CalendarSerializer.Deserialize<T>(stream);
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        return (T) Calendar.Load(stream)!;
-#pragma warning restore CS0618 // Type or member is obsolete
+        using var reader = new StreamReader(stream);
+        return (T) SimpleDeserializer.Default.Deserialize(reader).First();
     }
 }
 

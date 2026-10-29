@@ -12,9 +12,12 @@ using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
-[TestFixture]
-public class CalendarPropertiesTest
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class CalendarPropertiesTest(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
     [Test]
     public void AddPropertyShouldNotIncludePropertyNameInValue()
     {
@@ -24,7 +27,7 @@ public class CalendarPropertiesTest
         var iCal = new Calendar();
         iCal.AddProperty(propName, propValue);
 
-        var result = new CalendarSerializer().SerializeToString(iCal)!;
+        var result = _serializerSwitch.Serialize(iCal);
 
         var lines = result.Split(new[] { SerializationConstants.LineBreak }, StringSplitOptions.None);
         var propLine = lines.FirstOrDefault(x => x.StartsWith("X-WR-CALNAME:"));
@@ -54,7 +57,7 @@ public class CalendarPropertiesTest
         var calendar = new Calendar();
         calendar.Events.Add(@event);
 
-        var serialized = new CalendarSerializer().SerializeToString(calendar);
+        var serialized = _serializerSwitch.Serialize(calendar);
         Assert.That(serialized, Does.Contain($"X-ALT-DESC;FMTTYPE=text/html:{propValue}"),
             "Parameter and value should get serialized standard compliant");
     }
@@ -78,7 +81,7 @@ public class CalendarPropertiesTest
                   END:VEVENT
                   END:VCALENDAR
                   """;
-        var calendar = Calendar.Load(ics)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(ics)!;
         var calEvent = calendar.Events.First();
         var propDescription = calEvent.Properties.FirstOrDefault(x => x.Name == "X-ALT-DESC")!;
         var propProjects = calEvent.Properties.FirstOrDefault(x => x.Name == "X-PROJECTS")!;

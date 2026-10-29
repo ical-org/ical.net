@@ -840,24 +840,38 @@ public sealed class CalendarReader
 
             Debug.Assert(source[idx] == (byte) '\\');
 
-            destination[written++] = source[++idx] switch
+            // Value has a trailing backslash that escapes nothing,
+            // just copy it and stop.
+            if (++idx == source.Length)
             {
-                (byte) 'n' or (byte) 'N' => (byte) '\n',
-                (byte) '\\' => (byte) '\\',
-                (byte) ';' => (byte) ';',
-                (byte) ',' => (byte) ',',
+                destination[written++] = (byte) '\\';
+                return;
+            }
 
-                // Double quotes aren't escaped in RFC2445, but are in Mozilla Sunbird (0.5-)
-                (byte) '"' => (byte) '"',
+            // Write the unescaped character.
+            // Double quotes aren't escaped in RFC2445, but are in Mozilla Sunbird (0.5-).
+            if (source[idx] is (byte) '\\' or (byte) ';' or (byte) ',' or (byte) '"')
+            {
+                // Escaped character is the same as the source, just copy
+                destination[written++] = source[idx++];
+            }
+            else if (source[idx] is (byte) 'n' or (byte) 'N')
+            {
+                destination[written++] = (byte) '\n';
+                // Skip escaped character
+                idx++;
+            }
+            else
+            {
+                // Backslash is escaping an invalid character, just include
+                // the backslash and do not increment the source index so
+                // that the escaped character is copied.
+                destination[written++] = (byte) '\\';
+            }
 
-                // Backslash is escaping an invalid character, just
-                // include the backslash and leave it unchanged.
-                _ => (byte) '\\',
-            };
-
-            // If all source bytes are copied or an
-            // unescaped comma has been reached, then stop.
-            if (++idx == source.Length || source[idx] == delimiter)
+            // If all source bytes are copied or the
+            // delimiter has been reached, then stop.
+            if (idx == source.Length || source[idx] == delimiter)
             {
                 return;
             }

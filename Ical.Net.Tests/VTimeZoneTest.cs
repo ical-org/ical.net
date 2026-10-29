@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Serialization;
 using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.TimeZones;
@@ -40,8 +39,7 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneAmericaPhoenixShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Phoenix");
-        var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        var serialized = _serializerSwitch.Serialize(iCal);
 
         using (Assert.EnterMultipleScope())
         {
@@ -54,8 +52,7 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneAmericaPhoenixShouldSerializeProperly2()
     {
         var iCal = CreateTestCalendar("America/Phoenix", DateTime.Now, false);
-        var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        var serialized = _serializerSwitch.Serialize(iCal);
 
         using (Assert.EnterMultipleScope())
         {
@@ -68,8 +65,7 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneUsMountainStandardTimeShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("US Mountain Standard Time");
-        var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        var serialized = _serializerSwitch.Serialize(iCal);
 
         using (Assert.EnterMultipleScope())
         {
@@ -84,16 +80,14 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZonePacificKiritimatiShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("Pacific/Kiritimati");
-        var serializer = new CalendarSerializer();
-        Assert.DoesNotThrow(() => serializer.SerializeToString(iCal));
+        Assert.DoesNotThrow(() => _serializerSwitch.Serialize(iCal));
     }
 
     [Test, Category("VTimeZone")]
     public void VTimeZoneCentralAmericaStandardTimeShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("Central America Standard Time");
-        var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        var serialized = _serializerSwitch.Serialize(iCal);
 
         Assert.That(serialized, Does.Contain("TZID:Central America Standard Time"), "Time zone not found in serialization");
     }
@@ -102,8 +96,7 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneEasternStandardTimeShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("Eastern Standard Time");
-        var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        var serialized = _serializerSwitch.Serialize(iCal);
 
         Assert.That(serialized, Does.Contain("TZID:Eastern Standard Time"), "Time zone not found in serialization");
     }
@@ -112,9 +105,8 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneEuropeMoscowShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("Europe/Moscow");
-        var serializer = new CalendarSerializer();
         // Unwrap the lines to make it easier to search for specific values
-        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal)!);
+        var serialized = TextUtil.UnwrapLines(_serializerSwitch.Serialize(iCal));
 
         using (Assert.EnterMultipleScope())
         {
@@ -175,8 +167,7 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneAmericaChicagoShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Chicago");
-        var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        var serialized = _serializerSwitch.Serialize(iCal);
 
         using (Assert.EnterMultipleScope())
         {
@@ -201,8 +192,7 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneAmericaLosAngelesShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Los_Angeles");
-        var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        var serialized = _serializerSwitch.Serialize(iCal);
 
         using (Assert.EnterMultipleScope())
         {
@@ -224,8 +214,7 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneEuropeOsloShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("Europe/Oslo");
-        var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        var serialized = _serializerSwitch.Serialize(iCal);
 
         using (Assert.EnterMultipleScope())
         {
@@ -242,9 +231,8 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneAmericaAnchorageShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Anchorage");
-        var serializer = new CalendarSerializer();
         // Unwrap the lines to make it easier to search for specific values
-        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal)!);
+        var serialized = TextUtil.UnwrapLines(_serializerSwitch.Serialize(iCal));
 
         using (Assert.EnterMultipleScope())
         {
@@ -269,8 +257,7 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneAmericaEirunepeShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Eirunepe");
-        var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        var serialized = _serializerSwitch.Serialize(iCal);
 
         using (Assert.EnterMultipleScope())
         {
@@ -292,8 +279,7 @@ public class VTimeZoneTest(SerializerVersion serializerVersion)
     public void VTimeZoneAmericaDetroitShouldSerializeProperly()
     {
         var iCal = CreateTestCalendar("America/Detroit");
-        var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        var serialized = _serializerSwitch.Serialize(iCal);
 
         using (Assert.EnterMultipleScope())
         {

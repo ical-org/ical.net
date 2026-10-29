@@ -159,6 +159,10 @@ public class CalendarEventTest
 
         var serializer = new CalendarSerializer();
         yield return new TestCaseData(serializer.SerializeToString(emptyCalendar))
+            .SetName("Empty calendar with empty event returns true (Obsolete)")
+            .Returns(true);
+
+        yield return new TestCaseData(CalendarSerializer.Serialize(emptyCalendar))
             .SetName("Empty calendar with empty event returns true")
             .Returns(true);
 
@@ -169,6 +173,10 @@ public class CalendarEventTest
         };
         explicitDtStampCalendar.Events.Add(explicitDtStampEvent);
         yield return new TestCaseData(serializer.SerializeToString(explicitDtStampCalendar))
+            .SetName("CalendarEvent with explicitly-set DTSTAMP property returns true (Obsolete)")
+            .Returns(true);
+
+        yield return new TestCaseData(CalendarSerializer.Serialize(explicitDtStampCalendar))
             .SetName("CalendarEvent with explicitly-set DTSTAMP property returns true")
             .Returns(true);
     }
@@ -203,7 +211,9 @@ public class CalendarEventTest
     }
 
     [Test]
-    public void HourMinuteSecondOffsetParsingTest()
+    [TestCase(SerializerVersion.Current)]
+    [TestCase(SerializerVersion.Obsolete)]
+    public void HourMinuteSecondOffsetParsingTest(SerializerVersion serializerVersion)
     {
         const string ical =
             """
@@ -233,7 +243,7 @@ public class CalendarEventTest
             END:VTIMEZONE
             END:VCALENDAR
             """;
-        var timezones = Calendar.Load(ical)!
+        var timezones = new SerializerSwitch(serializerVersion).Deserialize<Calendar>(ical)
             .TimeZones.First()
             .Children.Cast<CalendarComponent>()
             .ToArray();

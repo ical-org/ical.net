@@ -5,21 +5,23 @@
 
 using System;
 using System.Linq;
-using Ical.Net.DataTypes;
 using NodaTime;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
-[TestFixture]
-public class ProgramTest
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class ProgramTest(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
     [Test]
     public void LoadAndDisplayCalendar()
     {
         // The following code loads and displays an iCalendar
         // with US Holidays for 2006.
-        var iCal = Calendar.Load(IcsFiles.UsHolidays);
+        var iCal = _serializerSwitch.Deserialize<Calendar>(IcsFiles.UsHolidays);
         Assert.That(iCal, Is.Not.Null, "iCalendar did not load.");
     }
 
@@ -40,8 +42,8 @@ public class ProgramTest
     [Test]
     public void Merge1()
     {
-        var iCal1 = Calendar.Load(IcsFiles.MonthlyCountByMonthDay3)!;
-        var iCal2 = Calendar.Load(IcsFiles.MonthlyByDay1)!;
+        var iCal1 = _serializerSwitch.Deserialize<Calendar>(IcsFiles.MonthlyCountByMonthDay3);
+        var iCal2 = _serializerSwitch.Deserialize<Calendar>(IcsFiles.MonthlyByDay1);
 
         // Change the UID of the 2nd event to make sure it's different
         iCal2.Events[iCal1.Events[0]!.Uid!].Uid = "1234567890";

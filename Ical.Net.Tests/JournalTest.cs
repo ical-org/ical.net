@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -9,13 +9,16 @@ using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
-[TestFixture]
-public class JournalTest
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class JournalTest(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
     [Test, Category("Journal")]
     public void Journal1()
     {
-        var iCal = Calendar.Load(IcsFiles.Journal1)!;
+        var iCal = _serializerSwitch.Deserialize<Calendar>(IcsFiles.Journal1)!;
         ProgramTest.TestCal(iCal);
         Assert.That(iCal.Journals, Has.Count.EqualTo(1));
         var j = iCal.Journals[0];
@@ -32,7 +35,7 @@ public class JournalTest
     [Test, Category("Journal")]
     public void Journal2()
     {
-        var iCal = Calendar.Load(IcsFiles.Journal2)!;
+        var iCal = _serializerSwitch.Deserialize<Calendar>(IcsFiles.Journal2)!;
         ProgramTest.TestCal(iCal);
         Assert.That(iCal.Journals, Has.Count.EqualTo(1));
         var j = iCal.Journals.First();
@@ -73,7 +76,7 @@ public class JournalTest
     [Test, Category("Journal")]
     public void Journal3()
     {
-        var iCal = Calendar.Load(IcsFiles.Journal3)!;
+        var iCal = _serializerSwitch.Deserialize<Calendar>(IcsFiles.Journal3)!;
         ProgramTest.TestCal(iCal);
         Assert.That(iCal.Journals, Has.Count.EqualTo(1));
         var j = iCal.Journals.First();
