@@ -4,6 +4,16 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v5
 
+### 5.2.4 - (2026-10-31)
+
+- fix: `VTimeZone.FromSystemTimeZone` for southern-hemisphere time zones ([#1014](https://github.com/ical-org/ical.net/pull/1014)))
+- fix: Correct escaping `StringSerializer` ([#1012](https://github.com/ical-org/ical.net/pull/1012)))
+- fix: `CalendarSerializer` does not escape backslash `(\)` in `TEXT` property values
+
+### 5.2.3 - (2026-06-23)
+
+Fix: Stop using culture-specific string handling, particularly with `.ToUpper()` and `.ToLower()`
+
 ### 5.2.2 - (2026-05-08)
 
 * Feat: Add alarm poll end time (#940)

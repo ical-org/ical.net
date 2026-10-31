@@ -8,6 +8,13 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v6
 
+### 6.0.0-pre.2 — Pre-release (2026-10-31)
+
+- fix: An issue with escaping invalid characters was fixed ([#1018](https://github.com/ical-org/ical.net/pull/1018)))
+- fix: Keep the `DTSTART` time of day after a daylight saving gap ([#1016](https://github.com/ical-org/ical.net/pull/1016))
+- fix: Stop `RRULE` evaluation at `UNTIL` when `BY` parts never match ([#1008](https://github.com/ical-org/ical.net/pull/1008))
+- fix: `VTimeZone.FromSystemTimeZone` for southern-hemisphere time zones ([#1013](https://github.com/ical-org/ical.net/pull/1013))
+
 ### 6.0.0-pre.1 — Pre-release (2026-10-05)
 
 #### Summary
