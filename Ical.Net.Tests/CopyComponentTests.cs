@@ -29,8 +29,6 @@ public class CopyComponentTests
         DtEnd = CalDateTime.FromDateTime(_later),
     };
 
-    private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } })!;
-
     [Test]
     public void CopyCalendarEventTest()
     {
@@ -50,8 +48,8 @@ public class CopyComponentTests
         copy.Resources = new[] { "C", "D" };
         copy.Attachments[0].Uri = new Uri("https://copy.org/");
         const string uidPattern = "UID:";
-        var serializedOrig = SerializeEvent(orig);
-        var serializedCopy = SerializeEvent(copy);
+        var serializedOrig = CalendarSerializer.Serialize(orig);
+        var serializedCopy = CalendarSerializer.Serialize(copy);
 
         using (Assert.EnterMultipleScope())
         {
@@ -78,28 +76,27 @@ public class CopyComponentTests
     [TestCase("X-TEST;X-VALUES=first,second:value")]
     public void CopyCalendarPreservesParameters(string property)
     {
-        var original = Calendar.Load(string.Join("\r\n", new[]
+        var original = CalendarSerializer.Deserialize<Calendar>(string.Join("\r\n", new[]
         {
             "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Copy test//EN",
             "BEGIN:VEVENT", "UID:copy-test", "DTSTAMP:20260101T000000Z",
             property, "END:VEVENT", "END:VCALENDAR", ""
         }))!;
-        var serializer = new CalendarSerializer();
-        var beforeCopy = serializer.SerializeToString(original);
+        var beforeCopy = CalendarSerializer.Serialize(original);
 
         var copy = original.Copy<Calendar>()!;
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(serializer.SerializeToString(copy), Is.EqualTo(beforeCopy));
-            Assert.That(serializer.SerializeToString(original), Is.EqualTo(beforeCopy));
+            Assert.That(CalendarSerializer.Serialize(copy), Is.EqualTo(beforeCopy));
+            Assert.That(CalendarSerializer.Serialize(original), Is.EqualTo(beforeCopy));
         }
     }
 
     [Test]
     public void CopyCalendarIsolatesAttachmentParameters()
     {
-        var original = Calendar.Load(string.Join("\r\n", new[]
+        var original = CalendarSerializer.Deserialize<Calendar>(string.Join("\r\n", new[]
         {
             "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Copy test//EN",
             "BEGIN:VEVENT", "UID:copy-test", "DTSTAMP:20260101T000000Z",

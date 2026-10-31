@@ -146,10 +146,9 @@ public class DeserializationTests(SerializerVersion serializerVersion)
     public void Bug3177278()
     {
         var calendar = new Calendar();
-        var serializer = new CalendarSerializer();
+        using var ms = new MemoryStream();
 
-        var ms = new MemoryStream();
-        serializer.Serialize(calendar, ms, Encoding.UTF8);
+        _serializerSwitch.Serialize(ms, calendar);
 
         Assert.That(ms.CanWrite, Is.True);
     }
@@ -200,6 +199,18 @@ public class DeserializationTests(SerializerVersion serializerVersion)
 
     [Test]
     public void EmptyLines2()
+    {
+        var calendars = CalendarSerializer.DeserializeCollection<Calendar>(IcsFiles.EmptyLines2);
+        Assert.That(calendars, Has.Count.EqualTo(2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(calendars[0].Events, Has.Count.EqualTo(2), "iCalendar should have 2 events");
+            Assert.That(calendars[1].Events, Has.Count.EqualTo(2), "iCalendar should have 2 events");
+        }
+    }
+
+    [Test]
+    public void EmptyLines2_Obsolete()
     {
         var calendars = CalendarCollection.Load(IcsFiles.EmptyLines2);
         Assert.That(calendars, Has.Count.EqualTo(2));
@@ -450,28 +461,6 @@ public class DeserializationTests(SerializerVersion serializerVersion)
         Assert.That(rs.ExtraData, Is.Null);
     }
 
-    /// <summary>
-    /// Tests that string escaping works with Text elements.
-    /// </summary>
-    [Test]
-    public void String2()
-    {
-        var serializer = new StringSerializer();
-        var value = @"test\with\;characters";
-        var unescaped = (string?) serializer.Deserialize(new StringReader(value));
-
-        Assert.That(unescaped, Is.EqualTo(@"test\with;characters"), "String unescaping was incorrect.");
-
-        value = @"C:\Path\To\My\New\Information";
-        unescaped = (string?) serializer.Deserialize(new StringReader(value));
-        Assert.That(unescaped, Is.EqualTo("C:\\Path\\To\\My\new\\Information"), "String unescaping was incorrect.");
-
-        value = @"\""This\r\nis\Na\, test\""\;\\;,";
-        unescaped = (string?) serializer.Deserialize(new StringReader(value));
-
-        Assert.That(unescaped, Is.EqualTo("\"This\\r\nis\na, test\";\\;,"), "String unescaping was incorrect.");
-    }
-
     [Test]
     public void Transparency2()
     {
@@ -481,6 +470,33 @@ public class DeserializationTests(SerializerVersion serializerVersion)
         var evt = iCal.Events.First();
 
         Assert.That(evt.Transparency, Is.EqualTo(TransparencyType.Transparent));
+    }
+
+    [Test]
+    public void EventStatus()
+    {
+        var iCal = _serializerSwitch.Deserialize<Calendar>(IcsFiles.EventStatus);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(iCal.Events, Has.Count.EqualTo(4));
+
+            Assert.That(iCal.Events[0]!.Summary, Is.EqualTo("No status"));
+            Assert.That(iCal.Events[0]!.Status, Is.Null);
+            Assert.That(iCal.Events[0]!.IsActive, Is.True);
+
+            Assert.That(iCal.Events[1]!.Summary, Is.EqualTo("Confirmed"));
+            Assert.That(iCal.Events[1]!.Status, Is.EqualTo("CONFIRMED"));
+            Assert.That(iCal.Events[1]!.IsActive, Is.True);
+
+            Assert.That(iCal.Events[2]!.Summary, Is.EqualTo("Cancelled"));
+            Assert.That(iCal.Events[2]!.Status, Is.EqualTo("CANCELLED"));
+            Assert.That(iCal.Events[2]!.IsActive, Is.False);
+
+            Assert.That(iCal.Events[3]!.Summary, Is.EqualTo("Tentative"));
+            Assert.That(iCal.Events[3]!.Status, Is.EqualTo("TENTATIVE"));
+            Assert.That(iCal.Events[3]!.IsActive, Is.True);
+        }
     }
 
     [Test]
@@ -622,6 +638,36 @@ public class DeserializationTests(SerializerVersion serializerVersion)
     }
 
     [Test]
+    // Invalid escape is kept
+    [TestCase(@"test\with\;characters", @"test\with;characters")]
+    [TestCase(@"C:\Path\To\My\New\Information", "C:\\Path\\To\\My\new\\Information")]
+    // Trailing unescaped comma is removed because it is a list delimiter.
+    // The old serializer keeps the trailing comma because SUMMARY is not
+    // allowed to have multiple values, so it does not check for list delimiters.
+    // The new serializer only reads up to the first list delimiter if the
+    // property (SUMMARY) is not allowed to have multiple values.
+    [TestCase(@"\""This\r\nis\Na\, test\""\;\\;,", "\"This\\r\nis\na, test\";\\;", Ignore = "Old serializer keeps the trailing comma")]
+    // Same as previous test, except the trailing comma is properly escaped
+    [TestCase(@"\""This\r\nis\Na\, test\""\;\\;\,", "\"This\\r\nis\na, test\";\\;,")]
+    // Multiple text values are ignored for single-value TEXT properties
+    [TestCase(@"Only the\, first value, is read", "Only the, first value", Ignore = "Old serializer keeps entire string")]
+    // Trailing slash is invalid but include it anyway
+    [TestCase(@"Ends\\With\;Slash\", @"Ends\With;Slash\")]
+    // Double quotes aren't escaped in RFC2445, but are in Mozilla Sunbird (0.5-)
+    [TestCase("Value From \\\"Mozilla Sunbird\\\"", @"Value From ""Mozilla Sunbird""")]
+    public void TextUnescaping(string input, string expected)
+    {
+        var ics = $"""
+            BEGIN:VEVENT
+            SUMMARY:{input}
+            END:VEVENT
+            """;
+        var result = _serializerSwitch.Deserialize<CalendarEvent>(ics);
+
+        Assert.That(result.Summary, Is.EqualTo(expected));
+    }
+
+    [Test]
     [TestCase(true)]
     [TestCase(false)]
     public void KeepApartDtEndAndDuration_Tests(bool useDtEnd)
@@ -657,7 +703,7 @@ public class DeserializationTests(SerializerVersion serializerVersion)
                       """;
 
         var calendar = _serializerSwitch.Deserialize<Calendar>(ics)!;
-        var deserialized = new CalendarSerializer(calendar).SerializeToString();
+        var deserialized = _serializerSwitch.Serialize(calendar);
 
         using (Assert.EnterMultipleScope())
         {

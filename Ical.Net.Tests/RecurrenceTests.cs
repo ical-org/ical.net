@@ -69,7 +69,6 @@ public class RecurrenceTests(SerializerVersion serializerVersion)
         string eventIcal,
         string[] expectedPeriods)
     {
-        var eventSerializer = new EventSerializer();
         var calendarIcalStr = $"""
                                BEGIN:VCALENDAR
                                VERSION:2.0
@@ -2807,7 +2806,7 @@ public class RecurrenceTests(SerializerVersion serializerVersion)
                     END:VEVENT
                     END:VCALENDAR
                     """;
-        var cal = Calendar.Load(ical)!;
+        var cal = _serializerSwitch.Deserialize<Calendar>(ical);
 
         Assert.That(cal.GetOccurrences(DateTimeZone.Utc).ToList(), Has.Count.EqualTo(1));
     }
@@ -2830,7 +2829,7 @@ public class RecurrenceTests(SerializerVersion serializerVersion)
                     END:VEVENT
                     END:VCALENDAR
                     """;
-        var occurrences = Calendar.Load(ical)!.GetOccurrences(DateTimeZone.Utc).ToList();
+        var occurrences = _serializerSwitch.Deserialize<Calendar>(ical).GetOccurrences(DateTimeZone.Utc).ToList();
 
         Assert.That(occurrences, Has.Count.EqualTo(expectedCount));
         Assert.That(occurrences[occurrences.Count - 1].Period.Start.ToDateTimeUtc()
@@ -3110,12 +3109,12 @@ END:VCALENDAR";
 
         var firstExclusion = start.ToLocalDateTime().PlusDays(4).ToCalDateTime();
         e.ExceptionDates.Add(firstExclusion);
-        var serialized = SerializationHelpers.SerializeToString(e);
+        var serialized = _serializerSwitch.Serialize(e);
         Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
 
         var secondExclusion = start.ToLocalDateTime().PlusDays(5).ToCalDateTime();
         e.ExceptionDates.Add(secondExclusion);
-        serialized = SerializationHelpers.SerializeToString(e);
+        serialized = _serializerSwitch.Serialize(e);
         Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
     }
 
@@ -3139,12 +3138,12 @@ END:VCALENDAR";
 
         e.ExceptionDates.Add(new CalDateTime(now.PlusDays(1), tzid));
 
-        var serialized = SerializationHelpers.SerializeToString(e);
+        var serialized = _serializerSwitch.Serialize(e);
         const string expected = "TZID=Europe/Stockholm";
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
 
         e.ExceptionDates.Add(new CalDateTime(now.PlusDays(2), tzid));
-        serialized = SerializationHelpers.SerializeToString(e);
+        serialized = _serializerSwitch.Serialize(e);
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
     }
 

@@ -39,15 +39,15 @@ internal class RecurrenceIdConverter : CalendarPropertyConverter<RecurrenceIdent
             writer.WriteParameter("VALUE", "DATE");
         }
 
-        if (recurrenceId.Range == RecurrenceRange.ThisAndFuture)
-        {
-            writer.WriteParameter("RANGE", "THISANDFUTURE");
-        }
-
         // Write all UTC values as instants ending with Z
         if (value.TzId != null && !value.IsUtc)
         {
             writer.WriteParameter("TZID", value.TzId);
+        }
+
+        if (recurrenceId.Range == RecurrenceRange.ThisAndFuture)
+        {
+            writer.WriteParameter("RANGE", "THISANDFUTURE");
         }
 
         writer.WriteValue(value.ToBasicIso());

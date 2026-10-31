@@ -12,10 +12,12 @@ using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
-[TestFixture]
-internal class RecurrenceIdentifierTests
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+internal class RecurrenceIdentifierTests(SerializerVersion serializerVersion)
 {
-#pragma warning disable CS0618 // Type or member is obsolete
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
 
     [TestCase(RecurrenceRange.ThisAndFuture, ";RANGE=THISANDFUTURE")]
     [TestCase(RecurrenceRange.ThisInstance, "")] // This means no RANGE parameter
@@ -27,8 +29,7 @@ internal class RecurrenceIdentifierTests
             RecurrenceIdentifier = new RecurrenceIdentifier(new CalDateTime(2025, 7, 1, 10, 0, 0, "America/New_York"), range)
         };
 
-        var serializer = new EventSerializer();
-        var serialized = serializer.SerializeToString(evt)!;
+        var serialized = _serializerSwitch.Serialize(evt);
         var expected = $"RECURRENCE-ID;TZID=America/New_York{rangeString}:20250701T100000";
 
         Assert.That(serialized, Does.Contain(expected));
@@ -45,8 +46,7 @@ internal class RecurrenceIdentifierTests
             RecurrenceIdentifier = new RecurrenceIdentifier(new CalDateTime(dateTime), range)
         };
 
-        var serializer = new EventSerializer();
-        var serialized = serializer.SerializeToString(evt)!;
+        var serialized = _serializerSwitch.Serialize(evt);
         var expected = $"RECURRENCE-ID{dtRangeString}:{dateTime}";
 
         Assert.That(serialized, Does.Contain(expected));
@@ -60,17 +60,15 @@ internal class RecurrenceIdentifierTests
     public void RecurrenceIdentifierWithoutTzId_ShouldDeserializeCorrectly(string dt, string recId, RecurrenceRange expected)
     {
         var cal = $"""
-                  BEGIN:VCALENDAR
                   BEGIN:VEVENT
                   DTSTAMP:20250928T221419Z
                   RECURRENCE-ID{recId}:{dt}
                   SEQUENCE:1
                   UID:c03cbcb3-6b37-49d6-9e05-a06a34a3ee57
                   END:VEVENT
-                  END:VCALENDAR
                   """;
 
-        var recurrenceId = Calendar.Load(cal)!.Events[0]!.RecurrenceIdentifier;
+        var recurrenceId = _serializerSwitch.Deserialize<CalendarEvent>(cal).RecurrenceIdentifier;
         using (Assert.EnterMultipleScope())
         {
             Assert.That(recurrenceId!.StartTime, Is.EqualTo(new CalDateTime(dt)));
@@ -103,5 +101,4 @@ internal class RecurrenceIdentifierTests
         }
     }
 
-#pragma warning restore CS0618 // Type or member is obsolete
 }

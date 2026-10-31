@@ -18,14 +18,16 @@ using NUnit.Framework.Interfaces;
 
 namespace Ical.Net.Tests;
 
-public class SymmetricSerializationTests
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class SymmetricSerializationTests(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
     private const string _ldapUri = "ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)";
 
     private static readonly DateTime _nowTime = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
     private static readonly DateTime _later = _nowTime.AddHours(1);
-    private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
-    private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c)!;
     private static CalendarEvent GetSimpleEvent(bool useDtEnd = true)
     {
         var evt = new CalendarEvent { DtStart = CalDateTime.FromDateTime(_nowTime) };
@@ -36,8 +38,6 @@ public class SymmetricSerializationTests
 
         return evt;
     }
-
-    private static Calendar UnserializeCalendar(string s) => Calendar.Load(s)!;
     
     [Test]
     public void VTimeZoneSerialization_Test()
@@ -48,9 +48,9 @@ public class SymmetricSerializationTests
             TzId = "New Zealand Standard Time"
         };
         originalCalendar.AddTimeZone(tz);
-        var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(originalCalendar)!;
-        var unserializedCalendar = Calendar.Load(serializedCalendar)!;
+
+        var serializedCalendar = _serializerSwitch.Serialize(originalCalendar);
+        var unserializedCalendar = _serializerSwitch.Deserialize<Calendar>(serializedCalendar);
 
         using (Assert.EnterMultipleScope())
         {
@@ -69,8 +69,8 @@ public class SymmetricSerializationTests
         someEvent.Attendees = new List<Attendee> { attendee };
         calendar.Events.Add(someEvent);
 
-        var serialized = SerializeToString(calendar);
-        var unserialized = UnserializeCalendar(serialized);
+        var serialized = _serializerSwitch.Serialize(calendar);
+        var unserialized = _serializerSwitch.Deserialize<Calendar>(serialized);
 
         using (Assert.EnterMultipleScope())
         {
@@ -118,8 +118,8 @@ public class SymmetricSerializationTests
         vEvent.Attachments = new List<Attachment> { binaryAttachment };
         calendar.Events.Add(vEvent);
 
-        var serialized = SerializeToString(calendar);
-        var unserialized = UnserializeCalendar(serialized);
+        var serialized = _serializerSwitch.Serialize(calendar);
+        var unserialized = _serializerSwitch.Deserialize<Calendar>(serialized);
         var unserializedAttachment = unserialized
             .Events
             .First()
@@ -159,8 +159,8 @@ public class SymmetricSerializationTests
         vEvent.Attachments = new List<Attachment> { attachment };
         calendar.Events.Add(vEvent);
 
-        var serialized = SerializeToString(calendar);
-        var unserialized = UnserializeCalendar(serialized);
+        var serialized = _serializerSwitch.Serialize(calendar);
+        var unserialized = _serializerSwitch.Deserialize<Calendar>(serialized);
         var unserializedUri = unserialized
             .Events
             .First()
@@ -193,13 +193,13 @@ public class SymmetricSerializationTests
         var c = new Calendar();
         c.Events.Add(vEvent);
 
-        var serialized = SerializeToString(c);
+        var serialized = _serializerSwitch.Serialize(c);
         var categoriesCount = Regex.Matches(serialized, "CATEGORIES").Count;
         Assert.That(categoriesCount, Is.EqualTo(1));
         var catString = $"CATEGORIES:{string.Join(",", categories.OfType<string>())}";
         Assert.That(serialized, Does.Contain(catString));
 
-        var deserialized = UnserializeCalendar(serialized);
+        var deserialized = _serializerSwitch.Deserialize<Calendar>(serialized);
         Assert.That(deserialized, Is.EqualTo(c));
     }
 
@@ -217,13 +217,13 @@ public class SymmetricSerializationTests
         var c = new Calendar();
         c.Events.Add(vEvent);
 
-        var serialized = SerializeToString(c);
+        var serialized = _serializerSwitch.Serialize(c);
         var categoriesCount = Regex.Matches(serialized, "RESOURCES").Count;
         Assert.That(categoriesCount, Is.EqualTo(1));
         var resString = $"RESOURCES:{string.Join(",", resources.OfType<string>())}";
         Assert.That(serialized, Does.Contain(resString));
 
-        var deserialized = UnserializeCalendar(serialized);
+        var deserialized = _serializerSwitch.Deserialize<Calendar>(serialized);
         Assert.That(deserialized, Is.EqualTo(c));
     }
 

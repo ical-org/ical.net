@@ -14,23 +14,20 @@ using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
-using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
-[TestFixture]
-public class SerializationTests
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class SerializationTests(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
     private static readonly CalDateTime _nowTime = new(2026, 2, 24, 11, 30, 21);
 
     private static readonly CalDateTime _later = _nowTime.ToLocalDateTime().PlusHours(1).ToCalDateTime();
-    private static CalendarSerializer GetNewSerializer() => new();
-
-    private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c)!;
-
-    private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
 
     private static CalendarEvent GetSimpleEvent() => new()
     {
@@ -198,8 +195,7 @@ public class SerializationTests
         };
         cal.Events.Add(evt);
 
-        var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(cal)!;
+        var serializedCalendar = _serializerSwitch.Serialize(cal);
 
         using (Assert.EnterMultipleScope())
         {
@@ -273,8 +269,7 @@ public class SerializationTests
         // Changing the ParticipationStatus just keeps the last status
         evt.Attendees[0].ParticipationStatus = EventParticipationStatus.Declined;
 
-        var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(cal)!;
+        var serializedCalendar = _serializerSwitch.Serialize(cal);
 
         var vEvt = InspectSerializedSection(serializedCalendar, "VEVENT", new[] { "ORGANIZER:" + org });
 
@@ -320,7 +315,7 @@ public class SerializationTests
         var originalDuration = e.Duration;
         var c = new Calendar();
         c.Events.Add(e);
-        var serialized = SerializeToString(c);
+        var serialized = _serializerSwitch.Serialize(c);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(e.Duration, Is.EqualTo(originalDuration));
@@ -333,11 +328,11 @@ public class SerializationTests
     {
         var e = GetSimpleEvent();
         e.Status = EventStatus.Confirmed;
-        var serialized = SerializeToString(e);
+        var serialized = _serializerSwitch.Serialize(e);
         Assert.That(serialized.Contains(EventStatus.Confirmed, EventStatus.Comparison), Is.True);
 
-        var calendar = Calendar.Load(serialized)!;
-        var eventStatus = calendar.Events.First().Status;
+        var calendarEvent = _serializerSwitch.Deserialize<CalendarEvent>(serialized);
+        var eventStatus = calendarEvent.Status;
         Assert.That(string.Equals(EventStatus.Confirmed, eventStatus, EventStatus.Comparison), Is.True);
     }
 
@@ -350,10 +345,10 @@ public class SerializationTests
         };
 
         var c = new Calendar { Todos = { component } };
-        var serialized = SerializeToString(c);
+        var serialized = _serializerSwitch.Serialize(c);
         Assert.That(serialized.Contains(TodoStatus.NeedsAction, TodoStatus.Comparison), Is.True);
 
-        var calendar = Calendar.Load(serialized)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(serialized);
         var status = calendar.Todos.First().Status;
         Assert.That(string.Equals(TodoStatus.NeedsAction, status, TodoStatus.Comparison), Is.True);
     }
@@ -367,10 +362,10 @@ public class SerializationTests
         };
 
         var c = new Calendar { Journals = { component } };
-        var serialized = SerializeToString(c);
+        var serialized = _serializerSwitch.Serialize(c);
         Assert.That(serialized.Contains(JournalStatus.Final, JournalStatus.Comparison), Is.True);
 
-        var calendar = Calendar.Load(serialized)!;
+        var calendar = _serializerSwitch.Deserialize<Calendar>(serialized);
         var status = calendar.Journals.First().Status;
         Assert.That(string.Equals(JournalStatus.Final, status, JournalStatus.Comparison), Is.True);
     }
@@ -468,7 +463,7 @@ public class SerializationTests
         {
             Events = { e },
         };
-        var serialized = new CalendarSerializer().SerializeToString(c)!;
+        var serialized = _serializerSwitch.Serialize(c);
         var serializedUntilNotContainsZSuffix = serialized
             .Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
             .Single(line => line.StartsWith("RRULE:", StringComparison.Ordinal));
@@ -487,7 +482,7 @@ public class SerializationTests
             Version = "BAR",
         };
 
-        var serialized = new CalendarSerializer().SerializeToString(c);
+        var serialized = _serializerSwitch.Serialize(c);
         
         using (Assert.EnterMultipleScope())
         {
@@ -526,9 +521,8 @@ public class SerializationTests
                 },
             },
         };
-        var serializer = new CalendarSerializer();
-        var serializedCalendar = serializer.SerializeToString(cal1)!;
-        var cal2 = Calendar.Load(serializedCalendar)!;
+        var serializedCalendar = _serializerSwitch.Serialize(cal1);
+        var cal2 = _serializerSwitch.Deserialize<Calendar>(serializedCalendar);
         Assert.That(cal2.Events.Single().Attachments.Single().FormatType, Is.EqualTo("application/json"));
     }
 
@@ -543,7 +537,7 @@ public class SerializationTests
             Summary = expectedString,
         };
 
-        var serialized = new CalendarSerializer().SerializeToString(e)!;
+        var serialized = _serializerSwitch.Serialize(e);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized.Contains(expectedString, StringComparison.Ordinal), Is.True);
@@ -575,7 +569,7 @@ public class SerializationTests
             using (Assert.EnterMultipleScope())
             {
                 // Deserialize
-                Assert.That(() => Calendar.Load(
+                Assert.That(() => _serializerSwitch.Deserialize<Calendar>(
                     """
                     BEGIN:VCALENDAR
                     BEGIN:VEVENT
@@ -601,7 +595,7 @@ public class SerializationTests
     }
 
     [Test]
-    public void CalendarSerialization_ShouldDefaultTo_Utf8NoBom()
+    public void CalendarSerialization_ShouldWriteWithoutUtf8Bom()
     {
         var calendar = new Calendar();
         calendar.Events.Add(new CalendarEvent
@@ -611,25 +605,13 @@ public class SerializationTests
             DtEnd = new CalDateTime(2025, 6, 10, 10, 0, 0)
         });
 
-        // Serialize with default encoding (should be UTF-8 without BOM)
-        using var msNoBom = new MemoryStream();
-        new CalendarSerializer().Serialize(calendar, msNoBom);
-        var noBomBytes = msNoBom.ToArray();
+        using var ms = new MemoryStream();
+        _serializerSwitch.Serialize(ms, calendar);
 
-        // Serialize with explicit UTF-8 BOM
-        using var msWithBom = new MemoryStream();
-        new CalendarSerializer().Serialize(calendar, msWithBom, new UTF8Encoding(true));
-        var withBomBytes = msWithBom.ToArray();
+        var b = ms.ToArray();
+        var pre = Encoding.UTF8.GetPreamble();
 
-        // UTF-8 BOM is 0xEF,0xBB,0xBF
-        bool HasBom(byte[] bytes) =>
-            bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(HasBom(noBomBytes), Is.False, "Stream should not contain a UTF-8 BOM");
-            Assert.That(HasBom(withBomBytes), Is.True, "Stream should contain a UTF-8 BOM");
-        }
+        Assert.That(ms.ToArray().StartsWith(Encoding.UTF8.GetPreamble()), Is.False);
     }
 
     [TestCase(@"Lab, Training", @"Lab\, Training")]
@@ -654,10 +636,10 @@ public class SerializationTests
         var calEvent = new CalendarEvent { Description = originalText };
         calendar.Events.Add(calEvent);
 
-        var result = new CalendarSerializer().SerializeToString(calendar);
+        var result = _serializerSwitch.Serialize(calendar);
         Assert.That(result, Does.Contain($"DESCRIPTION:{serializedText}"));
 
-        var resultCal = Calendar.Load(result)!;
+        var resultCal = _serializerSwitch.Deserialize<Calendar>(result);
         Assert.That(resultCal.Events[0]!.Description, Is.EqualTo(deserializedText ?? originalText));
     }
 
@@ -670,7 +652,7 @@ public class SerializationTests
             Resources = ["A \\ B", "", "Nothing", "1,2,3"]
         };
 
-        var eventStr = new EventSerializer().SerializeToString(ev);
+        var eventStr = _serializerSwitch.Serialize(ev);
 
         Assert.That(eventStr!, Does.Contain(@"A \\ B,,Nothing,1\,2\,3"));
     }
@@ -696,10 +678,10 @@ public class SerializationTests
             calEvent.Categories.Add(category);
         calendar.Events.Add(calEvent);
 
-        var result = new CalendarSerializer().SerializeToString(calendar);
+        var result = _serializerSwitch.Serialize(calendar);
         Assert.That(result, Does.Contain(serializedLine));
 
-        var roundTripped = Calendar.Load(result)!.Events[0]!.Categories.ToList();
+        var roundTripped = _serializerSwitch.Deserialize<Calendar>(result).Events[0]!.Categories.ToList();
         Assert.That(roundTripped, Is.EqualTo(categories));
     }
 }

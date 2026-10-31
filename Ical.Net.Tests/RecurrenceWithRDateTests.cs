@@ -16,9 +16,12 @@ using Period = Ical.Net.DataTypes.Period;
 
 namespace Ical.Net.Tests;
 
-[TestFixture]
-public class RecurrenceWithRDateTests
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class RecurrenceWithRDateTests(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
     [Test]
     public void RDate_SingleDateTime_IsProcessedCorrectly()
     {
@@ -33,8 +36,7 @@ public class RecurrenceWithRDateTests
         calendarEvent.RecurrenceDates.Add(new CalDateTime(2023, 10, 2, 10, 0, 0));
 
         cal.Events.Add(calendarEvent);
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = CalendarSerializer.Serialize(cal);
 
         var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
@@ -66,8 +68,7 @@ public class RecurrenceWithRDateTests
         calendarEvent.RecurrenceDates.AddRange(recurrenceDates);
 
         cal.Events.Add(calendarEvent);
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = CalendarSerializer.Serialize(cal);
 
         var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
@@ -101,8 +102,7 @@ public class RecurrenceWithRDateTests
         calendarEvent.RecurrenceDates.AddRange(recurrenceDates);
 
         cal.Events.Add(calendarEvent);
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = CalendarSerializer.Serialize(cal);
 
         var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[tzId]).ToList();
 
@@ -138,10 +138,7 @@ public class RecurrenceWithRDateTests
 
         cal.Events.Add(calendarEvent);
 
-        // Serialization
-
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal)!;
+        var ics = CalendarSerializer.Serialize(cal);
 
         var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[tzId]).ToList();
 
@@ -159,7 +156,7 @@ public class RecurrenceWithRDateTests
 
         // Deserialization
 
-        cal = Calendar.Load(ics)!;
+        cal = CalendarSerializer.Deserialize<Calendar>(ics);
         occurrences = cal.Events.First().GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases[tzId]).ToList();
 
         using (Assert.EnterMultipleScope())
@@ -188,8 +185,7 @@ public class RecurrenceWithRDateTests
             .Add(new Period(new CalDateTime(2023, 10, 3, 10, 0, 0), new Duration(hours: 3)));
 
         cal.Events.Add(calendarEvent);
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = CalendarSerializer.Serialize(cal);
 
         var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
@@ -224,8 +220,7 @@ public class RecurrenceWithRDateTests
         calendarEvent.RecurrenceDates.AddRange(recDates);
 
         cal.Events.Add(calendarEvent);
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = CalendarSerializer.Serialize(cal);
 
         var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
@@ -258,8 +253,7 @@ public class RecurrenceWithRDateTests
             .Add(new CalDateTime(2023, 10, 3, 10, 0, 0));
 
         cal.Events.Add(calendarEvent);
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = CalendarSerializer.Serialize(cal);
 
         var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
@@ -295,8 +289,7 @@ public class RecurrenceWithRDateTests
         calendarEvent.RecurrenceDates.AddRange(recDates);
 
         cal.Events.Add(calendarEvent);
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = CalendarSerializer.Serialize(cal);
 
         var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 
@@ -329,8 +322,7 @@ public class RecurrenceWithRDateTests
         calendarEvent.RecurrenceDates.AddRange(recurrenceDates);
 
         cal.Events.Add(calendarEvent);
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = CalendarSerializer.Serialize(cal);
 
         var tz = CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"];
         var occurrences = calendarEvent.GetOccurrences(tz).ToList();
@@ -367,8 +359,7 @@ public class RecurrenceWithRDateTests
         calendarEvent.RecurrenceDates.AddRange(recDates);
 
         cal.Events.Add(calendarEvent);
-        var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = CalendarSerializer.Serialize(cal);
 
         var occurrences = calendarEvent.GetOccurrences(CalendarTimeZoneProviders.TzdbWithAliases["America/New_York"]).ToList();
 

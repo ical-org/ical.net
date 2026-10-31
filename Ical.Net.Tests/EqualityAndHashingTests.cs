@@ -8,7 +8,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
@@ -50,8 +49,6 @@ public class EqualityAndHashingTests
         DtEnd = CalDateTime.FromDateTime(_later),
     };
 
-    private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } })!;
-
     [Test]
     public void Resources_Tests()
     {
@@ -62,23 +59,23 @@ public class EqualityAndHashingTests
 
         e.Resources.Add("Baz");
         Assert.That(e.Resources.Count == 3, Is.True);
-        var serialized = SerializeEvent(e);
+        var serialized = CalendarSerializer.Serialize(e);
         Assert.That(serialized, Does.Contain("Baz"));
 
         e.Resources.Remove("Baz");
         Assert.That(e.Resources.Count == 2, Is.True);
-        serialized = SerializeEvent(e);
+        serialized = CalendarSerializer.Serialize(e);
         Assert.That(serialized, Does.Not.Contain("Baz"));
 
         e.Resources.Add("Hello");
         Assert.That(e.Resources.Contains("Hello"), Is.True);
-        serialized = SerializeEvent(e);
+        serialized = CalendarSerializer.Serialize(e);
         Assert.That(serialized, Does.Contain("Hello"));
 
         e.Resources.Clear();
         e.Resources.AddRange(origContents);
         Assert.That(origContents, Is.EquivalentTo(e.Resources));
-        serialized = SerializeEvent(e);
+        serialized = CalendarSerializer.Serialize(e);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(serialized, Does.Contain("Foo"));
@@ -86,14 +83,6 @@ public class EqualityAndHashingTests
             Assert.That(serialized, Does.Not.Contain("Baz"));
             Assert.That(serialized, Does.Not.Contain("Hello"));
         }
-    }
-
-    private static (byte[] original, byte[] copy) GetAttachments()
-    {
-        var payload = Encoding.UTF8.GetBytes("This is an attachment!");
-        var payloadCopy = new byte[payload.Length];
-        Array.Copy(payload, payloadCopy, payload.Length);
-        return (payload, payloadCopy);
     }
 
     [Test, TestCaseSource(nameof(PeriodTestCases))]

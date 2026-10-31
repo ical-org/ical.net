@@ -11,15 +11,18 @@ using NUnit.Framework;
 
 namespace Ical.Net.Tests;
 
-[TestFixture]
-public class TodoTest
+[TestFixture(SerializerVersion.Current)]
+[TestFixture(SerializerVersion.Obsolete)]
+public class TodoTest(SerializerVersion serializerVersion)
 {
+    private readonly SerializerSwitch _serializerSwitch = new(serializerVersion);
+
     private const string _tzid = "America/New_York";
 
     [Test, TestCaseSource(nameof(ActiveTodo_TestCases)), Category("Todo")]
     public void ActiveTodo_Tests(string calendarString, bool isActive)
     {
-        var iCal = Calendar.Load(calendarString)!;
+        var iCal = _serializerSwitch.Deserialize<Calendar>(calendarString);
         ProgramTest.TestCal(iCal);
         var todo = iCal.Todos;
 
@@ -41,7 +44,7 @@ public class TodoTest
     [Test, TestCaseSource(nameof(CompletedTodo_TestCases)), Category("Todo")]
     public void CompletedTodo_Tests(string calendarString, bool isCompleted)
     {
-        var iCal = Calendar.Load(calendarString)!;
+        var iCal = _serializerSwitch.Deserialize<Calendar>(calendarString);
         ProgramTest.TestCal(iCal);
         var todo = iCal.Todos;
 
@@ -56,7 +59,7 @@ public class TodoTest
     [Test, Category("Todo")]
     public void Todo7_1()
     {
-        var iCal = Calendar.Load(IcsFiles.Todo7)!;
+        var iCal = _serializerSwitch.Deserialize<Calendar>(IcsFiles.Todo7);
         var todo = iCal.Todos;
 
         var items = new List<CalDateTime>
