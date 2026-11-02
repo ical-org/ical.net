@@ -22,12 +22,8 @@ public class UtcOffsetSerializer : EncodableDataTypeSerializer
     {
         if (obj is not UtcOffset offset) return null;
 
-        var value = (offset.Positive ? "+" : "-") + offset.Hours.ToString("00", CultureInfo.InvariantCulture) +
-                    offset.Minutes.ToString("00", CultureInfo.InvariantCulture) +
-                    (offset.Seconds != 0 ? offset.Seconds.ToString("00", CultureInfo.InvariantCulture) : string.Empty);
-
         // Encode the value as necessary
-        return Encode(offset, value);
+        return Encode(offset, offset.ToString());
     }
 
     public override object? Deserialize(TextReader tr)

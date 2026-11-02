@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
@@ -39,10 +38,8 @@ public class PeriodSerializer : EncodableDataTypeSerializer
                 return null;
             }
 
-            var sb = new StringBuilder();
-
             // Serialize the start time
-            sb.Append(dtSerializer.SerializeToString(p.StartTime));
+            var value = dtSerializer.SerializeToString(p.StartTime);
 
             // RFC 5545 section 3.6.1:
             // For cases where a "VEVENT" calendar component
@@ -53,19 +50,17 @@ public class PeriodSerializer : EncodableDataTypeSerializer
             if (p.EndTime is { } endtime)
             {
                 // Serialize the end date and time...
-                sb.Append('/');
-                sb.Append(dtSerializer.SerializeToString(endtime));
+                value += "/" + dtSerializer.SerializeToString(endtime);
             }
-            if (p.Duration is { } duration) 
+            if (p.Duration is { } duration)
             {
                 // Serialize the duration
-                sb.Append('/');
-                sb.Append(durationSerializer.SerializeToString(duration));
+                value += "/" + durationSerializer.SerializeToString(duration);
             }
             // else, just the start time gets serialized to comply with the RFC 5545 section 3.6.1
 
             // Encode the value as necessary
-            return Encode(p, sb.ToString());
+            return Encode(p, value);
         }
         finally
         {

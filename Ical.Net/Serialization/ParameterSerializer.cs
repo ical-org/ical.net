@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 
 namespace Ical.Net.Serialization;
 
@@ -24,22 +23,20 @@ public class ParameterSerializer : SerializerBase
             return null;
         }
 
-        var builder = new StringBuilder();
-        builder.Append(p.Name + "=");
-
         // "Section 3.2:  Property parameter values MUST NOT contain the DQUOTE character."
         // Therefore, let's strip any double quotes from the value.
         var values = string.Join(",", p.Values).Replace("\"", string.Empty);
 
         // Surround the parameter value with double quotes, if the value
         // contains any problematic characters.
-        if (values.IndexOfAny(new[] { ';', ':', ',' }) >= 0)
+        if (values.IndexOfAny(QuotedValueChars) >= 0)
         {
-            values = "\"" + values + "\"";
+            return p.Name + "=\"" + values + "\"";
         }
-        builder.Append(values);
-        return builder.ToString();
+        return p.Name + "=" + values;
     }
+
+    private static readonly char[] QuotedValueChars = [';', ':', ','];
 
     public override object? Deserialize(TextReader tr) => null;
 }
