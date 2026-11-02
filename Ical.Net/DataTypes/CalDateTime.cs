@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.Extensions;
 using NodaTime.Text;
@@ -530,16 +531,16 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         Span<char> text = stackalloc char[16];
         var length = 0;
 
-        AppendDigits(text, ref length, Year, 4);
-        AppendDigits(text, ref length, Month, 2);
-        AppendDigits(text, ref length, Day, 2);
+        TextUtil.AppendDigits(text, ref length, Year, 4);
+        TextUtil.AppendDigits(text, ref length, Month, 2);
+        TextUtil.AppendDigits(text, ref length, Day, 2);
 
         if (_localTime is { } time)
         {
             text[length++] = 'T';
-            AppendDigits(text, ref length, time.Hour, 2);
-            AppendDigits(text, ref length, time.Minute, 2);
-            AppendDigits(text, ref length, time.Second, 2);
+            TextUtil.AppendDigits(text, ref length, time.Hour, 2);
+            TextUtil.AppendDigits(text, ref length, time.Minute, 2);
+            TextUtil.AppendDigits(text, ref length, time.Second, 2);
 
             // RFC 5545 3.3.5: UTC time is identified by a Z suffix
             if (IsUtc)
@@ -549,20 +550,6 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
         }
 
         return text.Slice(0, length).ToString();
-    }
-
-    /// <summary>
-    /// Appends the value as a zero-padded number with the given number of digits.
-    /// </summary>
-    private static void AppendDigits(Span<char> text, ref int length, int value, int digits)
-    {
-        for (var i = length + digits - 1; i >= length; i--)
-        {
-            text[i] = (char) ('0' + value % 10);
-            value /= 10;
-        }
-
-        length += digits;
     }
 
     #endregion

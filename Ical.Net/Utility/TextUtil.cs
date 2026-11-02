@@ -63,6 +63,20 @@ internal static class TextUtil
         result.Append(SerializationConstants.LineBreak);
     }
 
+    /// <summary>
+    /// Appends the value as a zero-padded number with the given number of digits.
+    /// </summary>
+    public static void AppendDigits(Span<char> text, ref int length, int value, int digits)
+    {
+        for (var i = length + digits - 1; i >= length; i--)
+        {
+            text[i] = (char) ('0' + value % 10);
+            value /= 10;
+        }
+
+        length += digits;
+    }
+
     public static IEnumerable<string> Chunk(string str, int chunkSize = 73)
     {
         for (var index = 0; index < str.Length; index += chunkSize)
