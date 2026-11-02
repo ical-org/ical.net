@@ -32,10 +32,12 @@ internal sealed class ByRuleValues
 
     private readonly int[] _normalPositiveSetPos;
 
-    private readonly NormalValues _byWeekNo;
-    private readonly NormalValues _byYearDay;
-    private readonly NormalValues _byMonthDay;
-    private readonly NormalValues _bySetPos;
+    // Not readonly: NormalValues caches into itself, and calls on
+    // a readonly struct field would run on a copy and lose the cache.
+    private NormalValues _byWeekNo;
+    private NormalValues _byYearDay;
+    private NormalValues _byMonthDay;
+    private NormalValues _bySetPos;
 
     private readonly WeekDayValue[] _byDay;
     private IsoDayOfWeek[]? _normalDaysOfWeek;
