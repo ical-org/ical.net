@@ -38,8 +38,11 @@ public class SerializationTests2
         writer.WriteValue("🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄🎈👍😄");
         writer.EndLine();
 
-        var reader = new StreamReader(stream);
+        writer.Flush();
+
         stream.Position = 0;
+
+        var reader = new StreamReader(stream);
         var result = reader.ReadToEnd();
 
         var expected = """
@@ -75,6 +78,8 @@ public class SerializationTests2
                 writer.WriteName("SUMMARY");
                 writer.WriteValue(value);
                 writer.EndLine();
+
+                writer.Flush();
 
                 var result = Encoding.UTF8.GetString(stream.ToArray());
                 var lines = result.Split(new[] { "\r\n" }, StringSplitOptions.None);

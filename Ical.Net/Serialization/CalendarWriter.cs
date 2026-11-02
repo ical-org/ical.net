@@ -10,6 +10,8 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Ical.Net.Serialization;
 
@@ -21,9 +23,6 @@ public sealed class CalendarWriter
     private const byte CarriageReturn = (byte) '\r';
     private const byte LineFeed = (byte) '\n';
     private const byte Space = (byte) ' ';
-
-    // Sized for the max line size including line break
-    private readonly byte[] _buffer = new byte[LineByteLimit + 2];
 
     private char[] _charBuffer = new char[256];
     private int _charBufferLength = 0;
@@ -37,9 +36,12 @@ public sealed class CalendarWriter
 
     private readonly Stream _output;
 
+    private readonly ArrayBufferWriter<byte> _bufferWriter;
+
     internal CalendarWriter(Stream output)
     {
         _output = output;
+        _bufferWriter = new ArrayBufferWriter<byte>();
     }
 
     /// <summary>
@@ -51,8 +53,8 @@ public sealed class CalendarWriter
         // Write first line
         var start = 0;
         var charCount = FindCharCount(line, start, lineLength, LineByteLimit);
-        var bytesWritten = _encoding.GetBytes(line, start, charCount, _buffer, 0);
-        WriteLineEnd(bytesWritten);
+        _encoding.GetBytes(line.AsSpan(start, charCount), _bufferWriter);
+        WriteLineEnd();
 
         start = charCount;
 
@@ -60,13 +62,12 @@ public sealed class CalendarWriter
         while (start < lineLength)
         {
             // Prefix folded lines with a space
-            _buffer[0] = Space;
-            bytesWritten = 1;
+            _bufferWriter.Write(Space);
 
             // Write next line
             charCount = FindCharCount(line, start, lineLength - start, LineByteLimitFolded);
-            bytesWritten += _encoding.GetBytes(line, start, charCount, _buffer, 1);
-            WriteLineEnd(bytesWritten);
+            _encoding.GetBytes(line.AsSpan(start, charCount), _bufferWriter);
+            WriteLineEnd();
             start += charCount;
         }
     }
@@ -108,24 +109,19 @@ public sealed class CalendarWriter
     }
 
     /// <summary>
-    /// Writes a line without folder or escaping.
+    /// Writes a line without folding or escaping.
     /// This should only be used for constant values known to be safe.
     /// </summary>
     /// <param name="name"></param>
     /// <param name="property"></param>
     internal void WriteRawContentLine(ReadOnlySpan<byte> name, string property)
     {
-#if NET
-        _output.Write(name);
-#else
-        name.CopyTo(_buffer);
-        _output.Write(_buffer, 0, name.Length);
-#endif
+        _bufferWriter.Write(name);
+        _bufferWriter.Write(NameValueSeparator);
 
-        _output.WriteByte(NameValueSeparator);
+        _encoding.GetBytes(property, _bufferWriter);
 
-        var bytesWritten = _encoding.GetBytes(property, 0, property.Length, _buffer, 0);
-        WriteLineEnd(bytesWritten);
+        WriteLineEnd();
     }
 
     internal void WriteName(string name)
@@ -397,11 +393,32 @@ public sealed class CalendarWriter
         Array.Resize(ref _charBuffer, maxLength * 2);
     }
 
-    private void WriteLineEnd(int bytesWritten)
+    private void WriteLineEnd()
     {
-        _buffer[bytesWritten++] = CarriageReturn;
-        _buffer[bytesWritten++] = LineFeed;
-        _output.Write(_buffer, 0, bytesWritten);
+        _bufferWriter.Write(CarriageReturn);
+        _bufferWriter.Write(LineFeed);
+    }
+
+    internal void Flush()
+    {
+        if (_bufferWriter.WrittenCount > 0)
+        {
+            _output.Write(_bufferWriter.WrittenSpan);
+            _bufferWriter.ResetWrittenCount();
+        }
+
+        _output.Flush();
+    }
+
+    internal async Task FlushAsync(CancellationToken cancellationToken)
+    {
+        if (_bufferWriter.WrittenCount > 0)
+        {
+            await _output.WriteAsync(_bufferWriter.WrittenMemory, cancellationToken).ConfigureAwait(false);
+            _bufferWriter.ResetWrittenCount();
+        }
+
+        await _output.FlushAsync(cancellationToken).ConfigureAwait(false);
     }
 
 
