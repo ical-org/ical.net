@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -76,7 +77,7 @@ public class SerializationTests2
                 writer.EndLine();
 
                 var result = Encoding.UTF8.GetString(stream.ToArray());
-                var lines = result.Split("\r\n");
+                var lines = result.Split(new[] { "\r\n" }, StringSplitOptions.None);
 
                 Assert.That(lines.Select(l => Encoding.UTF8.GetByteCount(l)), Has.All.LessThanOrEqualTo(75));
                 Assert.That(result.Replace("\r\n ", ""), Is.EqualTo($"SUMMARY:{value}\r\n"));
