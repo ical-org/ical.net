@@ -95,7 +95,7 @@ public sealed class CalendarWriter
             }
 
             var lastCharByteCount = char.IsHighSurrogate(line[charIndex + length]) ? 2 : 1;
-            byteCount -= _encoding.GetByteCount(line, length, lastCharByteCount);
+            byteCount -= _encoding.GetByteCount(line, charIndex + length, lastCharByteCount);
         }
 
         // Do not cut UTF-16 multibyte character in half

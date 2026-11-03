@@ -3,8 +3,10 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
@@ -57,6 +59,30 @@ public class SerializationTests2
             """.ReplaceLineEndings("\r\n");
 
         Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void CalendarWriterFoldsMixedMultibyteLinesWithin75Octets()
+    {
+        for (var leading = 0; leading < 40; leading++)
+        {
+            for (var ascii = 0; ascii < 100; ascii += 3)
+            {
+                var value = new string('漢', leading) + new string('a', ascii) + new string('字', 40) + new string('b', 80);
+
+                var stream = new MemoryStream();
+                var writer = new CalendarWriter(stream);
+                writer.WriteName("SUMMARY");
+                writer.WriteValue(value);
+                writer.EndLine();
+
+                var result = Encoding.UTF8.GetString(stream.ToArray());
+                var lines = result.Split(new[] { "\r\n" }, StringSplitOptions.None);
+
+                Assert.That(lines.Select(l => Encoding.UTF8.GetByteCount(l)), Has.All.LessThanOrEqualTo(75));
+                Assert.That(result.Replace("\r\n ", ""), Is.EqualTo($"SUMMARY:{value}\r\n"));
+            }
+        }
     }
 
     [Test]
