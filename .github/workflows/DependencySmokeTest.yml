@@ -6,6 +6,9 @@ on:
     - cron: '22 2 5 * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   tests:
     runs-on: ubuntu-22.04  # ubuntu-24.04 does not include mono needed for net4x tests
