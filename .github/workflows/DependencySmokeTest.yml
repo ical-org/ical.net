@@ -1,0 +1,45 @@
+name: Dependency Smoke Test
+
+on:
+  schedule:
+    # Runs monthly on the 5th at 02:22 UTC
+    - cron: '22 2 5 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-22.04  # ubuntu-24.04 does not include mono needed for net4x tests
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v7
+      with:
+        fetch-depth: 0  # Fetch all history for all tags and branches
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: |
+          10.0.x
+          8.0.x
+          6.0.x
+          3.1.x
+
+    - name: Check .ics fixtures for BOM
+      shell: bash
+      run: bash .github/workflows/EnsureIcsFixturesWithoutBOM.sh Ical.Net.Tests
+
+    - name: Override NodaTime to latest in test project
+      run: dotnet add Ical.Net.Tests/Ical.Net.Tests.csproj package NodaTime --version "*" --no-restore
+
+    - name: Restore dependencies with latest compatible floating versions
+      run: dotnet restore --no-cache --force-evaluate
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release -p:nowarn=1591
+
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity normal
