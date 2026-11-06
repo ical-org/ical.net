@@ -103,6 +103,20 @@ public class CalDateTimeTests
             .SetName("Date only with 'IT' CultureInfo and default format arg");
     }
 
+    [Test, TestCaseSource(nameof(ToBasicIsoTestCases))]
+    public string ToBasicIsoWritesExactValue(CalDateTime calDateTime)
+        => calDateTime.ToBasicIso();
+
+    public static IEnumerable ToBasicIsoTestCases()
+    {
+        yield return new TestCaseData(new CalDateTime(2025, 1, 2)).Returns("20250102");
+        yield return new TestCaseData(new CalDateTime(2025, 1, 2, 3, 4, 5)).Returns("20250102T030405");
+        yield return new TestCaseData(new CalDateTime(2025, 1, 2, 3, 4, 5, CalDateTime.UtcTzId)).Returns("20250102T030405Z");
+        yield return new TestCaseData(new CalDateTime(2025, 1, 2, 3, 4, 5, "Europe/Vienna")).Returns("20250102T030405");
+        yield return new TestCaseData(new CalDateTime(1, 1, 1)).Returns("00010101");
+        yield return new TestCaseData(new CalDateTime(9999, 12, 31, 23, 59, 59, CalDateTime.UtcTzId)).Returns("99991231T235959Z");
+    }
+
     [Test, TestCaseSource(nameof(EqualityTestCases))]
     public bool EqualityTests(Func<CalDateTime, bool> operation)
     {

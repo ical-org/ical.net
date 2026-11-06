@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
@@ -40,26 +39,7 @@ public class DateTimeSerializer : SerializerBase, IParameterProvider
             return null;
         }
 
-        // RFC 5545 3.3.5:
-        // The date with UTC time, or absolute time, is identified by a LATIN
-        // CAPITAL LETTER Z suffix character, the UTC designator, appended to
-        // the time value. The "TZID" property parameter MUST NOT be applied to DATE-TIME
-        // properties whose time values are specified in UTC.
-
-        var value = new StringBuilder(512);
-        // NOSONAR: netstandard2.x does not support string.Create(CultureInfo.InvariantCulture, $"{...}");
-        value.Append(FormattableString.Invariant($"{dt.Year:0000}{dt.Month:00}{dt.Day:00}")); // NOSONAR
-        if (dt.Time is { } time)
-        {
-            value.Append(FormattableString.Invariant($"T{time.Hour:00}{time.Minute:00}{time.Second:00}")); // NOSONAR
-            if (dt.IsUtc)
-            {
-                value.Append('Z');
-            }
-        }
-
-        // Encode the value as necessary
-        return value.ToString();
+        return dt.ToBasicIso();
     }
 
     private const RegexOptions Options = RegexOptions.Compiled | RegexOptions.IgnoreCase;

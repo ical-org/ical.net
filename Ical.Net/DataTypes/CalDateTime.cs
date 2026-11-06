@@ -526,19 +526,43 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// <returns>A string representing the date and time (if any) of this value.</returns>
     public string ToBasicIso()
     {
-        if (IsUtc)
+        // yyyyMMdd, then THHmmss, then Z for UTC: at most 16 characters
+        Span<char> text = stackalloc char[16];
+        var length = 0;
+
+        AppendDigits(text, ref length, Year, 4);
+        AppendDigits(text, ref length, Month, 2);
+        AppendDigits(text, ref length, Day, 2);
+
+        if (_localTime is { } time)
         {
-            var instant = ToLocalDateTime().InUtc().ToInstant();
-            return instantPattern.Format(instant);
+            text[length++] = 'T';
+            AppendDigits(text, ref length, time.Hour, 2);
+            AppendDigits(text, ref length, time.Minute, 2);
+            AppendDigits(text, ref length, time.Second, 2);
+
+            // RFC 5545 3.3.5: UTC time is identified by a Z suffix
+            if (IsUtc)
+            {
+                text[length++] = 'Z';
+            }
         }
 
-        if (HasTime)
+        return text.Slice(0, length).ToString();
+    }
+
+    /// <summary>
+    /// Appends the value as a zero-padded number with the given number of digits.
+    /// </summary>
+    private static void AppendDigits(Span<char> text, ref int length, int value, int digits)
+    {
+        for (var i = length + digits - 1; i >= length; i--)
         {
-            var localDateTime = ToLocalDateTime();
-            return localDateTimePattern.Format(localDateTime);
+            text[i] = (char) ('0' + value % 10);
+            value /= 10;
         }
 
-        return localDatePattern.Format(Date);
+        length += digits;
     }
 
     #endregion
