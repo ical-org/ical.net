@@ -296,6 +296,43 @@ public class SerializationTests2
     }
 
     [Test]
+    [TestCase("ATTACH", "https://www.example.com", "ATTACH:https://www.example.com")]
+    [TestCase("DTSTART", "20250101T090000", "DTSTART:20250101T090000")]
+    [TestCase("PRIORITY", "5", "PRIORITY:5")]
+    public void PropertyWithTextValueIsWrittenAsText(string name, string value, string expected)
+    {
+        var e = new CalendarEvent();
+        e.AddProperty(new CalendarProperty(name, value));
+
+        var result = CalendarSerializer.Serialize(e);
+
+        Assert.That(result, Does.Contain($"\r\n{expected}\r\n"));
+    }
+
+    [Test]
+    public void PropertyWithTextValueKeepsParameters()
+    {
+        var p = new CalendarProperty("ATTACH", "https://www.example.com");
+        p.AddParameter("VALUE", "URI");
+
+        var e = new CalendarEvent();
+        e.AddProperty(p);
+
+        var result = CalendarSerializer.Serialize(e);
+
+        Assert.That(result, Does.Contain("\r\nATTACH;VALUE=URI:https://www.example.com\r\n"));
+    }
+
+    [Test]
+    public void PropertyWithOtherMismatchedValueTypeThrows()
+    {
+        var e = new CalendarEvent();
+        e.AddProperty(new CalendarProperty("PRIORITY", new CalDateTime(2025, 1, 1)));
+
+        Assert.That(() => CalendarSerializer.Serialize(e), Throws.TypeOf<System.Runtime.Serialization.SerializationException>());
+    }
+
+    [Test]
     public void CustomPropertyWithIntegerType()
     {
         var ev = new CalendarEvent();
