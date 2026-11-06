@@ -5,7 +5,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using NodaTime;
 
 namespace Ical.Net.DataTypes;
@@ -232,22 +231,35 @@ public class Period : EncodableDataType
 
     public string ToBasicIso()
     {
-        var sb = new StringBuilder();
+        Span<char> text = stackalloc char[MaxBasicIsoLength];
+        var length = WriteBasicIso(text);
 
-        // Serialize the start time
-        sb.Append(StartTime.ToBasicIso());
+        return text.Slice(0, length).ToString();
+    }
+
+    /// <summary>
+    /// The maximum length of the value returned by <see cref="ToBasicIso"/>:
+    /// the start, a slash, and the end or the duration.
+    /// </summary>
+    internal const int MaxBasicIsoLength = CalDateTime.MaxBasicIsoLength + 1 + DataTypes.Duration.MaxBasicIsoLength;
+
+    /// <summary>
+    /// Writes the value returned by <see cref="ToBasicIso"/> to the given span.
+    /// </summary>
+    /// <returns>The number of characters written.</returns>
+    internal int WriteBasicIso(Span<char> text)
+    {
+        var length = StartTime.WriteBasicIso(text);
 
         if (EndTime is { } endtime)
         {
-            // Serialize the end date and time...
-            sb.Append('/');
-            sb.Append(endtime.ToBasicIso());
+            text[length++] = '/';
+            length += endtime.WriteBasicIso(text.Slice(length));
         }
         else if (Duration is { } duration)
         {
-            // Serialize the duration
-            sb.Append('/');
-            sb.Append(duration.ToBasicIso());
+            text[length++] = '/';
+            length += duration.WriteBasicIso(text.Slice(length));
         }
         else
         {
@@ -261,7 +273,7 @@ public class Period : EncodableDataType
             //throw new InvalidOperationException("Period is missing an end or duration");
         }
 
-        return sb.ToString();
+        return length;
     }
 
     #endregion

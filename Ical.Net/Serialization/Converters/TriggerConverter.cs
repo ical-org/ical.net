@@ -37,12 +37,12 @@ internal class TriggerConverter : CalendarPropertyConverter<Trigger>
         if (value.DateTime is { } dt)
         {
             writer.WriteParameter("VALUE", dt.HasTime ? "DATE-TIME" : "DATE");
-            writer.WriteValue(dt.ToBasicIso());
+            writer.WriteValue(dt);
         }
         else if (value.Duration is { } duration)
         {
             // DURATION is the default VALUE type
-            writer.WriteValue(duration.ToBasicIso());
+            writer.WriteValue(duration);
         }
         else
         {

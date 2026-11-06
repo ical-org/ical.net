@@ -49,7 +49,7 @@ internal class FreeBusyConverter : CalendarPropertyConverter<FreeBusyEntry>
                 break;
         }
 
-        writer.WriteValue(value.ToBasicIso());
+        writer.WriteValue(value);
     }
 
     public override void WriteParameters(

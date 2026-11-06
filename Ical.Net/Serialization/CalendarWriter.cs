@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization;
 
@@ -298,6 +299,27 @@ public sealed class CalendarWriter
         => WriteValueRaw(uri.OriginalString);
 
     public void WriteValue(string value) => WriteValueEscape(value);
+
+    // Date, period and duration values never contain characters
+    // that need escaping, so they are formatted into the buffer directly.
+
+    internal void WriteValue(CalDateTime value)
+    {
+        StartWriteValue(CalDateTime.MaxBasicIsoLength);
+        _charBufferLength += value.WriteBasicIso(_charBuffer.AsSpan(_charBufferLength));
+    }
+
+    internal void WriteValue(Period value)
+    {
+        StartWriteValue(Period.MaxBasicIsoLength);
+        _charBufferLength += value.WriteBasicIso(_charBuffer.AsSpan(_charBufferLength));
+    }
+
+    internal void WriteValue(Duration value)
+    {
+        StartWriteValue(Duration.MaxBasicIsoLength);
+        _charBufferLength += value.WriteBasicIso(_charBuffer.AsSpan(_charBufferLength));
+    }
 
     /// <summary>
     /// Writes text segment. Repeated calls delimit the text

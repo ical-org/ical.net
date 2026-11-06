@@ -527,8 +527,24 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     /// <returns>A string representing the date and time (if any) of this value.</returns>
     public string ToBasicIso()
     {
-        // yyyyMMdd, then THHmmss, then Z for UTC: at most 16 characters
-        Span<char> text = stackalloc char[16];
+        Span<char> text = stackalloc char[MaxBasicIsoLength];
+        var length = WriteBasicIso(text);
+
+        return text.Slice(0, length).ToString();
+    }
+
+    /// <summary>
+    /// The maximum length of the value returned by <see cref="ToBasicIso"/>:
+    /// yyyyMMdd, then THHmmss, then Z for UTC.
+    /// </summary>
+    internal const int MaxBasicIsoLength = 16;
+
+    /// <summary>
+    /// Writes the value returned by <see cref="ToBasicIso"/> to the given span.
+    /// </summary>
+    /// <returns>The number of characters written.</returns>
+    internal int WriteBasicIso(Span<char> text)
+    {
         var length = 0;
 
         TextUtil.AppendDigits(text, ref length, Year, 4);
@@ -549,7 +565,7 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
             }
         }
 
-        return text.Slice(0, length).ToString();
+        return length;
     }
 
     #endregion

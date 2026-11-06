@@ -152,4 +152,31 @@ public class PeriodTests
                 "A period should not be equal to an object of different type.");
         }
     }
+
+    [Test]
+    [TestCase("20250102T030405Z/20250102T040405Z", false)]
+    [TestCase("20250102T030405Z/PT1H", true)]
+    public void ToBasicIsoWritesStartAndEndOrDuration(string expected, bool useDuration)
+    {
+        var start = new CalDateTime(2025, 1, 2, 3, 4, 5, CalDateTime.UtcTzId);
+        var period = useDuration
+            ? new Period(start, Duration.FromHours(1))
+            : new Period(start, new CalDateTime(2025, 1, 2, 4, 4, 5, CalDateTime.UtcTzId));
+
+        Assert.That(period.ToBasicIso(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void ToBasicIsoWritesStartOnly()
+        => Assert.That(new Period(new CalDateTime(2025, 1, 2)).ToBasicIso(), Is.EqualTo("20250102"));
+
+    [Test]
+    public void ToBasicIsoWritesLongestValue()
+    {
+        var period = new Period(
+            new CalDateTime(2025, 1, 2, 3, 4, 5, CalDateTime.UtcTzId),
+            new Duration(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue));
+
+        Assert.That(period.ToBasicIso(), Is.EqualTo("20250102T030405Z/P2147483647W2147483647DT2147483647H2147483647M2147483647S"));
+    }
 }
