@@ -27,9 +27,8 @@ public class ParameterSerializer : SerializerBase
         var builder = new StringBuilder();
         builder.Append(p.Name + "=");
 
-        // "Section 3.2:  Property parameter values MUST NOT contain the DQUOTE character."
-        // Therefore, let's strip any double quotes from the value.
-        var values = string.Join(",", p.Values).Replace("\"", string.Empty);
+        // RFC 6868 caret-encode each value, so ^, DQUOTE and newlines survive round-trips.
+        var values = string.Join(",", System.Linq.Enumerable.Select(p.Values, v => CaretEncoding.Encode(v ?? string.Empty)));
 
         // Surround the parameter value with double quotes, if the value
         // contains any problematic characters.
