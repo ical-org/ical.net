@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 
 namespace Ical.Net.Serialization;
 
+[Obsolete("This will be removed with no public replacement.")]
 internal class SerializationUtil
 {
     public static void OnDeserializing(object obj)

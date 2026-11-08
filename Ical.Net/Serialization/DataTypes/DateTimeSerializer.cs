@@ -17,6 +17,8 @@ namespace Ical.Net.Serialization.DataTypes;
 /// <summary>
 /// A serializer for the <see cref="CalDateTime"/> data type.
 /// </summary>
+///
+[Obsolete("Use CalDateTime.ToBasicIso() and CalDateTime.TryParse() instead.")]
 public class DateTimeSerializer : SerializerBase, IParameterProvider
 {
     /// <summary>

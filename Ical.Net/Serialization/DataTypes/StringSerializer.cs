@@ -14,6 +14,7 @@ using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
 
+[Obsolete("This will be removed with no public replacement.")]
 public class StringSerializer : EncodableDataTypeSerializer
 {
     public StringSerializer() { }

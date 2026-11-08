@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -12,6 +12,7 @@ using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
 
+[Obsolete("Use Duration.ToBasicIso() or Duration.TryParse() instead.")]
 public class DurationSerializer : SerializerBase
 {
     public DurationSerializer() { }

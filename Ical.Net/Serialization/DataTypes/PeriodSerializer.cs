@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -10,6 +10,7 @@ using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
 
+[Obsolete("Use Period.ToBasicIso() and Period.TryParse() instead.")]
 public class PeriodSerializer : EncodableDataTypeSerializer
 {
     public PeriodSerializer() { }

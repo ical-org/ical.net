@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace Ical.Net;
 
+[Obsolete("This will be removed with no public replacement.")]
 public class ServiceProvider
 {
     private readonly IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
