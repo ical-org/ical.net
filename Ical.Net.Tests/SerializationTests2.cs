@@ -273,6 +273,8 @@ public class SerializationTests2
     [TestCase("ATTACH", "https://www.example.com", "ATTACH:https://www.example.com")]
     [TestCase("DTSTART", "20250101T090000", "DTSTART:20250101T090000")]
     [TestCase("PRIORITY", "5", "PRIORITY:5")]
+    [TestCase("RRULE", "FREQ=DAILY;COUNT=10;INTERVAL=2", "RRULE:FREQ=DAILY;COUNT=10;INTERVAL=2")]
+    [TestCase("GEO", "37.386013;-122.082932", "GEO:37.386013;-122.082932")]
     public void PropertyWithTextValueIsWrittenAsText(string name, string value, string expected)
     {
         var e = new CalendarEvent();
@@ -286,7 +288,7 @@ public class SerializationTests2
     [Test]
     public void PropertyWithTextValueKeepsParameters()
     {
-        var p = new CalendarProperty("ATTACH", "https://www.example.com");
+        var p = new CalendarProperty("ATTACH", "https://www.example.com?values=1,2,3");
         p.AddParameter("VALUE", "URI");
 
         var e = new CalendarEvent();
@@ -294,7 +296,7 @@ public class SerializationTests2
 
         var result = CalendarSerializer.Serialize(e);
 
-        Assert.That(result, Does.Contain("\r\nATTACH;VALUE=URI:https://www.example.com\r\n"));
+        Assert.That(result, Does.Contain("\r\nATTACH;VALUE=URI:https://www.example.com?values=1,2,3\r\n"));
     }
 
     [Test]

@@ -138,11 +138,11 @@ public abstract class CalendarPropertyConverter
         ICalendarProperty property,
         object propertyValue)
     {
-        // Write plain text values as text, even if the property
+        // Write plain text values as they are, even if the property
         // normally has another value type.
         if (propertyValue is string && !IsListValue && !Type.IsInstanceOfType(propertyValue))
         {
-            ConverterMap.TextConverter.WritePropertyLine(writer, property, propertyValue);
+            ConverterMap.RawStringConverter.WritePropertyLine(writer, property, propertyValue);
             return;
         }
 

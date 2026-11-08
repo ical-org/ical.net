@@ -24,7 +24,7 @@ internal static class ConverterMap
 
         // Property name is unknown. Treat value as a single text value.
         // The VALUE parameter will not change the parsed value type.
-        return TextConverter;
+        return objectToStringConverter;
     }
 
     internal static CalendarComponent GetCalendarComponent(string name)
@@ -52,7 +52,9 @@ internal static class ConverterMap
     private static readonly Dictionary<string, Func<CalendarComponent>> _components = InitializeComponentMap();
 #endif
 
-    internal static readonly CalendarPropertyConverter TextConverter = new ObjectToStringConverter();
+    private static readonly ObjectToStringConverter objectToStringConverter = new();
+
+    internal static readonly RawStringConverter RawStringConverter = new();
 
     private static Dictionary<string, CalendarPropertyConverter> InitializeMap()
     {
