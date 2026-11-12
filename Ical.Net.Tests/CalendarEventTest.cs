@@ -279,4 +279,18 @@ public class CalendarEventTest
             Assert.That(() => evt.DtEnd = new CalDateTime(2025, 12, 11), Throws.InvalidOperationException);
         }
     }
+
+    [Test]
+    public void GetOccurrencesRemovesDuplicatesThatAreNotAdjacent()
+    {
+        var start = new CalDateTime(2025, 1, 1, 9, 0, 0, CalDateTime.UtcTzId);
+        var cal = new Calendar();
+        cal.Events.Add(new CalendarEvent { Uid = "same", Start = start, Duration = Duration.FromHours(1) });
+        cal.Events.Add(new CalendarEvent { Uid = "other", Start = start, Duration = Duration.FromHours(1) });
+        cal.Events.Add(new CalendarEvent { Uid = "same", Start = start, Duration = Duration.FromHours(1) });
+
+        var result = cal.GetOccurrences(NodaTime.DateTimeZone.Utc).ToList();
+
+        Assert.That(result.Select(x => ((CalendarEvent) x.Source).Uid), Is.EquivalentTo(new[] { "same", "other" }));
+    }
 }

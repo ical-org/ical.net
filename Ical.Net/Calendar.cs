@@ -224,9 +224,9 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             // being ordered to avoid full enumeration.
             .OrderedMergeMany()
 
-            // Remove duplicates based on Period.StartTime and take advantage of
-            // being ordered to avoid full enumeration.
-            .OrderedDistinct()
+            // Remove duplicates among occurrences with the same start and take
+            // advantage of being ordered to avoid full enumeration.
+            .OrderedDistinct(Comparer<Occurrence>.Default, EqualityComparer<Occurrence>.Default)
 
             // Convert overflow exceptions to expected ones.
             .HandleEvaluationExceptions();
