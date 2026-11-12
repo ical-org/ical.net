@@ -208,6 +208,34 @@ internal static class CollectionHelpers
     }
 
     /// <summary>
+    /// Returns a sequence containing the items of the ordered input sequence, with duplicates removed.
+    /// </summary>
+    /// <remarks>
+    /// The input sequence must be ordered according to <paramref name="windowComparer"/>. Items that compare
+    /// as equal form a window, and duplicates according to <paramref name="equalityComparer"/> are removed
+    /// within that window, even if they are not adjacent to each other.
+    ///
+    /// The method operates in a streaming manner, meaning it only enumerates the input sequence while the
+    /// output sequence is enumerated and can therefore handle indefinite sequences.
+    /// </remarks>
+    public static IEnumerable<T> OrderedDistinct<T>(this IEnumerable<T> items, IComparer<T> windowComparer, IEqualityComparer<T> equalityComparer)
+    {
+        var prev = default(T);
+        var window = new HashSet<T>(equalityComparer);
+
+        foreach (var item in items)
+        {
+            if (window.Count > 0 && windowComparer.Compare(prev!, item) != 0)
+                window.Clear();
+
+            if (window.Add(item))
+                yield return item;
+
+            prev = item;
+        }
+    }
+
+    /// <summary>
     /// While iterating the source sequence, catch exceptions of the specified type and call the handler.
     /// </summary>
     public static IEnumerable<T> Catch<T, TException>(this IEnumerable<T> source, Action<TException> handler)

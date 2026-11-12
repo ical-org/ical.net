@@ -75,4 +75,15 @@ internal class CollectionHelpersTests
         var result = new[] { 1, 2, 2, 3 }.OrderedDistinct();
         Assert.That(result, Is.EqualTo(new[] { 1, 2, 3 }));
     }
+
+    [Test]
+    public void TestOrderedDistinctWithinWindow()
+    {
+        var items = new[] { (1, "a"), (1, "b"), (1, "a"), (2, "a"), (2, "a") };
+        var window = Comparer<(int, string)>.Create((x, y) => x.Item1.CompareTo(y.Item1));
+
+        var result = items.OrderedDistinct(window, EqualityComparer<(int, string)>.Default);
+
+        Assert.That(result, Is.EqualTo(new[] { (1, "a"), (1, "b"), (2, "a") }));
+    }
 }
