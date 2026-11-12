@@ -596,5 +596,102 @@ public class AlarmTests
         Assert.That(results, Is.Empty);
     }
 
+    [Test]
+    public void RelativeAlarmBeforeStartTimeDoesNotStopLaterAlarms()
+    {
+        var e = DailyEvent(new CalDateTime(2025, 1, 1, 10, 5, 0, CalDateTime.UtcTzId), count: 5, "-PT15M");
+
+        var results = e.GetAlarmOccurrences(DateTimeZone.Utc, Instant.FromUtc(2025, 1, 1, 10, 0))
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        Assert.That(results, Is.EqualTo(new[]
+        {
+            Instant.FromUtc(2025, 1, 2, 9, 50),
+            Instant.FromUtc(2025, 1, 3, 9, 50),
+            Instant.FromUtc(2025, 1, 4, 9, 50),
+            Instant.FromUtc(2025, 1, 5, 9, 50),
+        }));
+    }
+
+    [Test]
+    public void MultipleRelativeAlarmsAreReturnedInOrder()
+    {
+        var e = DailyEvent(new CalDateTime(2025, 1, 1, 10, 0, 0, CalDateTime.UtcTzId), count: 3, "-PT15M", "-P1D");
+
+        var results = e.GetAlarmOccurrences(DateTimeZone.Utc)
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        Assert.That(results, Is.EqualTo(new[]
+        {
+            Instant.FromUtc(2024, 12, 31, 10, 0),
+            Instant.FromUtc(2025, 1, 1, 9, 45),
+            Instant.FromUtc(2025, 1, 1, 10, 0),
+            Instant.FromUtc(2025, 1, 2, 9, 45),
+            Instant.FromUtc(2025, 1, 2, 10, 0),
+            Instant.FromUtc(2025, 1, 3, 9, 45),
+        }));
+    }
+
+    [Test]
+    public void RelativeAlarmLongerThanIntervalIsReturnedInOrder()
+    {
+        var e = DailyEvent(new CalDateTime(2025, 1, 1, 10, 0, 0, CalDateTime.UtcTzId), count: 3, "-PT15M", "-P2D");
+
+        var results = e.GetAlarmOccurrences(DateTimeZone.Utc)
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        Assert.That(results, Is.EqualTo(new[]
+        {
+            Instant.FromUtc(2024, 12, 30, 10, 0),
+            Instant.FromUtc(2024, 12, 31, 10, 0),
+            Instant.FromUtc(2025, 1, 1, 9, 45),
+            Instant.FromUtc(2025, 1, 1, 10, 0),
+            Instant.FromUtc(2025, 1, 2, 9, 45),
+            Instant.FromUtc(2025, 1, 3, 9, 45),
+        }));
+    }
+
+    [Test]
+    public void RelativeAlarmsOfUnboundedRuleStopAtEndTime()
+    {
+        var e = DailyEvent(new CalDateTime(2025, 1, 1, 10, 0, 0, CalDateTime.UtcTzId), count: null, "-PT15M");
+
+        var results = e.GetAlarmOccurrences(DateTimeZone.Utc, endTime: Instant.FromUtc(2025, 1, 4, 0, 0))
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        Assert.That(results, Is.EqualTo(new[]
+        {
+            Instant.FromUtc(2025, 1, 1, 9, 45),
+            Instant.FromUtc(2025, 1, 2, 9, 45),
+            Instant.FromUtc(2025, 1, 3, 9, 45),
+        }));
+    }
+
+    private static CalendarEvent DailyEvent(CalDateTime start, int? count, params string[] triggers)
+    {
+        var e = new CalendarEvent
+        {
+            Start = start,
+            Duration = Duration.FromHours(1),
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Daily) { Count = count },
+        };
+
+        foreach (var trigger in triggers)
+        {
+            e.Alarms.Add(new Alarm
+            {
+                Action = AlarmAction.Display,
+                Description = "Reminder",
+                Trigger = new Trigger(trigger),
+            });
+        }
+
+        return e;
+    }
+
     #endregion
 }
