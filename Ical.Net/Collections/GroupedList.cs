@@ -29,6 +29,12 @@ public class GroupedList<TGroup, TItem> :
         }
 
         var list = new MultiLinkedList<TItem>();
+
+        if (_lists.Count > 0)
+        {
+            list.SetPrevious(_lists[_lists.Count - 1]);
+        }
+
         _dictionary[group] = list;
         _lists.Add(list);
         return list;
