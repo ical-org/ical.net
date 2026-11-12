@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -11,6 +11,7 @@ using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.Serialization;
 
+[Obsolete("Implement a CalendarPropertyConverter and add to CalendarSerializerOptions.Converters instead.")]
 public class DataTypeSerializerFactory : ISerializerFactory
 {
     private static readonly Dictionary<Type, Func<SerializationContext, ISerializer>> _serializerMap =

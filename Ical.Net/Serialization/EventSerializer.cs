@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -8,6 +8,7 @@ using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.Serialization;
 
+[Obsolete("Use the static CalendarSerializer methods instead.")]
 public class EventSerializer : ComponentSerializer
 {
     public EventSerializer() { }
