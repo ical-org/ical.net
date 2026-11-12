@@ -737,6 +737,8 @@ public class DeserializationTests(SerializerVersion serializerVersion)
     [TestCase("-P1DT1H", 0, -1, -1, 0, 0)]
     [TestCase("PT1000H", 0, 0, 1000, 0, 0)]
     [TestCase("-PT1000H", null, null, -1000, null, null)]
+    [TestCase("p1dt2h", null, 1, 2, null, null)]
+    [TestCase("+P2W", 2, null, null, null, null)]
     public void DurationSerializer_ShouldReturn_ExpectedDuration(string text, int? weeks = null, int? days = null, int? hours = null, int? minutes = null, int? seconds = null)
     {
         Assert.That(DataTypes.Duration.Parse(text), Is.EqualTo(new DataTypes.Duration(weeks, days, hours, minutes, seconds)));
@@ -745,6 +747,9 @@ public class DeserializationTests(SerializerVersion serializerVersion)
     [Test, Category("DurationSerializer")]
     [TestCase("")]
     [TestCase("Invalid")]
+    [TestCase("P1W1D")]
+    [TestCase("PT1S2M")]
+    [TestCase("P1D ")]
     public void Duration_InvalidArguments_ShouldThrow(string text)
     {
         using (Assert.EnterMultipleScope())
@@ -752,4 +757,26 @@ public class DeserializationTests(SerializerVersion serializerVersion)
             Assert.That(DataTypes.Duration.Parse(text), Is.Null);
         }
     }
+
+    [Test, Category("DurationSerializer")]
+    public void Duration_ValueTooLarge_Throws()
+        => Assert.That(() => DataTypes.Duration.Parse("P2147483648D"), Throws.TypeOf<FormatException>());
+
+    [Test]
+    [TestCase("2.0", "2.0")]
+    [TestCase("3.1.4", "3.1.4")]
+    [TestCase("x 2.8;Success", "2.8")]
+    [TestCase("2.", "2")]
+    public void StatusCode_TryParse_ReadsFirstCode(string text, string expected)
+    {
+        Assert.That(StatusCode.TryParse(text, out var statusCode), Is.True);
+        Assert.That(statusCode!.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    [TestCase("")]
+    [TestCase("Success")]
+    [TestCase("1.99999999999")]
+    public void StatusCode_TryParse_ReturnsFalseWithoutValidCode(string text)
+        => Assert.That(StatusCode.TryParse(text, out _), Is.False);
 }

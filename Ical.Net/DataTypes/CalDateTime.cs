@@ -461,8 +461,9 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
     {
         if (basicIsoString is not null)
         {
-            var instantResult = instantPattern.Parse(basicIsoString);
-            if (instantResult.Success)
+            // Each pattern only matches one length, so skip parses that would fail
+            var instantResult = basicIsoString.Length == 16 ? instantPattern.Parse(basicIsoString) : null;
+            if (instantResult is { Success: true })
             {
                 var utcValue = instantResult.Value.InUtc();
                 if (utcValue.Year < 1)
@@ -475,8 +476,8 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
                 return true;
             }
 
-            var localDateTimeResult = localDateTimePattern.Parse(basicIsoString);
-            if (localDateTimeResult.Success)
+            var localDateTimeResult = basicIsoString.Length == 15 ? localDateTimePattern.Parse(basicIsoString) : null;
+            if (localDateTimeResult is { Success: true })
             {
                 if (localDateTimeResult.Value.Year < 1)
                 {
@@ -488,8 +489,8 @@ public sealed class CalDateTime : IFormattable, IEquatable<CalDateTime>
                 return true;
             }
 
-            var localDateResult = localDatePattern.Parse(basicIsoString);
-            if (localDateResult.Success)
+            var localDateResult = basicIsoString.Length == 8 ? localDatePattern.Parse(basicIsoString) : null;
+            if (localDateResult is { Success: true })
             {
                 if (localDateResult.Value.Year < 1)
                 {
