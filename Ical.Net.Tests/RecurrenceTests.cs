@@ -4988,4 +4988,50 @@ END:VCALENDAR";
             return evt.GetOccurrences(DateTimeZone.Utc).Select(x => x.Start).ToList();
         }
     }
+
+    [Test]
+    public void OccurrencesStillRunningAtPeriodStartAreIncluded()
+    {
+        var evt = new CalendarEvent
+        {
+            Start = new CalDateTime(2025, 1, 1, 9, 0, 0, CalDateTime.UtcTzId),
+            Duration = Duration.FromDays(3),
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Daily),
+        };
+
+        var result = evt.GetOccurrences(DateTimeZone.Utc, Instant.FromUtc(2025, 1, 10, 12, 0))
+            .Take(3)
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        Assert.That(result, Is.EqualTo(new[]
+        {
+            Instant.FromUtc(2025, 1, 8, 9, 0),
+            Instant.FromUtc(2025, 1, 9, 9, 0),
+            Instant.FromUtc(2025, 1, 10, 9, 0),
+        }));
+    }
+
+    [Test]
+    public void OccurrencesStillRunningAtPeriodStartAreIncludedWithDtEnd()
+    {
+        var evt = new CalendarEvent
+        {
+            Start = new CalDateTime(2025, 1, 6, 9, 0, 0, "Europe/Vienna"),
+            End = new CalDateTime(2025, 1, 15, 17, 0, 0, "Europe/Vienna"),
+            RecurrenceRule = new RecurrenceRule(FrequencyType.Weekly),
+        };
+
+        var tz = DateTimeZoneProviders.Tzdb["Europe/Vienna"];
+        var result = evt.GetOccurrences(tz, Instant.FromUtc(2025, 1, 21, 0, 0))
+            .Take(2)
+            .Select(x => x.Start.LocalDateTime)
+            .ToList();
+
+        Assert.That(result, Is.EqualTo(new[]
+        {
+            new LocalDateTime(2025, 1, 13, 9, 0),
+            new LocalDateTime(2025, 1, 20, 9, 0),
+        }));
+    }
 }
