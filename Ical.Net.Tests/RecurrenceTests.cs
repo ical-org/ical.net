@@ -4960,4 +4960,32 @@ END:VCALENDAR";
 
         Assert.That(result, Is.Empty);
     }
+
+    [Test]
+    [TestCase("FREQ=DAILY;COUNT=2;BYHOUR=9,9,10;BYSETPOS=2", "FREQ=DAILY;COUNT=2;BYHOUR=9,10;BYSETPOS=2")]
+    [TestCase("FREQ=HOURLY;COUNT=2;BYMINUTE=15,15,45;BYSETPOS=2", "FREQ=HOURLY;COUNT=2;BYMINUTE=15,45;BYSETPOS=2")]
+    [TestCase("FREQ=MINUTELY;COUNT=2;BYSECOND=10,10,20;BYSETPOS=2", "FREQ=MINUTELY;COUNT=2;BYSECOND=10,20;BYSETPOS=2")]
+    [TestCase("FREQ=YEARLY;COUNT=2;BYMONTH=3,3,6;BYSETPOS=2", "FREQ=YEARLY;COUNT=2;BYMONTH=3,6;BYSETPOS=2")]
+    public void DuplicateByValuesDoNotChangeSetPositions(string rule, string ruleWithoutDuplicates)
+    {
+        var result = GetOccurrenceStarts(rule);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Has.Count.EqualTo(2));
+            Assert.That(result, Is.EqualTo(GetOccurrenceStarts(ruleWithoutDuplicates)));
+        }
+
+        static List<ZonedDateTime> GetOccurrenceStarts(string rule)
+        {
+            var evt = new CalendarEvent
+            {
+                Start = new CalDateTime(2025, 1, 1, 8, 0, 0, CalDateTime.UtcTzId),
+                Duration = Duration.FromMinutes(30),
+                RecurrenceRule = new RecurrenceRule(rule),
+            };
+
+            return evt.GetOccurrences(DateTimeZone.Utc).Select(x => x.Start).ToList();
+        }
+    }
 }

@@ -266,7 +266,7 @@ internal sealed class ByRuleValues
     public int[] GetSetPositions(int count) => _bySetPos.Normalize(count);
 
     /// <summary>
-    /// Copies values to an array and sorts.
+    /// Copies distinct values to an array and sorts.
     /// </summary>
     /// <param name="values"></param>
     /// <returns></returns>
@@ -278,7 +278,7 @@ internal sealed class ByRuleValues
             return [];
         }
 
-        int[] result = [.. values];
+        int[] result = [.. values.Distinct()];
         Array.Sort(result);
 
         return result;
