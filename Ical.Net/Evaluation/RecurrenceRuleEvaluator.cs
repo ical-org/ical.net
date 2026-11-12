@@ -31,6 +31,7 @@ internal sealed class RecurrenceRuleEvaluator
 
     private readonly IWeekYearRule _weekYearRule;
     private readonly ZonedDateTime _zonedReferenceDate;
+    private readonly LocalTime _referenceTimeOfDay;
     private readonly int _referenceWeekNo;
 
     private ZonedDateTime _seed;
@@ -58,6 +59,7 @@ internal sealed class RecurrenceRuleEvaluator
         _firstDayOfWeek = rule.FirstDayOfWeek.ToIsoDayOfWeek();
         _weekYearRule = WeekYearRules.ForMinDaysInFirstWeek(4, _firstDayOfWeek);
         _zonedReferenceDate = referenceDate.ToZonedOrDefault(timeZone, timeZoneProvider);
+        _referenceTimeOfDay = referenceDate.ToLocalDateTime().TimeOfDay;
         _referenceWeekNo = _weekYearRule.GetWeekOfWeekYear(_zonedReferenceDate.Date);
         _seedLimit = GetSeedLimit();
     }
@@ -155,26 +157,28 @@ internal sealed class RecurrenceRuleEvaluator
             case FrequencyType.Daily:
                 nominalDiff = NodaTime.Period.Between(start.Date, limit.Date, PeriodUnits.Days);
                 nominalByInterval = FromIntervalInt(nominalDiff.Days);
-                return start.LocalDateTime.PlusDays(nominalByInterval)
+                return start.Date.PlusDays(nominalByInterval)
+                    .At(_referenceTimeOfDay)
                     .InZoneLeniently(start.Zone);
             case FrequencyType.Weekly:
                 nominalDiff = NodaTime.Period.Between(start.Date, limit.Date, PeriodUnits.Weeks);
                 nominalByInterval = FromIntervalInt(nominalDiff.Weeks);
-                return start.LocalDateTime.PlusWeeks(nominalByInterval)
+                return start.Date.PlusWeeks(nominalByInterval)
+                    .At(_referenceTimeOfDay)
                     .InZoneLeniently(start.Zone);
             case FrequencyType.Monthly:
                 nominalDiff = NodaTime.Period.Between(start.Date, limit.Date, PeriodUnits.Months);
                 nominalByInterval = FromIntervalInt(nominalDiff.Months);
                 return start.Date.PlusMonths(nominalByInterval)
                     .AtNearestDayOfMonth(_zonedReferenceDate.Day)
-                    .At(start.TimeOfDay)
+                    .At(_referenceTimeOfDay)
                     .InZoneLeniently(start.Zone);
             case FrequencyType.Yearly:
                 nominalDiff = NodaTime.Period.Between(start.Date, limit.Date, PeriodUnits.Years);
                 nominalByInterval = FromIntervalInt(nominalDiff.Years);
                 return start.Date.PlusYears(nominalByInterval)
                     .AtNearestDayOfMonth(_zonedReferenceDate.Day)
-                    .At(start.TimeOfDay)
+                    .At(_referenceTimeOfDay)
                     .InZoneLeniently(start.Zone);
         }
 
@@ -661,7 +665,7 @@ internal sealed class RecurrenceRuleEvaluator
 
             foreach (var day in ExpandDayOfWeekWithoutOffset(start, end))
             {
-                yield return day.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
+                yield return day.At(_referenceTimeOfDay).InZoneLeniently(value.Zone);
             }
         }
     }
@@ -680,7 +684,7 @@ internal sealed class RecurrenceRuleEvaluator
 
             foreach (var day in ExpandDayFromRange(start, end))
             {
-                yield return day.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
+                yield return day.At(_referenceTimeOfDay).InZoneLeniently(value.Zone);
             }
         }
     }
@@ -738,7 +742,7 @@ internal sealed class RecurrenceRuleEvaluator
 
             foreach (var day in ExpandDayFromRange(start, end))
             {
-                yield return day.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
+                yield return day.At(_referenceTimeOfDay).InZoneLeniently(value.Zone);
             }
         }
     }
@@ -752,7 +756,7 @@ internal sealed class RecurrenceRuleEvaluator
 
             foreach (var day in ExpandDayFromRange(start, end))
             {
-                yield return day.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
+                yield return day.At(_referenceTimeOfDay).InZoneLeniently(value.Zone);
             }
         }
     }
@@ -923,7 +927,7 @@ internal sealed class RecurrenceRuleEvaluator
             foreach (var day in _rule.GetMonthDays(value.Year, value.Month))
             {
                 yield return new LocalDate(value.Year, value.Month, day)
-                    .At(_zonedReferenceDate.TimeOfDay)
+                    .At(_referenceTimeOfDay)
                     .InZoneLeniently(value.Zone);
             }
         }
@@ -957,7 +961,7 @@ internal sealed class RecurrenceRuleEvaluator
                     continue;
                 }
 
-                yield return result.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
+                yield return result.At(_referenceTimeOfDay).InZoneLeniently(value.Zone);
 
             } while ((result = result.PlusDays(1)) != end);
         }
@@ -1027,7 +1031,7 @@ internal sealed class RecurrenceRuleEvaluator
                     continue;
                 }
 
-                yield return result.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
+                yield return result.At(_referenceTimeOfDay).InZoneLeniently(value.Zone);
 
             } while ((result = result.PlusDays(1)) != end);
         }
@@ -1055,7 +1059,7 @@ internal sealed class RecurrenceRuleEvaluator
                     continue;
                 }
 
-                yield return result.At(_zonedReferenceDate.TimeOfDay).InZoneLeniently(value.Zone);
+                yield return result.At(_referenceTimeOfDay).InZoneLeniently(value.Zone);
             }
         }
     }
@@ -1089,7 +1093,7 @@ internal sealed class RecurrenceRuleEvaluator
 
                 yield return _weekYearRule
                     .GetLocalDate(weekYear, weekNo, _zonedReferenceDate.DayOfWeek)
-                    .At(_zonedReferenceDate.TimeOfDay)
+                    .At(_referenceTimeOfDay)
                     .InZoneLeniently(value.Zone);
             }
         }
@@ -1169,7 +1173,7 @@ internal sealed class RecurrenceRuleEvaluator
                 var day = Math.Min(daysInMonth, _zonedReferenceDate.Day);
 
                 yield return new LocalDate(value.Year, month, day)
-                    .At(_zonedReferenceDate.TimeOfDay)
+                    .At(_referenceTimeOfDay)
                     .InZoneLeniently(value.Zone);
             }
         }
@@ -1270,24 +1274,24 @@ internal sealed class RecurrenceRuleEvaluator
             // daylight saving time).
             FrequencyType.Daily => _seed.Date
                 .PlusDays(_interval)
-                .At(_zonedReferenceDate.TimeOfDay)
+                .At(_referenceTimeOfDay)
                 .InZoneLeniently(_seed.Zone),
 
             FrequencyType.Weekly => _seed.Date
                 .PlusWeeks(_interval)
-                .At(_zonedReferenceDate.TimeOfDay)
+                .At(_referenceTimeOfDay)
                 .InZoneLeniently(_seed.Zone),
 
             FrequencyType.Monthly => _seed.Date
                 .PlusMonths(_interval)
                 .AtNearestDayOfMonth(_zonedReferenceDate.Day)
-                .At(_zonedReferenceDate.TimeOfDay)
+                .At(_referenceTimeOfDay)
                 .InZoneLeniently(_seed.Zone),
 
             FrequencyType.Yearly => _seed.Date
                 .PlusYears(_interval)
                 .AtNearestDayOfMonth(_zonedReferenceDate.Day)
-                .At(_zonedReferenceDate.TimeOfDay)
+                .At(_referenceTimeOfDay)
                 .InZoneLeniently(_seed.Zone),
 
             _ => throw new EvaluationException($"Invalid frequency ${_frequency}")

@@ -4710,6 +4710,53 @@ END:VCALENDAR";
     }
 
     [Test]
+    [TestCase("FREQ=DAILY;COUNT=3", "20250309T033000", "20250310T023000", "20250311T023000")]
+    [TestCase("FREQ=WEEKLY;COUNT=3", "20250309T033000", "20250316T023000", "20250323T023000")]
+    [TestCase("FREQ=MONTHLY;COUNT=3", "20250309T033000", "20250409T023000", "20250509T023000")]
+    [TestCase("FREQ=YEARLY;COUNT=3", "20250309T033000", "20260309T023000", "20270309T023000")]
+    [TestCase("FREQ=WEEKLY;BYDAY=SU,MO;COUNT=3", "20250309T033000", "20250310T023000", "20250316T023000")]
+    public void DtStartInForwardDaylightSavingGap_KeepsTimeOfDayAfterTransitionDay(string rrule, params string[] expectedStarts)
+    {
+        var evt = new CalendarEvent
+        {
+            RecurrenceRule = new(rrule),
+            Start = new CalDateTime(2025, 3, 9, 2, 30, 0, "America/New_York"),
+            Duration = Duration.FromMinutes(90),
+        };
+
+        var tz = DateTimeZoneProviders.Tzdb["America/New_York"];
+        var result = evt.GetOccurrences(tz)
+            .Select(x => x.Start)
+            .ToList();
+
+        var expected = expectedStarts
+            .Select(x => new CalDateTime(x).ToLocalDateTime().InZoneStrictly(tz))
+            .ToList();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    [TestCase("FREQ=DAILY", "20250320T023000")]
+    [TestCase("FREQ=WEEKLY", "20250323T023000")]
+    [TestCase("FREQ=MONTHLY", "20250409T023000")]
+    [TestCase("FREQ=YEARLY", "20260309T023000")]
+    public void DtStartInForwardDaylightSavingGap_KeepsTimeOfDayWhenStartingLater(string rrule, string expectedStart)
+    {
+        var evt = new CalendarEvent
+        {
+            RecurrenceRule = new(rrule),
+            Start = new CalDateTime(2025, 3, 9, 2, 30, 0, "America/New_York"),
+            Duration = Duration.FromMinutes(90),
+        };
+
+        var tz = DateTimeZoneProviders.Tzdb["America/New_York"];
+        var result = evt.GetOccurrences(tz, Instant.FromUtc(2025, 3, 20, 0, 0)).First().Start;
+
+        Assert.That(result, Is.EqualTo(new CalDateTime(expectedStart).ToLocalDateTime().InZoneStrictly(tz)));
+    }
+
+    [Test]
     public void MonthlyUtcEvent_OnForwardDaylightSaving_HourShiftsAfterTransition()
     {
         var evt = new CalendarEvent();
