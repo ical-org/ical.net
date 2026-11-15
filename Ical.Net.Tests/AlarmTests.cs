@@ -671,6 +671,47 @@ public class AlarmTests
         }));
     }
 
+    [Test]
+    public void RDatePeriods_TriggerRelatedEnd_LaterOccurrenceEndingEarlierIsNotPreceded()
+    {
+        // Ordered by start: 10:00-14:00, 10:30-15:00, 11:00-12:00.
+        // The 3rd occurrence starts last but ends first, so its RELATED=END alarm fires first.
+        // A lower bound based on occurrence end would release the 13:30 alarm while
+        // processing the 2nd occurrence (bound 14:30), before 11:30 is generated.
+        CalendarEvent e = new()
+        {
+            Start = new CalDateTime(2026, 4, 1, 10, 0, 0, CalDateTime.UtcTzId),
+            End = new CalDateTime(2026, 4, 1, 14, 0, 0, CalDateTime.UtcTzId),
+        };
+
+        e.RecurrenceDates.Add(new Period(
+            new CalDateTime(2026, 4, 1, 10, 30, 0, CalDateTime.UtcTzId),
+            new CalDateTime(2026, 4, 1, 15, 0, 0, CalDateTime.UtcTzId)));
+
+        e.RecurrenceDates.Add(new Period(
+            new CalDateTime(2026, 4, 1, 11, 0, 0, CalDateTime.UtcTzId),
+            new CalDateTime(2026, 4, 1, 12, 0, 0, CalDateTime.UtcTzId)));
+
+        e.Alarms.Add(new Alarm
+        {
+            Trigger = new Trigger(new Duration(minutes: -30))
+            {
+                Related = TriggerRelation.End
+            }
+        });
+
+        var results = e.GetAlarmOccurrences(DateTimeZone.Utc)
+            .Select(x => x.Start.ToInstant())
+            .ToList();
+
+        Assert.That(results, Is.EqualTo(new[]
+        {
+            Instant.FromUtc(2026, 4, 1, 11, 30),
+            Instant.FromUtc(2026, 4, 1, 13, 30),
+            Instant.FromUtc(2026, 4, 1, 14, 30),
+        }));
+    }
+
     private static CalendarEvent DailyEvent(CalDateTime start, int? count, params string[] triggers)
     {
         var e = new CalendarEvent
