@@ -17,6 +17,9 @@ on:
     paths-ignore:
       - '**/*.md'
 
+permissions:
+ contents: read
+
 jobs:
   coverage:
 
