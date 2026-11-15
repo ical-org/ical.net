@@ -11,35 +11,48 @@ permissions:
 
 jobs:
   tests:
-    runs-on: ubuntu-22.04  # ubuntu-24.04 does not include mono needed for net4x tests
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-26.04
+            framework: net8.0
+          - os: ubuntu-26.04
+            framework: net10.0
+          - os: windows-2025
+            framework: net48
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v7
-      with:
-        fetch-depth: 0  # Fetch all history for all tags and branches
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v6
-      with:
-        dotnet-version: |
-          10.0.x
-          8.0.x
-          6.0.x
-          3.1.x
+      # ubuntu-26.04 and windows-2025 have dotnet 10 and 8
+      # installed already. If those images remove dotnet 8
+      # use the following to make sure the correct dotnet
+      # versions are installed:
+      #
+      # - name: Setup .NET
+      #   uses: actions/setup-dotnet@v6
+      #   with:
+      #     dotnet-version: |
+      #       10.0.x
+      #       8.0.x
 
-    - name: Check .ics fixtures for BOM
-      shell: bash
-      run: bash .github/workflows/EnsureIcsFixturesWithoutBOM.sh Ical.Net.Tests
+      - name: Check .ics fixtures for BOM
+        shell: bash
+        run: bash .github/workflows/EnsureIcsFixturesWithoutBOM.sh Ical.Net.Tests
 
-    - name: Override NodaTime to latest in test project
-      run: dotnet add Ical.Net.Tests/Ical.Net.Tests.csproj package NodaTime --version "*" --no-restore
+      - name: Override NodaTime to latest in test project
+        run: dotnet add Ical.Net.Tests/Ical.Net.Tests.csproj package NodaTime --version "*" --no-restore
 
-    - name: Restore dependencies with latest compatible floating versions
-      run: dotnet restore --no-cache --force-evaluate
+      - name: Restore dependencies with latest compatible floating versions
+        run: dotnet restore ./Ical.Net.Tests/Ical.Net.Tests.csproj --no-cache --force-evaluate
 
-    - name: Build
-      run: dotnet build --no-restore --configuration Release -p:nowarn=1591
+      - name: Build
+        run: dotnet build ./Ical.Net.Tests/Ical.Net.Tests.csproj --no-restore --configuration Release -p:nowarn=1591 --framework ${{ matrix.framework }}
 
-    - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal
+      - name: Test
+        run: dotnet test --no-build --configuration Release --verbosity normal --framework ${{ matrix.framework }}
