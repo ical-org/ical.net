@@ -298,7 +298,8 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
     /// <summary>
     /// Gets a time no relative alarm of this or any later occurrence can fire before.
     /// Triggers related to the end are measured from the start, because a later
-    /// occurrence can end before this one, but never starts before it.
+    /// occurrence (e.g. an RDATE period with its own duration) can end before
+    /// this one, but never starts before it.
     /// </summary>
     private static Instant GetRelativeAlarmStartLowerBound(List<Alarm> relativeAlarms, Occurrence occurrence)
         => relativeAlarms.Min(alarm => GetTriggerTime(alarm, occurrence.Start).ToInstant());
