@@ -246,20 +246,25 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
 
         foreach (var occurrence in GetOccurrences(timeZone, startTime, options))
         {
-            var earliestAlarmStart = GetEarliestRelativeAlarmStart(relativeAlarms, occurrence);
+            var alarmStartLowerBound = GetRelativeAlarmStartLowerBound(relativeAlarms, occurrence);
 
-            if (endTime != null && earliestAlarmStart >= endTime)
+            if (endTime != null && alarmStartLowerBound >= endTime)
             {
                 break;
             }
 
-            // Output queued alarms that no later alarm can come before
-            while (alarmQueue.Count > 0 && alarmQueue.Peek().Start.ToInstant() <= earliestAlarmStart)
+            // Output alarm times until the next set of alarms starts overlapping
+            while (alarmQueue.Count > 0 && alarmQueue.Peek().Start.ToInstant() <= alarmStartLowerBound)
             {
                 yield return alarmQueue.Dequeue();
             }
 
             var alarms = GetRelativeAlarmOccurrences(relativeAlarms, occurrence, startTime, endTime);
+
+            if (alarms.Count == 0)
+            {
+                continue;
+            }
 
             // Queue the next set of alarms, merging with queue if needed
             if (alarmQueue.Count == 0)
@@ -291,11 +296,11 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
     }
 
     /// <summary>
-    /// Gets the earliest time any relative alarm can fire for the occurrence.
-    /// Triggers related to the end are measured from the start, because
-    /// the end is never before the start and repeats only fire later.
+    /// Gets a time no relative alarm of this or any later occurrence can fire before.
+    /// Triggers related to the end are measured from the start, because a later
+    /// occurrence can end before this one, but never starts before it.
     /// </summary>
-    private static Instant GetEarliestRelativeAlarmStart(List<Alarm> relativeAlarms, Occurrence occurrence)
+    private static Instant GetRelativeAlarmStartLowerBound(List<Alarm> relativeAlarms, Occurrence occurrence)
         => relativeAlarms.Min(alarm => GetTriggerTime(alarm, occurrence.Start).ToInstant());
 
     private static ZonedDateTime GetTriggerTime(Alarm alarm, ZonedDateTime relatedTime)
@@ -370,7 +375,7 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
         Instant? endTime = null)
     {
         return relativeAlarms
-            .SelectMany(alarm => GetRelativeAlarmStart(alarm, occurrence)
+            .Select(alarm => GetRelativeAlarmStart(alarm, occurrence)
                 .Where(start =>
                 {
                     var alarmStart = start.ToInstant();
@@ -379,7 +384,7 @@ public abstract class RecurringComponent : UniqueComponent, IRecurringComponent
                         && (endTime == null || endTime > alarmStart);
                 })
                 .Select(start => new AlarmOccurrence(alarm, start, this)))
-            .OrderBy(alarm => alarm.Start.ToInstant())
+            .OrderedMergeMany()
             .ToList();
     }
 }
