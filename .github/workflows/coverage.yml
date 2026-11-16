@@ -7,54 +7,73 @@ on:
   pull_request:
     branches:
       - main
-      - 'version/6.0'
     paths-ignore:
       - '**/*.md'
   push:
     branches:
       - main
-      - 'version/6.0'
       - 'pr/**/*'
       - 'wip/**/*'
     paths-ignore:
       - '**/*.md'
 
+permissions:
+ contents: read
+
 jobs:
   coverage:
-    runs-on: ubuntu-22.04  # ubuntu-24.04 does not include mono needed for net4x tests
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-26.04
+            framework: net8.0
+          - os: ubuntu-26.04
+            framework: net10.0
+          - os: windows-2025
+            framework: net48
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v7
-      with:
-        fetch-depth: 0  # Fetch all history for all tags and branches
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v6
-      with:
-        dotnet-version: |
-          10.0.x
-          8.0.x
-          6.0.x
-          3.1.x
-    - name: Restore dependencies --verbosity quiet
-      run: dotnet restore
-    - name: Add AltCover package to test project
-      run: dotnet add ./Ical.Net.Tests/Ical.Net.Tests.csproj package AltCover
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
-    - name: Build
-      run: dotnet build --no-restore --configuration Release -p:nowarn=1591
-    - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal /p:AltCover=true /p:AltCoverXmlReport="coverage.xml" /p:AltCoverStrongNameKey="../IcalNetStrongnameKey.snk" /p:AltCoverAssemblyExcludeFilter="Ical.Net.Tests|NUnit3.TestAdapter|AltCover" /p:AltCoverAttributeFilter="ExcludeFromCodeCoverage" /p:AltCoverLineCover="false"
+      # ubuntu-26.04 and windows-2025 have dotnet 10 and 8
+      # installed already. If those images remove dotnet 8
+      # use the following to make sure the correct dotnet
+      # versions are installed:
+      #
+      # - name: Setup .NET
+      #   uses: actions/setup-dotnet@v6
+      #   with:
+      #     dotnet-version: |
+      #       10.0.x
+      #       8.0.x
 
-    - name: Store coverage report as artifact
-      uses: actions/upload-artifact@v7
-      with:
-        name: coverage-report
-        path: ./Ical.Net.Tests/coverage.*.xml  # store all coverage reports
-    - name: Upload coverage to Codecov  
-      uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5
-      with:  
-        # files: automatically finds all in ./Ical.Net.Tests/
-        name: coverage
-        token: ${{ secrets.CODECOV_TOKEN }}
-        fail_ci_if_error: false
+      - name: Add AltCover package to test project
+        run: dotnet add ./Ical.Net.Tests/Ical.Net.Tests.csproj package AltCover --no-restore
+
+      - name: Restore dependencies
+        run: dotnet restore ./Ical.Net.Tests/Ical.Net.Tests.csproj
+
+      - name: Build
+        run: dotnet build ./Ical.Net.Tests/Ical.Net.Tests.csproj --no-restore --configuration Release -p:nowarn=1591  --framework ${{ matrix.framework }}
+
+      - name: Test
+        run: dotnet test ./Ical.Net.Tests/Ical.Net.Tests.csproj --no-build --configuration Release --verbosity normal --framework ${{ matrix.framework }} /p:AltCover=true /p:AltCoverXmlReport="coverage.xml" /p:AltCoverStrongNameKey="../IcalNetStrongnameKey.snk" /p:AltCoverAssemblyExcludeFilter="Ical.Net.Tests|NUnit3.TestAdapter|AltCover" /p:AltCoverAttributeFilter="ExcludeFromCodeCoverage" /p:AltCoverLineCover="false"
+
+      - name: Store coverage report as artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: ./Ical.Net.Tests/coverage.*.xml  # store all coverage reports
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5
+        with:
+          # files: automatically finds all in ./Ical.Net.Tests/
+          name: coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
