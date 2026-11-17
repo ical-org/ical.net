@@ -17,6 +17,7 @@ namespace Ical.Net.Serialization;
 
 public sealed class CalendarWriter
 {
+    private const int FlushThreshold = 16 * 1024;
     private const int LineByteLimit = 75;
     private const int LineByteLimitFolded = LineByteLimit - 1;
     private const byte NameValueSeparator = (byte) ':';
@@ -410,8 +411,15 @@ public sealed class CalendarWriter
         _output.Flush();
     }
 
-    internal async Task FlushAsync(CancellationToken cancellationToken)
+    internal async Task FlushAsync(CancellationToken cancellationToken, bool force = false)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (!force && _bufferWriter.WrittenCount < FlushThreshold)
+        {
+            return;
+        }
+
         if (_bufferWriter.WrittenCount > 0)
         {
             await _output.WriteAsync(_bufferWriter.WrittenMemory, cancellationToken).ConfigureAwait(false);
