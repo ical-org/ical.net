@@ -63,7 +63,7 @@ public partial class CalendarSerializer
         writer.Flush();
     }
 
-    public static Task SerializeAsync(
+    public static async Task SerializeAsync(
         Stream utf8Destination,
         CalendarComponent component,
         CalendarSerializerOptions? options = null,
@@ -73,7 +73,10 @@ public partial class CalendarSerializer
 
         options ??= new();
 
-        return SerializeAsync(writer, component, options, cancellationToken);
+        await SerializeAsync(writer, component, options, cancellationToken).ConfigureAwait(false);
+
+        // Force flush to ensure all data is written to the stream
+        await writer.FlushAsync(cancellationToken, force: true).ConfigureAwait(false);
     }
 
     private static async Task SerializeAsync(
@@ -89,13 +92,13 @@ public partial class CalendarSerializer
         {
             if (child is CalendarComponent childComponent)
             {
-                await SerializeAsync(writer, childComponent, options, cancellationToken);
+                await SerializeAsync(writer, childComponent, options, cancellationToken).ConfigureAwait(false);
             }
         }
 
         EndComponent(writer, component);
 
-        // Flush after every component
+        // Flush when the buffer reaches the threshold
         await writer.FlushAsync(cancellationToken).ConfigureAwait(false);
     }
 
