@@ -12,7 +12,7 @@ using NodaTime;
 
 namespace Ical.Net.Evaluation;
 
-public abstract class RecurringEvaluator : IEvaluator
+internal abstract class RecurringEvaluator : IEvaluator
 {
     protected IRecurrable Recurrable { get; set; }
 
