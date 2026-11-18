@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -11,7 +11,7 @@ using Ical.Net.Collections.Proxies;
 
 namespace Ical.Net.Proxies;
 
-public class ParameterCollectionProxy : GroupedCollectionProxy<string, CalendarParameter, CalendarParameter>, IParameterCollection
+internal class ParameterCollectionProxy : GroupedCollectionProxy<string, CalendarParameter, CalendarParameter>, IParameterCollection
 {
     protected GroupedValueList<string, CalendarParameter, CalendarParameter, string> Parameters
         => (GroupedValueList<string, CalendarParameter, CalendarParameter, string>) RealObject;

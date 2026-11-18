@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -7,15 +7,13 @@ using System.Collections.Generic;
 
 namespace Ical.Net.Collections;
 
-public class MultiLinkedList<TType> :
-    List<TType>,
-    IMultiLinkedList<TType>
+internal sealed class MultiLinkedList<TType> : List<TType>
 {
-    private IMultiLinkedList<TType>? _previous;
+    private MultiLinkedList<TType>? _previous;
 
-    public virtual void SetPrevious(IMultiLinkedList<TType> previous) => _previous = previous;
+    public void SetPrevious(MultiLinkedList<TType> previous) => _previous = previous;
 
-    public virtual int StartIndex => _previous?.ExclusiveEnd ?? 0;
+    public int StartIndex => _previous?.ExclusiveEnd ?? 0;
 
-    public virtual int ExclusiveEnd => Count > 0 ? StartIndex + Count : StartIndex;
+    public int ExclusiveEnd => Count > 0 ? StartIndex + Count : StartIndex;
 }
