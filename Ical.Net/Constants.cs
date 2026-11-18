@@ -116,7 +116,7 @@ public static class ParticipationRole
     public static string ParamName => Role;
 }
 
-public class SerializationConstants
+internal class SerializationConstants
 {
     public const string LineBreak = "\r\n";
 }
