@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -10,7 +10,7 @@ using Ical.Net.Collections.Proxies;
 
 namespace Ical.Net.Proxies;
 
-public class CalendarObjectListProxy<TType> : GroupedCollectionProxy<string, ICalendarObject, TType>, ICalendarObjectList<TType>
+internal class CalendarObjectListProxy<TType> : GroupedCollectionProxy<string, ICalendarObject, TType>, ICalendarObjectList<TType>
     where TType : class, ICalendarObject
 {
     public CalendarObjectListProxy(IGroupedCollection<string, ICalendarObject> list) : base(list) { }

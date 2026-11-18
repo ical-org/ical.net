@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -11,7 +11,7 @@ using Ical.Net.Collections;
 
 namespace Ical.Net.Proxies;
 
-public class UniqueComponentListProxy<TComponentType> :
+internal class UniqueComponentListProxy<TComponentType> :
     CalendarObjectListProxy<TComponentType>,
     IUniqueComponentList<TComponentType>
     where TComponentType : class, IUniqueComponent
