@@ -9,7 +9,7 @@ using Ical.Net.DataTypes;
 
 namespace Ical.Net.Evaluation;
 
-public class TimeZoneInfoEvaluator : RecurringEvaluator
+internal class TimeZoneInfoEvaluator : RecurringEvaluator
 {
     protected VTimeZoneInfo TimeZoneInfo
     {

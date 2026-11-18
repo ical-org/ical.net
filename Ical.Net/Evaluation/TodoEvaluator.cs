@@ -11,7 +11,7 @@ using NodaTime;
 
 namespace Ical.Net.Evaluation;
 
-public class TodoEvaluator : RecurringEvaluator
+internal class TodoEvaluator : RecurringEvaluator
 {
     protected Todo Todo => Recurrable as Todo ?? throw new InvalidOperationException();
 
