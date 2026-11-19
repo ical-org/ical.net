@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.Serialization;
@@ -45,6 +47,66 @@ public partial class CalendarSerializer
         CalendarComponent component,
         CalendarSerializerOptions options)
     {
+        BeginComponent(writer, component, options);
+
+        // Write children
+        foreach (var child in component.Children)
+        {
+            if (child is CalendarComponent childComponent)
+            {
+                Serialize(writer, childComponent, options);
+            }
+        }
+
+        EndComponent(writer, component);
+
+        writer.Flush();
+    }
+
+    public static async Task SerializeAsync(
+        Stream utf8Destination,
+        CalendarComponent component,
+        CalendarSerializerOptions? options = null,
+        CancellationToken cancellationToken = default)
+    {
+        var writer = new CalendarWriter(utf8Destination);
+
+        options ??= new();
+
+        await SerializeAsync(writer, component, options, cancellationToken).ConfigureAwait(false);
+
+        // Force flush to ensure all data is written to the stream
+        await writer.FlushAsync(cancellationToken, force: true).ConfigureAwait(false);
+    }
+
+    private static async Task SerializeAsync(
+        CalendarWriter writer,
+        CalendarComponent component,
+        CalendarSerializerOptions options,
+        CancellationToken cancellationToken = default)
+    {
+        BeginComponent(writer, component, options);
+
+        // Write children
+        foreach (var child in component.Children)
+        {
+            if (child is CalendarComponent childComponent)
+            {
+                await SerializeAsync(writer, childComponent, options, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        EndComponent(writer, component);
+
+        // Flush when the buffer reaches the threshold
+        await writer.FlushAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static void BeginComponent(
+        CalendarWriter writer,
+        CalendarComponent component,
+        CalendarSerializerOptions options)
+    {
         writer.WriteRawContentLine("BEGIN"u8, component.Name);
 
         IEnumerable<ICalendarProperty> properties = component.Properties;
@@ -66,18 +128,8 @@ public partial class CalendarSerializer
 
             converter.WriteProperty(writer, property);
         }
-
-        // Write children
-        foreach (var child in component.Children)
-        {
-            if (child is CalendarComponent childComponent)
-            {
-                Serialize(writer, childComponent, options);
-            }
-        }
-
-        writer.WriteRawContentLine("END"u8, component.Name);
     }
 
-    
+    private static void EndComponent(CalendarWriter writer, CalendarComponent component)
+        => writer.WriteRawContentLine("END"u8, component.Name);
 }
