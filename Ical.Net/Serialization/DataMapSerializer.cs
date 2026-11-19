@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -9,6 +9,7 @@ using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.Serialization;
 
+[Obsolete("This will be removed with no public replacement.")]
 public class DataMapSerializer : SerializerBase
 {
     public DataMapSerializer() { }

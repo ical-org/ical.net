@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -11,6 +11,7 @@ using System.Reflection;
 
 namespace Ical.Net.Serialization;
 
+[Obsolete("This will be removed with no public replacement.")]
 public class GenericListSerializer : SerializerBase
 {
     private readonly Type _innerType;

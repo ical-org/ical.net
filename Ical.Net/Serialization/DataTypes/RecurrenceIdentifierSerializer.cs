@@ -14,6 +14,7 @@ namespace Ical.Net.Serialization.DataTypes;
 /// <summary>
 /// Provides serialization and deserialization functionality for <see cref="RecurrenceIdentifier"/> objects.
 /// </summary>
+[Obsolete("This will be removed with no public replacement.")]
 public class RecurrenceIdentifierSerializer : SerializerBase, IParameterProvider
 {
     /// <summary>
