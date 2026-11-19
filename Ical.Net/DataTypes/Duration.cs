@@ -5,7 +5,6 @@
 
 using System;
 using System.Globalization;
-using System.Text.RegularExpressions;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes;
@@ -229,10 +228,6 @@ public struct Duration
     private static int? NullIfZero(int? v) => (v == 0) ? null : v;
 
 
-    internal static readonly Regex DurationMatch =
-        new Regex(@"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$",
-            RegexOptions.Compiled | RegexOptions.IgnoreCase, RegexDefaults.Timeout);
-
     /// <summary>
     /// Parse result for backwards compatibility with <see cref="Parse(string)"/>
     /// </summary>
@@ -248,61 +243,102 @@ public struct Duration
 
     internal static DurationParseResult TryParseInternal(string? value, out Duration duration)
     {
+        duration = default;
+
         if (string.IsNullOrEmpty(value))
         {
-            duration = default;
             return DurationParseResult.NoMatch;
         }
 
-        try
+        var text = value.AsSpan();
+        var pos = 0;
+        var sign = 1;
+
+        if (text[pos] is '+' or '-')
         {
-            var match = DurationMatch.Match(value);
-
-            if (!match.Success)
-            {
-                // This happens for
-                // * EXDATE values, which never have a duration,
-                // * RDATE values, where the optional duration is missing
-                // * TRIGGER values that are invalid
-                //return null;
-
-                duration = default;
-                return DurationParseResult.NoMatch;
-            }
-
-            var sign = 1;
-            int? weeks = null;
-            int? days = null;
-            int? hours = null;
-            int? minutes = null;
-            int? seconds = null;
-
-            if (match.Groups["sign"].Success && match.Groups["sign"].Value == "-")
-                sign = -1;
-
-            int? GetGroupInt(string key)
-                => match.Groups[key].Success ? Convert.ToInt32(match.Groups[key].Value, CultureInfo.InvariantCulture) : null;
-
-            weeks = GetGroupInt("week");
-            if (match.Groups["main"].Success)
-            {
-                days = GetGroupInt("day");
-                if (match.Groups["time"].Success)
-                {
-                    hours = GetGroupInt("hour");
-                    minutes = GetGroupInt("minute");
-                    seconds = GetGroupInt("second");
-                }
-            }
-
-            duration = new Duration(sign * weeks, sign * days, sign * hours, sign * minutes, sign * seconds);
-            return DurationParseResult.Success;
+            sign = text[pos] == '-' ? -1 : 1;
+            pos++;
         }
-        catch (Exception)
+
+        if (pos == text.Length || char.ToUpperInvariant(text[pos]) != 'P')
         {
-            duration = default;
+            return DurationParseResult.NoMatch;
+        }
+
+        pos++;
+
+        var invalid = false;
+        int? days = null;
+        int? hours = null;
+        int? minutes = null;
+        int? seconds = null;
+
+        // Weeks cannot be combined with other values
+        var weeks = ReadPart(text, ref pos, 'W', ref invalid);
+        if (weeks is null)
+        {
+            days = ReadPart(text, ref pos, 'D', ref invalid);
+
+            if (pos < text.Length && char.ToUpperInvariant(text[pos]) == 'T')
+            {
+                pos++;
+                hours = ReadPart(text, ref pos, 'H', ref invalid);
+                minutes = ReadPart(text, ref pos, 'M', ref invalid);
+                seconds = ReadPart(text, ref pos, 'S', ref invalid);
+            }
+        }
+
+        if (pos != text.Length)
+        {
+            // This happens for
+            // * EXDATE values, which never have a duration,
+            // * RDATE values, where the optional duration is missing
+            // * TRIGGER values that are invalid
+            return DurationParseResult.NoMatch;
+        }
+
+        if (invalid)
+        {
             return DurationParseResult.Invalid;
         }
+
+        duration = new Duration(sign * weeks, sign * days, sign * hours, sign * minutes, sign * seconds);
+        return DurationParseResult.Success;
+    }
+
+    /// <summary>
+    /// Reads digits followed by the designator, or returns null without
+    /// moving <paramref name="pos"/> if they are not there.
+    /// </summary>
+    private static int? ReadPart(ReadOnlySpan<char> text, ref int pos, char designator, ref bool invalid)
+    {
+        var end = pos;
+        while (end < text.Length && char.IsDigit(text[end]))
+        {
+            end++;
+        }
+
+        if (end == pos || end == text.Length || char.ToUpperInvariant(text[end]) != designator)
+        {
+            return null;
+        }
+
+        long value = 0;
+        for (var i = pos; i < end && !invalid; i++)
+        {
+            // Other Unicode digits match char.IsDigit but are not valid numbers
+            if (text[i] > '9')
+            {
+                invalid = true;
+                break;
+            }
+
+            value = value * 10 + (text[i] - '0');
+            invalid = value > int.MaxValue;
+        }
+
+        pos = end + 1;
+        return invalid ? 0 : (int) value;
     }
 
     internal string ToBasicIso()
