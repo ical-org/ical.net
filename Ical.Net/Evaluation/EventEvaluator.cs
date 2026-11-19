@@ -12,7 +12,7 @@ namespace Ical.Net.Evaluation;
 /// <summary>
 /// Evaluates a <see cref="CalendarEvent"/> to determine the dates and times for which the event occurs.
 /// </summary>
-public class EventEvaluator : RecurringEvaluator
+internal class EventEvaluator : RecurringEvaluator
 {
     protected CalendarEvent CalendarEvent => (CalendarEvent) Recurrable;
 

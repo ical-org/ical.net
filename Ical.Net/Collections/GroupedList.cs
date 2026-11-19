@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -18,10 +18,10 @@ public class GroupedList<TGroup, TItem> :
     where TGroup : notnull
     where TItem : class, IGroupedObject<TGroup>
 {
-    private readonly List<IMultiLinkedList<TItem>> _lists = new();
-    private readonly Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new();
+    private readonly List<MultiLinkedList<TItem>> _lists = new();
+    private readonly Dictionary<TGroup, MultiLinkedList<TItem>> _dictionary = new();
 
-    private IMultiLinkedList<TItem> EnsureList(TGroup group)
+    private MultiLinkedList<TItem> EnsureList(TGroup group)
     {
         if (_dictionary.TryGetValue(group, out var existingList))
         {
@@ -40,7 +40,7 @@ public class GroupedList<TGroup, TItem> :
         return list;
     }
 
-    private IMultiLinkedList<TItem>? ListForIndex(int index, out int relativeIndex)
+    private MultiLinkedList<TItem>? ListForIndex(int index, out int relativeIndex)
     {
         var list = _lists.FirstOrDefault(l => l.StartIndex <= index && l.ExclusiveEnd > index);
         if (list != null)

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -13,7 +13,7 @@ namespace Ical.Net.Collections.Proxies;
 /// <summary>
 /// A proxy for a keyed list.
 /// </summary>
-public class GroupedCollectionProxy<TGroup, TOriginal, TNew> :
+internal class GroupedCollectionProxy<TGroup, TOriginal, TNew> :
     IGroupedCollection<TGroup, TNew>
     where TOriginal : class, IGroupedObject<TGroup>
     where TNew : class, TOriginal

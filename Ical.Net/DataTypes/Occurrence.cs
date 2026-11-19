@@ -9,22 +9,15 @@ using NodaTime;
 
 namespace Ical.Net.DataTypes;
 
-public class Occurrence : IComparable<Occurrence>
+public sealed class Occurrence : IComparable<Occurrence>
 {
     public IRecurrable Source { get; private set; }
     public ZonedDateTime Start { get; private set; }
     public ZonedDateTime End { get; private set; }
 
-    public (ZonedDateTime Start, ZonedDateTime End) Period => (Start, End);
+    internal (ZonedDateTime Start, ZonedDateTime End) Period => (Start, End);
 
-    public Occurrence(Occurrence ao)
-    {
-        Source = ao.Source;
-        Start = ao.Start;
-        End = ao.End;
-    }
-
-    public Occurrence(IRecurrable recurrable, ZonedDateTime start, ZonedDateTime end)
+    internal Occurrence(IRecurrable recurrable, ZonedDateTime start, ZonedDateTime end)
     {
         Source = recurrable;
         Start = start;
