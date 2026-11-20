@@ -57,7 +57,7 @@ internal class PeriodListConverter : CalendarPropertyConverter<PeriodList>
 
         foreach (var period in value)
         {
-            writer.WriteValue(period.ToBasicIso());
+            writer.WriteValue(period);
         }
     }
 

@@ -50,7 +50,7 @@ internal class RecurrenceIdConverter : CalendarPropertyConverter<RecurrenceIdent
             writer.WriteParameter("RANGE", "THISANDFUTURE");
         }
 
-        writer.WriteValue(value.ToBasicIso());
+        writer.WriteValue(value);
     }
 
     public override void WriteParameters(CalendarWriter writer, IEnumerable<CalendarParameter> parameters, ICalendarParameterCollectionContainer container)

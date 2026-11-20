@@ -307,21 +307,33 @@ public struct Duration
 
     internal string ToBasicIso()
     {
+        Span<char> result = stackalloc char[MaxBasicIsoLength];
+        var written = WriteBasicIso(result);
+
+        return result.Slice(0, written).ToString();
+    }
+
+    // Max string length is:
+    // sign: 1 ch
+    // 'P': 1 ch
+    // 'T': 1 ch
+    // values: 10 * 5 ch (int.MaxValue.ToString.Length())
+    // units: 1 * 5 ch
+    internal const int MaxBasicIsoLength = 58;
+
+    /// <summary>
+    /// Writes the value returned by <see cref="ToBasicIso"/> to the given span.
+    /// </summary>
+    /// <returns>The number of characters written.</returns>
+    internal int WriteBasicIso(Span<char> result)
+    {
         if (IsEmpty)
         {
-            return "P0D";
+            "P0D".AsSpan().CopyTo(result);
+            return 3;
         }
 
-        // Max string length is:
-        // sign: 1 ch
-        // 'P': 1 ch
-        // 'T': 1 ch
-        // values: 10 * 5 ch (int.MaxValue.ToString.Length())
-        // units: 1 * 5 ch
-        const int MaxDurationStringLength = 58;
-
         var written = 0;
-        Span<char> result = stackalloc char[MaxDurationStringLength];
 
         var sign = Sign;
         if (sign < 0)
@@ -349,7 +361,7 @@ public struct Duration
                 written += WriteInt(sign * seconds, 'S', result.Slice(written));
         }
 
-        return result.Slice(0, written).ToString();
+        return written;
 
         static int WriteInt(int value, char unit, Span<char> buffer)
         {

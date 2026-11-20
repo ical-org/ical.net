@@ -22,6 +22,6 @@ internal class DurationConverter : CalendarPropertyConverter<Duration>
 
     public override void Write(CalendarWriter writer, Duration value)
     {
-        writer.WriteValue(value.ToBasicIso());
+        writer.WriteValue(value);
     }
 }

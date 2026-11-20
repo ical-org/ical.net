@@ -37,7 +37,7 @@ internal class DateTimeConverter : CalendarPropertyConverter<CalDateTime>
             writer.WriteParameter("TZID", value.TzId);
         }
 
-        writer.WriteValue(value.ToBasicIso());
+        writer.WriteValue(value);
     }
 
     public override void WriteParameters(

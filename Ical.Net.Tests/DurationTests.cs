@@ -72,4 +72,13 @@ public class DurationTests
     {
         Assert.That(Duration.FromSeconds(0), Is.EqualTo(Duration.Zero));
     }
+
+    [Test]
+    [TestCase(0, 0, 0, 0, 0, "P0D")]
+    [TestCase(2, null, null, null, null, "P2W")]
+    [TestCase(null, 1, 2, 3, 4, "P1DT2H3M4S")]
+    [TestCase(null, null, -1, -30, null, "-PT1H30M")]
+    [TestCase(-int.MaxValue, -int.MaxValue, -int.MaxValue, -int.MaxValue, -int.MaxValue, "-P2147483647W2147483647DT2147483647H2147483647M2147483647S")]
+    public void ToStringWritesBasicIso(int? weeks, int? days, int? hours, int? minutes, int? seconds, string expected)
+        => Assert.That(new Duration(weeks, days, hours, minutes, seconds).ToString(), Is.EqualTo(expected));
 }
