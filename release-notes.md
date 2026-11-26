@@ -8,6 +8,25 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ## v6
 
+### 6.0.0-pre.3 — Pre-release (2026-11-26)
+
+#### Fixes
+
+- Fix folding of long content lines that mix multi-byte and ASCII text ([#1022](https://github.com/ical-org/ical.net/pull/1022))
+- Preserve `DTSTART` time of day when it falls in a daylight saving gap ([#1031](https://github.com/ical-org/ical.net/pull/1031))
+- Prevent the BY-rule value cache from being lost when copying readonly structs ([#1023](https://github.com/ical-org/ical.net/pull/1023))
+- Ignore duplicate BY values when applying `BYSETPOS` ([#1032](https://github.com/ical-org/ical.net/pull/1032))
+- Fix missing and out-of-order relative alarm occurrences ([#1029](https://github.com/ical-org/ical.net/pull/1029))
+- Skip empty alarm sets and merge pre-sorted alarm fire times in the alarm queue ([#1029](https://github.com/ical-org/ical.net/pull/1029))
+- Preserve ordering for end-related alarms when a later occurrence ends earlier ([#1029](https://github.com/ical-org/ical.net/pull/1029))
+- Fix index-based access to grouped lists across groups ([#1030](https://github.com/ical-org/ical.net/pull/1030))
+
+#### Enhancements
+
+- Set NodaTime 3.1.0 as the minimum supported version ([#1025](https://github.com/ical-org/ical.net/pull/1025))
+- Reduce allocations when formatting `CalDateTime` values ([#1021](https://github.com/ical-org/ical.net/pull/1021))
+- Reduce allocations in duration, period, UTC offset, and parameter serializers ([#1026](https://github.com/ical-org/ical.net/pull/1026))
+
 ### 6.0.0-pre.2 — Pre-release (2026-10-31)
 
 - fix: An issue with escaping invalid characters was fixed ([#1018](https://github.com/ical-org/ical.net/pull/1018)))
