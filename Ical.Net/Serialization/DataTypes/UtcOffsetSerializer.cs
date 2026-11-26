@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -10,6 +10,7 @@ using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
 
+[Obsolete("Use UTCOffset.TryParse() and UTCOffset.ToString() instead.")]
 public class UtcOffsetSerializer : EncodableDataTypeSerializer
 {
     public UtcOffsetSerializer() { }

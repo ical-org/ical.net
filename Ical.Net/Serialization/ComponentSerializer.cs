@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -13,6 +13,7 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization;
 
+[Obsolete("This will be removed with no public replacement.")]
 public class ComponentSerializer : SerializerBase
 {
     protected virtual IComparer<ICalendarProperty> PropertySorter => new PropertyAlphabetizer();

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -25,6 +25,7 @@ namespace Ical.Net.Serialization;
 /// This class is thread-safe.
 /// Use the static Default instance for typical deserialization scenarios.
 /// </remarks>
+[Obsolete("Use CalendarSerializer.Deserialize() instead.")]
 public class SimpleDeserializer
 {
     internal SimpleDeserializer(

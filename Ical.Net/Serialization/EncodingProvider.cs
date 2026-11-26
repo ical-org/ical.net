@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
@@ -12,6 +12,7 @@ namespace Ical.Net.Serialization;
 /// <summary>
 /// Provides encoding and decoding services for byte arrays and strings.
 /// </summary>
+[Obsolete("This will be removed with no public replacement.")]
 internal class EncodingProvider : IEncodingProvider
 {
     private readonly SerializationContext _mSerializationContext;
