@@ -73,6 +73,22 @@ public abstract class RecurringEvaluator : IEvaluator
         ZonedDateTime periodStart,
         EvaluationOptions? options) => Evaluate(referenceDate, periodStart.Zone, periodStart.ToInstant(), options);
 
+    /// <summary>
+    /// Gets the earliest start of an occurrence that can still be running at <paramref name="periodStart"/>.
+    /// </summary>
+    private Instant? GetEarliestOverlappingStart(ZonedDateTime reference, Instant? periodStart)
+    {
+        if (periodStart is null)
+        {
+            return null;
+        }
+
+        var length = GetEnd(reference).ToInstant() - reference.ToInstant();
+
+        // Nominal durations can be an hour longer across a daylight saving change
+        return periodStart.Value - length - NodaTime.Duration.FromHours(1);
+    }
+
     public virtual IEnumerable<EvaluationPeriod> Evaluate(
         CalDateTime referenceDate,
         DateTimeZone timeZone,
@@ -87,7 +103,7 @@ public abstract class RecurringEvaluator : IEvaluator
         // is undefined. It seems to be good practice not to return the referenceDate in this case.
         var rruleOccurrences = Recurrable.RecurrenceRule is null
             ? [zonedReference]
-            : EvaluateRRule(referenceDate, zonedReference.Zone, periodStart, options);
+            : EvaluateRRule(referenceDate, zonedReference.Zone, GetEarliestOverlappingStart(zonedReference, periodStart), options);
 
         var periods = rruleOccurrences
             .Select(start => new EvaluationPeriod(start, GetEnd(start)));
