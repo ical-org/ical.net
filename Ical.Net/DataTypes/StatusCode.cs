@@ -4,10 +4,10 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes;
@@ -68,8 +68,6 @@ public class StatusCode : EncodableDataType
         statusCode.Parts.CopyTo(Parts, 0);
     }
 
-    internal static readonly Regex StatusCodeRegex = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant, RegexDefaults.Timeout);
-
     public static bool TryParse(
         string value,
 #if NET
@@ -77,26 +75,46 @@ public class StatusCode : EncodableDataType
 #endif
         out StatusCode? statusCode)
     {
-        var match = StatusCodeRegex.Match(value);
-        if (!match.Success)
+        statusCode = null;
+
+        // Find the first digit, then any following ".digits" parts
+        var start = 0;
+        while (start < value.Length && !char.IsDigit(value[start]))
         {
-            statusCode = null;
+            start++;
+        }
+
+        if (start == value.Length)
+        {
             return false;
         }
 
-        var parts = match.Value.Split('.');
-        var intParts = new int[parts.Length];
-        for (var i = 0; i < parts.Length; i++)
+        var parts = new List<int>();
+        var end = start + 1;
+
+        while (true)
         {
-            if (!int.TryParse(parts[i], out var num))
+            if (!int.TryParse(value.Substring(start, end - start), NumberStyles.None, CultureInfo.InvariantCulture, out var part))
             {
-                statusCode = null;
                 return false;
             }
-            intParts[i] = num;
+
+            parts.Add(part);
+
+            if (end + 1 >= value.Length || value[end] != '.' || !char.IsDigit(value[end + 1]))
+            {
+                break;
+            }
+
+            start = end + 1;
+            end = start;
+            while (end < value.Length && char.IsDigit(value[end]))
+            {
+                end++;
+            }
         }
 
-        statusCode = new StatusCode(intParts);
+        statusCode = new StatusCode(parts.ToArray());
         return true;
     }
 
